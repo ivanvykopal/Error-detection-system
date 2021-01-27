@@ -56,6 +56,47 @@ public class Scanner {
             else break;
         }
 
+        switch (peek) {
+            case '/': // / /=
+            case '+': // + ++ +=
+            case '-': // - -- -= ->
+            case '*': // * *=, *
+            case '%': // % %=
+            case '=': // = ==
+            case '!': // != !
+            case '>': // > >= >> >>=
+            case '<': // < <= << <<=
+            case '&': // && & &= , &
+            case '|': // || | |=
+            case '~':
+                return new Token(Tag.OP_BITWISE, "~", line);
+            case '^': // ^ ^=
+            case '?':
+                return new Token(Tag.QMARK, "?", line);
+            case '[':
+                return new Token(Tag.LEFT_PARENTHESES, "[", line);
+            case ']':
+                return new Token(Tag.RIGHT_PARENTHESES, "]", line);
+            case '(':
+                return new Token(Tag.LEFT_BRACKETS, "(", line);
+            case ')':
+                return new Token(Tag.RIGHT_BRACKETS, ")", line);
+            case '{':
+                return new Token(Tag.LEFT_BRACES, "{", line);
+            case '}':
+                return new Token(Tag.RIGHT_BRACES, "}", line);
+            case ',':
+                return new Token(Tag.COMMA, ",", line);
+            case ';':
+                return new Token(Tag.SEMICOLON, ";", line);
+            case ':':
+                return new Token(Tag.COLON, ":", line);
+            case '#':
+                return new Token(Tag.HASHTAG, "#", line);
+            case '.':
+                return new Token(Tag.DOT, ".", line);
+        }
+
         return null;
     }
 

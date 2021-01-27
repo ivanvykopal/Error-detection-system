@@ -81,6 +81,39 @@ public class Scanner {
     }
 
     /**
+     * Funkcia, ktorá ignoruje komentáre.
+     * @throws IOException
+     */
+    private void ignoreComments() throws IOException {
+        if (peek == '/') {
+            readNextCharacter();
+            switch (peek) {
+                case '*':
+                    // komentár typu /* */
+                    while(true) {
+                        readNextCharacter();
+                        if (peek == '*' && readNextCharacter('/')) break;
+                    }
+                    break;
+                case '/':
+                    // komentár typu //
+                    while (true) {
+                        readNextCharacter();
+                        if (peek == '\n') {
+                            line++;
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    // prípad, ak nejde o komentár
+                    position -= 2;
+                    readNextCharacter();
+            }
+        }
+    }
+
+    /**
      * Funkcia, ktorá pridá klúčové slová do HashMap.
      */
     private void addKeywords() {

@@ -58,10 +58,52 @@ public class Scanner {
 
         switch (peek) {
             case '/': // / /=
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "/=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ARITHMETIC, "/", line);
+                }
             case '+': // + ++ +=
+                readNextCharacter();
+                if (peek == '+') {
+                    return new Token(Tag.OP_ARITHMETIC, "++", line);
+                } else if(peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "+=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ARITHMETIC, "+", line);
+                }
             case '-': // - -- -= ->
+                readNextCharacter();
+                if(peek == '-') {
+                    return new Token(Tag.OP_ARITHMETIC, "--", line);
+                } else if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "-=", line);
+                } else if (peek == '>') {
+                    return new Token(Tag.ARROW, "->", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ARITHMETIC, "-", line);
+                }
             case '*': // * *=, *
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "*=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ARITHMETIC, "*", line);
+                }
+                //TODO: prípad, ak ide o smerník *
             case '%': // % %=
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "%=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ARITHMETIC, "%", line);
+                }
             case '=': // = ==
             case '!': // != !
             case '>': // > >= >> >>=

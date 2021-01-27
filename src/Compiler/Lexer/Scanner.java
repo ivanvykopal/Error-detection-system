@@ -105,9 +105,53 @@ public class Scanner {
                     return new Token(Tag.OP_ARITHMETIC, "%", line);
                 }
             case '=': // = ==
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "==", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_ASSIGNMENT, "=", line);
+                }
             case '!': // != !
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_RELATIONAL, "!=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_LOGICAL, "!", line);
+                }
             case '>': // > >= >> >>=
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_RELATIONAL, ">=", line);
+                } else if(peek == '>') {
+                    readNextCharacter();
+                    if (peek == '=') {
+                        return new Token(Tag.OP_ASSIGNMENT, ">>=", line);
+                    } else {
+                        getPreviousPosition();
+                        return new Token(Tag.OP_BITWISE, ">>", line);
+                    }
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_RELATIONAL, ">", line);
+                }
             case '<': // < <= << <<=
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_RELATIONAL, "<=", line);
+                } else if (peek == '<') {
+                    readNextCharacter();
+                    if (peek == '=') {
+                        return new Token(Tag.OP_ASSIGNMENT, "<<=", line);
+                    } else {
+                        getPreviousPosition();
+                        return new Token(Tag.OP_BITWISE, "<<", line);
+                    }
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_RELATIONAL, "<", line);
+                }
             case '&': // && & &= , &
             case '|': // || | |=
             case '~':

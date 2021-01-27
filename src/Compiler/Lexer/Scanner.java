@@ -62,6 +62,25 @@ public class Scanner {
     }
 
     /**
+     * Funkcia, ktorá ignoruje prechádza cez prázdne znaky.
+     * @throws IOException
+     */
+    private void ignoreWhiteSpaces() throws IOException {
+        while(true) {
+            readNextCharacter();
+            // kontrola konca súboru
+            if (peek == '§') break;
+            // kontrola pre medzeru a tabulátor
+            if (peek == ' ' || peek == '\t') continue;
+            // kontrola pre CR znak
+            if ((int)peek == 13) continue;
+            // kontrola nového riadku
+            if (peek == '\n') line++;
+            else break;
+        }
+    }
+
+    /**
      * Funkcia, ktorá pridá klúčové slová do HashMap.
      */
     private void addKeywords() {

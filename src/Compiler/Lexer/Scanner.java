@@ -137,6 +137,13 @@ public class Scanner {
     }
 
     /**
+     * Funkcia, ktorá vyráta predchádzajúcu pozíciu.
+     */
+    private void getPreviousPosition() {
+        position--;
+    }
+
+    /**
      * Funkcia, ktorá ignoruje prechádza cez prázdne znaky.
      * @throws IOException
      */

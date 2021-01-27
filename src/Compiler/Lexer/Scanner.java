@@ -26,6 +26,40 @@ public class Scanner {
     }
 
     /**
+     * Funkcia, ktorá spracováva vstup mení ho na tokeny.
+     * @return - vracia token
+     * @throws IOException
+     */
+    public Token scan() throws IOException {
+        while(true) {
+            // ignorovanie prázdnych znakov a komentárov
+            ignoreWhiteSpaces();
+            ignoreComments();
+            if (peek == '\n') {
+                line++;
+                continue;
+            }
+            // ak sú ešte prázdne znaky opakuje cyklus
+            if(peek == ' ' || peek == '\t') continue;
+            if (peek == '/') {
+                readNextCharacter();
+                // ak nasleduje komentár opakuje cyklus
+                if (peek == '/' || peek == '*') {
+                    position -= 2;
+                    readNextCharacter();
+                } else {
+                    position -= 2;
+                    readNextCharacter();
+                    break;
+                }
+            }
+            else break;
+        }
+
+        return null;
+    }
+
+    /**
      * Funkcia na načítanie ďalšieho znaku.
      * @throws IOException
      */

@@ -153,10 +153,36 @@ public class Scanner {
                     return new Token(Tag.OP_RELATIONAL, "<", line);
                 }
             case '&': // && & &= , &
+                readNextCharacter();
+                if (peek == '&') {
+                    return new Token(Tag.OP_LOGICAL, "&&", line);
+                } else if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "&=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_BITWISE, "&", line);
+                }
+                //TODO: prípad, ak ide o smerník &
             case '|': // || | |=
+                readNextCharacter();
+                if (peek == '|') {
+                    return new Token(Tag.OP_LOGICAL, "||", line);
+                } else if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "|=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_BITWISE, "|", line);
+                }
             case '~':
                 return new Token(Tag.OP_BITWISE, "~", line);
             case '^': // ^ ^=
+                readNextCharacter();
+                if (peek == '=') {
+                    return new Token(Tag.OP_ASSIGNMENT, "^=", line);
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.OP_BITWISE, "^", line);
+                }
             case '?':
                 return new Token(Tag.QMARK, "?", line);
             case '[':

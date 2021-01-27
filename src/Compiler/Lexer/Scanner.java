@@ -1,5 +1,6 @@
 package Compiler.Lexer;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -22,6 +23,42 @@ public class Scanner {
         this.file = file;
 
         addKeywords();
+    }
+
+    /**
+     * Funkcia na načítanie ďalšieho znaku.
+     * @throws IOException
+     */
+    private void readNextCharacter() throws IOException {
+        // načítanie ďalšieho znaku
+        if (position < file.length()) {
+            peek = file.charAt(position++);
+        } else {
+            // ukončovací znak
+            peek = '§';
+        }
+    }
+
+    /**
+     * Funkcia, ktorá načíta nasledujúci znak a porovnáho s parametrom.
+     * @param c znak, ktorý má byť nasledujúci
+     * @throws IOException
+     */
+    private boolean readNextCharacter(char c) throws IOException {
+        readNextCharacter();
+
+        // kontrola, či je koniec súboru
+        if (peek == '§') {
+            return false;
+        }
+
+        // kontrola, či nasledujúci znak je rovný c
+        if (peek == c) {
+            return true;
+        } else {
+            peek = ' ';
+            return false;
+        }
     }
 
     /**

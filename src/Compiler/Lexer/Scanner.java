@@ -228,6 +228,26 @@ public class Scanner {
             return new Token(Tag.STRING, word.toString(), line);
         }
 
+        // znaky s ''
+        if (peek == '\'') {
+            StringBuilder word = new StringBuilder("" + peek);
+            readNextCharacter();
+            if (peek == '\\' || peek == '\'') {
+                System.out.print("Chyba pre znak!");
+                return null;
+            } else {
+                word.append(peek);
+            }
+            readNextCharacter();
+            if (peek == '\'') {
+                word.append(peek);
+                return new Token(Tag.CHARACTER, word.toString(), line);
+            } else {
+                System.out.print("Chyba pre znak!");
+                return null;
+            }
+        }
+
         return null;
     }
 

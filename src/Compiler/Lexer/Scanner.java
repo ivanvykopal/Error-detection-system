@@ -209,6 +209,25 @@ public class Scanner {
                 return new Token(Tag.DOT, ".", line);
         }
 
+        // stringy -> reťazce s ""
+        if (peek == '"') {
+            StringBuilder word = new StringBuilder("" + peek);
+            while(true) {
+                readNextCharacter();
+                if (peek == '\\') {
+                    word.append(peek);
+                    readNextCharacter();
+                    word.append(peek);
+                } else if (peek == '"') {
+                    word.append(peek);
+                    break;
+                } else {
+                    word.append(peek);
+                }
+            }
+            return new Token(Tag.STRING, word.toString(), line);
+        }
+
         return null;
     }
 

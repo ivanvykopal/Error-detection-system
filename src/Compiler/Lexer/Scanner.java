@@ -248,6 +248,28 @@ public class Scanner {
             }
         }
 
+        // čísla
+        if(Character.isDigit(peek)) {
+            StringBuilder word = new StringBuilder("" + peek);
+            do {
+                readNextCharacter();
+                word.append(peek);
+            } while (Character.isDigit(peek));
+            if (peek != '.') {
+                getPreviousPosition();
+                return new Token(Tag.NUMBER, word.toString(), line);
+            } else {
+                do {
+                    word.append(peek);
+                    readNextCharacter();
+                } while (Character.isDigit(peek));
+                getPreviousPosition();
+                return new Token(Tag.REAL, word.toString(), line);
+            }
+        }
+
+        //TODO: chyba, nevedel zaradiť token
+        System.out.println("Nezaradený token!");
         return null;
     }
 

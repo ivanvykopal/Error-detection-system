@@ -209,6 +209,39 @@ public class Scanner {
                 return new Token(Tag.DOT, ".", line);
         }
 
+        if(Character.isLetter(peek)) {
+            // flag vraví o tom, či reťazec obsahuje _
+            boolean flag = false;
+            StringBuilder word = new StringBuilder("" + peek);
+            while (true) {
+                readNextCharacter();
+                if(Character.isLetterOrDigit(peek)) {
+                    word.append(peek);
+                    continue;
+                }
+                if (peek == '_') {
+                    word.append(peek);
+                    flag = true;
+                } else {
+                    getPreviousPosition();
+                    break;
+                }
+            }
+            if (flag) {
+                return new Token(Tag.IDENTIFIER, word.toString(), line);
+            } else {
+                // vyhľadanie kľúčového slova a jeho hodnoty v HashMape keywords
+                Byte tag = keywords.get(word.toString());
+                if (tag != null) {
+                    //keyword
+                    return new Token(tag, word.toString(), line);
+                } else {
+                    //identifier
+                    return new Token(Tag.IDENTIFIER, word.toString(), line);
+                }
+            }
+        }
+
         //identifikátor začinajúci s _
         if (peek == '_') {
             StringBuilder word = new StringBuilder("" + peek);

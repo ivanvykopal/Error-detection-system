@@ -209,6 +209,21 @@ public class Scanner {
                 return new Token(Tag.DOT, ".", line);
         }
 
+        //identifikátor začinajúci s _
+        if (peek == '_') {
+            StringBuilder word = new StringBuilder("" + peek);
+            while (true) {
+                readNextCharacter();
+                if (Character.isLetterOrDigit(peek) || peek == '_') {
+                    word.append(peek);
+                    continue;
+                }
+                getPreviousPosition();
+                break;
+            }
+            return new Token(Tag.IDENTIFIER, word.toString(), line);
+        }
+
         // stringy -> reťazce s ""
         if (peek == '"') {
             StringBuilder word = new StringBuilder("" + peek);

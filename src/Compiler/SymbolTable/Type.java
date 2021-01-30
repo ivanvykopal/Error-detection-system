@@ -1,5 +1,8 @@
 package Compiler.SymbolTable;
 
+/**
+ * Trieda, ktorá určuje dátový typ premennej alebo návratovú hodnotu funkcie
+ */
 public class Type {
 
     // Character
@@ -36,5 +39,4 @@ public class Type {
     public static byte FLOAT = 26;
     public static byte DOUBLE = 27;
     public static byte LONGDOUBLE = 28;
-
 }

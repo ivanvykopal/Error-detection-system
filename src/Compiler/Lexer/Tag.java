@@ -3,7 +3,6 @@ package Compiler.Lexer;
 /**
  * Trieda obsahujúca všetky potrebné druhy tried pre tokeny.
  */
-
 public class Tag {
     //keywords
     public static byte AUTO = 0;                // auto

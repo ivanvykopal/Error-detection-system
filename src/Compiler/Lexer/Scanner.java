@@ -60,128 +60,126 @@ public class Scanner {
             case '/': // / /=
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "/=", line);
+                    return new Token(Tag.ASSIGNMENT, "/=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ARITHMETIC, "/", line);
+                    return new Token(Tag.DIV, "/", line);
                 }
             case '+': // + ++ +=
                 readNextCharacter();
                 if (peek == '+') {
-                    return new Token(Tag.OP_ARITHMETIC, "++", line);
+                    return new Token(Tag.INC, "++", line);
                 } else if(peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "+=", line);
+                    return new Token(Tag.ASSIGNMENT, "+=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ARITHMETIC, "+", line);
+                    return new Token(Tag.PLUS, "+", line);
                 }
             case '-': // - -- -= ->
                 readNextCharacter();
                 if(peek == '-') {
-                    return new Token(Tag.OP_ARITHMETIC, "--", line);
+                    return new Token(Tag.DEC, "--", line);
                 } else if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "-=", line);
+                    return new Token(Tag.ASSIGNMENT, "-=", line);
                 } else if (peek == '>') {
                     return new Token(Tag.ARROW, "->", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ARITHMETIC, "-", line);
+                    return new Token(Tag.MINUS, "-", line);
                 }
             case '*': // * *=, *
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "*=", line);
+                    return new Token(Tag.ASSIGNMENT, "*=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ARITHMETIC, "*", line);
+                    return new Token(Tag.MULT, "*", line);
                 }
-                //TODO: prípad, ak ide o smerník *
             case '%': // % %=
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "%=", line);
+                    return new Token(Tag.ASSIGNMENT, "%=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ARITHMETIC, "%", line);
+                    return new Token(Tag.MOD, "%", line);
                 }
             case '=': // = ==
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "==", line);
+                    return new Token(Tag.EQ, "==", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_ASSIGNMENT, "=", line);
+                    return new Token(Tag.ASSIGNMENT, "=", line);
                 }
             case '!': // != !
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_RELATIONAL, "!=", line);
+                    return new Token(Tag.NOT_EQ, "!=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_LOGICAL, "!", line);
+                    return new Token(Tag.LOGICAL_NOT, "!", line);
                 }
             case '>': // > >= >> >>=
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_RELATIONAL, ">=", line);
+                    return new Token(Tag.GEQT, ">=", line);
                 } else if(peek == '>') {
                     readNextCharacter();
                     if (peek == '=') {
-                        return new Token(Tag.OP_ASSIGNMENT, ">>=", line);
+                        return new Token(Tag.ASSIGNMENT, ">>=", line);
                     } else {
                         getPreviousPosition();
-                        return new Token(Tag.OP_BITWISE, ">>", line);
+                        return new Token(Tag.RIGHT_SHIFT, ">>", line);
                     }
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_RELATIONAL, ">", line);
+                    return new Token(Tag.GT, ">", line);
                 }
             case '<': // < <= << <<=
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_RELATIONAL, "<=", line);
+                    return new Token(Tag.LEQT, "<=", line);
                 } else if (peek == '<') {
                     readNextCharacter();
                     if (peek == '=') {
-                        return new Token(Tag.OP_ASSIGNMENT, "<<=", line);
+                        return new Token(Tag.ASSIGNMENT, "<<=", line);
                     } else {
                         getPreviousPosition();
-                        return new Token(Tag.OP_BITWISE, "<<", line);
+                        return new Token(Tag.LEFT_SHIFT, "<<", line);
                     }
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_RELATIONAL, "<", line);
+                    return new Token(Tag.LT, "<", line);
                 }
             case '&': // && & &= , &
                 readNextCharacter();
                 if (peek == '&') {
-                    return new Token(Tag.OP_LOGICAL, "&&", line);
+                    return new Token(Tag.LOGICAL_AND, "&&", line);
                 } else if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "&=", line);
+                    return new Token(Tag.ASSIGNMENT, "&=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_BITWISE, "&", line);
+                    return new Token(Tag.AND, "&", line);
                 }
-                //TODO: prípad, ak ide o smerník &
             case '|': // || | |=
                 readNextCharacter();
                 if (peek == '|') {
-                    return new Token(Tag.OP_LOGICAL, "||", line);
+                    return new Token(Tag.LOGICAL_OR, "||", line);
                 } else if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "|=", line);
+                    return new Token(Tag.ASSIGNMENT, "|=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_BITWISE, "|", line);
+                    return new Token(Tag.OR, "|", line);
                 }
             case '~':
-                return new Token(Tag.OP_BITWISE, "~", line);
+                return new Token(Tag.BITWISE_NOT, "~", line);
             case '^': // ^ ^=
                 readNextCharacter();
                 if (peek == '=') {
-                    return new Token(Tag.OP_ASSIGNMENT, "^=", line);
+                    return new Token(Tag.ASSIGNMENT, "^=", line);
                 } else {
                     getPreviousPosition();
-                    return new Token(Tag.OP_BITWISE, "^", line);
+                    return new Token(Tag.XOR, "^", line);
                 }
             case '?':
                 return new Token(Tag.QMARK, "?", line);

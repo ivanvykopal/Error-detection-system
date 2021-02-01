@@ -1,16 +1,24 @@
 package Compiler.Parser;
 
+import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
+import Compiler.Lexer.Tag;
+import java.io.IOException;
 
 public class Parser {
     private Token token;
+    private Scanner scanner;
 
-    public Parser() {
-
+    public Parser(String file) {
+        scanner = new Scanner(file);
     }
 
     private void nextToken() {
-
+        try {
+            token = scanner.scan();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean accept(byte tag) {

@@ -45,25 +45,42 @@ public class Tag {
     public static final byte CHARACTER = 36;          // character
 
     // operators
-    public static final byte OP_ARITHMETIC = 37;      // + - * / % ++ --
-    public static final byte OP_RELATIONAL = 38;      // == != > < >= <=
-    public static final byte OP_LOGICAL = 39;         // && || !
-    public static final byte OP_BITWISE = 40;         // << >> ~ & ^ |
-    public static final byte OP_ASSIGNMENT = 41;      // = += -= *= /= %= <<= >>= &= ^= |=
-    public static final byte OP_MISCELLANEOUS = 42;   // & *
+    public static final byte PLUS = 37;               // +
+    public static final byte MINUS = 38;              // -
+    public static final byte MULT = 39;               // *
+    public static final byte DIV = 40;                // /
+    public static final byte MOD = 41;                // %
+    public static final byte INC = 42;                // ++
+    public static final byte DEC = 43;                // --
+    public static final byte EQ = 44;                 // ==
+    public static final byte NOT_EQ = 45;             // !=
+    public static final byte GT = 46;                 // >
+    public static final byte LT = 47;                 // <
+    public static final byte GEQT = 48;               // >=
+    public static final byte LEQT = 49;               // <=
+    public static final byte LOGICAL_AND = 50;        // &&
+    public static final byte LOGICAL_OR = 51;         // ||
+    public static final byte LOGICAL_NOT = 52;        // !
+    public static final byte AND = 53;                // &
+    public static final byte OR = 54;                 // |
+    public static final byte XOR = 55;                // ^
+    public static final byte LEFT_SHIFT = 56;         // <<
+    public static final byte RIGHT_SHIFT = 57;        // >>
+    public static final byte BITWISE_NOT = 58;        // ~
+    public static final byte ASSIGNMENT = 59;         // = += -= *= /= %= <<= >>= &= ^= |=
 
     // symbols
-    public static final byte LEFT_PARENTHESES = 43;   // [
-    public static final byte RIGHT_PARENTHESES = 44;  // ]
-    public static final byte LEFT_BRACKETS = 45;      // (
-    public static final byte RIGHT_BRACKETS = 46;     // )
-    public static final byte LEFT_BRACES = 47;        // {
-    public static final byte RIGHT_BRACES = 48;       // }
-    public static final byte COMMA = 49;              // ,
-    public static final byte SEMICOLON = 50;          // ;
-    public static final byte COLON = 51;              // :
-    public static final byte HASHTAG = 52;            // #
-    public static final byte DOT = 53;                // .
-    public static final byte QMARK = 54;              // ?
-    public static final byte ARROW = 55;              // ->
+    public static final byte LEFT_PARENTHESES = 60;   // [
+    public static final byte RIGHT_PARENTHESES = 61;  // ]
+    public static final byte LEFT_BRACKETS = 62;      // (
+    public static final byte RIGHT_BRACKETS = 63;     // )
+    public static final byte LEFT_BRACES = 64;        // {
+    public static final byte RIGHT_BRACES = 65;       // }
+    public static final byte COMMA = 66;              // ,
+    public static final byte SEMICOLON = 67;          // ;
+    public static final byte COLON = 68;              // :
+    public static final byte HASHTAG = 69;            // #
+    public static final byte DOT = 70;                // .
+    public static final byte QMARK = 71;              // ?
+    public static final byte ARROW = 72;              // ->
 }

@@ -47,4 +47,8 @@ public class Error {
         put("E-RP-08", "priradenie dynamického smerníka do statického");
     }};
 
+    public String getError(String key) {
+        return errors.get(key);
+    }
+
 }

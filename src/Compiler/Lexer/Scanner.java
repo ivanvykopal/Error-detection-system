@@ -1,5 +1,7 @@
 package Compiler.Lexer;
 
+import Compiler.Errors.Error;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -11,6 +13,7 @@ public class Scanner {
     private HashMap<String, Byte> keywords = new HashMap<>();
     private char peek = ' ';
     private int position = 0;
+    private Error err = new Error();
 
     public static int line = 1;
 
@@ -34,7 +37,11 @@ public class Scanner {
         while(true) {
             // ignorovanie prázdnych znakov a komentárov
             ignoreWhiteSpaces();
-            ignoreComments();
+            if (ignoreComments()) {
+                //TODO: Chýbajúca časť uzavretia
+                System.out.println("Chyba: E-LA-03 " + err.getError("E-LA-03"));
+                return null;
+            };
             if (peek == '\n') {
                 line++;
                 continue;
@@ -226,7 +233,13 @@ public class Scanner {
                 }
             }
             if (flag) {
-                return new Token(Tag.IDENTIFIER, word.toString(), line);
+                //TODO: prekročenie dĺžky názvu identifikátoru
+                if (word.toString().length() > 31) {
+                    System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                    return null;
+                } else {
+                    return new Token(Tag.IDENTIFIER, word.toString(), line);
+                }
             } else {
                 // vyhľadanie kľúčového slova a jeho hodnoty v HashMape keywords
                 Byte tag = keywords.get(word.toString());
@@ -235,7 +248,13 @@ public class Scanner {
                     return new Token(tag, word.toString(), line);
                 } else {
                     //identifier
-                    return new Token(Tag.IDENTIFIER, word.toString(), line);
+                    //TODO: prekročenie dĺžky názvu identifikátoru
+                    if (word.toString().length() > 31) {
+                        System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                        return null;
+                    } else {
+                        return new Token(Tag.IDENTIFIER, word.toString(), line);
+                    }
                 }
             }
         }
@@ -252,7 +271,13 @@ public class Scanner {
                 getPreviousPosition();
                 break;
             }
-            return new Token(Tag.IDENTIFIER, word.toString(), line);
+            //TODO: prekročenie dĺžky názvu identifikátoru
+            if (word.toString().length() > 31) {
+                System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                return null;
+            } else {
+                return new Token(Tag.IDENTIFIER, word.toString(), line);
+            }
         }
 
         // stringy -> reťazce s ""
@@ -267,6 +292,10 @@ public class Scanner {
                 } else if (peek == '"') {
                     word.append(peek);
                     break;
+                } else if (peek == '\n'){
+                    //TODO: Chýbajúce úvodzovky pre reťazcovú konštantu
+                    System.out.println("Chyba: E-LA-04 " + err.getError("E-LA-04"));
+                    return null;
                 } else {
                     word.append(peek);
                 }
@@ -315,7 +344,7 @@ public class Scanner {
         }
 
         //TODO: chyba, nevedel zaradiť token
-        System.out.println("Nezaradený token!");
+        System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
         return null;
     }
 
@@ -385,7 +414,7 @@ public class Scanner {
      * Funkcia, ktorá ignoruje komentáre.
      * @throws IOException
      */
-    private void ignoreComments() throws IOException {
+    private boolean ignoreComments() throws IOException {
         if (peek == '/') {
             readNextCharacter();
             switch (peek) {
@@ -394,6 +423,10 @@ public class Scanner {
                     while(true) {
                         readNextCharacter();
                         if (peek == '*' && readNextCharacter('/')) break;
+                        if (peek == '$') {
+                            // koniec súboru
+                            return true;
+                        }
                     }
                     break;
                 case '/':
@@ -412,6 +445,7 @@ public class Scanner {
                     readNextCharacter();
             }
         }
+        return false;
     }
 
     /**

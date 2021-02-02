@@ -1,4 +1,4 @@
-package Compiler;
+package Compiler.Errors;
 
 import java.util.HashMap;
 import java.util.Map;

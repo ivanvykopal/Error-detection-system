@@ -3,6 +3,7 @@ package Compiler.Parser;
 import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
+
 import java.io.IOException;
 
 public class Parser {
@@ -30,7 +31,7 @@ public class Parser {
     }
 
     /**
-     * primary_expression -> IDENTIFIER
+     * primary_expression ->  IDENTIFIER
      *                      | constant
      *                      | STRING
      *                      | CHAR
@@ -64,6 +65,8 @@ public class Parser {
             case Tag.NUMBER:
                 break;
             case Tag.REAL:
+                break;
+            default:
                 break;
         }
         return 0;
@@ -114,17 +117,15 @@ public class Parser {
                 break;
             case Tag.ARROW:
                 break;
+            case Tag.INC:
+                break;
+            case Tag.DEC:
+                break;
             case Tag.LEFT_BRACKETS:
                 break;
             default:
-                //TODO: upraviť
-                if (token.value.equals("++")) {
-
-                } else if (token.value.equals("--")) {
-
-                } else {
-                    //epsilon
-                }
+                //epsilon
+                break;
         }
         return 0;
     }
@@ -135,13 +136,13 @@ public class Parser {
      * @return
      */
     private int left1() {
-        if (token.tag == Tag.RIGHT_BRACES) {
-
-        } else if (token.tag == Tag.COMMA) {
-
-        }
-        else {
-            return 0;
+        switch (token.tag) {
+            case Tag.RIGHT_BRACES:
+                break;
+            case Tag.COMMA:
+                break;
+            default:
+                break;
         }
         return 0;
     }
@@ -192,12 +193,18 @@ public class Parser {
      * @return
      */
     private int unary_expression() {
-        if (token.value.equals("++")) {
-
-        } else if (token.value.equals("--")) {
-
-        } else if (token.tag == Tag.SIZEOF) {
-
+        switch (token.tag) {
+            case Tag.INC:
+                break;
+            case Tag.DEC:
+                break;
+            case Tag.SIZEOF:
+                break;
+            default:
+                // postfix_expression
+                // unary_operator
+                // chyba
+                break;
         }
         return 0;
     }
@@ -211,7 +218,7 @@ public class Parser {
         if (token.tag == Tag.LEFT_BRACKETS) {
 
         } else {
-
+            //unary_expression
         }
         return 0;
     }
@@ -221,7 +228,23 @@ public class Parser {
      * @return
      */
     private int unary_operator() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.AND:
+                break;
+            case Tag.MULT:
+                break;
+            case Tag.PLUS:
+                break;
+            case Tag.MINUS:
+                break;
+            case Tag.BITWISE_NOT:
+                break;
+            case Tag.LOGICAL_NOT:
+                break;
+            default:
+                // chyba
+                break;
+        }
         return 0;
     }
 
@@ -234,7 +257,7 @@ public class Parser {
         if (token.tag == Tag.LEFT_BRACKETS) {
 
         } else {
-
+            // unary_expression
         }
         return 0;
     }
@@ -255,7 +278,17 @@ public class Parser {
      * @return
      */
     private int rest3() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.MULT:
+                break;
+            case Tag.DIV:
+                break;
+            case Tag.MOD:
+                break;
+            default:
+                // epsilon
+                break;
+        }
         return 0;
     }
 
@@ -274,7 +307,15 @@ public class Parser {
      * @return
      */
     private int rest4() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.PLUS:
+                break;
+            case Tag.MINUS:
+                break;
+            default:
+                // epsilon
+                break;
+        }
         return 0;
     }
 
@@ -293,7 +334,15 @@ public class Parser {
      * @return
      */
     private int rest5() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.LEFT_SHIFT:
+                break;
+            case Tag.RIGHT_SHIFT:
+                break;
+            default:
+                // epsilon
+                break;
+        }
         return 0;
     }
 
@@ -314,7 +363,19 @@ public class Parser {
      * @return
      */
     private int rest6() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.LT:
+                break;
+            case Tag.GT:
+                break;
+            case Tag.LEQT:
+                break;
+            case Tag.GEQT:
+                break;
+            default:
+                // epsilon
+                break;
+        }
         return 0;
     }
 
@@ -333,7 +394,15 @@ public class Parser {
      * @return
      */
     private int rest7() {
-        //TODO: rozdeliť Tagy
+        switch (token.tag) {
+            case Tag.EQ:
+                break;
+            case Tag.NOT_EQ:
+                break;
+            default:
+                // epsilon
+                break;
+        }
         return 0;
     }
 
@@ -351,7 +420,11 @@ public class Parser {
      * @return
      */
     private int rest8() {
-        //TODO: rozdeliť Tagy
+        if (token.tag == Tag.AND) {
+
+        } else {
+            // epsilon
+        }
         return 0;
     }
 
@@ -369,7 +442,11 @@ public class Parser {
      * @return
      */
     private int rest9() {
-        //TODO: rozdeliť Tagy
+        if (token.tag == Tag.XOR) {
+
+        } else {
+            // epsilon
+        }
         return 0;
     }
 
@@ -387,7 +464,11 @@ public class Parser {
      * @return
      */
     private int rest10() {
-        //TODO: rozdeliť Tagy
+        if (token.tag == Tag.OR) {
+
+        } else {
+            // epsilon
+        }
         return 0;
     }
 
@@ -405,7 +486,11 @@ public class Parser {
      * @return
      */
     private int rest11() {
-        //TODO: rozdeliť Tagy
+        if (token.tag == Tag.LOGICAL_AND) {
+
+        } else {
+            // epsilon
+        }
         return 0;
     }
 
@@ -423,7 +508,11 @@ public class Parser {
      * @return
      */
     private int rest12() {
-        //TODO: rozdeliť Tagy
+        if (token.tag == Tag.LOGICAL_OR) {
+
+        } else {
+            // epsilon
+        }
         return 0;
     }
 
@@ -463,10 +552,10 @@ public class Parser {
      * @return
      */
     private int assignment_operator() {
-        if (token.tag == Tag.OP_ASSIGNMENT) {
+        if (token.tag == Tag.ASSIGNMENT) {
 
         } else {
-
+            // chyba
         }
         return 0;
     }
@@ -518,7 +607,7 @@ public class Parser {
         if (token.tag == Tag.SEMICOLON) {
 
         } else {
-
+            // init_declarator_list
         }
         return 0;
     }
@@ -602,6 +691,8 @@ public class Parser {
                 break;
             case Tag.REGISTER:
                 break;
+            default:
+                break;
         }
         return 0;
     }
@@ -633,6 +724,11 @@ public class Parser {
                 break;
             case Tag.UNSIGNED:
                 break;
+            default:
+                // struct_or_union_specifier
+                // enum_specifier
+                // TYPEDEF_NAME ???
+                break;
         }
         return 0;
     }
@@ -651,10 +747,14 @@ public class Parser {
      * @return
      */
     private int left8() {
-        if (token.tag == Tag.LEFT_BRACES) {
-
-        } else if (token.tag == Tag.IDENTIFIER) {
-
+        switch (token.tag) {
+            case Tag.LEFT_BRACES:
+                break;
+            case Tag.IDENTIFIER:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -678,10 +778,14 @@ public class Parser {
      * @return
      */
     private int struct_or_union() {
-        if (token.tag == Tag.STRUCT) {
-
-        } else if (token.tag == Tag.UNION) {
-
+        switch (token.tag) {
+            case Tag.STRUCT:
+                break;
+            case Tag.UNION:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -812,12 +916,14 @@ public class Parser {
      * @return
      */
     private int left13() {
-        if (token.tag == Tag.LEFT_BRACES) {
-
-        } else if (token.tag == Tag.IDENTIFIER) {
-
-        } else {
-
+        switch (token.tag) {
+            case Tag.LEFT_BRACES:
+                break;
+            case Tag. IDENTIFIER:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -828,12 +934,14 @@ public class Parser {
      * @return
      */
     private int left14() {
-        if (token.tag == Tag.RIGHT_BRACES) {
-
-        } else if (token.tag == Tag.COMMA) {
-
-        } else {
-
+        switch (token.tag) {
+            case Tag.RIGHT_BRACES:
+                break;
+            case Tag.COMMA:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -855,7 +963,7 @@ public class Parser {
         if (token.tag == Tag.COMMA) {
 
         } else {
-
+            // epsilon
         }
         return 0;
     }
@@ -893,6 +1001,9 @@ public class Parser {
                 break;
             case Tag.VOLATILE:
                 break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -912,12 +1023,14 @@ public class Parser {
      * @return
      */
     private int direct_declarator() {
-        if (token.tag == Tag.IDENTIFIER) {
-
-        } else if (token.tag == Tag.LEFT_BRACKETS) {
-
-        } else {
-
+        switch (token.tag) {
+            case Tag.IDENTIFIER:
+                break;
+            case Tag.LEFT_BRACKETS:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -929,12 +1042,14 @@ public class Parser {
      * @return
      */
     private int rest18() {
-        if (token.tag == Tag.LEFT_PARENTHESES) {
-
-        } else if (token.tag == Tag.LEFT_BRACKETS) {
-
-        } else {
-
+        switch (token.tag) {
+            case Tag.LEFT_PARENTHESES:
+                break;
+            case Tag.LEFT_BRACKETS:
+                break;
+            default:
+                // epsilon
+                break;
         }
         return 0;
     }
@@ -948,11 +1063,16 @@ public class Parser {
      * @return
      */
     private int left16() {
-        //TODO: dokončiť a rozdeliť tagy
         switch (token.tag) {
+            case Tag.MULT:
+                break;
             case Tag.STATIC:
                 break;
             case Tag.RIGHT_PARENTHESES:
+                break;
+            default:
+                // type_qualifier_list
+                // assignment_expression
                 break;
         }
         return 0;
@@ -991,9 +1111,14 @@ public class Parser {
      */
     private int left19() {
         switch (token.tag) {
+            case Tag.MULT:
+                break;
             case Tag.STATIC:
                 break;
             case Tag.RIGHT_PARENTHESES:
+                break;
+            default:
+                // assignment_expression
                 break;
         }
         return 0;
@@ -1004,7 +1129,11 @@ public class Parser {
      * @return
      */
     private int pointer() {
-        //TODO: rozdeliť tagy
+        if (token.tag == Tag.MULT) {
+
+        } else {
+            // chyba
+        }
         return 0;
     }
 
@@ -1102,7 +1231,7 @@ public class Parser {
         if (token.tag == Tag.IDENTIFIER) {
 
         } else {
-
+            // chyba
         }
         return 0;
     }
@@ -1168,6 +1297,9 @@ public class Parser {
                 break;
             case Tag.LEFT_PARENTHESES:
                 break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -1182,7 +1314,8 @@ public class Parser {
         if (token.tag == Tag.RIGHT_BRACKETS) {
 
         } else {
-
+            // abstract_declarator
+            // parameter_type_list
         }
         return 0;
     }
@@ -1199,7 +1332,13 @@ public class Parser {
         switch (token.tag) {
             case Tag.RIGHT_PARENTHESES:
                 break;
+            case Tag.MULT:
+                break;
             case Tag.STATIC:
+                break;
+            default:
+                // type_qualifier_list
+                // assignment_expression
                 break;
         }
         return 0;
@@ -1225,6 +1364,9 @@ public class Parser {
             case Tag.STATIC:
                 break;
             case Tag.RIGHT_PARENTHESES:
+                break;
+            default:
+                // assignment_expression
                 break;
         }
         return 0;
@@ -1258,7 +1400,7 @@ public class Parser {
         if (token.tag == Tag.RIGHT_BRACKETS) {
 
         } else {
-
+            // parameter_type_list
         }
         return 0;
     }
@@ -1272,7 +1414,7 @@ public class Parser {
         if (token.tag == Tag.LEFT_BRACES) {
 
         } else {
-
+            // assignment_expression
         }
         return 0;
     }
@@ -1340,12 +1482,14 @@ public class Parser {
      * @return
      */
     private int designator() {
-        if (token.tag == Tag.LEFT_PARENTHESES) {
-
-        } else if (token.tag == Tag.DOT) {
-
-        } else {
-
+        switch (token.tag) {
+            case Tag.LEFT_PARENTHESES:
+                break;
+            case Tag.DO:
+                break;
+            default:
+                // chyba
+                break;
         }
         return 0;
     }
@@ -1378,6 +1522,7 @@ public class Parser {
             case Tag.DEFAULT:
                 break;
             default:
+                // chyba
                 break;
         }
         return 0;
@@ -1391,7 +1536,7 @@ public class Parser {
         if (token.tag == Tag.LEFT_BRACES) {
 
         } else {
-
+            // chyba
         }
         return 0;
     }
@@ -1405,7 +1550,7 @@ public class Parser {
         if (token.tag == Tag.RIGHT_BRACES) {
 
         } else {
-
+            // block_item_list
         }
         return 0;
     }
@@ -1445,7 +1590,7 @@ public class Parser {
         if (token.tag == Tag.SEMICOLON) {
 
         } else {
-
+            // expression
         }
         return 0;
     }
@@ -1462,6 +1607,7 @@ public class Parser {
             case Tag.SWITCH:
                 break;
             default:
+                // chyba
                 break;
         }
         return 0;
@@ -1496,6 +1642,7 @@ public class Parser {
             case Tag.FOR:
                 break;
             default:
+                // chyba
                 break;
         }
         return 0;
@@ -1519,7 +1666,7 @@ public class Parser {
         if (token.tag == Tag.RIGHT_BRACKETS) {
 
         } else {
-
+            // expression
         }
         return 0;
     }
@@ -1542,6 +1689,7 @@ public class Parser {
             case Tag.RETURN:
                 break;
             default:
+                // chyba
                 break;
         }
         return 0;
@@ -1556,7 +1704,7 @@ public class Parser {
         if (token.tag == Tag.SEMICOLON) {
 
         } else {
-
+            // expression
         }
         return 0;
     }

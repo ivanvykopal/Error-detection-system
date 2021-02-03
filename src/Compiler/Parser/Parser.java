@@ -5,29 +5,43 @@ import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Parser {
-    private Token token;
-    private Scanner scanner;
+    private int position = 0;
+    private ArrayList<Token> tokenStream = new ArrayList<Token>();
 
     public Parser(String file) {
-        scanner = new Scanner(file);
-    }
-
-    private void nextToken() {
-        try {
-            token = scanner.scan();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Scanner scanner = new Scanner(file);
+        Token tok;
+        while (true) {
+            try {
+                tok = scanner.scan();
+                if (tok.tag == Tag.EOF) {
+                    break;
+                } else {
+                    tokenStream.add(tok);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    private void nextToken() {
+        position++;
+    }
+
     private boolean accept(byte tag) {
-        if (token.tag == tag) {
+        if (tokenStream.get(position).tag == tag) {
             nextToken();
             return true;
         }
         return false;
+    }
+
+    private byte getTokenTag() {
+        return tokenStream.get(position).tag;
     }
 
     /**
@@ -39,7 +53,7 @@ public class Parser {
      * @return
      */
     private int primary_expression() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 break;
             case Tag.STRING:
@@ -61,7 +75,7 @@ public class Parser {
      * @return
      */
     private int constant() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.NUMBER:
                 break;
             case Tag.REAL:
@@ -77,7 +91,7 @@ public class Parser {
      * @return
      */
     private int enumeration_constant() {
-        if (token.tag == Tag.IDENTIFIER) {
+        if (getTokenTag() == Tag.IDENTIFIER) {
             return 1;
         }
         else {
@@ -91,7 +105,7 @@ public class Parser {
      * @return
      */
     private int postfix_expression() {
-        if (token.tag == Tag.LEFT_BRACES) {
+        if (getTokenTag() == Tag.LEFT_BRACES) {
             return 1;
         }
         else {
@@ -110,7 +124,7 @@ public class Parser {
      * @return
      */
     private int rest1() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 break;
             case Tag.DOT:
@@ -136,7 +150,7 @@ public class Parser {
      * @return
      */
     private int left1() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
                 break;
             case Tag.COMMA:
@@ -153,7 +167,7 @@ public class Parser {
      * @return
      */
     private int left2() {
-        if (token.tag == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
 
         }
         else {
@@ -176,7 +190,7 @@ public class Parser {
      * @return
      */
     private int rest2() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -193,7 +207,7 @@ public class Parser {
      * @return
      */
     private int unary_expression() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.INC:
                 break;
             case Tag.DEC:
@@ -215,7 +229,7 @@ public class Parser {
      * @return
      */
     private int left3() {
-        if (token.tag == Tag.LEFT_BRACKETS) {
+        if (getTokenTag() == Tag.LEFT_BRACKETS) {
 
         } else {
             //unary_expression
@@ -228,7 +242,7 @@ public class Parser {
      * @return
      */
     private int unary_operator() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.AND:
                 break;
             case Tag.MULT:
@@ -254,7 +268,7 @@ public class Parser {
      * @return
      */
     private int cast_expression() {
-        if (token.tag == Tag.LEFT_BRACKETS) {
+        if (getTokenTag() == Tag.LEFT_BRACKETS) {
 
         } else {
             // unary_expression
@@ -278,7 +292,7 @@ public class Parser {
      * @return
      */
     private int rest3() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.MULT:
                 break;
             case Tag.DIV:
@@ -307,7 +321,7 @@ public class Parser {
      * @return
      */
     private int rest4() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.PLUS:
                 break;
             case Tag.MINUS:
@@ -334,7 +348,7 @@ public class Parser {
      * @return
      */
     private int rest5() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_SHIFT:
                 break;
             case Tag.RIGHT_SHIFT:
@@ -363,7 +377,7 @@ public class Parser {
      * @return
      */
     private int rest6() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LT:
                 break;
             case Tag.GT:
@@ -394,7 +408,7 @@ public class Parser {
      * @return
      */
     private int rest7() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.EQ:
                 break;
             case Tag.NOT_EQ:
@@ -420,7 +434,7 @@ public class Parser {
      * @return
      */
     private int rest8() {
-        if (token.tag == Tag.AND) {
+        if (getTokenTag() == Tag.AND) {
 
         } else {
             // epsilon
@@ -442,7 +456,7 @@ public class Parser {
      * @return
      */
     private int rest9() {
-        if (token.tag == Tag.XOR) {
+        if (getTokenTag() == Tag.XOR) {
 
         } else {
             // epsilon
@@ -464,7 +478,7 @@ public class Parser {
      * @return
      */
     private int rest10() {
-        if (token.tag == Tag.OR) {
+        if (getTokenTag() == Tag.OR) {
 
         } else {
             // epsilon
@@ -486,7 +500,7 @@ public class Parser {
      * @return
      */
     private int rest11() {
-        if (token.tag == Tag.LOGICAL_AND) {
+        if (getTokenTag() == Tag.LOGICAL_AND) {
 
         } else {
             // epsilon
@@ -508,7 +522,7 @@ public class Parser {
      * @return
      */
     private int rest12() {
-        if (token.tag == Tag.LOGICAL_OR) {
+        if (getTokenTag() == Tag.LOGICAL_OR) {
 
         } else {
             // epsilon
@@ -530,7 +544,7 @@ public class Parser {
      * @return
      */
     private int left4() {
-        if (token.tag == Tag.QMARK) {
+        if (getTokenTag() == Tag.QMARK) {
 
         } else {
             //epsilon
@@ -552,7 +566,7 @@ public class Parser {
      * @return
      */
     private int assignment_operator() {
-        if (token.tag == Tag.ASSIGNMENT) {
+        if (getTokenTag() == Tag.ASSIGNMENT) {
 
         } else {
             // chyba
@@ -574,7 +588,7 @@ public class Parser {
      * @return
      */
     private int rest13() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -604,7 +618,7 @@ public class Parser {
      * @return
      */
     private int left5() {
-        if (token.tag == Tag.SEMICOLON) {
+        if (getTokenTag() == Tag.SEMICOLON) {
 
         } else {
             // init_declarator_list
@@ -645,7 +659,7 @@ public class Parser {
      * @return
      */
     private int rest14() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -667,7 +681,7 @@ public class Parser {
      * @return
      */
     private int left7() {
-        if (token.value.equals("=")) {
+        if (tokenStream.get(position).value.equals("=")) {
 
         } else {
             //espilon
@@ -680,7 +694,7 @@ public class Parser {
      * @return
      */
     private int storage_class_specifier() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.TYPEDEF:
                 break;
             case Tag.EXTERN:
@@ -705,7 +719,7 @@ public class Parser {
      * @return
      */
     private int type_specifier() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.VOID:
                 break;
             case Tag.CHAR:
@@ -747,7 +761,7 @@ public class Parser {
      * @return
      */
     private int left8() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
                 break;
             case Tag.IDENTIFIER:
@@ -765,7 +779,7 @@ public class Parser {
      * @return
      */
     private int left9() {
-        if (token.tag == Tag.LEFT_BRACES) {
+        if (getTokenTag() == Tag.LEFT_BRACES) {
 
         } else {
             //epsilon
@@ -778,7 +792,7 @@ public class Parser {
      * @return
      */
     private int struct_or_union() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.STRUCT:
                 break;
             case Tag.UNION:
@@ -821,7 +835,7 @@ public class Parser {
      * @return
      */
     private int left10() {
-        if (token.tag == Tag.SEMICOLON) {
+        if (getTokenTag() == Tag.SEMICOLON) {
 
         } else {
 
@@ -861,7 +875,7 @@ public class Parser {
      * @return
      */
     private int rest16() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -875,7 +889,7 @@ public class Parser {
      * @return
      */
     private int struct_declarator() {
-        if (token.tag == Tag.COLON) {
+        if (getTokenTag() == Tag.COLON) {
 
         } else {
 
@@ -889,7 +903,7 @@ public class Parser {
      * @return
      */
     private int left12() {
-        if (token.tag == Tag.COLON) {
+        if (getTokenTag() == Tag.COLON) {
 
         } else {
             //espilon
@@ -902,7 +916,7 @@ public class Parser {
      * @return
      */
     private int enum_specifier() {
-        if (token.tag == Tag.ENUM) {
+        if (getTokenTag() == Tag.ENUM) {
 
         } else {
 
@@ -916,7 +930,7 @@ public class Parser {
      * @return
      */
     private int left13() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
                 break;
             case Tag. IDENTIFIER:
@@ -934,7 +948,7 @@ public class Parser {
      * @return
      */
     private int left14() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
                 break;
             case Tag.COMMA:
@@ -960,7 +974,7 @@ public class Parser {
      * @return
      */
     private int rest17() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             // epsilon
@@ -982,7 +996,7 @@ public class Parser {
      * @return
      */
     private int left15() {
-        if (token.value.equals("=")) {
+        if (tokenStream.get(position).value.equals("=")) {
 
         } else {
             //epsilon
@@ -991,12 +1005,11 @@ public class Parser {
     }
 
     /**
-     * type_qualifier -> CONST | RESTRICT | VOLATILE
-     * TODO: Pozrieť sa na RESTRICT
+     * type_qualifier -> CONST | VOLATILE
      * @return
      */
     private int type_qualifier() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.CONST:
                 break;
             case Tag.VOLATILE:
@@ -1023,7 +1036,7 @@ public class Parser {
      * @return
      */
     private int direct_declarator() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 break;
             case Tag.LEFT_BRACKETS:
@@ -1042,7 +1055,7 @@ public class Parser {
      * @return
      */
     private int rest18() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 break;
             case Tag.LEFT_BRACKETS:
@@ -1063,7 +1076,7 @@ public class Parser {
      * @return
      */
     private int left16() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.MULT:
                 break;
             case Tag.STATIC:
@@ -1085,7 +1098,7 @@ public class Parser {
      * @return
      */
     private int left17() {
-        if (token.tag == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
 
         } else {
 
@@ -1110,7 +1123,7 @@ public class Parser {
      * @return
      */
     private int left19() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.MULT:
                 break;
             case Tag.STATIC:
@@ -1129,7 +1142,7 @@ public class Parser {
      * @return
      */
     private int pointer() {
-        if (token.tag == Tag.MULT) {
+        if (getTokenTag() == Tag.MULT) {
 
         } else {
             // chyba
@@ -1197,7 +1210,7 @@ public class Parser {
      * @return
      */
     private int rest20() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -1228,7 +1241,7 @@ public class Parser {
      * @return
      */
     private int identifier_list() {
-        if (token.tag == Tag.IDENTIFIER) {
+        if (getTokenTag() == Tag.IDENTIFIER) {
 
         } else {
             // chyba
@@ -1242,7 +1255,7 @@ public class Parser {
      * @return
      */
     private int rest21() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -1292,7 +1305,7 @@ public class Parser {
      * @return
      */
     private int direct_abstract_declarator() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
                 break;
             case Tag.LEFT_PARENTHESES:
@@ -1311,7 +1324,7 @@ public class Parser {
      * @return
      */
     private int left25() {
-        if (token.tag == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
 
         } else {
             // abstract_declarator
@@ -1329,7 +1342,7 @@ public class Parser {
      * @return
      */
     private int left26() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.RIGHT_PARENTHESES:
                 break;
             case Tag.MULT:
@@ -1360,7 +1373,7 @@ public class Parser {
      * @return
      */
     private int left28() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.STATIC:
                 break;
             case Tag.RIGHT_PARENTHESES:
@@ -1379,7 +1392,7 @@ public class Parser {
      * @return
      */
     private int rest22() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 break;
             case Tag.LEFT_BRACKETS:
@@ -1397,7 +1410,7 @@ public class Parser {
      * @return
      */
     private int left29() {
-        if (token.tag == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
 
         } else {
             // parameter_type_list
@@ -1411,7 +1424,7 @@ public class Parser {
      * @return
      */
     private int initializer() {
-        if (token.tag == Tag.LEFT_BRACES) {
+        if (getTokenTag() == Tag.LEFT_BRACES) {
 
         } else {
             // assignment_expression
@@ -1434,7 +1447,7 @@ public class Parser {
      * @return
      */
     private int rest23() {
-        if (token.tag == Tag.COMMA) {
+        if (getTokenTag() == Tag.COMMA) {
 
         } else {
             //epsilon
@@ -1482,7 +1495,7 @@ public class Parser {
      * @return
      */
     private int designator() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 break;
             case Tag.DO:
@@ -1514,7 +1527,7 @@ public class Parser {
      * @return
      */
     private int labeled_statement() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 break;
             case Tag.CASE:
@@ -1533,7 +1546,7 @@ public class Parser {
      * @return
      */
     private int compound_statement() {
-        if (token.tag == Tag.LEFT_BRACES) {
+        if (getTokenTag() == Tag.LEFT_BRACES) {
 
         } else {
             // chyba
@@ -1547,7 +1560,7 @@ public class Parser {
      * @return
      */
     private int left31() {
-        if (token.tag == Tag.RIGHT_BRACES) {
+        if (getTokenTag() == Tag.RIGHT_BRACES) {
 
         } else {
             // block_item_list
@@ -1587,7 +1600,7 @@ public class Parser {
      * @return
      */
     private int expression_statement() {
-        if (token.tag == Tag.SEMICOLON) {
+        if (getTokenTag() == Tag.SEMICOLON) {
 
         } else {
             // expression
@@ -1601,7 +1614,7 @@ public class Parser {
      * @return
      */
     private int selection_statement() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.IF:
                 break;
             case Tag.SWITCH:
@@ -1619,7 +1632,7 @@ public class Parser {
      * @return
      */
     private int left32() {
-        if (token.tag == Tag.ELSE) {
+        if (getTokenTag() == Tag.ELSE) {
 
         } else {
             //epsilon
@@ -1634,7 +1647,7 @@ public class Parser {
      * @return
      */
     private int iteration_statement() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.WHILE:
                 break;
             case Tag.DO:
@@ -1663,7 +1676,7 @@ public class Parser {
      * @return
      */
     private int left34() {
-        if (token.tag == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
 
         } else {
             // expression
@@ -1679,7 +1692,7 @@ public class Parser {
      * @return
      */
     private int jump_statement() {
-        switch (token.tag) {
+        switch (getTokenTag()) {
             case Tag.GOTO:
                 break;
             case Tag.CONTINUE:
@@ -1701,7 +1714,7 @@ public class Parser {
      * @return
      */
     private int left35() {
-        if (token.tag == Tag.SEMICOLON) {
+        if (getTokenTag() == Tag.SEMICOLON) {
 
         } else {
             // expression

@@ -83,4 +83,6 @@ public class Tag {
     public static final byte DOT = 70;                // .
     public static final byte QMARK = 71;              // ?
     public static final byte ARROW = 72;              // ->
+
+    public static final byte EOF = 73;
 }

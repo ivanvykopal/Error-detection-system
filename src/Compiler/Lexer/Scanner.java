@@ -343,6 +343,10 @@ public class Scanner {
             }
         }
 
+
+        if (peek == '§') {
+            return new Token(Tag.EOF,"", line);
+        }
         //TODO: chyba, nevedel zaradiť token
         System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
         return null;
@@ -423,7 +427,7 @@ public class Scanner {
                     while(true) {
                         readNextCharacter();
                         if (peek == '*' && readNextCharacter('/')) break;
-                        if (peek == '$') {
+                        if (peek == '§') {
                             // koniec súboru
                             return true;
                         }
@@ -470,7 +474,7 @@ public class Scanner {
         keywords.put("if", Tag.IF);
         keywords.put("int", Tag.INT);
         keywords.put("long", Tag.LONG);
-        keywords.put("Register", Tag.REGISTER);
+        keywords.put("register", Tag.REGISTER);
         keywords.put("return", Tag.RETURN);
         keywords.put("short", Tag.SHORT);
         keywords.put("signed", Tag.SIGNED);

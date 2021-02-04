@@ -1635,7 +1635,6 @@ public class Parser {
         return 1;
     }
 
-    //TODO: tu som skončil
     /**
      * left16 ->  '*' ']' rest18
      *          | STATIC left18
@@ -1645,17 +1644,52 @@ public class Parser {
      * @return
      */
     private int left16() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.MULT:
+                nextToken();
+                value = accept(Tag.RIGHT_PARENTHESES);
+                if (value == 1) {
+                    value = rest18();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.STATIC:
+                nextToken();
+                if (left18() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.RIGHT_PARENTHESES:
+                nextToken();
+                if (rest18() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
-            default:
-                // type_qualifier_list
-                // assignment_expression
-                break;
+        }
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = type_qualifier_list();
+        if (value == 1) {
+            value = left19();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -1667,10 +1701,31 @@ public class Parser {
      * @return
      */
     private int left17() {
+        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-
-        } else {
-
+            nextToken();
+            if (rest18() == 1) {
+                return 1;
+            }
+            position = pos;
+        }
+        int value = parameter_type_list();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACKETS);
+        }
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = identifier_list();
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -1681,6 +1736,32 @@ public class Parser {
      * @return
      */
     private int left18() {
+        int pos = position;
+        int value = type_qualifier_list();
+        if (value == 1) {
+            value = assignment_expression();
+        }
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
         return 0;
     }
 
@@ -1692,17 +1773,53 @@ public class Parser {
      * @return
      */
     private int left19() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.MULT:
+                nextToken();
+                value = accept(Tag.RIGHT_PARENTHESES);
+                if (value == 1) {
+                    value = rest18();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.STATIC:
+                nextToken();
+                value = assignment_expression();
+                if (value == 1) {
+                    value = accept(Tag.RIGHT_PARENTHESES);
+                }
+                if (value == 1) {
+                    value = rest18();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.RIGHT_PARENTHESES:
-                break;
-            default:
-                // assignment_expression
+                nextToken();
+                if (rest18() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest18();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
         return 0;
     }
 
@@ -1711,10 +1828,13 @@ public class Parser {
      * @return
      */
     private int pointer() {
+        int pos = position;
         if (getTokenTag() == Tag.MULT) {
-
-        } else {
-            // chyba
+            nextToken();
+            if (left20() == 1) {
+                return 1;
+            }
+            position = pos;
         }
         return 0;
     }
@@ -1726,7 +1846,15 @@ public class Parser {
      * @return
      */
     private int left20() {
-        return 0;
+        int value = type_qualifier_list();
+        if (value == 1) {
+            value = left21();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        pointer();
+        return 1;
     }
 
     /**
@@ -1735,7 +1863,8 @@ public class Parser {
      * @return
      */
     private int left21() {
-        return 0;
+        pointer();
+        return 1;
     }
 
     /**
@@ -1743,6 +1872,13 @@ public class Parser {
      * @return
      */
     private int type_qualifier_list() {
+        int value = type_qualifier();
+        if (value == 1) {
+            value = rest19();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -1752,7 +1888,10 @@ public class Parser {
      * @return
      */
     private int rest19() {
-        return 0;
+        if (type_qualifier() == 1) {
+            rest19();
+        }
+        return 1;
     }
 
     /**
@@ -1770,6 +1909,13 @@ public class Parser {
      * @return
      */
     private int parameter_list() {
+        int value = parameter_declaration();
+        if (value == 1) {
+            value = rest20();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -1779,12 +1925,20 @@ public class Parser {
      * @return
      */
     private int rest20() {
+        int pos = position;
+        int value = 0;
         if (getTokenTag() == Tag.COMMA) {
-
-        } else {
-            //epsilon
+            nextToken();
+            value = parameter_declaration();
         }
-        return 0;
+        if (value == 1) {
+            value = rest20();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        return 1;
     }
 
     /**
@@ -1792,6 +1946,13 @@ public class Parser {
      * @return
      */
     private int parameter_declaration() {
+        int value = declaration_specifiers();
+        if (value == 1) {
+            value = left22();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -1802,7 +1963,11 @@ public class Parser {
      * @return
      */
     private int left22() {
-        return 0;
+        if (declarator() == 1) {
+            return 1;
+        }
+        abstract_declarator();
+        return 1;
     }
 
     /**
@@ -1810,10 +1975,13 @@ public class Parser {
      * @return
      */
     private int identifier_list() {
+        int pos = position;
         if (getTokenTag() == Tag.IDENTIFIER) {
-
-        } else {
-            // chyba
+            nextToken();
+            if (rest21() == 1) {
+                return 1;
+            }
+        position = pos;
         }
         return 0;
     }
@@ -1824,12 +1992,20 @@ public class Parser {
      * @return
      */
     private int rest21() {
+        int pos = position;
+        int value = 0;
         if (getTokenTag() == Tag.COMMA) {
-
-        } else {
-            //epsilon
+            nextToken();
+            value = accept(Tag.IDENTIFIER);
+            if (value == 1) {
+                value = rest21();
+            }
+            if (value == 1) {
+                return 1;
+            }
+            position = pos;
         }
-        return 0;
+        return 1;
     }
 
     /**
@@ -1838,6 +2014,13 @@ public class Parser {
      * @return
      */
     private int type_name() {
+        int value = specifier_qualifier_list();
+        if (value == 1) {
+            value = left23();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -1847,7 +2030,8 @@ public class Parser {
      * @return
      */
     private int left23() {
-        return 0;
+        abstract_declarator();
+        return 1;
     }
 
     /**
@@ -1856,6 +2040,16 @@ public class Parser {
      * @return
      */
     private int abstract_declarator() {
+        int value = pointer();
+        if (value == 1) {
+            value = left24();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        if (direct_abstract_declarator() == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -1865,7 +2059,8 @@ public class Parser {
      * @return
      */
     private int left24() {
-        return 0;
+        direct_abstract_declarator();
+        return 1;
     }
 
     /**
@@ -1874,13 +2069,21 @@ public class Parser {
      * @return
      */
     private int direct_abstract_declarator() {
+        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
+                nextToken();
+                if (left25() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.LEFT_PARENTHESES:
-                break;
-            default:
-                // chyba
+                nextToken();
+                if (left26() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -1893,11 +2096,34 @@ public class Parser {
      * @return
      */
     private int left25() {
+        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-
-        } else {
-            // abstract_declarator
-            // parameter_type_list
+            nextToken();
+            if (rest22() == 1) {
+                return 1;
+            }
+            position = pos;
+        }
+        int value = abstract_declarator();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACKETS);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = parameter_type_list();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACKETS);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -1911,17 +2137,52 @@ public class Parser {
      * @return
      */
     private int left26() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.RIGHT_PARENTHESES:
+                nextToken();
+                if (rest22() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.MULT:
+                nextToken();
+                value = accept(Tag.RIGHT_PARENTHESES);
+                if (value == 1) {
+                    value = rest22();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.STATIC:
+                nextToken();
+                if (left27() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
-            default:
-                // type_qualifier_list
-                // assignment_expression
-                break;
+        }
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = type_qualifier_list();
+        if (value == 1) {
+            value = left28();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -1932,6 +2193,32 @@ public class Parser {
      * @return
      */
     private int left27() {
+        int pos = position;
+        int value = type_qualifier_list();
+        if (value == 1) {
+            value = assignment_expression();
+        }
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
         return 0;
     }
 
@@ -1942,14 +2229,40 @@ public class Parser {
      * @return
      */
     private int left28() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.STATIC:
+                nextToken();
+                value = assignment_expression();
+                if (value == 1) {
+                    value = accept(Tag.RIGHT_PARENTHESES);
+                }
+                if (value == 1) {
+                    value = rest22();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.RIGHT_PARENTHESES:
+                nextToken();
+                if (rest22() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
-            default:
-                // assignment_expression
-                break;
+        }
+        value = assignment_expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_PARENTHESES);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -1961,16 +2274,24 @@ public class Parser {
      * @return
      */
     private int rest22() {
+        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                nextToken();
+                if (left26() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.LEFT_BRACKETS:
-                break;
-            default:
-                //epsilon
+                nextToken();
+                if (left29() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
-        return 0;
+        return 1;
     }
 
     /**
@@ -1979,11 +2300,25 @@ public class Parser {
      * @return
      */
     private int left29() {
+        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-
-        } else {
-            // parameter_type_list
+            nextToken();
+            if (rest22() == 1) {
+                return 1;
+            }
+            position = pos;
         }
+        int value = parameter_type_list();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACKETS);
+        }
+        if (value == 1) {
+            value = rest22();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        position = pos;
         return 0;
     }
 
@@ -1993,10 +2328,21 @@ public class Parser {
      * @return
      */
     private int initializer() {
+        int pos = position;
+        int value = 0;
         if (getTokenTag() == Tag.LEFT_BRACES) {
-
-        } else {
-            // assignment_expression
+            nextToken();
+            value = initializer_list();
+            if (value == 1) {
+                value = left14();
+            }
+            if (value == 1) {
+                return 1;
+            }
+            position = pos;
+        }
+        if (assignment_expression() == 1) {
+            return 1;
         }
         return 0;
     }
@@ -2007,6 +2353,23 @@ public class Parser {
      * @return
      */
     private int initializer_list() {
+        int value = designation();
+        if (value == 1) {
+            value = initializer();
+        }
+        if (value == 1) {
+            value = rest23();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        value = initializer();
+        if (value == 1) {
+            value = rest23();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2016,12 +2379,15 @@ public class Parser {
      * @return
      */
     private int rest23() {
+        int pos = position;
         if (getTokenTag() == Tag.COMMA) {
-
-        } else {
-            //epsilon
+            nextToken();
+            if (left30() == 1) {
+                return 1;
+            }
+            position = pos;
         }
-        return 0;
+        return 1;
     }
 
     /**
@@ -2030,6 +2396,23 @@ public class Parser {
      * @return
      */
     private int left30() {
+        int value = designation();
+        if (value == 1) {
+            value = initializer();
+        }
+        if (value == 1) {
+            value = rest23();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        value = initializer();
+        if (value == 1) {
+            value = rest23();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2038,6 +2421,18 @@ public class Parser {
      * @return
      */
     private int designation() {
+        int value = designator_list();
+        if (value == 1) {
+            if (tokenStream.get(position).value.equals("=")) {
+                value = 1;
+                nextToken();
+            } else {
+                value = 0;
+            }
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2046,6 +2441,13 @@ public class Parser {
      * @return
      */
     private int designator_list() {
+        int value = designator();
+        if (value == 1) {
+            value = rest24();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2055,7 +2457,11 @@ public class Parser {
      * @return
      */
     private int rest24() {
-        return 0;
+        int value = designator();
+        if (value == 1) {
+            rest24();
+        }
+        return 1;
     }
 
     /**
@@ -2064,13 +2470,26 @@ public class Parser {
      * @return
      */
     private int designator() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                nextToken();
+                value = constant_expression();
+                if (value == 1) {
+                    value = accept(Tag.RIGHT_PARENTHESES);
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
-            case Tag.DO:
-                break;
-            default:
-                // chyba
+            case Tag.DOT:
+                nextToken();
+                if (accept(Tag.IDENTIFIER) == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -2086,6 +2505,24 @@ public class Parser {
      * @return
      */
     private int statement() {
+        if (labeled_statement() == 1) {
+            return 1;
+        }
+        if (compound_statement() == 1) {
+            return 1;
+        }
+        if (expression_statement() == 1) {
+            return 1;
+        }
+        if (selection_statement() == 1) {
+            return 1;
+        }
+        if (iteration_statement() == 1) {
+            return 1;
+        }
+        if (jump_statement() == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2096,15 +2533,34 @@ public class Parser {
      * @return
      */
     private int labeled_statement() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
+            case Tag.DEFAULT:
+                nextToken();
+                value = accept(Tag.COLON);
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.CASE:
-                break;
-            case Tag.DEFAULT:
-                break;
-            default:
-                // chyba
+                nextToken();
+                value = constant_expression();
+                if (value == 1) {
+                    value = accept(Tag.COLON);
+                }
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -2115,10 +2571,13 @@ public class Parser {
      * @return
      */
     private int compound_statement() {
+        int pos = position;
         if (getTokenTag() == Tag.LEFT_BRACES) {
-
-        } else {
-            // chyba
+            nextToken();
+            if (left31() == 1) {
+                return 1;
+            }
+            position = pos;
         }
         return 0;
     }
@@ -2130,9 +2589,15 @@ public class Parser {
      */
     private int left31() {
         if (getTokenTag() == Tag.RIGHT_BRACES) {
-
-        } else {
-            // block_item_list
+            nextToken();
+            return 1;
+        }
+        int value = block_item_list();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACES);
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -2142,6 +2607,13 @@ public class Parser {
      * @return
      */
     private int block_item_list() {
+        int value = block_item();
+        if (value == 1) {
+            value = rest25();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2151,7 +2623,11 @@ public class Parser {
      * @return
      */
     private int rest25() {
-        return 0;
+        int value = block_item();
+        if (value == 1) {
+            rest25();
+        }
+        return 1;
     }
 
     /**
@@ -2160,6 +2636,12 @@ public class Parser {
      * @return
      */
     private int block_item() {
+        if (declaration() == 1) {
+            return 1;
+        }
+        if (statement() == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2170,9 +2652,15 @@ public class Parser {
      */
     private int expression_statement() {
         if (getTokenTag() == Tag.SEMICOLON) {
-
-        } else {
-            // expression
+            nextToken();
+            return 1;
+        }
+        int value = expression();
+        if (value == 1) {
+            value = accept(Tag.SEMICOLON);
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -2183,13 +2671,45 @@ public class Parser {
      * @return
      */
     private int selection_statement() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.IF:
+                nextToken();
+                value = accept(Tag.LEFT_BRACKETS);
+                if (value == 1) {
+                    value = expression();
+                }
+                if (value == 1) {
+                    value = accept(Tag. RIGHT_BRACKETS);
+                }
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    value = left32();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.SWITCH:
-                break;
-            default:
-                // chyba
+                nextToken();
+                value = accept(Tag.LEFT_BRACKETS);
+                if (value == 1) {
+                    value = expression();
+                }
+                if (value == 1) {
+                    value = accept(Tag. RIGHT_BRACKETS);
+                }
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -2201,30 +2721,79 @@ public class Parser {
      * @return
      */
     private int left32() {
+        int pos = position;
         if (getTokenTag() == Tag.ELSE) {
-
-        } else {
-            //epsilon
+            nextToken();
+            if (statement() == 1) {
+                return 1;
+            } else {
+                position = pos;
+                // chyba alebo return 0;
+            }
         }
-        return 0;
+        return 1;
     }
 
     /**
      * iteration_statement ->  WHILE '(' expression ')' statement
-     *                       | DO statement WHILE WHILE '(' espression ')' ';'
+     *                       | DO statement WHILE '(' espression ')' ';'
      *                       | FOR '(' left33
      * @return
      */
     private int iteration_statement() {
+        int pos = position;
+        int value = 0;
         switch (getTokenTag()) {
             case Tag.WHILE:
+                nextToken();
+                value = accept(Tag. LEFT_BRACKETS);
+                if (value == 1) {
+                    value = expression();
+                }
+                if (value == 1) {
+                    value = accept(Tag. RIGHT_BRACKETS);
+                }
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.DO:
+                nextToken();
+                value = statement();
+                if (value == 1) {
+                    value = accept(Tag.WHILE);
+                }
+                if (value == 1) {
+                    value = accept(Tag. LEFT_BRACKETS);
+                }
+                if (value == 1) {
+                    value = expression();
+                }
+                if (value == 1) {
+                    value = accept(Tag. RIGHT_BRACKETS);
+                }
+                if (value == 1) {
+                    value = accept(Tag.SEMICOLON);
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.FOR:
-                break;
-            default:
-                // chyba
+                nextToken();
+                value = accept(Tag. LEFT_BRACKETS);
+                if (value == 1) {
+                    value = left33();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -2236,6 +2805,26 @@ public class Parser {
      * @return
      */
     private int left33() {
+        int value = expression_statement();
+        if (value == 1) {
+            value = expression_statement();
+        }
+        if (value == 1) {
+            value = left34();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        value = declaration();
+        if (value == 1) {
+            value = expression_statement();
+        }
+        if (value == 1) {
+            value = left34();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2245,10 +2834,23 @@ public class Parser {
      * @return
      */
     private int left34() {
+        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-
-        } else {
-            // expression
+            nextToken();
+            if (statement() == 1) {
+                return 1;
+            }
+            position = pos;
+        }
+        int value = expression();
+        if (value == 1) {
+            value = accept(Tag.RIGHT_BRACKETS);
+        }
+        if (value == 1) {
+            value = statement();
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -2261,17 +2863,33 @@ public class Parser {
      * @return
      */
     private int jump_statement() {
+        int pos = position;
         switch (getTokenTag()) {
             case Tag.GOTO:
+                nextToken();
+                int value = accept(Tag.IDENTIFIER);
+                if (value == 1) {
+                    value = accept(Tag.SEMICOLON);
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.CONTINUE:
-                break;
             case Tag.BREAK:
+                nextToken();
+                if (accept(Tag.SEMICOLON) == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
             case Tag.RETURN:
-                break;
-            default:
-                // chyba
+                nextToken();
+                if (left35() == 1) {
+                    return 1;
+                }
+                position = pos;
                 break;
         }
         return 0;
@@ -2284,9 +2902,15 @@ public class Parser {
      */
     private int left35() {
         if (getTokenTag() == Tag.SEMICOLON) {
-
-        } else {
-            // expression
+            nextToken();
+            return 1;
+        }
+        int value = expression();
+        if (value == 1) {
+            value = accept(Tag.SEMICOLON);
+        }
+        if (value == 1) {
+            return 1;
         }
         return 0;
     }
@@ -2296,6 +2920,13 @@ public class Parser {
      * @return
      */
     private int translation_unit() {
+        int value = external_declaration();
+        if (value == 1) {
+            value = rest26();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2305,7 +2936,11 @@ public class Parser {
      * @return
      */
     private int rest26() {
-        return 0;
+        int value = external_declaration();
+        if (value == 1) {
+            rest26();
+        }
+        return 1;
     }
 
     /**
@@ -2314,6 +2949,12 @@ public class Parser {
      * @return
      */
     private int external_declaration() {
+        if (function_definition() == 1) {
+            return 1;
+        }
+        if (declaration() == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2322,6 +2963,16 @@ public class Parser {
      * @return
      */
     private int function_definition() {
+        int value = declaration_specifiers();
+        if(value == 1) {
+            value = declarator();
+        }
+        if (value == 1) {
+            value = left36();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2331,6 +2982,16 @@ public class Parser {
      * @return
      */
     private int left36() {
+        int value = declaration_list();
+        if (value == 1) {
+            value = compound_statement();
+        }
+        if (value == 1) {
+            return 1;
+        }
+        if (compound_statement() == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2339,6 +3000,13 @@ public class Parser {
      * @return
      */
     private int declaration_list() {
+        int value = declaration();
+        if (value == 1) {
+            value = rest27();
+        }
+        if (value == 1) {
+            return 1;
+        }
         return 0;
     }
 
@@ -2348,6 +3016,10 @@ public class Parser {
      * @return
      */
     private int rest27() {
-        return 0;
+        int value = declaration();
+        if (value == 1) {
+            rest27();
+        }
+        return 1;
     }
 }

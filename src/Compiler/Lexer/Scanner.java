@@ -211,7 +211,16 @@ public class Scanner {
             case '#':
                 return new Token(Tag.HASHTAG, "#", line);
             case '.':
-                return new Token(Tag.DOT, ".", line);
+                readNextCharacter();
+                if (peek == '.') {
+                    readNextCharacter();
+                    if (peek == '.') {
+                        return new Token(Tag.ELLIPSIS, "...", line);
+                    }
+                } else {
+                    getPreviousPosition();
+                    return new Token(Tag.DOT, ".", line);
+                }
         }
 
         if(Character.isLetter(peek)) {

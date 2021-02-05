@@ -31,10 +31,49 @@ public class Parser {
         position++;
     }
 
+    private int getTokenLine() {
+        return tokenStream.get(position).line;
+    }
+
+    private String getTokenValue() {
+        return tokenStream.get(position).value;
+    }
+
     private int accept(byte tag) {
         if (tokenStream.get(position).tag == tag) {
             nextToken();
             return 1;
+        }
+        return 0;
+    }
+
+    private int expect(byte tag) {
+        if (accept(tag) == 1) {
+            return 1;
+        }
+        switch (tag) {
+            case Tag.LEFT_BRACKETS:
+            case Tag.RIGHT_BRACKETS:
+            case Tag.LEFT_BRACES:
+            case Tag.RIGHT_BRACES:
+                System.out.println("Chybajúca zátvorka na riadku " + getTokenLine() + "!");
+                break;
+            case Tag.SEMICOLON:
+                System.out.println("Chybajúca ; na riadku " + getTokenLine() + "!");
+                break;
+            case Tag.PLUS:
+            case Tag.MINUS:
+            case Tag.MULT:
+            case Tag.DIV:
+            case Tag.MOD:
+                System.out.println("Chybajúci operátor na riadku " + getTokenLine() + "!");
+                break;
+            case Tag.IDENTIFIER:
+                System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
+                break;
+            default:
+                System.out.println("Chyba na riadku " + getTokenLine() + "!");
+                break;
         }
         return 0;
     }
@@ -49,7 +88,8 @@ public class Parser {
      *                      | STRING
      *                      | CHARACTER
      *                      | '(' expression ')'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int primary_expression() {
         int pos = position;
@@ -61,17 +101,19 @@ public class Parser {
                 return 1;
             case Tag.LEFT_BRACKETS:
                 nextToken();
-                if (expression() == 1 && accept(Tag.RIGHT_BRACKETS) == 1) {
-                    return 1;
-                } else {
-                    position = pos;
-                    return 0;
+                int value = expression();
+                if (value == 1) {
+                    value = accept(Tag.RIGHT_BRACKETS);
                 }
+                if (value == 1) {
+                    return 1;
+                }
+                position = pos;
+                return 0;
             default:
                 if (constant() == 1) {
                     return 1;
                 } else {
-                    position = pos;
                     return 0;
                 }
         }
@@ -80,14 +122,15 @@ public class Parser {
     /**
      * constant ->  NUMBER
      *            | REAL
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int constant() {
         switch (getTokenTag()) {
             case Tag.NUMBER:
             case Tag.REAL:
                 nextToken();
-               return 1;
+                return 1;
             default:
                 return 0;
         }
@@ -95,20 +138,18 @@ public class Parser {
 
     /**
      * enumeration_constant -> IDENTIFIER
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int enumeration_constant() {
-        if (getTokenTag() == Tag.IDENTIFIER) {
-            nextToken();
-            return 1;
-        }
-        return 0;
+        return accept(Tag.IDENTIFIER);
     }
 
     /**
      * postfix_expression ->  primary_expression rest1
      *                      | '(' type_name ')' '{' initializer_list '}' left1
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int postfix_expression() {
         int pos = position;
@@ -143,7 +184,6 @@ public class Parser {
         if (value == 1) {
             return 1;
         }
-        position = pos;
         return 0;
     }
 
@@ -155,7 +195,8 @@ public class Parser {
      *         | '--' rest1
      *         | '(' left2
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest1() {
         int value = 0;
@@ -164,7 +205,7 @@ public class Parser {
                 nextToken();
                 value = expression();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_PARENTHESES);
+                    value = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (value == 1) {
                     value = rest1();
@@ -172,44 +213,44 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                break;
+                return -1;
             case Tag.DOT:
             case Tag.ARROW:
                 nextToken();
-                value = accept(Tag.IDENTIFIER);
+                value = expect(Tag.IDENTIFIER);
                 if (value == 1) {
                     value = rest1();
                 }
                 if (value == 1) {
                     return 1;
                 }
-                break;
+                return -1;
             case Tag.INC:
             case Tag.DEC:
                 nextToken();
-                value = rest1();
-                if (value == 1) {
+                if (rest1() == 1) {
                     return 1;
                 }
-                break;
+                return -1;
             case Tag.LEFT_BRACKETS:
                 nextToken();
-                value = left2();
-                if (value == 1) {
+                if (left2() == 1) {
                     return 1;
                 }
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * left1 ->  '}' rest1
      *         | ',' '}' rest1
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left1() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
@@ -218,19 +259,17 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                return 0;
+                return -1;
             case Tag.COMMA:
                 nextToken();
-                value = accept(Tag.RIGHT_BRACES);
+                value = expect(Tag.RIGHT_BRACES);
                 if (value == 1) {
                     value = rest1();
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                return 0;
+                return -1;
             default:
                 return 0;
         }
@@ -239,21 +278,21 @@ public class Parser {
     /**
      * left2 ->  ')' rest1
      *         | argument_expression_list ')' rest1
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left2() {
-        int pos = position;
-        int value = 0;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-            value = rest1();
-            if (value == 1) {
+            nextToken();
+            if (rest1() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
-        value = argument_expression_list();
+        int value = argument_expression_list();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
         }
         if (value == 1) {
             value = rest1();
@@ -261,13 +300,14 @@ public class Parser {
         if (value == 1) {
             return 1;
         }
-        position = pos;
-        return 0;
+        return -1;
     }
 
     /**
      * argument_expression_list -> assignment_expression rest2
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int argument_expression_list() {
         int value = assignment_expression();
@@ -277,16 +317,16 @@ public class Parser {
         if (value == 1) {
             return 1;
         }
-        return 0;
+        return -1;
     }
 
     /**
      * rest2 ->  ',' assignment_expression rest2
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest2() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
@@ -297,9 +337,10 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
@@ -308,10 +349,11 @@ public class Parser {
      *                    | '--' unary_expression
      *                    | unary_operator cast_expression
      *                    | SIZEOF left3
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int unary_expression() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.INC:
@@ -321,20 +363,21 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.SIZEOF:
                 nextToken();
                 value = left3();
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         value = unary_operator();
         if (value == 1) {
             value = cast_expression();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -349,32 +392,34 @@ public class Parser {
     /**
      *  left3 ->  unary_expression
      *          | '(' type_name ')'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left3() {
-        int pos = position;
-        int value = 0;
+        int value = unary_expression();
+        if (value == 1) {
+            return 1;
+        }
         if (getTokenTag() == Tag.LEFT_BRACKETS) {
             nextToken();
             value = type_name();
             if (value == 1) {
-                value = accept(Tag.RIGHT_BRACKETS);
+                value = expect(Tag.RIGHT_BRACKETS);
             }
             if (value == 1) {
                 return 1;
             }
-            position = pos;
-        }
-        value = unary_expression();
-        if (value == 1) {
-            return 1;
+            return -1;
         }
         return 0;
     }
 
     /**
      * unary_operator -> '&' | '*' | '+' | '-' | '~' | '!'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int unary_operator() {
         switch (getTokenTag()) {
@@ -393,7 +438,8 @@ public class Parser {
     /**
      * cast_expression ->  unary_expression
      *                   | '(' type_name ')' cast_expression
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int cast_expression() {
         int pos = position;
@@ -421,7 +467,8 @@ public class Parser {
 
     /**
      * multiplicative_expression -> cast_expression rest3
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int multiplicative_expression() {
         int value = cast_expression();
@@ -439,10 +486,11 @@ public class Parser {
      *         | '/' cast_expression rest3
      *         | '%' cast_expression rest3
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int rest3() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.MULT:
@@ -456,15 +504,16 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * additive_expression -> multiplicative_expression rest4
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int additive_expression() {
         int value = multiplicative_expression();
@@ -481,10 +530,10 @@ public class Parser {
      * rest4 ->  '+' multiplicative_expression rest4
      *         | '-' multiplicative_expression rest4
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest4() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.PLUS:
@@ -497,15 +546,16 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * shift_expression -> additive_expression rest5
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int shift_expression() {
         int value = additive_expression();
@@ -522,10 +572,10 @@ public class Parser {
      * rest5 ->  '<<' additive_expression rest5
      *         | '>>' additive_expression rest5
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest5() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.LEFT_SHIFT:
@@ -538,15 +588,16 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * relational_expression -> shift_expression rest6
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int relational_expression() {
         int value = shift_expression();
@@ -565,10 +616,10 @@ public class Parser {
      *         | '<=' shift_expression rest6
      *         | '>=' shift_expression rest6
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest6() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.LT:
@@ -583,15 +634,16 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * equality_expression -> relational_expression rest7
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int equality_expression() {
         int value = relational_expression();
@@ -608,10 +660,10 @@ public class Parser {
      * rest7 ->  '==' relational_expression rest7
      *         | '!=' relational_expression rest7
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest7() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.EQ:
@@ -624,15 +676,16 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * and_expression -> equality_expression rest8
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int and_expression() {
         int value = equality_expression();
@@ -648,10 +701,10 @@ public class Parser {
     /**
      * rest8 ->  '&' equality_expression rest8
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest8() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.AND) {
             nextToken();
@@ -662,14 +715,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * exclusive_or_expression -> and_expression rest9
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int exclusive_or_expression() {
         int value = and_expression();
@@ -685,10 +740,10 @@ public class Parser {
     /**
      * rest9 ->  '^' and_expression rest9
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest9() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.XOR) {
             nextToken();
@@ -699,14 +754,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * inclusive_or_expression -> exclusive_or_expression rest10
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int inclusive_or_expression() {
         int value = exclusive_or_expression();
@@ -722,10 +779,10 @@ public class Parser {
     /**
      * rest10 ->  '|' exclusive_or_expression rest10
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest10() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.OR) {
             nextToken();
@@ -736,14 +793,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * logical_and_expression -> inclusive_or_expression rest11
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int logical_and_expression() {
         int value = inclusive_or_expression();
@@ -759,10 +818,10 @@ public class Parser {
     /**
      * rest11 ->  '&&' inclusive_or_expression rest11
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest11() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.LOGICAL_AND) {
             nextToken();
@@ -773,14 +832,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * logical_or_expression -> logical_and_expression rest12
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int logical_or_expression() {
         int value = logical_and_expression();
@@ -796,10 +857,10 @@ public class Parser {
     /**
      * rest12 ->  '||' logical_and_expression rest12
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest12() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.LOGICAL_OR) {
             nextToken();
@@ -810,14 +871,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * conditional_expression -> logical_or_expression left4
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int conditional_expression() {
         int value = logical_or_expression();
@@ -833,16 +896,17 @@ public class Parser {
     /**
      * left4 ->  '?' expression ':' conditional_expression
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left4() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.QMARK) {
             nextToken();
             value = expression();
             if (value == 1) {
-                value = accept(Tag.COLON);
+                value = expect(Tag.COLON);
             }
             if (value == 1) {
                 value = conditional_expression();
@@ -850,15 +914,18 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * assignment_expression ->  conditional_expression
      *                         | unary_expression assignment_operator assignment_expression
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int assignment_expression() {
         int value = unary_expression();
@@ -867,6 +934,9 @@ public class Parser {
         }
         if (value == 1) {
             value = assignment_expression();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -880,19 +950,17 @@ public class Parser {
 
     /**
      * assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<' | '>>=' | '&=' | '^=' | '|='
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int assignment_operator() {
-        if (getTokenTag() == Tag.ASSIGNMENT) {
-            nextToken();
-            return 1;
-        }
-        return 0;
+        return accept(Tag.ASSIGNMENT);
     }
 
     /**
      * expression -> assignment_expression rest13
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int expression() {
         int value = assignment_expression();
@@ -908,7 +976,8 @@ public class Parser {
     /**
      * rest13 ->  ',' assignment_expression rest13
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest13() {
         int value = 0;
@@ -921,13 +990,16 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * constant_expression -> conditional_expression
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int constant_expression() {
         if (conditional_expression() == 1) {
@@ -944,6 +1016,9 @@ public class Parser {
         int value = declaration_specifiers();
         if (value == 1) {
             value = left5();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -954,34 +1029,39 @@ public class Parser {
     /**
      * left5 ->  ';'
      *         | init_declarator_list ';'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left5() {
-        int value = 0;
         if (getTokenTag() == Tag.SEMICOLON) {
             nextToken();
             return 1;
         }
-        value = init_declarator_list();
+        int value = init_declarator_list();
         if (value == 1) {
-            value = accept(Tag.SEMICOLON);
+            value = expect(Tag.SEMICOLON);
         }
         if (value == 1) {
             return 1;
         }
-        return 0;
+        return -1;
     }
 
     /**
      * declaration_specifiers ->  storage_class_specifier left6
      *                          | type_specifier left6
      *                          | type_qualifier left6
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int declaration_specifiers() {
         int value = storage_class_specifier();
         if (value == 1) {
             value = left6();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -989,6 +1069,9 @@ public class Parser {
         value = type_specifier();
         if (value == 1) {
             value = left6();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -996,6 +1079,9 @@ public class Parser {
         value = type_qualifier();
         if (value == 1) {
             value = left6();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1006,21 +1092,30 @@ public class Parser {
     /**
      * left6 ->  declaration_specifiers
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left6() {
-        declaration_specifiers();
+        if (declaration_specifiers() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * init_declarator_list -> init_declarator rest14
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int init_declarator_list() {
         int value = init_declarator();
         if (value == 1) {
             value = rest14();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1031,10 +1126,10 @@ public class Parser {
     /**
      * rest 14 ->  ',' init_declarator rest14
      *           | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest14() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
@@ -1045,19 +1140,25 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * init_declarator -> declarator left7
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int init_declarator() {
         int value = declarator();
         if (value == 1) {
             value = left7();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1068,25 +1169,27 @@ public class Parser {
     /**
      * left7 ->  '=' initializer
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left7() {
-        int pos = position;
         int value = 0;
-        if (tokenStream.get(position).value.equals("=")) {
+        if (getTokenValue().equals("=")) {
             nextToken();
             value = initializer();
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * storage_class_specifier -> TYPEDEF | EXTERN | STATIC | AUTO | REGISTER
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int storage_class_specifier() {
         switch (getTokenTag()) {
@@ -1106,10 +1209,11 @@ public class Parser {
      *                  | struct_or_union_specifier
      *                  | enum_specifier
      *                  | TYPEDEF_NAME ???
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int type_specifier() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.VOID:
             case Tag.CHAR:
@@ -1123,12 +1227,10 @@ public class Parser {
                 nextToken();
                 return 1;
         }
-        int value = struct_or_union_specifier();
-        if (value == 1) {
+        if (struct_or_union_specifier() == 1) {
             return 1;
         }
-        value = enum_specifier();
-        if (value == 1) {
+        if (enum_specifier() == 1) {
             return 1;
         }
         //TODO: TYPEDEF_NAME vyriešiť
@@ -1137,12 +1239,17 @@ public class Parser {
 
     /**
      * struct_or_union_specifier -> struct_or_union left8
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int struct_or_union_specifier() {
         int value = struct_or_union();
         if (value == 1) {
             value = left8();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1153,31 +1260,30 @@ public class Parser {
     /**
      * left8 ->  '{' struct_declaration_list '}'
      *         | IDENTIFIER left9
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left8() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
                 nextToken();
                 value = struct_declaration_list();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_BRACES);
+                    value = expect(Tag.RIGHT_BRACES);
                 }
                 if (value == 1) {
                     return 0;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.IDENTIFIER:
                 nextToken();
                 value = left9();
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -1185,28 +1291,30 @@ public class Parser {
     /**
      * left9 ->  '{' struct_declaration_list '}'
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left9() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.LEFT_BRACES) {
             nextToken();
             value = struct_declaration_list();
             if (value == 1) {
-                value = accept(Tag.RIGHT_BRACES);
+                value = expect(Tag.RIGHT_BRACES);
             }
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * struct_or_union -> STRUCT | UNION
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int struct_or_union() {
         switch (getTokenTag()) {
@@ -1220,12 +1328,17 @@ public class Parser {
 
     /**
      * struct_declaration_list -> struct_declaration rest15
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int struct_declaration_list() {
         int value = struct_declaration();
         if (value == 1) {
             value = rest15();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1236,24 +1349,33 @@ public class Parser {
     /**
      * rest15 ->  struct_declaration rest15
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest15() {
         int value = struct_declaration();
         if (value == 1) {
-            rest15();
+            value = rest15();
+            if (value < 1) {
+                return -1;
+            }
         }
         return 1;
     }
 
     /**
      * struct_declaration -> specifier_qualifier_list left10
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int struct_declaration() {
         int value = specifier_qualifier_list();
         if (value == 1) {
             value = left10();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1264,7 +1386,9 @@ public class Parser {
     /**
      * left10 ->  ';'
      *          | struct_declarator_list ';'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left10() {
         if (getTokenTag() == Tag.SEMICOLON) {
@@ -1273,7 +1397,10 @@ public class Parser {
         }
         int value = struct_declarator_list();
         if (value == 1) {
-            value = accept(Tag.SEMICOLON);
+            value = expect(Tag.SEMICOLON);
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1284,12 +1411,17 @@ public class Parser {
     /**
      * specifier_qualifier_list ->  type_specifier left11
      *                            | type_qualifier left11
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int specifier_qualifier_list() {
         int value = type_specifier();
         if (value == 1) {
             value = left11();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1297,6 +1429,9 @@ public class Parser {
         value = type_qualifier();
         if (value == 1) {
             value = left11();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1307,21 +1442,30 @@ public class Parser {
     /**
      * left11 ->  specifier_qualifier_list
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left11() {
-        specifier_qualifier_list();
+        if (specifier_qualifier_list() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * struct_declarator_list -> struct_declarator rest16
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int struct_declarator_list() {
         int value = struct_declarator();
         if (value == 1) {
             value = rest16();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1332,10 +1476,10 @@ public class Parser {
     /**
      * rest16 ->  ',' struct_declarator rest16
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest16() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
@@ -1346,30 +1490,33 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * struct_declarator ->  ':' constant_expression
      *                     | declarator left12
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int struct_declarator() {
-        int pos = position;
-        int value = 0;
         if (getTokenTag() == Tag.COLON) {
             nextToken();
-            value = constant_expression();
-            if (value == 1) {
+            if (constant_expression() == 1) {
                 return  1;
             }
-            position = pos;
+            return -1;
         }
-        value = declarator();
+        int value = declarator();
         if (value == 1) {
             value = left12();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1380,32 +1527,33 @@ public class Parser {
     /**
      * left12 ->  ':' constant_expression
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left12() {
-        int pos = position;
         if (getTokenTag() == Tag.COLON) {
             nextToken();
             if (constant_expression() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         return 1;
     }
 
     /**
      * enum_specifier -> ENUM left13
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int enum_specifier() {
-        int pos = position;
         if (getTokenTag() == Tag.ENUM) {
             nextToken();
             if (left13() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         return 0;
     }
@@ -1413,10 +1561,11 @@ public class Parser {
     /**
      * left13 ->  '{' enumerator_list left14
      *          | IDENTIFIER '{' enumerator_list left14
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left13() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
@@ -1428,11 +1577,10 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.IDENTIFIER:
                 nextToken();
-                value = accept(Tag.LEFT_BRACES);
+                value = expect(Tag.LEFT_BRACES);
                 if (value == 1) {
                     value = enumerator_list();
                 }
@@ -1441,12 +1589,8 @@ public class Parser {
                 }
                 if (value == 1) {
                     return 1;
-                }
-                position = pos;
-                break;
-            default:
-                // chyba
-                break;
+                };
+                return -1;
         }
         return 0;
     }
@@ -1454,33 +1598,38 @@ public class Parser {
     /**
      * left14 ->  '}'
      *          | ',' '}'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left14() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
                 nextToken();
                 return 1;
             case Tag.COMMA:
                 nextToken();
-                if (accept(Tag.RIGHT_BRACES) == 1) {
+                if (expect(Tag.RIGHT_BRACES) == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
 
     /**
      * enumerator_list -> enumerator rest17
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int enumerator_list() {
         int value = enumerator();
         if (value == 1) {
             value = rest17();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1491,10 +1640,10 @@ public class Parser {
     /**
      * rest17 ->  ',' enumerator rest17
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest17() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
@@ -1505,19 +1654,25 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * enumerator -> enumeration_constant left15
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int enumerator() {
         int value = enumeration_constant();
         if (value == 1) {
             value = left15();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1528,23 +1683,25 @@ public class Parser {
     /**
      * left15 ->  '=' constant_expression
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left15() {
-        int pos = position;
-        if (tokenStream.get(position).value.equals("=")) {
+        if (getTokenValue().equals("=")) {
             nextToken();
             if (constant_expression() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * type_qualifier -> CONST | VOLATILE
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int type_qualifier() {
         switch (getTokenTag()) {
@@ -1559,18 +1716,22 @@ public class Parser {
     /**
      * declarator ->  pointer direct_declarator
      *              | direct_declarator
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int declarator() {
         int value = pointer();
         if (value == 1) {
             value = direct_declarator();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        value = direct_declarator();
-        if (value == 1) {
+        if (direct_declarator() == 1) {
             return 1;
         }
         return 0;
@@ -1579,23 +1740,23 @@ public class Parser {
     /**
      * direct_declarator ->  IDENTIFIER rest18
      *                     | '(' declarator ')' rest18
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int direct_declarator() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 nextToken();
                 if (rest18() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.LEFT_BRACKETS:
                 nextToken();
                 int value = declarator();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_BRACKETS);
+                    value = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (value == 1) {
                     value = rest18();
@@ -1603,7 +1764,7 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
+                return -1;
         }
         return 0;
     }
@@ -1612,27 +1773,27 @@ public class Parser {
      * rest18 ->  '[' left16
      *          | '(' left17
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int rest18() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 if (left16() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.LEFT_BRACKETS:
                 nextToken();
                 if (left17() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
@@ -1641,7 +1802,9 @@ public class Parser {
      *          | type_qualifier_list left19
      *          | assignment_expression ']' rest18
      *          | ']' rest18
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left16() {
         int pos = position;
@@ -1652,41 +1815,51 @@ public class Parser {
                 value = accept(Tag.RIGHT_PARENTHESES);
                 if (value == 1) {
                     value = rest18();
+                    if (value < 1) {
+                        return -1;
+                    }
+                } else {
+                    position = pos;
+                    break;
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
             case Tag.STATIC:
                 nextToken();
                 if (left18() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.RIGHT_PARENTHESES:
                 nextToken();
                 if (rest18() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = type_qualifier_list();
         if (value == 1) {
             value = left19();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1698,31 +1871,40 @@ public class Parser {
      * left17 ->  parameter_type_list ')' rest18
      *          | ')' rest18
      *          | identifier_list rest18
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left17() {
-        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
             nextToken();
             if (rest18() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         int value = parameter_type_list();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = identifier_list();
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1733,35 +1915,49 @@ public class Parser {
     /**
      * left18 ->  type_qualifier_list assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left18() {
-        int pos = position;
         int value = type_qualifier_list();
         if (value == 1) {
             value = assignment_expression();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         return 0;
     }
 
@@ -1770,7 +1966,9 @@ public class Parser {
      *          | STATIC assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
      *          | ']' rest18
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left19() {
         int pos = position;
@@ -1781,17 +1979,21 @@ public class Parser {
                 value = accept(Tag.RIGHT_PARENTHESES);
                 if (value == 1) {
                     value = rest18();
+                    if (value < 1) {
+                        return -1;
+                    }
+                } else {
+                    position = pos;
+                    break;
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
             case Tag.STATIC:
                 nextToken();
                 value = assignment_expression();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_PARENTHESES);
+                    value = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (value == 1) {
                     value = rest18();
@@ -1799,42 +2001,46 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.RIGHT_PARENTHESES:
                 nextToken();
                 if (rest18() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest18();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         return 0;
     }
 
     /**
      * pointer -> '*' left20
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int pointer() {
-        int pos = position;
         if (getTokenTag() == Tag.MULT) {
             nextToken();
             if (left20() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         return 0;
     }
@@ -1843,38 +2049,52 @@ public class Parser {
      * left20 ->  type_qualifier_list left21
      *          | pointer
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left20() {
         int value = type_qualifier_list();
         if (value == 1) {
             value = left21();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        pointer();
+        if (pointer() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * left21 ->  pointer
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left21() {
-        pointer();
+        if (pointer() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * type_qualifier_list -> type_qualifier rest19
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int type_qualifier_list() {
         int value = type_qualifier();
         if (value == 1) {
             value = rest19();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1885,11 +2105,14 @@ public class Parser {
     /**
      * rest19 ->  type_qualifier rest19
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest19() {
         if (type_qualifier() == 1) {
-            rest19();
+            if (rest19() < 1) {
+                return -1;
+            }
         }
         return 1;
     }
@@ -1906,12 +2129,17 @@ public class Parser {
 
     /**
      * parameter_list -> parameter_declaration rest20
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int parameter_list() {
         int value = parameter_declaration();
         if (value == 1) {
             value = rest20();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1922,33 +2150,39 @@ public class Parser {
     /**
      * rest20 ->  ',' parameter_declaration rest20
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest20() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
             value = parameter_declaration();
-        }
-        if (value == 1) {
-            value = rest20();
-        }
-        if (value == 1) {
+            if (value == 1) {
+                value = rest20();
+            }
+            if (value == 1) {
+                return 1;
+            }
+            return -1;
+        } else {
             return 1;
         }
-        position = pos;
-        return 1;
     }
 
     /**
      * parameter_declaration -> declaration_specifiers left22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int parameter_declaration() {
         int value = declaration_specifiers();
         if (value == 1) {
             value = left22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -1962,6 +2196,7 @@ public class Parser {
      *          | epsilon
      * @return
      */
+    //TODO:upraviť
     private int left22() {
         if (declarator() == 1) {
             return 1;
@@ -1972,16 +2207,17 @@ public class Parser {
 
     /**
      * identifier_list -> IDENTIFIER rest21
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int identifier_list() {
-        int pos = position;
         if (getTokenTag() == Tag.IDENTIFIER) {
             nextToken();
             if (rest21() == 1) {
                 return 1;
             }
-        position = pos;
+            return -1;
         }
         return 0;
     }
@@ -1989,34 +2225,39 @@ public class Parser {
     /**
      * rest21 ->  ',' IDENTIFIER rest21
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest21() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
-            value = accept(Tag.IDENTIFIER);
+            value = expect(Tag.IDENTIFIER);
             if (value == 1) {
                 value = rest21();
             }
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * type_name ->  specifier_qualifier_list left23
-     *
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int type_name() {
         int value = specifier_qualifier_list();
         if (value == 1) {
             value = left23();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2027,22 +2268,30 @@ public class Parser {
     /**
      * left23 ->  abstract_declarator
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left23() {
-        abstract_declarator();
+        if (abstract_declarator() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * abstract_declarator ->  pointer left24
      *                       | direct_abstract_declarator
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int abstract_declarator() {
         int value = pointer();
         if (value == 1) {
             value = left24();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2056,35 +2305,37 @@ public class Parser {
     /**
      * left24 ->  direct_abstract_declarator
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left24() {
-        direct_abstract_declarator();
+        if (direct_abstract_declarator() == -1) {
+            return -1;
+        }
         return 1;
     }
 
     /**
      * direct_abstract_declarator ->  '(' left25
      *                              | '[' left26
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int direct_abstract_declarator() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
                 nextToken();
                 if (left25() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 if (left26() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -2093,34 +2344,46 @@ public class Parser {
      * left25 ->  abstract_declarator ')' rest22
      *          | ')' rest22
      *          | parameter_type_list ')' rest22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left25() {
-        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
             nextToken();
             if (rest22() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         int value = abstract_declarator();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = parameter_type_list();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2134,7 +2397,9 @@ public class Parser {
      *          | STATIC left27
      *          | type_qualifier_list left28
      *          | assignment_expression ']' rest22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left26() {
         int pos = position;
@@ -2145,41 +2410,51 @@ public class Parser {
                 if (rest22() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.MULT:
                 nextToken();
                 value = accept(Tag.RIGHT_PARENTHESES);
                 if (value == 1) {
                     value = rest22();
+                    if (value < 1) {
+                        return -1;
+                    }
+                } else {
+                    position = pos;
+                    break;
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
             case Tag.STATIC:
                 nextToken();
                 if (left27() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = type_qualifier_list();
         if (value == 1) {
             value = left28();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2190,35 +2465,49 @@ public class Parser {
     /**
      * left27 ->  type_qualifier_list assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left27() {
-        int pos = position;
         int value = type_qualifier_list();
         if (value == 1) {
             value = assignment_expression();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         return 0;
     }
 
@@ -2226,17 +2515,18 @@ public class Parser {
      * left28 ->  STATIC assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
      *          | ']' rest22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left28() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.STATIC:
                 nextToken();
                 value = assignment_expression();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_PARENTHESES);
+                    value = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (value == 1) {
                     value = rest22();
@@ -2244,22 +2534,26 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.RIGHT_PARENTHESES:
                 nextToken();
                 if (rest22() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         value = assignment_expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_PARENTHESES);
+            value = expect(Tag.RIGHT_PARENTHESES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2271,64 +2565,70 @@ public class Parser {
      * rest22 ->  '[' left26
      *          | '(' left29
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest22() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 if (left26() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.LEFT_BRACKETS:
                 nextToken();
                 if (left29() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
+            default:
+                return 1;
         }
-        return 1;
     }
 
     /**
      * left29 ->  ')' rest22
      *          | parameter_type_list ')' rest22
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left29() {
-        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
             nextToken();
             if (rest22() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         int value = parameter_type_list();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest22();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
         }
-        position = pos;
         return 0;
     }
 
     /**
      * initializer ->  '{' initializer_list left14
      *               | assignment_expression
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int initializer() {
-        int pos = position;
         int value = 0;
         if (getTokenTag() == Tag.LEFT_BRACES) {
             nextToken();
@@ -2339,7 +2639,7 @@ public class Parser {
             if (value == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         if (assignment_expression() == 1) {
             return 1;
@@ -2350,15 +2650,23 @@ public class Parser {
     /**
      * initializer_list ->  designation initializer rest23
      *                    | initializer rest23
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int initializer_list() {
         int value = designation();
         if (value == 1) {
             value = initializer();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest23();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2366,6 +2674,9 @@ public class Parser {
         value = initializer();
         if (value == 1) {
             value = rest23();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2376,32 +2687,41 @@ public class Parser {
     /**
      * rest23 ->  ',' left30
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest23() {
-        int pos = position;
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
             if (left30() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
+        } else {
+            return 1;
         }
-        return 1;
     }
 
     /**
      * left30 ->  designation initializer rest23
      *          | initializer rest23
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left30() {
         int value = designation();
         if (value == 1) {
             value = initializer();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = rest23();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2409,6 +2729,9 @@ public class Parser {
         value = initializer();
         if (value == 1) {
             value = rest23();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2418,16 +2741,18 @@ public class Parser {
 
     /**
      * designation -> designator_list '='
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int designation() {
         int value = designator_list();
         if (value == 1) {
-            if (tokenStream.get(position).value.equals("=")) {
+            if (getTokenValue().equals("=")) {
                 value = 1;
                 nextToken();
             } else {
-                value = 0;
+                return -1;
             }
         }
         if (value == 1) {
@@ -2438,12 +2763,17 @@ public class Parser {
 
     /**
      * designator_list -> designator rest24
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int designator_list() {
         int value = designator();
         if (value == 1) {
             value = rest24();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2454,12 +2784,15 @@ public class Parser {
     /**
      * rest24 ->  designator rest24
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest24() {
         int value = designator();
         if (value == 1) {
-            rest24();
+            if (rest24() < 1) {
+                return -1;
+            }
         }
         return 1;
     }
@@ -2467,30 +2800,29 @@ public class Parser {
     /**
      * designator ->  '[' constant_expression ']'
      *              | '.' IDENTIFIER
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int designator() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 value = constant_expression();
                 if (value == 1) {
-                    value = accept(Tag.RIGHT_PARENTHESES);
+                    value = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.DOT:
                 nextToken();
-                if (accept(Tag.IDENTIFIER) == 1) {
+                if (expect(Tag.IDENTIFIER) == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -2502,8 +2834,10 @@ public class Parser {
      *             | selection_statement
      *             | iteration_statement
      *             | jump_statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
+    //TODO: pozrieť sa na chyby
     private int statement() {
         if (labeled_statement() == 1) {
             return 1;
@@ -2530,14 +2864,15 @@ public class Parser {
      * labeled_statement ->  IDENTIFIER ':' statement
      *                     | CASE constant_expression ':' statement
      *                     | DEFAULT ':' statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int labeled_statement() {
         int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
-            case Tag.DEFAULT:
                 nextToken();
                 value = accept(Tag.COLON);
                 if (value == 1) {
@@ -2548,11 +2883,21 @@ public class Parser {
                 }
                 position = pos;
                 break;
+            case Tag.DEFAULT:
+                nextToken();
+                value = expect(Tag.COLON);
+                if (value == 1) {
+                    value = statement();
+                }
+                if (value == 1) {
+                    return 1;
+                }
+                return -1;
             case Tag.CASE:
                 nextToken();
                 value = constant_expression();
                 if (value == 1) {
-                    value = accept(Tag.COLON);
+                    value = expect(Tag.COLON);
                 }
                 if (value == 1) {
                     value = statement();
@@ -2560,24 +2905,24 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
 
     /**
      * compound_statement -> '{' left31
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int compound_statement() {
-        int pos = position;
         if (getTokenTag() == Tag.LEFT_BRACES) {
             nextToken();
             if (left31() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         return 0;
     }
@@ -2585,7 +2930,9 @@ public class Parser {
     /**
      * left31 ->  '}'
      *          | block_item_list '}'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left31() {
         if (getTokenTag() == Tag.RIGHT_BRACES) {
@@ -2594,7 +2941,10 @@ public class Parser {
         }
         int value = block_item_list();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACES);
+            value = expect(Tag.RIGHT_BRACES);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2604,12 +2954,17 @@ public class Parser {
 
     /**
      * block_item_list ->  block_item rest25
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int block_item_list() {
         int value = block_item();
         if (value == 1) {
             value = rest25();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2620,12 +2975,15 @@ public class Parser {
     /**
      * rest25->  block_item rest25
      *         | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest25() {
         int value = block_item();
         if (value == 1) {
-            rest25();
+            if (rest25() < 1) {
+                return -1;
+            }
         }
         return 1;
     }
@@ -2633,8 +2991,11 @@ public class Parser {
     /**
      * block_item ->  declaration
      *              | statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
+    //TODO: pozrieť sa na chyby
     private int block_item() {
         if (declaration() == 1) {
             return 1;
@@ -2648,7 +3009,9 @@ public class Parser {
     /**
      * expression_statement ->  ';'
      *                        | expression ';'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int expression_statement() {
         if (getTokenTag() == Tag.SEMICOLON) {
@@ -2657,7 +3020,10 @@ public class Parser {
         }
         int value = expression();
         if (value == 1) {
-            value = accept(Tag.SEMICOLON);
+            value = expect(Tag.SEMICOLON);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2668,20 +3034,21 @@ public class Parser {
     /**
      * selection_statement ->  IF '(' expression ')' statement left32
      *                       | SWITCH '(' expression ')' statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int selection_statement() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.IF:
                 nextToken();
-                value = accept(Tag.LEFT_BRACKETS);
+                value = expect(Tag.LEFT_BRACKETS);
                 if (value == 1) {
                     value = expression();
                 }
                 if (value == 1) {
-                    value = accept(Tag. RIGHT_BRACKETS);
+                    value = expect(Tag. RIGHT_BRACKETS);
                 }
                 if (value == 1) {
                     value = statement();
@@ -2692,16 +3059,15 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.SWITCH:
                 nextToken();
-                value = accept(Tag.LEFT_BRACKETS);
+                value = expect(Tag.LEFT_BRACKETS);
                 if (value == 1) {
                     value = expression();
                 }
                 if (value == 1) {
-                    value = accept(Tag. RIGHT_BRACKETS);
+                    value = expect(Tag. RIGHT_BRACKETS);
                 }
                 if (value == 1) {
                     value = statement();
@@ -2709,8 +3075,7 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -2718,17 +3083,16 @@ public class Parser {
     /**
      * left32 ->  ELSE statement
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int left32() {
-        int pos = position;
         if (getTokenTag() == Tag.ELSE) {
             nextToken();
             if (statement() == 1) {
                 return 1;
             } else {
-                position = pos;
-                // chyba alebo return 0;
+                return -1;
             }
         }
         return 1;
@@ -2738,20 +3102,21 @@ public class Parser {
      * iteration_statement ->  WHILE '(' expression ')' statement
      *                       | DO statement WHILE '(' espression ')' ';'
      *                       | FOR '(' left33
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int iteration_statement() {
-        int pos = position;
         int value = 0;
         switch (getTokenTag()) {
             case Tag.WHILE:
                 nextToken();
-                value = accept(Tag. LEFT_BRACKETS);
+                value = expect(Tag. LEFT_BRACKETS);
                 if (value == 1) {
                     value = expression();
                 }
                 if (value == 1) {
-                    value = accept(Tag. RIGHT_BRACKETS);
+                    value = expect(Tag. RIGHT_BRACKETS);
                 }
                 if (value == 1) {
                     value = statement();
@@ -2759,42 +3124,39 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.DO:
                 nextToken();
                 value = statement();
                 if (value == 1) {
-                    value = accept(Tag.WHILE);
+                    value = expect(Tag.WHILE);
                 }
                 if (value == 1) {
-                    value = accept(Tag. LEFT_BRACKETS);
+                    value = expect(Tag. LEFT_BRACKETS);
                 }
                 if (value == 1) {
                     value = expression();
                 }
                 if (value == 1) {
-                    value = accept(Tag. RIGHT_BRACKETS);
+                    value = expect(Tag. RIGHT_BRACKETS);
                 }
                 if (value == 1) {
-                    value = accept(Tag.SEMICOLON);
+                    value = expect(Tag.SEMICOLON);
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.FOR:
                 nextToken();
-                value = accept(Tag. LEFT_BRACKETS);
+                value = expect(Tag. LEFT_BRACKETS);
                 if (value == 1) {
                     value = left33();
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -2802,15 +3164,23 @@ public class Parser {
     /**
      * left33 ->  expression_statement expression_statement left34
      *          | declaration expression_statement left34
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left33() {
         int value = expression_statement();
         if (value == 1) {
             value = expression_statement();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = left34();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2818,9 +3188,15 @@ public class Parser {
         value = declaration();
         if (value == 1) {
             value = expression_statement();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = left34();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2831,23 +3207,30 @@ public class Parser {
     /**
      * left34 ->  ')' statement
      *          | expression ')' statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left34() {
-        int pos = position;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
             nextToken();
             if (statement() == 1) {
                 return 1;
             }
-            position = pos;
+            return -1;
         }
         int value = expression();
         if (value == 1) {
-            value = accept(Tag.RIGHT_BRACKETS);
+            value = expect(Tag.RIGHT_BRACKETS);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             value = statement();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2860,37 +3243,35 @@ public class Parser {
      *                  | CONTINUE ';'
      *                  | BREAK ';'
      *                  | RETURN left35
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int jump_statement() {
-        int pos = position;
         switch (getTokenTag()) {
             case Tag.GOTO:
                 nextToken();
-                int value = accept(Tag.IDENTIFIER);
+                int value = expect(Tag.IDENTIFIER);
                 if (value == 1) {
-                    value = accept(Tag.SEMICOLON);
+                    value = expect(Tag.SEMICOLON);
                 }
                 if (value == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.CONTINUE:
             case Tag.BREAK:
                 nextToken();
-                if (accept(Tag.SEMICOLON) == 1) {
+                if (expect(Tag.SEMICOLON) == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
             case Tag.RETURN:
                 nextToken();
                 if (left35() == 1) {
                     return 1;
                 }
-                position = pos;
-                break;
+                return -1;
         }
         return 0;
     }
@@ -2898,7 +3279,9 @@ public class Parser {
     /**
      * left35 ->  ';'
      *          | expression ';'
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int left35() {
         if (getTokenTag() == Tag.SEMICOLON) {
@@ -2907,7 +3290,10 @@ public class Parser {
         }
         int value = expression();
         if (value == 1) {
-            value = accept(Tag.SEMICOLON);
+            value = expect(Tag.SEMICOLON);
+            if (value == 0) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2917,12 +3303,17 @@ public class Parser {
 
     /**
      * translation_unit -> external_declaration rest26
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int translation_unit() {
         int value = external_declaration();
         if (value == 1) {
             value = rest26();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -2933,12 +3324,15 @@ public class Parser {
     /**
      * rest26 ->  external_declaration rest26
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
      */
     private int rest26() {
         int value = external_declaration();
         if (value == 1) {
-            rest26();
+            if (rest26() < 1) {
+                return -1;
+            }
         }
         return 1;
     }
@@ -2946,8 +3340,10 @@ public class Parser {
     /**
      * external_declaration ->  function_definition
      *                        | declaration
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
+    //TODO: pozrieť sa na chyby
     private int external_declaration() {
         if (function_definition() == 1) {
             return 1;
@@ -2960,7 +3356,8 @@ public class Parser {
 
     /**
      * function_definition -> declaration_specifiers declarator left36
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int function_definition() {
         int value = declaration_specifiers();
@@ -2979,7 +3376,8 @@ public class Parser {
     /**
      * left36 ->  declaration_list compound_statement
      *          | compound_statement
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
      */
     private int left36() {
         int value = declaration_list();
@@ -2997,12 +3395,17 @@ public class Parser {
 
     /**
      * declaration_list -> declaration rest27
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int declaration_list() {
         int value = declaration();
         if (value == 1) {
             value = rest27();
+            if (value < 1) {
+                return -1;
+            }
         }
         if (value == 1) {
             return 1;
@@ -3013,12 +3416,16 @@ public class Parser {
     /**
      * rest27 ->  declaration rest27
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private int rest27() {
         int value = declaration();
         if (value == 1) {
-            rest27();
+            if (rest27() < 1) {
+                return -1;
+            }
         }
         return 1;
     }

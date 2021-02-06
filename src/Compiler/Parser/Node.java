@@ -1,11 +1,19 @@
 package Compiler.Parser;
 
-public class Node {
+import java.util.ArrayList;
+
+public abstract class Node {
 
     /**
      * Konštruktor bez parametrov.
      */
     public Node() {
     }
+
+    /**
+     * Funkcia na zistenie nasledovníkov vrcholu.
+     * @return pole nasledovníkov vrcholu
+     */
+    abstract public ArrayList<Node> getChilds();
 
 }

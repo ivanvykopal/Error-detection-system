@@ -22,10 +22,10 @@ public class Production extends Node {
 
     /**
      * Funkcia na pridanie nasledovníkov do stromu.
-     * @param childs pole nasledovníkov
+     * @param child nasledovník
      */
-    public void addChilds(ArrayList<Node> childs) {
-        this.childs = childs;
+    public void addChilds(Node child) {
+        this.childs.add(child);
     }
 
     /**

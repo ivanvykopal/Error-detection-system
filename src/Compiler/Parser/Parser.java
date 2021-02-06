@@ -8,7 +8,8 @@ import java.util.ArrayList;
 
 public class Parser {
     private int position = 0;
-    private ArrayList<Token> tokenStream = new ArrayList<Token>();
+    private ArrayList<Token> tokenStream = new ArrayList<>();
+    private ArrayList<Node> parseTree = new ArrayList<>();
 
     public Parser(String file) {
         Scanner scanner = new Scanner(file);
@@ -39,17 +40,23 @@ public class Parser {
         return tokenStream.get(position).value;
     }
 
-    private int accept(byte tag) {
-        if (tokenStream.get(position).tag == tag) {
-            nextToken();
-            return 1;
-        }
-        return 0;
+    private byte getTokenTag() {
+        return tokenStream.get(position).tag;
     }
 
-    private int expect(byte tag) {
-        if (accept(tag) == 1) {
-            return 1;
+    private Leaf accept(byte tag) {
+        if (getTokenTag() == tag) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
+            nextToken();
+            return terminal;
+        }
+        return null;
+    }
+
+    private Leaf expect(byte tag) {
+        Leaf terminal = accept(tag);
+        if (terminal != null) {
+            return terminal;
         }
         switch (tag) {
             case Tag.LEFT_BRACKETS:
@@ -75,11 +82,7 @@ public class Parser {
                 System.out.println("Chyba na riadku " + getTokenLine() + "!");
                 break;
         }
-        return 0;
-    }
-
-    private byte getTokenTag() {
-        return tokenStream.get(position).tag;
+        return null;
     }
 
     /**
@@ -91,30 +94,40 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int primary_expression() {
+    private Node primary_expression() {
+        Production prod = new Production("primary_expression");
         int pos = position;
+        Node child1;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
             case Tag.CHARACTER:
             case Tag.STRING:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
             case Tag.LEFT_BRACKETS:
+                Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                int value = expression();
-                if (value == 1) {
-                    value = accept(Tag.RIGHT_BRACKETS);
+                child1 = expression();
+                Node child2 = null;
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = accept(Tag.RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
                 position = pos;
-                return 0;
+                return prod;
             default:
-                if (constant() == 1) {
-                    return 1;
+                child1 = constant();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(child1);
+                    return prod;
                 } else {
-                    return 0;
+                    return prod;
                 }
         }
     }
@@ -125,14 +138,16 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int constant() {
+    private Node constant() {
+        Production prod = new Production("constant");
         switch (getTokenTag()) {
             case Tag.NUMBER:
             case Tag.REAL:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
             default:
-                return 0;
+                return prod;
         }
     }
 
@@ -141,8 +156,13 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int enumeration_constant() {
-        return accept(Tag.IDENTIFIER);
+    private Node enumeration_constant() {
+        Production prod = new Production("enumeration_constant");
+        Node child = accept(Tag.IDENTIFIER);
+        if (child != null) {
+            prod.addChilds(child);
+        }
+        return prod;
     }
 
     /**
@@ -151,40 +171,53 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int postfix_expression() {
+    private Node postfix_expression() {
+        Production prod = new Production("postfix_expression");
         int pos = position;
-        int value = 0;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_BRACES) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = type_name();
-            if (value == 1) {
-                value = accept(Tag.RIGHT_BRACKETS);
+            child1 = type_name();
+            Node child3 = null, child4 = null, child5 = null, child6 = null;
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = accept(Tag.RIGHT_BRACKETS);
             }
-            if (value == 1) {
-                value = accept(Tag.LEFT_BRACES);
+            if (child2 != null) {
+                child3 = accept(Tag.LEFT_BRACES);
             }
-            if (value == 1) {
-                value = initializer_list();
+            if (child3 != null) {
+                child4 = initializer_list();
             }
-            if (value == 1) {
-                value = accept(Tag.RIGHT_BRACES);
+            if (child4 != null && !child4.getChilds().isEmpty()) {
+                child5 = accept(Tag.RIGHT_BRACES);
             }
-            if (value == 1) {
-                value = left1();
+            if (child5 != null) {
+                child6 = left1();
             }
-            if (value == 1) {
-                return 1;
+            if (child6 != null && !child6.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                prod.addChilds(child3);
+                prod.addChilds(child4);
+                prod.addChilds(child5);
+                prod.addChilds(child6);
+                return prod;
             }
             position = pos;
         }
-        value = primary_expression();
-        if (value == 1) {
-            value = rest1();
+        child1 = primary_expression();
+        child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest1();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -198,48 +231,68 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest1() {
-        int value = 0;
+    private Node rest1() {
+        Production prod = new Production("rest1");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expression();
-                if (value == 1) {
-                    value = expect(Tag.RIGHT_PARENTHESES);
+                child1 = expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
-                if (value == 1) {
-                    value = rest1();
+                if (child2 != null) {
+                    child3 = rest1();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.DOT:
             case Tag.ARROW:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.IDENTIFIER);
-                if (value == 1) {
-                    value = rest1();
+                child1 = expect(Tag.IDENTIFIER);
+                if (child1 != null) {
+                    child2 = rest1();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.INC:
             case Tag.DEC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest1() == 1) {
-                    return 1;
+                child1 = rest1();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.LEFT_BRACKETS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left2() == 1) {
-                    return 1;
+                child1 = left2();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -250,28 +303,37 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left1() {
-        int value = 0;
+    private Node left1() {
+        Production prod = new Production("left1");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = rest1();
-                if (value == 1) {
-                    return 1;
+                child1 = rest1();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.COMMA:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.RIGHT_BRACES);
-                if (value == 1) {
-                    value = rest1();
+                child1 = expect(Tag.RIGHT_BRACES);
+                if (child1 != null) {
+                    child2 = rest1();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 0;
+                return prod;
         }
     }
 
@@ -282,25 +344,35 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left2() {
+    private Node left2() {
+        Production prod = new Production("left2");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (rest1() == 1) {
-                return 1;
+            child1 = rest1();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = argument_expression_list();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
+        child1 = argument_expression_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
         }
-        if (value == 1) {
-            value = rest1();
+        if (child2 != null) {
+            child3 = rest1();
         }
-        if (value == 1) {
-            return 1;
+        if (child3 != null && !child3.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            prod.addChilds(child3);
+            return prod;
         }
-        return -1;
+        return null;
     }
 
     /**
@@ -309,15 +381,19 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int argument_expression_list() {
-        int value = assignment_expression();
-        if (value == 1) {
-            value = rest2();
+    private Node argument_expression_list() {
+        Production prod = new Production("argument_expression_list");
+        Node child1 = assignment_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest2();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return -1;
+        return null;
     }
 
     /**
@@ -326,20 +402,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest2() {
-        int value = 0;
+    private Node rest2() {
+        Production prod = new Production("rest2");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = assignment_expression();
-            if (value == 1) {
-                value = rest2();
+            child1 = assignment_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest2();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -353,40 +436,50 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int unary_expression() {
-        int value = 0;
+    private Node unary_expression() {
+        Production prod = new Production("unary_expression");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.INC:
             case Tag.DEC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = unary_expression();
-                if (value == 1) {
-                    return 1;
+                child1 = unary_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.SIZEOF:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = left3();
-                if (value == 1) {
-                    return 1;
+                child1 = left3();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        value = unary_operator();
-        if (value == 1) {
-            value = cast_expression();
-            if (value < 1) {
-                return -1;
+        child1 = unary_operator();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = cast_expression();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
+        child1 = postfix_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        value = postfix_expression();
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -396,23 +489,30 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left3() {
-        int value = unary_expression();
-        if (value == 1) {
-            return 1;
+    private Node left3() {
+        Production prod = new Production("left3");
+        Node child1 = unary_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
         if (getTokenTag() == Tag.LEFT_BRACKETS) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = type_name();
-            if (value == 1) {
-                value = expect(Tag.RIGHT_BRACKETS);
+            child1 = type_name();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = expect(Tag.RIGHT_BRACKETS);
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -421,7 +521,8 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int unary_operator() {
+    private Node unary_operator() {
+        Production prod = new Production("unary_operator");
         switch (getTokenTag()) {
             case Tag.AND:
             case Tag.MULT:
@@ -429,9 +530,11 @@ public class Parser {
             case Tag.MINUS:
             case Tag.BITWISE_NOT:
             case Tag.LOGICAL_NOT:
-                return 1;
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
+                nextToken();
+                return prod;
             default:
-                return 0;
+                return prod;
         }
     }
 
@@ -441,28 +544,35 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int cast_expression() {
+    private Node cast_expression() {
+        Production prod = new Production("cast_expression");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         int pos = position;
-        int value = 0;
         if (getTokenTag() == Tag.LEFT_BRACKETS) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = type_name();
-            if (value == 1) {
-                value = accept(Tag.RIGHT_BRACKETS);
+            child1 = type_name();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = accept(Tag.RIGHT_BRACKETS);
             }
-            if (value == 1) {
-                value = cast_expression();
+            if (child2 != null) {
+                child3 = cast_expression();
             }
-            if (value == 1) {
-                return 1;
+            if (child3 != null && !child3.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
             position = pos;
         }
-        value = unary_expression();
-        if (value == 1) {
-            return 1;
+        child1 = unary_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -470,15 +580,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int multiplicative_expression() {
-        int value = cast_expression();
-        if (value == 1) {
-            value = rest3();
+    private Node multiplicative_expression() {
+        Production prod = new Production("multiplicative_expression");
+        Node child1 = cast_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest3();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -490,23 +604,30 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int rest3() {
-        int value = 0;
+    private Node rest3() {
+        Production prod = new Production("rest3");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.MULT:
             case Tag.DIV:
             case Tag.MOD:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = cast_expression();
-                if (value == 1) {
-                    value = rest3();
+                child1 = cast_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = rest3();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -515,15 +636,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int additive_expression() {
-        int value = multiplicative_expression();
-        if (value == 1) {
-            value = rest4();
+    private Node additive_expression() {
+        Production prod = new Production("additive_expression");
+        Node child1 = multiplicative_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest4();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -533,22 +658,29 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest4() {
-        int value = 0;
+    private Node rest4() {
+        Production prod = new Production("rest4");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.PLUS:
             case Tag.MINUS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = multiplicative_expression();
-                if (value == 1) {
-                    value = rest4();
+                child1 = multiplicative_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = rest4();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -557,15 +689,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int shift_expression() {
-        int value = additive_expression();
-        if (value == 1) {
-            value = rest5();
+    private Node shift_expression() {
+        Production prod = new Production("shift_expression");
+        Node child1 = additive_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest5();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -575,22 +711,29 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest5() {
-        int value = 0;
+    private Node rest5() {
+        Production prod = new Production("rest5");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.LEFT_SHIFT:
             case Tag.RIGHT_SHIFT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = additive_expression();
-                if (value == 1) {
-                    value = rest5();
+                child1 = additive_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = rest5();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -599,15 +742,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int relational_expression() {
-        int value = shift_expression();
-        if (value == 1) {
-            value = rest6();
+    private Node relational_expression() {
+        Production prod = new Production("relational_expression");
+        Node child1 = shift_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest6();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -619,24 +766,31 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest6() {
-        int value = 0;
+    private Node rest6() {
+        Production prod = new Production("rest6");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.LT:
             case Tag.GT:
             case Tag.LEQT:
             case Tag.GEQT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = shift_expression();
-                if (value == 1) {
-                    value = rest6();
+                child1 = shift_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = rest6();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -645,15 +799,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int equality_expression() {
-        int value = relational_expression();
-        if (value == 1) {
-            value = rest7();
+    private Node equality_expression() {
+        Production prod = new Production("equality_expression");
+        Node child1 = relational_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest7();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -663,22 +821,29 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest7() {
-        int value = 0;
+    private Node rest7() {
+        Production prod = new Production("rest7");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.EQ:
             case Tag.NOT_EQ:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = relational_expression();
-                if (value == 1) {
-                    value = rest7();
+                child1 = relational_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = rest7();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -687,15 +852,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int and_expression() {
-        int value = equality_expression();
-        if (value == 1) {
-            value = rest8();
+    private Node and_expression() {
+        Production prod = new Production("and_expression");
+        Node child1 = equality_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest8();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -704,20 +873,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest8() {
-        int value = 0;
+    private Node rest8() {
+        Production prod = new Production("rest8");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.AND) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = equality_expression();
-            if (value == 1) {
-                value = rest8();
+            child1 = equality_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest8();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -726,15 +902,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int exclusive_or_expression() {
-        int value = and_expression();
-        if (value == 1) {
-            value = rest9();
+    private Node exclusive_or_expression() {
+        Production prod = new Production("exclusive_or_expression");
+        Node child1 = and_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest9();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -743,20 +923,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest9() {
-        int value = 0;
+    private Node rest9() {
+        Production prod = new Production("rest9");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.XOR) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = and_expression();
-            if (value == 1) {
-                value = rest9();
+            child1 = and_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest9();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -765,15 +952,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int inclusive_or_expression() {
-        int value = exclusive_or_expression();
-        if (value == 1) {
-            value = rest10();
+    private Node inclusive_or_expression() {
+        Production prod = new Production("inclusive_or_expression");
+        Node child1 = exclusive_or_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest10();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -782,20 +973,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest10() {
-        int value = 0;
+    private Node rest10() {
+        Production prod = new Production("rest10");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.OR) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = exclusive_or_expression();
-            if (value == 1) {
-                value = rest10();
+            child1 = exclusive_or_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest10();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -804,15 +1002,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int logical_and_expression() {
-        int value = inclusive_or_expression();
-        if (value == 1) {
-            value = rest11();
+    private Node logical_and_expression() {
+        Production prod = new Production("logical_and_expression");
+        Node child1 = inclusive_or_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest11();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -821,20 +1023,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest11() {
-        int value = 0;
+    private Node rest11() {
+        Production prod = new Production("rest11");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.LOGICAL_AND) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = inclusive_or_expression();
-            if (value == 1) {
-                value = rest11();
+            child1 = inclusive_or_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest11();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -843,15 +1052,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int logical_or_expression() {
-        int value = logical_and_expression();
-        if (value == 1) {
-            value = rest12();
+    private Node logical_or_expression() {
+        Production prod = new Production("logical_or_expression");
+        Node child1 = logical_and_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest12();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -860,20 +1073,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest12() {
-        int value = 0;
+    private Node rest12() {
+        Production prod = new Production("rest12");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.LOGICAL_OR) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = logical_and_expression();
-            if (value == 1) {
-                value = rest12();
+            child1 = logical_and_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest12();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -882,15 +1102,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int conditional_expression() {
-        int value = logical_or_expression();
-        if (value == 1) {
-            value = left4();
+    private Node conditional_expression() {
+        Production prod = new Production("conditional_expression");
+        Node child1 = logical_or_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left4();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -900,23 +1124,31 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left4() {
-        int value = 0;
+    private Node left4() {
+        Production prod = new Production("left4");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         if (getTokenTag() == Tag.QMARK) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = expression();
-            if (value == 1) {
-                value = expect(Tag.COLON);
+            child1 = expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = expect(Tag.COLON);
             }
-            if (value == 1) {
-                value = conditional_expression();
+            if (child2 != null) {
+                child3 = conditional_expression();
             }
-            if (value == 1) {
-                return 1;
+            if (child3 != null && !child3.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                prod.addChilds(child3);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -927,25 +1159,30 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int assignment_expression() {
-        int value = unary_expression();
-        if (value == 1) {
-            value = assignment_operator();
+    private Node assignment_expression() {
+        Production prod = new Production("assignment_expression");
+        Node child1 = unary_expression();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = assignment_operator();
         }
-        if (value == 1) {
-            value = assignment_expression();
-            if (value < 1) {
-                return -1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            child3 = assignment_expression();
+            if (child3 == null || child3.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                prod.addChilds(child3);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
+        child1 = conditional_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        value = conditional_expression();
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -953,8 +1190,14 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int assignment_operator() {
-        return accept(Tag.ASSIGNMENT);
+    private Node assignment_operator() {
+        Production prod = new Production("assignment_operator");
+        Node child1 = accept(Tag.ASSIGNMENT);
+        if (child1 != null) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        return prod;
     }
 
     /**
@@ -962,15 +1205,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int expression() {
-        int value = assignment_expression();
-        if (value == 1) {
-            value = rest13();
+    private Node expression() {
+        Production prod = new Production("expression");
+        Node child1 = assignment_expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest13();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -979,20 +1226,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest13() {
-        int value = 0;
+    private Node rest13() {
+        Production prod = new Production("rest13");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = assignment_expression();
-            if (value == 1) {
-                value = rest13();
+            child1 = assignment_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest13();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1001,29 +1255,35 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int constant_expression() {
-        if (conditional_expression() == 1) {
-            return 1;
+    private Node constant_expression() {
+        Production prod = new Production("constant_expression");
+        Node child1 = conditional_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
      * declaration -> declaration_specifiers left5
      * @return
      */
-    private int declaration() {
-        int value = declaration_specifiers();
-        if (value == 1) {
-            value = left5();
-            if (value < 1) {
-                return -1;
+    private Node declaration() {
+        Production prod = new Production("declaration");
+        Node child1 = declaration_specifiers();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left5();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1032,19 +1292,23 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left5() {
+    private Node left5() {
+        Production prod = new Production("left5");
         if (getTokenTag() == Tag.SEMICOLON) {
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
             nextToken();
-            return 1;
+            return prod;
         }
-        int value = init_declarator_list();
-        if (value == 1) {
-            value = expect(Tag.SEMICOLON);
+        Node child1 = init_declarator_list();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.SEMICOLON);
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return -1;
+        return null;
     }
 
     /**
@@ -1055,38 +1319,43 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int declaration_specifiers() {
-        int value = storage_class_specifier();
-        if (value == 1) {
-            value = left6();
-            if (value < 1) {
-                return -1;
+    private Node declaration_specifiers() {
+        Production prod = new Production("declaration_specifiers");
+        Node child1 = storage_class_specifier();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left6();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = type_specifier();
-        if (value == 1) {
-            value = left6();
-            if (value < 1) {
-                return -1;
+        child1 = type_specifier();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left6();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = type_qualifier();
-        if (value == 1) {
-            value = left6();
-            if (value < 1) {
-                return -1;
+        child1 = type_qualifier();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left6();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1096,11 +1365,18 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left6() {
-        if (declaration_specifiers() == -1) {
-            return -1;
+    private Node left6() {
+        Production prod = new Production("left6");
+        Node child1 = declaration_specifiers();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -1109,18 +1385,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int init_declarator_list() {
-        int value = init_declarator();
-        if (value == 1) {
-            value = rest14();
-            if (value < 1) {
-                return -1;
+    private Node init_declarator_list() {
+        Production prod = new Production("init_declarator_lis");
+        Node child1 = init_declarator();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest14();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1129,20 +1408,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest14() {
-        int value = 0;
+    private Node rest14() {
+        Production prod = new Production("rest14");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = init_declarator();
-            if (value == 1) {
-                value = rest14();
+            child1 = init_declarator();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest14();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1152,18 +1438,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int init_declarator() {
-        int value = declarator();
-        if (value == 1) {
-            value = left7();
-            if (value < 1) {
-                return -1;
+    private Node init_declarator() {
+        Production prod = new Production("init_declarator");
+        Node child1 = declarator();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left7();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1172,17 +1461,23 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left7() {
-        int value = 0;
+    private Node left7() {
+        Production prod = new Production("left7");
+        Leaf terminal;
+        Node child1;
         if (getTokenValue().equals("=")) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = initializer();
-            if (value == 1) {
-                return 1;
+            child1 = initializer();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1191,17 +1486,19 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int storage_class_specifier() {
+    private Node storage_class_specifier() {
+        Production prod = new Production("storage_class_specifier");
         switch (getTokenTag()) {
             case Tag.TYPEDEF:
             case Tag.EXTERN:
             case Tag.STATIC:
             case Tag.AUTO:
             case Tag.REGISTER:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1213,7 +1510,8 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int type_specifier() {
+    private Node type_specifier() {
+        Production prod = new Production("type_specifier");
         switch (getTokenTag()) {
             case Tag.VOID:
             case Tag.CHAR:
@@ -1224,17 +1522,22 @@ public class Parser {
             case Tag.DOUBLE:
             case Tag.SIGNED:
             case Tag.UNSIGNED:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
         }
-        if (struct_or_union_specifier() == 1) {
-            return 1;
+        Node child1 = struct_or_union_specifier();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (enum_specifier() == 1) {
-            return 1;
+        child1 = enum_specifier();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
         //TODO: TYPEDEF_NAME vyriešiť
-        return 0;
+        return prod;
     }
 
     /**
@@ -1243,18 +1546,22 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int struct_or_union_specifier() {
-        int value = struct_or_union();
-        if (value == 1) {
-            value = left8();
-            if (value < 1) {
-                return -1;
+    private Node struct_or_union_specifier() {
+        Production prod = new Production("struct_or_union_specifier");
+        Node child1 = struct_or_union();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left8();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
             }
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1264,28 +1571,37 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left8() {
-        int value = 0;
+    private Node left8() {
+        Production prod = new Production("left8");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = struct_declaration_list();
-                if (value == 1) {
-                    value = expect(Tag.RIGHT_BRACES);
+                child1 = struct_declaration_list();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.RIGHT_BRACES);
                 }
-                if (value == 1) {
-                    return 0;
+                if (child2 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.IDENTIFIER:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = left9();
-                if (value == 1) {
-                    return 1;
+                child1 = left9();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1294,20 +1610,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left9() {
-        int value = 0;
+    private Node left9() {
+        Production prod = new Production("left9");
+        Leaf terminal;
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_BRACES) {
+            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = struct_declaration_list();
-            if (value == 1) {
-                value = expect(Tag.RIGHT_BRACES);
+            child1 = struct_declaration_list();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = expect(Tag.RIGHT_BRACES);
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1316,14 +1639,16 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int struct_or_union() {
+    private Node struct_or_union() {
+        Production prod = new Production("struct_or_union");
         switch (getTokenTag()) {
             case Tag.STRUCT:
             case Tag.UNION:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1332,18 +1657,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int struct_declaration_list() {
-        int value = struct_declaration();
-        if (value == 1) {
-            value = rest15();
-            if (value < 1) {
-                return -1;
+    private Node struct_declaration_list() {
+        Production prod = new Production("struct_declaration_list");
+        Node child1 = struct_declaration();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest15();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1352,15 +1680,25 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest15() {
-        int value = struct_declaration();
-        if (value == 1) {
-            value = rest15();
-            if (value < 1) {
-                return -1;
+    private Node rest15() {
+        Production prod = new Production("rest15");
+        Node child1 = struct_declaration();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest15();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if (child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -1369,18 +1707,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int struct_declaration() {
-        int value = specifier_qualifier_list();
-        if (value == 1) {
-            value = left10();
-            if (value < 1) {
-                return -1;
+    private Node struct_declaration() {
+        Production prod = new Production("struct_declaration");
+        Node child1 = specifier_qualifier_list();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left10();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1390,22 +1731,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left10() {
+    private Node left10() {
+        Production prod = new Production("left10");
         if (getTokenTag() == Tag.SEMICOLON) {
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
             nextToken();
-            return 1;
+            return prod;
         }
-        int value = struct_declarator_list();
-        if (value == 1) {
-            value = expect(Tag.SEMICOLON);
-            if (value < 1) {
-                return -1;
+        Node child1 = struct_declarator_list();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.SEMICOLON);
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1415,28 +1760,32 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int specifier_qualifier_list() {
-        int value = type_specifier();
-        if (value == 1) {
-            value = left11();
-            if (value < 1) {
-                return -1;
+    private Node specifier_qualifier_list() {
+        Production prod = new Production("specifier_qualifier_ist");
+        Node child1 = type_specifier();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left11();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = type_qualifier();
-        if (value == 1) {
-            value = left11();
-            if (value < 1) {
-                return -1;
+        child1 = type_qualifier();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left11();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1446,11 +1795,18 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left11() {
-        if (specifier_qualifier_list() == -1) {
-            return -1;
+    private Node left11() {
+        Production prod = new Production("left11");
+        Node child1 = specifier_qualifier_list();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -1459,18 +1815,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int struct_declarator_list() {
-        int value = struct_declarator();
-        if (value == 1) {
-            value = rest16();
-            if (value < 1) {
-                return -1;
+    private Node struct_declarator_list() {
+        Production prod = new Production("struct_declarator_list");
+        Node child1 = struct_declarator();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest16();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1479,20 +1838,26 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest16() {
-        int value = 0;
+    private Node rest16() {
+        Production prod = new Production("rest16");
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = struct_declarator();
-            if (value == 1) {
-                value = rest16();
+            child1 = struct_declarator();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest16();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1503,25 +1868,33 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int struct_declarator() {
+    private Node struct_declarator() {
+        Production prod = new Production("struct_declarator");
+        Node child1;
         if (getTokenTag() == Tag.COLON) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (constant_expression() == 1) {
-                return  1;
+            child1 = constant_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = declarator();
-        if (value == 1) {
-            value = left12();
-            if (value < 1) {
-                return -1;
+        child1 = declarator();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left12();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1530,15 +1903,22 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left12() {
+    private Node left12() {
+        Production prod = new Production("left12");
         if (getTokenTag() == Tag.COLON) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (constant_expression() == 1) {
-                return 1;
+            Node child1 = constant_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
+        } else {
+            prod.addChilds(new Leaf((byte) 255, "E", 0));
+            return prod;
         }
-        return 1;
     }
 
     /**
@@ -1547,15 +1927,20 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int enum_specifier() {
+    private Node enum_specifier() {
+        Production prod = new Production("enum_specifier");
         if (getTokenTag() == Tag.ENUM) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (left13() == 1) {
-                return 1;
+            Node child1 = left13();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1565,34 +1950,45 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left13() {
-        int value = 0;
+    private Node left13() {
+        Production prod = new Production("left13");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = enumerator_list();
-                if (value == 1) {
-                    value = left14();
+                child1 = enumerator_list();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = left14();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.IDENTIFIER:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.LEFT_BRACES);
-                if (value == 1) {
-                    value = enumerator_list();
+                child1 = expect(Tag.LEFT_BRACES);
+                if (child1 != null) {
+                    child2 = enumerator_list();
                 }
-                if (value == 1) {
-                    value = left14();
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    child3 = left14();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 };
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1602,19 +1998,25 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left14() {
+    private Node left14() {
+        Production prod = new Production("left14");
         switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
             case Tag.COMMA:
+                Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (expect(Tag.RIGHT_BRACES) == 1) {
-                    return 1;
+                Node child1 = expect(Tag.RIGHT_BRACES);
+                if ( child1 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1623,18 +2025,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int enumerator_list() {
-        int value = enumerator();
-        if (value == 1) {
-            value = rest17();
-            if (value < 1) {
-                return -1;
+    private Node enumerator_list() {
+        Production prod = new Production("enumerator_list");
+        Node child1 = enumerator();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest17();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1643,20 +2048,26 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest17() {
-        int value = 0;
+    private Node rest17() {
+        Production prod = new Production("rest17");
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = enumerator();
-            if (value == 1) {
-                value = rest17();
+            child1 = enumerator();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest17();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1666,18 +2077,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int enumerator() {
-        int value = enumeration_constant();
-        if (value == 1) {
-            value = left15();
-            if (value < 1) {
-                return -1;
+    private Node enumerator() {
+        Production prod = new Production("enumerator");
+        Node child1 = enumeration_constant();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left15();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1686,15 +2100,21 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left15() {
+    private Node left15() {
+        Production prod = new Production("left15");
         if (getTokenValue().equals("=")) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (constant_expression() == 1) {
-                return 1;
+            Node child1 = constant_expression();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -1703,14 +2123,16 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int type_qualifier() {
+    private Node type_qualifier() {
+        Production prod = new Production("type_qualifier");
         switch (getTokenTag()) {
             case Tag.CONST:
             case Tag.VOLATILE:
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
-                return 1;
+                return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1720,25 +2142,27 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int declarator() {
-        int value = pointer();
-        if (value == 1) {
-            value = direct_declarator();
-            if (value < 1) {
-                return 0;
+    private Node declarator() {
+        Production prod = new Production("declarator");
+        Node child1 = pointer();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = direct_declarator();
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
             }
+            return prod;
         }
-        if (value == 1) {
-            return 1;
+        child1 = direct_declarator();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        value = direct_declarator();
-        if (value == 1) {
-            return 1;
+        if (child1 == null) {
+            return null;
         }
-        if (value == -1) {
-            return -1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1747,31 +2171,43 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int direct_declarator() {
+    private Node direct_declarator() {
+        Production prod = new Production("direct_declarator");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest18() == 1) {
-                    return 1;
+                child1 = rest18();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.LEFT_BRACKETS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                int value = declarator();
-                if (value == 1) {
-                    value = accept(Tag.RIGHT_BRACKETS);
+                child1 = declarator();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = accept(Tag.RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = rest18();
+                if (child2 != null) {
+                    child3 = rest18();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 }
                 position = pos;
-                return 0;
+                return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1782,22 +2218,34 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int rest18() {
+    private Node rest18() {
+        Production prod = new Production("rest18");
+        Leaf terminal;
+        Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left16() == 1) {
-                    return 1;
+                child1 = left16();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.LEFT_BRACKETS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left17() == 1) {
-                    return 1;
+                child1 = left17();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -1811,65 +2259,81 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left16() {
+    private Node left16() {
+        Production prod = new Production("left16");
         int pos = position;
-        int value = 0;
+        Node child1, child2 = null;
+        Leaf terminal;
         switch (getTokenTag()) {
             case Tag.MULT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = accept(Tag.RIGHT_PARENTHESES);
-                if (value == 1) {
-                    value = rest18();
-                    if (value < 1) {
-                        return -1;
+                child1 = accept(Tag.RIGHT_PARENTHESES);
+                if (child1 != null) {
+                    child2 = rest18();
+                    if (child2 == null || child2.getChilds().isEmpty()) {
+                        return null;
+                    } else {
+                        prod.addChilds(terminal);
+                        prod.addChilds(child1);
+                        prod.addChilds(child2);
+                        return prod;
                     }
                 } else {
                     position = pos;
                     break;
                 }
-                if (value == 1) {
-                    return 1;
-                }
             case Tag.STATIC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left18() == 1) {
-                    return 1;
+                child1 = left18();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.RIGHT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest18() == 1) {
-                    return 1;
+                child1 = rest18();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        Node child3 = null;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest18();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
+        child1 = type_qualifier_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left19();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = type_qualifier_list();
-        if (value == 1) {
-            value = left19();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1880,41 +2344,51 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left17() {
+    private Node left17() {
+        Production prod = new Production("left17");
+        Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (rest18() == 1) {
-                return 1;
+            child1 = rest18();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = parameter_type_list();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
-            if (value == 0) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
+        child1 = parameter_type_list();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
+            if (child2 == null) {
+                return null;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = identifier_list();
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            child3 = rest18();
+            if (child3 == null || child3.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                prod.addChilds(child3);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
+        child1 = identifier_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest18();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
+            }
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1924,46 +2398,50 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left18() {
-        int value = type_qualifier_list();
-        if (value == 1) {
-            value = assignment_expression();
-            if (value < 1) {
-                return -1;
+    private Node left18() {
+        Production prod = new Production("left18");
+        Node child1 = type_qualifier_list();
+        Node child2 = null, child3 = null, child4 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = assignment_expression();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = expect(Tag.RIGHT_PARENTHESES);
+                if (child3 == null) {
+                    return null;
+                } else {
+                    child4 = rest18();
+                    if (child4 == null || child4.getChilds().isEmpty()) {
+                        return null;
+                    } else {
+                        prod.addChilds(child1);
+                        prod.addChilds(child2);
+                        prod.addChilds(child3);
+                        prod.addChilds(child4);
+                        return prod;
+                    }
+                }
             }
         }
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest18();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -1975,62 +2453,77 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left19() {
+    private Node left19() {
+        Production prod = new Production("left19");
         int pos = position;
-        int value = 0;
+        Node child1, child2 = null, child3 = null;
+        Leaf terminal;
         switch (getTokenTag()) {
             case Tag.MULT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = accept(Tag.RIGHT_PARENTHESES);
-                if (value == 1) {
-                    value = rest18();
-                    if (value < 1) {
-                        return -1;
+                child1 = accept(Tag.RIGHT_PARENTHESES);
+                if (child1 != null) {
+                    child2 = rest18();
+                    if (child2 == null || child2.getChilds().isEmpty()) {
+                        return null;
+                    } else {
+                        prod.addChilds(terminal);
+                        prod.addChilds(child1);
+                        prod.addChilds(child2);
+                        return prod;
                     }
                 } else {
                     position = pos;
                     break;
                 }
-                if (value == 1) {
-                    return 1;
-                }
             case Tag.STATIC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = assignment_expression();
-                if (value == 1) {
-                    value = expect(Tag.RIGHT_PARENTHESES);
+                child1 = assignment_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
-                if (value == 1) {
-                    value = rest18();
+                if (child2 != null) {
+                    child3 = rest18();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.RIGHT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest18() == 1) {
-                    return 1;
+                child1 = rest18();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest18();
+                if (child3 == null ||child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest18();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2038,16 +2531,21 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int pointer() {
+    private Node pointer() {
+        Production prod = new Production("pointer");
         int pos = position;
         if (getTokenTag() == Tag.MULT) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (left20() == 1) {
-                return 1;
+            Node child1 = left20();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
         }
         position = pos;
-        return 0;
+        return prod;
     }
 
     /**
@@ -2057,21 +2555,33 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left20() {
-        int value = type_qualifier_list();
-        if (value == 1) {
-            value = left21();
-            if (value < 1) {
-                return -1;
+    private Node left20() {
+        Production prod = new Production("left20");
+        Node child1 = type_qualifier_list();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left21();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
+        if (child1 == null) {
+            return null;
         }
-        if (pointer() == -1) {
-            return -1;
+        child1 = pointer();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2080,11 +2590,18 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left21() {
-        if (pointer() == -1) {
-            return -1;
+    private Node left21() {
+        Production prod = new Production("left21");
+        Node child1 = pointer();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2093,18 +2610,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int type_qualifier_list() {
-        int value = type_qualifier();
-        if (value == 1) {
-            value = rest19();
-            if (value < 1) {
-                return -1;
+    private Node type_qualifier_list() {
+        Production prod = new Production("type_qualifier_list");
+        Node child1 = type_qualifier();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest19();
+            if (child2 == null ||child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2113,13 +2633,25 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest19() {
-        if (type_qualifier() == 1) {
-            if (rest19() < 1) {
-                return -1;
+    private Node rest19() {
+        Production prod = new Production("rest19");
+        Node child1 = type_qualifier();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest19();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if(child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2128,14 +2660,20 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int parameter_type_list() {
-        if (parameter_list() == 1) {
-            if (left37() == 1) {
-                return 1;
+    private Node parameter_type_list() {
+        Production prod = new Production("parameter_type_list");
+        Node child1 = parameter_list();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left37();
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2144,15 +2682,22 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left37() {
+    private Node left37() {
+        Production prod = new Production("left37");
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (expect(Tag.ELLIPSIS) == 1) {
-                return 1;
+            Node child1 = expect(Tag.ELLIPSIS);
+            if (child1 != null) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
+        } else {
+            prod.addChilds(new Leaf((byte) 255, "E", 0));
+            return prod;
         }
-        return 1;
     }
 
     /**
@@ -2161,18 +2706,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int parameter_list() {
-        int value = parameter_declaration();
-        if (value == 1) {
-            value = rest20();
-            if (value < 1) {
-                return -1;
+    private Node parameter_list() {
+        Production prod = new Production("parameter_list");
+        Node child1 = parameter_declaration();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest20();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2181,20 +2729,26 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest20() {
-        int value = 0;
+    private Node rest20() {
+        Production prod = new Production("rest20");
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = parameter_declaration();
-            if (value == 1) {
-                value = rest20();
+            child1 = parameter_declaration();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = rest20();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -2204,18 +2758,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int parameter_declaration() {
-        int value = declaration_specifiers();
-        if (value == 1) {
-            value = left22();
-            if (value < 1) {
-                return -1;
+    private Node parameter_declaration() {
+        Production prod = new Production("parameter_declaration");
+        Node child1 = declaration_specifiers();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left22();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2226,19 +2783,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left22() {
-        int value = declarator();
-        if (value == 1) {
-            return 1;
+    private Node left22() {
+        Production prod = new Production("left22");
+        Node child1 = declarator();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (value == -1) {
-            return -1;
+        if (child1 == null) {
+            return null;
         }
-        value = abstract_declarator();
-        if (value == -1) {
-            return -1;
+        child1 = abstract_declarator();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2247,15 +2811,20 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int identifier_list() {
+    private Node identifier_list() {
+        Production prod = new Production("identifier_list");
         if (getTokenTag() == Tag.IDENTIFIER) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (rest21() == 1) {
-                return 1;
+            Node child1 = rest21();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2264,20 +2833,26 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest21() {
-        int value = 0;
+    private Node rest21() {
+        Production prod = new Production("rest21");
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = expect(Tag.IDENTIFIER);
-            if (value == 1) {
-                value = rest21();
+            child1 = expect(Tag.IDENTIFIER);
+            if (child1 != null) {
+                child2 = rest21();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -2287,18 +2862,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int type_name() {
-        int value = specifier_qualifier_list();
-        if (value == 1) {
-            value = left23();
-            if (value < 1) {
-                return -1;
+    private Node type_name() {
+        Production prod = new Production("type_name");
+        Node child1 = specifier_qualifier_list();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left23();
+            if (child2 == null ||child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2307,11 +2885,18 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left23() {
-        if (abstract_declarator() == -1) {
-            return -1;
+    private Node left23() {
+        Production prod = new Production("left23");
+        Node child1 = abstract_declarator();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2321,25 +2906,27 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int abstract_declarator() {
-        int value = pointer();
-        if (value == 1) {
-            value = left24();
-            if (value < 1) {
-                return 0;
+    private Node abstract_declarator() {
+        Production prod = new Production("abstractor_declarator");
+        Node child1 = pointer();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left24();
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
             }
+            return prod;
         }
-        if (value == 1) {
-            return 1;
+        child1 = direct_abstract_declarator();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        value = direct_abstract_declarator();
-        if (value == 1) {
-            return 1;
+        if (child1 == null) {
+            return null;
         }
-        if (value == -1) {
-            return -1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2348,11 +2935,18 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left24() {
-        if (direct_abstract_declarator() == -1) {
-            return -1;
+    private Node left24() {
+        Production prod = new Production("left24");
+        Node child1 = direct_abstract_declarator();
+        if (child1 == null) {
+            return null;
         }
-        return 1;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2362,24 +2956,35 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int direct_abstract_declarator() {
+    private Node direct_abstract_declarator() {
+        Production prod = new Production("direct_abstract_declarator");
+        Leaf terminal;
+        Node child1;
         int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left25() == 1) {
-                    return 1;
+                child1 = left25();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
                 position = pos;
-                return 0;
+                return prod;
             case Tag.LEFT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left26() == 1) {
-                    return 1;
+                child1 = left26();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2390,47 +2995,56 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left25() {
+    private Node left25() {
+        Production prod = new Production("left25");
+        Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (rest22() == 1) {
-                return 1;
+            child1 = rest22();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = abstract_declarator();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
-            if (value == 0) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        value = parameter_type_list();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
-            if (value == 0) {
-                return -1;
+        child1 = abstract_declarator();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                }  else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
+        child1 = parameter_type_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null ||child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2443,65 +3057,81 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left26() {
+    private Node left26() {
+        Production prod = new Production("left26");
         int pos = position;
-        int value = 0;
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.RIGHT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest22() == 1) {
-                    return 1;
+                child1 = rest22();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.MULT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = accept(Tag.RIGHT_PARENTHESES);
-                if (value == 1) {
-                    value = rest22();
-                    if (value < 1) {
-                        return -1;
+                child1 = accept(Tag.RIGHT_PARENTHESES);
+                if (child1 != null) {
+                    child2 = rest22();
+                    if (child2 == null ||child2.getChilds().isEmpty()) {
+                        return null;
+                    } else {
+                        prod.addChilds(terminal);
+                        prod.addChilds(child1);
+                        prod.addChilds(child2);
+                        return prod;
                     }
                 } else {
                     position = pos;
                     break;
                 }
-                if (value == 1) {
-                    return 1;
-                }
             case Tag.STATIC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left27() == 1) {
-                    return 1;
+                child1 = left27();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        child1 = assignment_expression();
+        Node child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
+        child1 = type_qualifier_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = left28();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = type_qualifier_list();
-        if (value == 1) {
-            value = left28();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2511,46 +3141,50 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left27() {
-        int value = type_qualifier_list();
-        if (value == 1) {
-            value = assignment_expression();
-            if (value < 1) {
-                return -1;
+    private Node left27() {
+        Production prod = new Production("left27");
+        Node child1 = type_qualifier_list();
+        Node child2 = null, child3 = null, child4 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = assignment_expression();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = expect(Tag.RIGHT_PARENTHESES);
+                if (child3 == null) {
+                    return null;
+                } else {
+                    child4 = rest22();
+                    if (child4 == null || child4.getChilds().isEmpty()) {
+                        return null;
+                    } else {
+                        prod.addChilds(child1);
+                        prod.addChilds(child2);
+                        prod.addChilds(child3);
+                        prod.addChilds(child4);
+                        return prod;
+                    }
+                }
             }
         }
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2561,46 +3195,58 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left28() {
-        int value = 0;
+    private Node left28() {
+        Production prod = new Production("left28");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null;
         switch (getTokenTag()) {
             case Tag.STATIC:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = assignment_expression();
-                if (value == 1) {
-                    value = expect(Tag.RIGHT_PARENTHESES);
+                child1 = assignment_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
-                if (value == 1) {
-                    value = rest22();
+                if (child2 != null) {
+                    child3 = rest22();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.RIGHT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (rest22() == 1) {
-                    return 1;
+                child1 = rest22();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        value = assignment_expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_PARENTHESES);
-            if (value == 0) {
-                return -1;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_PARENTHESES);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2610,22 +3256,34 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest22() {
+    private Node rest22() {
+        Production prod = new Production("rest22");
+        Leaf terminal;
+        Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left26() == 1) {
-                    return 1;
+                child1 = left26();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.LEFT_BRACKETS:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left29() == 1) {
-                    return 1;
+                child1 = left29();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             default:
-                return 1;
+                prod.addChilds(new Leaf((byte) 255,"E",0));
+                return prod;
         }
     }
 
@@ -2636,31 +3294,39 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left29() {
+    private Node left29() {
+        Production prod = new Production("left29");
+        Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (rest22() == 1) {
-                return 1;
+            child1 = rest22();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = parameter_type_list();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
-            if (value == 0) {
-                return -1;
+        child1 = parameter_type_list();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = rest22();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest22();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2670,23 +3336,30 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int initializer() {
-        int value = 0;
+    private Node initializer() {
+        Production prod = new Production("initializer");
+        Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_BRACES) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            value = initializer_list();
-            if (value == 1) {
-                value = left14();
+            child1 = initializer_list();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                child2 = left14();
             }
-            if (value == 1) {
-                return 1;
+            if (child2 != null && !child2.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        if (assignment_expression() == 1) {
-            return 1;
+        child1 = assignment_expression();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2696,34 +3369,38 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int initializer_list() {
-        int value = designation();
-        if (value == 1) {
-            value = initializer();
-            if (value < 1) {
-                return -1;
+    private Node initializer_list() {
+        Production prod = new Production("initialize_list");
+        Node child1= designation();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = initializer();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = rest23();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest23();
-            if (value < 1) {
-                return -1;
+        child1 = initializer();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest23();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = initializer();
-        if (value == 1) {
-            value = rest23();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2732,15 +3409,21 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest23() {
+    private Node rest23() {
+        Production prod = new Production("rest23");
         if (getTokenTag() == Tag.COMMA) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (left30() == 1) {
-                return 1;
+            Node child1 = left30();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         } else {
-            return 1;
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
     }
 
@@ -2751,34 +3434,38 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left30() {
-        int value = designation();
-        if (value == 1) {
-            value = initializer();
-            if (value < 1) {
-                return -1;
+    private Node left30() {
+        Production prod = new Production("left30");
+        Node child1 = designation();
+        Node child2, child3;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = initializer();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = rest23();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                }  else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = rest23();
-            if (value < 1) {
-                return -1;
+        child1 = initializer();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest23();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = initializer();
-        if (value == 1) {
-            value = rest23();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2787,20 +3474,19 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int designation() {
-        int value = designator_list();
-        if (value == 1) {
+    private Node designation() {
+        Production prod = new Production("designation");
+        Node child1 = designator_list();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
             if (getTokenValue().equals("=")) {
-                value = 1;
+                prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
+                return prod;
             } else {
-                return -1;
+                return null;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2809,18 +3495,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int designator_list() {
-        int value = designator();
-        if (value == 1) {
-            value = rest24();
-            if (value < 1) {
-                return -1;
+    private Node designator_list() {
+        Production prod = new Production("designator_list");
+        Node child1 = designator();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest24();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2829,14 +3518,25 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest24() {
-        int value = designator();
-        if (value == 1) {
-            if (rest24() < 1) {
-                return -1;
+    private Node rest24() {
+        Production prod = new Production("rest24");
+        Node child1 = designator();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest24();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if (child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -2846,27 +3546,37 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int designator() {
-        int value = 0;
+    private Node designator() {
+        Production prod = new Production("designator");
+        Node child1, child2 = null;
+        Leaf terminal;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = constant_expression();
-                if (value == 1) {
-                    value = expect(Tag.RIGHT_PARENTHESES);
+                child1 = constant_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.DOT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (expect(Tag.IDENTIFIER) == 1) {
-                    return 1;
+                child1 = expect(Tag.IDENTIFIER);
+                if (child1 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2880,26 +3590,39 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //TODO: pozrieť sa na chyby
-    private int statement() {
-        if (labeled_statement() == 1) {
-            return 1;
+    private Node statement() {
+        Production prod = new Production("statement");
+        Node child1 = labeled_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (compound_statement() == 1) {
-            return 1;
+        child1 = compound_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (expression_statement() == 1) {
-            return 1;
+        child1 = expression_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (selection_statement() == 1) {
-            return 1;
+        child1 = selection_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (iteration_statement() == 1) {
-            return 1;
+        child1 = iteration_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (jump_statement() == 1) {
-            return 1;
+        child1 = jump_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2910,46 +3633,61 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int labeled_statement() {
+    private Node labeled_statement() {
+        Production prod = new Production("labeled_statement");
         int pos = position;
-        int value = 0;
+        Node child1, child2 = null, child3 = null;
+        Leaf terminal;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = accept(Tag.COLON);
-                if (value == 1) {
-                    value = statement();
+                child1 = accept(Tag.COLON);
+                if (child1 != null) {
+                    child2 = statement();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
                 position = pos;
                 break;
             case Tag.DEFAULT:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.COLON);
-                if (value == 1) {
-                    value = statement();
+                child1 = expect(Tag.COLON);
+                if (child1 != null) {
+                    child2 = statement();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.CASE:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = constant_expression();
-                if (value == 1) {
-                    value = expect(Tag.COLON);
+                child1 = constant_expression();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.COLON);
                 }
-                if (value == 1) {
-                    value = statement();
+                if (child2 != null) {
+                    child3 = statement();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child3 != null && !child3.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2958,15 +3696,20 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int compound_statement() {
+    private Node compound_statement() {
+        Production prod = new Production("compound_statement");
         if (getTokenTag() == Tag.LEFT_BRACES) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (left31() == 1) {
-                return 1;
+            Node child1 = left31();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -2976,22 +3719,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left31() {
+    private Node left31() {
+        Production prod = new Production("left31");
         if (getTokenTag() == Tag.RIGHT_BRACES) {
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
             nextToken();
-            return 1;
+            return prod;
         }
-        int value = block_item_list();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACES);
-            if (value == 0) {
-                return -1;
+        Node child1 = block_item_list();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACES);
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3000,18 +3747,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int block_item_list() {
-        int value = block_item();
-        if (value == 1) {
-            value = rest25();
-            if (value < 1) {
-                return -1;
+    private Node block_item_list() {
+        Production prod = new Production("block_item_list");
+        Node child1 = block_item();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest25();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3020,14 +3770,25 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest25() {
-        int value = block_item();
-        if (value == 1) {
-            if (rest25() < 1) {
-                return -1;
+    private Node rest25() {
+        Production prod = new Production("rest25");
+        Node child1 = block_item();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest25();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if (child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -3038,14 +3799,19 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //TODO: pozrieť sa na chyby
-    private int block_item() {
-        if (declaration() == 1) {
-            return 1;
+    private Node block_item() {
+        Production prod = new Production("block_item");
+        Node child1 = declaration();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (statement() == 1) {
-            return 1;
+        child1 = statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3055,22 +3821,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int expression_statement() {
+    private Node expression_statement() {
+        Production prod = new Production("expression_statement");
         if (getTokenTag() == Tag.SEMICOLON) {
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
             nextToken();
-            return 1;
+            return prod;
         }
-        int value = expression();
-        if (value == 1) {
-            value = expect(Tag.SEMICOLON);
-            if (value == 0) {
-                return -1;
+        Node child1 = expression();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.SEMICOLON);
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3080,46 +3850,61 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int selection_statement() {
-        int value = 0;
+    private Node selection_statement() {
+        Production prod = new Production("selection_statement");
+        Node child1, child2 = null, child3 = null, child4 = null, child5 = null;
+        Leaf terminal;
         switch (getTokenTag()) {
             case Tag.IF:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.LEFT_BRACKETS);
-                if (value == 1) {
-                    value = expression();
+                child1 = expect(Tag.LEFT_BRACKETS);
+                if (child1 != null) {
+                    child2 = expression();
                 }
-                if (value == 1) {
-                    value = expect(Tag. RIGHT_BRACKETS);
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    child3 = expect(Tag. RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = statement();
+                if (child3 != null) {
+                    child4 = statement();
                 }
-                if (value == 1) {
-                    value = left32();
+                if (child4 != null && !child4.getChilds().isEmpty()) {
+                    child5 = left32();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child5 != null && !child5.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    prod.addChilds(child4);
+                    prod.addChilds(child5);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.SWITCH:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag.LEFT_BRACKETS);
-                if (value == 1) {
-                    value = expression();
+                child1 = expect(Tag.LEFT_BRACKETS);
+                if (child1 != null) {
+                    child2 = expression();
                 }
-                if (value == 1) {
-                    value = expect(Tag. RIGHT_BRACKETS);
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    child3 = expect(Tag. RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = statement();
+                if (child3 != null) {
+                    child4 = statement();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child4 != null && !child4.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    prod.addChilds(child4);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3128,16 +3913,23 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int left32() {
+    private Node left32() {
+        Production prod = new Production("left32");
         if (getTokenTag() == Tag.ELSE) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (statement() == 1) {
-                return 1;
+            Node child1 = statement();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             } else {
-                return -1;
+                return null;
             }
+        } else {
+            prod.addChilds(new Leaf((byte) 255,"E",0));
+            return prod;
         }
-        return 1;
     }
 
     /**
@@ -3148,59 +3940,80 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int iteration_statement() {
-        int value = 0;
+    private Node iteration_statement() {
+        Production prod = new Production("iteration_statement");
+        Leaf terminal;
+        Node child1, child2 = null, child3 = null, child4 = null;
+        Node child5 = null, child6 = null;
         switch (getTokenTag()) {
             case Tag.WHILE:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag. LEFT_BRACKETS);
-                if (value == 1) {
-                    value = expression();
+                child1 = expect(Tag. LEFT_BRACKETS);
+                if (child1 != null) {
+                    child2 = expression();
                 }
-                if (value == 1) {
-                    value = expect(Tag. RIGHT_BRACKETS);
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    child3 = expect(Tag. RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = statement();
+                if (child3 != null) {
+                    child4 = statement();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child4 != null && !child4.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    prod.addChilds(child4);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.DO:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = statement();
-                if (value == 1) {
-                    value = expect(Tag.WHILE);
+                child1 = statement();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    child2 = expect(Tag.WHILE);
                 }
-                if (value == 1) {
-                    value = expect(Tag. LEFT_BRACKETS);
+                if (child2 != null) {
+                    child3 = expect(Tag. LEFT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = expression();
+                if (child3 != null) {
+                    child4 = expression();
                 }
-                if (value == 1) {
-                    value = expect(Tag. RIGHT_BRACKETS);
+                if (child4 != null && !child4.getChilds().isEmpty()) {
+                    child5 = expect(Tag. RIGHT_BRACKETS);
                 }
-                if (value == 1) {
-                    value = expect(Tag.SEMICOLON);
+                if (child5 != null) {
+                    child6 = expect(Tag.SEMICOLON);
                 }
-                if (value == 1) {
-                    return 1;
+                if (child6 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    prod.addChilds(child4);
+                    prod.addChilds(child5);
+                    prod.addChilds(child6);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.FOR:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                value = expect(Tag. LEFT_BRACKETS);
-                if (value == 1) {
-                    value = left33();
+                child1 = expect(Tag. LEFT_BRACKETS);
+                if (child1 != null) {
+                    child2 = left33();
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null && !child2.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3210,40 +4023,44 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left33() {
-        int value = expression_statement();
-        if (value == 1) {
-            value = expression_statement();
-            if (value < 1) {
-                return -1;
+    private Node left33() {
+        Production prod = new Production("left33");
+        Node child1 = expression_statement();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expression_statement();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = left34();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = left34();
-            if (value < 1) {
-                return -1;
+        child1 = declaration();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expression_statement();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                child3 = left34();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        value = declaration();
-        if (value == 1) {
-            value = expression_statement();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            value = left34();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3253,31 +4070,39 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left34() {
+    private Node left34() {
+        Production prod = new Production("left34");
+        Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            if (statement() == 1) {
-                return 1;
+            child1 = statement();
+            if (child1 != null && !child1.getChilds().isEmpty()) {
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                return prod;
             }
-            return -1;
+            return null;
         }
-        int value = expression();
-        if (value == 1) {
-            value = expect(Tag.RIGHT_BRACKETS);
-            if (value == 0) {
-                return -1;
+        child1 = expression();
+        Node child2 = null, child3 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.RIGHT_BRACKETS);
+            if (child2 == null) {
+                return null;
+            } else {
+                child3 = statement();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
-        if (value == 1) {
-            value = statement();
-            if (value < 1) {
-                return -1;
-            }
-        }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3289,33 +4114,48 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int jump_statement() {
+    private Node jump_statement() {
+        Production prod = new Production("jump_statement");
+        Leaf terminal;
+        Node child1, child2 = null;
         switch (getTokenTag()) {
             case Tag.GOTO:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                int value = expect(Tag.IDENTIFIER);
-                if (value == 1) {
-                    value = expect(Tag.SEMICOLON);
+                child1 = expect(Tag.IDENTIFIER);
+                if (child1 != null) {
+                    child2 = expect(Tag.SEMICOLON);
                 }
-                if (value == 1) {
-                    return 1;
+                if (child2 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.CONTINUE:
             case Tag.BREAK:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (expect(Tag.SEMICOLON) == 1) {
-                    return 1;
+                child1 = expect(Tag.SEMICOLON);
+                if (child1 != null) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
             case Tag.RETURN:
+                terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                if (left35() == 1) {
-                    return 1;
+                child1 = left35();
+                if (child1 != null && !child1.getChilds().isEmpty()) {
+                    prod.addChilds(terminal);
+                    prod.addChilds(child1);
+                    return prod;
                 }
-                return -1;
+                return null;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3325,22 +4165,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int left35() {
+    private Node left35() {
+        Production prod = new Production("left35");
         if (getTokenTag() == Tag.SEMICOLON) {
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
             nextToken();
-            return 1;
+            return prod;
         }
-        int value = expression();
-        if (value == 1) {
-            value = expect(Tag.SEMICOLON);
-            if (value == 0) {
-                return -1;
+        Node child1 = expression();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = expect(Tag.SEMICOLON);
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3349,18 +4193,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int translation_unit() {
-        int value = external_declaration();
-        if (value == 1) {
-            value = rest26();
-            if (value < 1) {
-                return -1;
+    private Node translation_unit() {
+        Production prod = new Production("translation_unit");
+        Node child1 = external_declaration();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest26();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3369,14 +4216,25 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private int rest26() {
-        int value = external_declaration();
-        if (value == 1) {
-            if (rest26() < 1) {
-                return -1;
+    private Node rest26() {
+        Production prod = new Production("rest26");
+        Node child1 = external_declaration();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest26();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if (child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 
     /**
@@ -3386,14 +4244,19 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //TODO: pozrieť sa na chyby
-    private int external_declaration() {
-        if (function_definition() == 1) {
-            return 1;
+    private Node external_declaration() {
+        Production prod = new Production("external_declaration");
+        Node child1 = function_definition();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        if (declaration() == 1) {
-            return 1;
+        child1 = declaration();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3401,18 +4264,23 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int function_definition() {
-        int value = declaration_specifiers();
-        if(value == 1) {
-            value = declarator();
+    private Node function_definition() {
+        Production prod = new Production("functional_definiton");
+        Node child1 = declaration_specifiers();
+        Node child2 = null, child3 = null;
+        if(child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = declarator();
         }
-        if (value == 1) {
-            value = left36();
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            child3 = left36();
         }
-        if (value == 1) {
-            return 1;
+        if (child3 != null && !child3.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            prod.addChilds(child3);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3421,18 +4289,24 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private int left36() {
-        int value = declaration_list();
-        if (value == 1) {
-            value = compound_statement();
+    private Node left36() {
+        Production prod = new Production("left36");
+        Node child1 = declaration_list();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = compound_statement();
         }
-        if (value == 1) {
-            return 1;
+        if (child2 != null && !child2.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            prod.addChilds(child2);
+            return prod;
         }
-        if (compound_statement() == 1) {
-            return 1;
+        child1 = compound_statement();
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3441,18 +4315,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int declaration_list() {
-        int value = declaration();
-        if (value == 1) {
-            value = rest27();
-            if (value < 1) {
-                return -1;
+    private Node declaration_list() {
+        Production prod = new Production("declaration_list");
+        Node child1 = declaration();
+        Node child2 = null;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest27();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        if (value == 1) {
-            return 1;
-        }
-        return 0;
+        return prod;
     }
 
     /**
@@ -3462,13 +4339,24 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private int rest27() {
-        int value = declaration();
-        if (value == 1) {
-            if (rest27() < 1) {
-                return -1;
+    private Node rest27() {
+        Production prod = new Production("rest27");
+        Node child1 = declaration();
+        Node child2;
+        if (child1 != null && !child1.getChilds().isEmpty()) {
+            child2 = rest27();
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                return prod;
             }
         }
-        return 1;
+        if (child1 == null) {
+            return null;
+        }
+        prod.addChilds(new Leaf((byte) 255,"E",0));
+        return prod;
     }
 }

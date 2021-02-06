@@ -1725,14 +1725,18 @@ public class Parser {
         if (value == 1) {
             value = direct_declarator();
             if (value < 1) {
-                return -1;
+                return 0;
             }
         }
         if (value == 1) {
             return 1;
         }
-        if (direct_declarator() == 1) {
+        value = direct_declarator();
+        if (value == 1) {
             return 1;
+        }
+        if (value == -1) {
+            return -1;
         }
         return 0;
     }
@@ -1742,9 +1746,9 @@ public class Parser {
      *                     | '(' declarator ')' rest18
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
      */
     private int direct_declarator() {
+        int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 nextToken();
@@ -1756,7 +1760,7 @@ public class Parser {
                 nextToken();
                 int value = declarator();
                 if (value == 1) {
-                    value = expect(Tag.RIGHT_BRACKETS);
+                    value = accept(Tag.RIGHT_BRACKETS);
                 }
                 if (value == 1) {
                     value = rest18();
@@ -1764,7 +1768,8 @@ public class Parser {
                 if (value == 1) {
                     return 1;
                 }
-                return -1;
+                position = pos;
+                return 0;
         }
         return 0;
     }
@@ -2032,16 +2037,16 @@ public class Parser {
      * pointer -> '*' left20
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
      */
     private int pointer() {
+        int pos = position;
         if (getTokenTag() == Tag.MULT) {
             nextToken();
             if (left20() == 1) {
                 return 1;
             }
-            return -1;
         }
+        position = pos;
         return 0;
     }
 
@@ -2118,13 +2123,36 @@ public class Parser {
     }
 
     /**
-     * parameter_type_list ->  parameter_list ',' '...' ????
-     *                       | parameter_list
-     * @return
+     * parameter_type_list ->  parameter_list left37
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa na to ??
     private int parameter_type_list() {
+        if (parameter_list() == 1) {
+            if (left37() == 1) {
+                return 1;
+            }
+            return -1;
+        }
         return 0;
+    }
+
+    /**
+     * left37 ->  ',' '...'
+     *          | epsilon
+     * @return 1 ak sa našla zhoda,
+     *         -1 ak sa vyskytla chyba
+     */
+    private int left37() {
+        if (getTokenTag() == Tag.COMMA) {
+            nextToken();
+            if (expect(Tag.ELLIPSIS) == 1) {
+                return 1;
+            }
+            return -1;
+        }
+        return 1;
     }
 
     /**
@@ -2194,14 +2222,22 @@ public class Parser {
      * left22 ->  declarator
      *          | abstract_declarator
      *          | epsilon
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
-    //TODO:upraviť
     private int left22() {
-        if (declarator() == 1) {
+        int value = declarator();
+        if (value == 1) {
             return 1;
         }
-        abstract_declarator();
+        if (value == -1) {
+            return -1;
+        }
+        value = abstract_declarator();
+        if (value == -1) {
+            return -1;
+        }
         return 1;
     }
 
@@ -2290,14 +2326,18 @@ public class Parser {
         if (value == 1) {
             value = left24();
             if (value < 1) {
-                return -1;
+                return 0;
             }
         }
         if (value == 1) {
             return 1;
         }
-        if (direct_abstract_declarator() == 1) {
+        value = direct_abstract_declarator();
+        if (value == 1) {
             return 1;
+        }
+        if (value == -1) {
+            return -1;
         }
         return 0;
     }
@@ -2323,13 +2363,15 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     private int direct_abstract_declarator() {
+        int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
                 nextToken();
                 if (left25() == 1) {
                     return 1;
                 }
-                return -1;
+                position = pos;
+                return 0;
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 if (left26() == 1) {

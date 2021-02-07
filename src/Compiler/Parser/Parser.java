@@ -202,7 +202,8 @@ public class Parser {
                 prod.addChilds(child3);
                 prod.addChilds(child4);
                 prod.addChilds(child5);
-                prod.addChilds(child6);
+                prod.getChilds().addAll(child6.getChilds());
+                //prod.addChilds(child6);
                 return prod;
             }
             position = pos;
@@ -214,7 +215,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -250,7 +252,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
                 return null;
@@ -265,7 +268,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -276,7 +280,8 @@ public class Parser {
                 child1 = rest1();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -286,7 +291,8 @@ public class Parser {
                 child1 = left2();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -314,7 +320,8 @@ public class Parser {
                 child1 = rest1();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -328,7 +335,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -354,7 +362,8 @@ public class Parser {
             child1 = rest1();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
@@ -369,7 +378,8 @@ public class Parser {
         if (child3 != null && !child3.getChilds().isEmpty()) {
             prod.addChilds(child1);
             prod.addChilds(child2);
-            prod.addChilds(child3);
+            prod.getChilds().addAll(child3.getChilds());
+            //prod.addChilds(child3);
             return prod;
         }
         return null;
@@ -390,7 +400,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return null;
@@ -416,7 +427,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -439,7 +451,7 @@ public class Parser {
     private Node unary_expression() {
         Production prod = new Production("unary_expression");
         Leaf terminal;
-        Node child1, child2 = null;
+        Node child1, child2;
         switch (getTokenTag()) {
             case Tag.INC:
             case Tag.DEC:
@@ -458,7 +470,8 @@ public class Parser {
                 child1 = left3();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -589,7 +602,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -621,7 +635,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -645,7 +660,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -674,7 +690,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -698,7 +715,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -727,7 +745,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -751,7 +770,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -784,7 +804,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -808,7 +829,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -837,7 +859,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -861,7 +884,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -887,7 +911,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -911,7 +936,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -937,7 +963,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -961,7 +988,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -987,7 +1015,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1011,7 +1040,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -1037,7 +1067,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1061,7 +1092,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -1087,7 +1119,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1111,7 +1144,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -1162,7 +1196,7 @@ public class Parser {
     private Node assignment_expression() {
         Production prod = new Production("assignment_expression");
         Node child1 = unary_expression();
-        Node child2 = null, child3 = null;
+        Node child2 = null, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_operator();
         }
@@ -1214,7 +1248,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
-            prod.addChilds(child2);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
             return prod;
         }
         return prod;
@@ -1240,7 +1275,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1279,7 +1315,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1322,14 +1359,15 @@ public class Parser {
     private Node declaration_specifiers() {
         Production prod = new Production("declaration_specifiers");
         Node child1 = storage_class_specifier();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left6();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1340,7 +1378,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1351,7 +1390,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1395,7 +1435,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1422,7 +1463,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1441,14 +1483,15 @@ public class Parser {
     private Node init_declarator() {
         Production prod = new Production("init_declarator");
         Node child1 = declarator();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left7();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1464,11 +1507,10 @@ public class Parser {
     private Node left7() {
         Production prod = new Production("left7");
         Leaf terminal;
-        Node child1;
         if (getTokenValue().equals("=")) {
             terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = initializer();
+            Node child1 = initializer();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
@@ -1554,12 +1596,12 @@ public class Parser {
             child2 = left8();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
             }
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.addChilds(child2);
-            return prod;
         }
         return prod;
     }
@@ -1596,7 +1638,8 @@ public class Parser {
                 child1 = left9();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -1667,7 +1710,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1690,7 +1734,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1710,14 +1755,15 @@ public class Parser {
     private Node struct_declaration() {
         Production prod = new Production("struct_declaration");
         Node child1 = specifier_qualifier_list();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left10();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1763,14 +1809,15 @@ public class Parser {
     private Node specifier_qualifier_list() {
         Production prod = new Production("specifier_qualifier_ist");
         Node child1 = type_specifier();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left11();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1781,7 +1828,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1818,14 +1866,15 @@ public class Parser {
     private Node struct_declarator_list() {
         Production prod = new Production("struct_declarator_list");
         Node child1 = struct_declarator();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest16();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1851,7 +1900,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -1890,7 +1940,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -1935,7 +1986,8 @@ public class Parser {
             Node child1 = left13();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
@@ -1965,7 +2017,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -1983,7 +2036,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 };
                 return null;
@@ -2035,7 +2089,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2061,7 +2116,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -2087,7 +2143,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2183,7 +2240,8 @@ public class Parser {
                 child1 = rest18();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -2201,7 +2259,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
                 position = pos;
@@ -2229,7 +2288,8 @@ public class Parser {
                 child1 = left16();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -2239,7 +2299,8 @@ public class Parser {
                 child1 = left17();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -2262,7 +2323,7 @@ public class Parser {
     private Node left16() {
         Production prod = new Production("left16");
         int pos = position;
-        Node child1, child2 = null;
+        Node child1, child2;
         Leaf terminal;
         switch (getTokenTag()) {
             case Tag.MULT:
@@ -2276,7 +2337,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
-                        prod.addChilds(child2);
+                        prod.getChilds().addAll(child2.getChilds());
+                        //prod.addChilds(child2);
                         return prod;
                     }
                 } else {
@@ -2289,7 +2351,8 @@ public class Parser {
                 child1 = left18();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -2299,12 +2362,13 @@ public class Parser {
                 child1 = rest18();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
         }
-        Node child3 = null;
+        Node child3;
         child1 = assignment_expression();
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
@@ -2317,7 +2381,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -2329,7 +2394,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2353,28 +2419,29 @@ public class Parser {
             child1 = rest18();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
+                prod.getChilds().addAll(child1.getChilds());
                 prod.addChilds(child1);
                 return prod;
             }
             return null;
         }
         child1 = parameter_type_list();
-        Node child2 = null, child3 = null;
+        Node child2 = null, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
-            }
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            child3 = rest18();
-            if (child3 == null || child3.getChilds().isEmpty()) {
-                return null;
             } else {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
-                prod.addChilds(child3);
-                return prod;
+                child3 = rest18();
+                if (child3 == null || child3.getChilds().isEmpty()) {
+                    return null;
+                } else {
+                    prod.addChilds(child1);
+                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
+                    return prod;
+                }
             }
         }
         child1 = identifier_list();
@@ -2384,7 +2451,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2401,7 +2469,7 @@ public class Parser {
     private Node left18() {
         Production prod = new Production("left18");
         Node child1 = type_qualifier_list();
-        Node child2 = null, child3 = null, child4 = null;
+        Node child2, child3, child4;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null || child2.getChilds().isEmpty()) {
@@ -2418,7 +2486,8 @@ public class Parser {
                         prod.addChilds(child1);
                         prod.addChilds(child2);
                         prod.addChilds(child3);
-                        prod.addChilds(child4);
+                        prod.getChilds().addAll(child4.getChilds());
+                        //prod.addChilds(child4);
                         return prod;
                     }
                 }
@@ -2436,7 +2505,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -2470,7 +2540,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
-                        prod.addChilds(child2);
+                        prod.getChilds().addAll(child2.getChilds());
+                        //prod.addChilds(child2);
                         return prod;
                     }
                 } else {
@@ -2491,7 +2562,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
                 return null;
@@ -2501,7 +2573,8 @@ public class Parser {
                 child1 = rest18();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -2518,7 +2591,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -2540,7 +2614,8 @@ public class Parser {
             Node child1 = left20();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
         }
@@ -2565,7 +2640,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2613,14 +2689,15 @@ public class Parser {
     private Node type_qualifier_list() {
         Production prod = new Production("type_qualifier_list");
         Node child1 = type_qualifier();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest19();
             if (child2 == null ||child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2643,7 +2720,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2668,7 +2746,8 @@ public class Parser {
             child2 = left37();
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -2709,14 +2788,15 @@ public class Parser {
     private Node parameter_list() {
         Production prod = new Production("parameter_list");
         Node child1 = parameter_declaration();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest20();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2742,7 +2822,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -2761,14 +2842,15 @@ public class Parser {
     private Node parameter_declaration() {
         Production prod = new Production("parameter_declaration");
         Node child1 = declaration_specifiers();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left22();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2819,7 +2901,8 @@ public class Parser {
             Node child1 = rest21();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
@@ -2846,7 +2929,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -2865,14 +2949,15 @@ public class Parser {
     private Node type_name() {
         Production prod = new Production("type_name");
         Node child1 = specifier_qualifier_list();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left23();
             if (child2 == null ||child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -2909,12 +2994,13 @@ public class Parser {
     private Node abstract_declarator() {
         Production prod = new Production("abstractor_declarator");
         Node child1 = pointer();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left24();
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
             }
             return prod;
         }
@@ -2968,7 +3054,8 @@ public class Parser {
                 child1 = left25();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 position = pos;
@@ -2979,7 +3066,8 @@ public class Parser {
                 child1 = left26();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -3004,13 +3092,14 @@ public class Parser {
             child1 = rest22();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
         }
         child1 = abstract_declarator();
-        Node child2 = null, child3 = null;
+        Node child2, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
@@ -3022,7 +3111,8 @@ public class Parser {
                 }  else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3034,12 +3124,13 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null ||child3.getChilds().isEmpty()) {
+                if (child3 == null || child3.getChilds().isEmpty()) {
                     return null;
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3061,7 +3152,7 @@ public class Parser {
         Production prod = new Production("left26");
         int pos = position;
         Leaf terminal;
-        Node child1, child2 = null;
+        Node child1, child2;
         switch (getTokenTag()) {
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -3069,7 +3160,8 @@ public class Parser {
                 child1 = rest22();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -3084,7 +3176,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
-                        prod.addChilds(child2);
+                        prod.getChilds().addAll(child2.getChilds());
+                        //prod.addChilds(child2);
                         return prod;
                     }
                 } else {
@@ -3097,13 +3190,14 @@ public class Parser {
                 child1 = left27();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
         }
         child1 = assignment_expression();
-        Node child3 = null;
+        Node child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
@@ -3115,7 +3209,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3127,7 +3222,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3144,7 +3240,7 @@ public class Parser {
     private Node left27() {
         Production prod = new Production("left27");
         Node child1 = type_qualifier_list();
-        Node child2 = null, child3 = null, child4 = null;
+        Node child2, child3, child4;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null || child2.getChilds().isEmpty()) {
@@ -3161,7 +3257,8 @@ public class Parser {
                         prod.addChilds(child1);
                         prod.addChilds(child2);
                         prod.addChilds(child3);
-                        prod.addChilds(child4);
+                        prod.getChilds().addAll(child4.getChilds());
+                        //prod.addChilds(child4);
                         return prod;
                     }
                 }
@@ -3179,7 +3276,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3214,7 +3312,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
                 return null;
@@ -3224,7 +3323,8 @@ public class Parser {
                 child1 = rest22();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -3241,7 +3341,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3267,7 +3368,8 @@ public class Parser {
                 child1 = left26();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -3277,7 +3379,8 @@ public class Parser {
                 child1 = left29();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -3303,13 +3406,14 @@ public class Parser {
             child1 = rest22();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
         }
         child1 = parameter_type_list();
-        Node child2 = null, child3 = null;
+        Node child2, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
@@ -3321,7 +3425,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3349,7 +3454,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
             return null;
@@ -3372,7 +3478,7 @@ public class Parser {
     private Node initializer_list() {
         Production prod = new Production("initialize_list");
         Node child1= designation();
-        Node child2 = null, child3 = null;
+        Node child2, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = initializer();
             if (child2 == null || child2.getChilds().isEmpty()) {
@@ -3384,7 +3490,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3396,7 +3503,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3417,7 +3525,8 @@ public class Parser {
             Node child1 = left30();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
@@ -3449,7 +3558,8 @@ public class Parser {
                 }  else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -3461,7 +3571,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3505,7 +3616,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3528,7 +3640,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3704,7 +3817,8 @@ public class Parser {
             Node child1 = left31();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
-                prod.addChilds(child1);
+                prod.getChilds().addAll(child1.getChilds());
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;
@@ -3757,7 +3871,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3780,7 +3895,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -3877,7 +3993,8 @@ public class Parser {
                     prod.addChilds(child2);
                     prod.addChilds(child3);
                     prod.addChilds(child4);
-                    prod.addChilds(child5);
+                    prod.getChilds().addAll(child5.getChilds());
+                    //prod.addChilds(child5);
                     return prod;
                 }
                 return null;
@@ -4008,7 +4125,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
-                    prod.addChilds(child2);
+                    prod.getChilds().addAll(child2.getChilds());
+                    //prod.addChilds(child2);
                     return prod;
                 }
                 return null;
@@ -4026,7 +4144,7 @@ public class Parser {
     private Node left33() {
         Production prod = new Production("left33");
         Node child1 = expression_statement();
-        Node child2 = null, child3 = null;
+        Node child2, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expression_statement();
             if (child2 == null || child2.getChilds().isEmpty()) {
@@ -4038,7 +4156,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -4055,7 +4174,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
-                    prod.addChilds(child3);
+                    prod.getChilds().addAll(child3.getChilds());
+                    //prod.addChilds(child3);
                     return prod;
                 }
             }
@@ -4085,7 +4205,7 @@ public class Parser {
             return null;
         }
         child1 = expression();
-        Node child2 = null, child3 = null;
+        Node child2, child3;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
@@ -4150,7 +4270,8 @@ public class Parser {
                 child1 = left35();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    prod.getChilds().addAll(child1.getChilds());
+                    //prod.addChilds(child1);
                     return prod;
                 }
                 return null;
@@ -4173,7 +4294,7 @@ public class Parser {
             return prod;
         }
         Node child1 = expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = expect(Tag.SEMICOLON);
             if (child2 == null) {
@@ -4196,14 +4317,15 @@ public class Parser {
     private Node translation_unit() {
         Production prod = new Production("translation_unit");
         Node child1 = external_declaration();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest26();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -4226,7 +4348,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -4277,7 +4400,8 @@ public class Parser {
         if (child3 != null && !child3.getChilds().isEmpty()) {
             prod.addChilds(child1);
             prod.addChilds(child2);
-            prod.addChilds(child3);
+            prod.getChilds().addAll(child3.getChilds());
+            //prod.addChilds(child3);
             return prod;
         }
         return prod;
@@ -4318,14 +4442,15 @@ public class Parser {
     private Node declaration_list() {
         Production prod = new Production("declaration_list");
         Node child1 = declaration();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest27();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }
@@ -4349,7 +4474,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
-                prod.addChilds(child2);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
                 return prod;
             }
         }

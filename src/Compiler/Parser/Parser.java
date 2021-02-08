@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Parser {
     private int position = 0;
     private ArrayList<Token> tokenStream = new ArrayList<>();
-    private ArrayList<Node> parseTree = new ArrayList<>();
+    private Production parseTree;
 
     public Parser(String file) {
         Scanner scanner = new Scanner(file);
@@ -123,12 +123,10 @@ public class Parser {
                 return prod;
             default:
                 child1 = constant();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (!child1.getChilds().isEmpty()) {
                     prod.addChilds(child1);
-                    return prod;
-                } else {
-                    return prod;
                 }
+                return prod;
         }
     }
 
@@ -167,7 +165,7 @@ public class Parser {
 
     /**
      * postfix_expression ->  primary_expression rest1
-     *                      | '(' type_name ')' '{' initializer_list '}' left1
+     *                      | '(' type_name ')' '{' initializer_list left1
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
@@ -179,7 +177,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = type_name();
-            Node child3 = null, child4 = null, child5 = null, child6 = null;
+            Node child3 = null, child4 = null, child5 = null;
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = accept(Tag.RIGHT_BRACKETS);
             }
@@ -190,27 +188,23 @@ public class Parser {
                 child4 = initializer_list();
             }
             if (child4 != null && !child4.getChilds().isEmpty()) {
-                child5 = accept(Tag.RIGHT_BRACES);
+                child5 = left1();
             }
-            if (child5 != null) {
-                child6 = left1();
-            }
-            if (child6 != null && !child6.getChilds().isEmpty()) {
+            if (child5 != null && !child5.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.addChilds(child2);
                 prod.addChilds(child3);
                 prod.addChilds(child4);
-                prod.addChilds(child5);
-                prod.getChilds().addAll(child6.getChilds());
-                //prod.addChilds(child6);
+                prod.getChilds().addAll(child5.getChilds());
+                //prod.addChilds(child5);
                 return prod;
             }
             position = pos;
         }
         child1 = primary_expression();
         child2 = null;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest1();
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
@@ -477,9 +471,9 @@ public class Parser {
                 return null;
         }
         child1 = unary_operator();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = cast_expression();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2.getChilds().isEmpty()) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -488,7 +482,7 @@ public class Parser {
             }
         }
         child1 = postfix_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -576,6 +570,7 @@ public class Parser {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.addChilds(child2);
+                prod.addChilds(child3);
                 return prod;
             }
             position = pos;
@@ -596,15 +591,17 @@ public class Parser {
     private Node multiplicative_expression() {
         Production prod = new Production("multiplicative_expression");
         Node child1 = cast_expression();
-        Node child2 = null;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        Node child2;
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest3();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -629,7 +626,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = cast_expression();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (!child1.getChilds().isEmpty()) {
                     child2 = rest3();
                 }
                 if (child2 != null && !child2.getChilds().isEmpty()) {
@@ -654,15 +651,17 @@ public class Parser {
     private Node additive_expression() {
         Production prod = new Production("additive_expression");
         Node child1 = multiplicative_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest4();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -709,15 +708,17 @@ public class Parser {
     private Node shift_expression() {
         Production prod = new Production("shift_expression");
         Node child1 = additive_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest5();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -764,15 +765,17 @@ public class Parser {
     private Node relational_expression() {
         Production prod = new Production("relational_expression");
         Node child1 = shift_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest6();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -823,15 +826,17 @@ public class Parser {
     private Node equality_expression() {
         Production prod = new Production("equality_expression");
         Node child1 = relational_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest7();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -878,15 +883,17 @@ public class Parser {
     private Node and_expression() {
         Production prod = new Production("and_expression");
         Node child1 = equality_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest8();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -930,15 +937,17 @@ public class Parser {
     private Node exclusive_or_expression() {
         Production prod = new Production("exclusive_or_expression");
         Node child1 = and_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest9();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -982,15 +991,17 @@ public class Parser {
     private Node inclusive_or_expression() {
         Production prod = new Production("inclusive_or_expression");
         Node child1 = exclusive_or_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest10();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -1034,15 +1045,17 @@ public class Parser {
     private Node logical_and_expression() {
         Production prod = new Production("logical_and_expression");
         Node child1 = inclusive_or_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest11();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -1086,15 +1099,17 @@ public class Parser {
     private Node logical_or_expression() {
         Production prod = new Production("logical_or_expression");
         Node child1 = logical_and_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest12();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -1138,15 +1153,17 @@ public class Parser {
     private Node conditional_expression() {
         Production prod = new Production("conditional_expression");
         Node child1 = logical_or_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = left4();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -1160,10 +1177,9 @@ public class Parser {
      */
     private Node left4() {
         Production prod = new Production("left4");
-        Leaf terminal;
         Node child1, child2 = null, child3 = null;
         if (getTokenTag() == Tag.QMARK) {
-            terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
+            Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = expression();
             if (child1 != null && !child1.getChilds().isEmpty()) {
@@ -1212,7 +1228,10 @@ public class Parser {
             }
         }
         child1 = conditional_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -1229,7 +1248,6 @@ public class Parser {
         Node child1 = accept(Tag.ASSIGNMENT);
         if (child1 != null) {
             prod.addChilds(child1);
-            return prod;
         }
         return prod;
     }
@@ -1242,15 +1260,17 @@ public class Parser {
     private Node expression() {
         Production prod = new Production("expression");
         Node child1 = assignment_expression();
-        Node child2 = null;
+        Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest13();
-        }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            prod.getChilds().addAll(child2.getChilds());
-            //prod.addChilds(child2);
-            return prod;
+            if (child2 == null || child2.getChilds().isEmpty()) {
+                return null;
+            } else {
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
+            }
         }
         return prod;
     }
@@ -1303,7 +1323,9 @@ public class Parser {
 
     /**
      * declaration -> declaration_specifiers left5
-     * @return
+     * @return 1 ak sa našla zhoda,
+     *         0 ak sa zhoda nenašla
+     *         -1 ak sa vyskytla chyba
      */
     private Node declaration() {
         Production prod = new Production("declaration");
@@ -1338,14 +1360,33 @@ public class Parser {
         }
         Node child1 = init_declarator_list();
         Node child2 = null;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            //error recovery
+            while (getTokenTag() != Tag.SEMICOLON) {
+                nextToken();
+            }
+            nextToken();
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            return prod;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.SEMICOLON);
         }
         if (child2 != null) {
             prod.addChilds(child1);
             return prod;
         }
-        return null;
+        //error recovery
+        while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+            nextToken();
+        }
+        if (getTokenTag() == Tag.SEMICOLON) {
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            nextToken();
+            return prod;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1360,7 +1401,7 @@ public class Parser {
         Production prod = new Production("declaration_specifiers");
         Node child1 = storage_class_specifier();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = left6();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1384,7 +1425,7 @@ public class Parser {
             }
         }
         child1 = type_qualifier();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = left6();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1444,8 +1485,8 @@ public class Parser {
     }
 
     /**
-     * rest 14 ->  ',' init_declarator rest14
-     *           | epsilon
+     * rest14 ->  ',' init_declarator rest14
+     *          | epsilon
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
@@ -1569,12 +1610,18 @@ public class Parser {
                 return prod;
         }
         Node child1 = struct_or_union_specifier();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = enum_specifier();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -1591,8 +1638,8 @@ public class Parser {
     private Node struct_or_union_specifier() {
         Production prod = new Production("struct_or_union_specifier");
         Node child1 = struct_or_union();
-        Node child2 = null;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        Node child2;
+        if (!child1.getChilds().isEmpty()) {
             child2 = left8();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1622,7 +1669,16 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = struct_declaration_list();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 == null) {
+                    //error recovery
+                    while (getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                }
+                if (!child1.getChilds().isEmpty()) {
                     child2 = expect(Tag.RIGHT_BRACES);
                 }
                 if (child2 != null) {
@@ -1630,8 +1686,19 @@ public class Parser {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
                     return prod;
+                } else {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.RIGHT_BRACES) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
                 }
-                return null;
             case Tag.IDENTIFIER:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
@@ -1661,7 +1728,16 @@ public class Parser {
             terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = struct_declaration_list();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 == null) {
+                //error recovery
+                while (getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                nextToken();
+                prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                return prod;
+            }
+            if (!child1.getChilds().isEmpty()) {
                 child2 = expect(Tag.RIGHT_BRACES);
             }
             if (child2 != null) {
@@ -1669,8 +1745,19 @@ public class Parser {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
                 return prod;
+            } else {
+                //error recovery
+                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                if (getTokenTag() == Tag.RIGHT_BRACES) {
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
+                    return null;
+                }
             }
-            return null;
         } else {
             prod.addChilds(new Leaf((byte) 255,"E",0));
             return prod;
@@ -1706,7 +1793,7 @@ public class Parser {
         Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest15();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1728,7 +1815,10 @@ public class Parser {
         Production prod = new Production("rest15");
         Node child1 = struct_declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest15();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1738,9 +1828,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if (child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;
@@ -1786,10 +1873,28 @@ public class Parser {
         }
         Node child1 = struct_declarator_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            //error recovery
+            while (getTokenTag() != Tag.SEMICOLON) {
+                nextToken();
+            }
+            nextToken();
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            return prod;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.SEMICOLON);
             if (child2 == null) {
-                return null;
+                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                if (getTokenTag() == Tag.SEMICOLON) {
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
+                    return null;
+                }
             } else {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
@@ -1822,7 +1927,7 @@ public class Parser {
             }
         }
         child1 = type_qualifier();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = left11();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1869,7 +1974,7 @@ public class Parser {
         Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest16();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1897,7 +2002,7 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest16();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
@@ -1925,7 +2030,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = constant_expression();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (!child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -1934,7 +2039,10 @@ public class Parser {
         }
         child1 = declarator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left12();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1960,7 +2068,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = constant_expression();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (!child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -2011,17 +2119,40 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = enumerator_list();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    child2 = left14();
-                }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.getChilds().addAll(child2.getChilds());
-                    //prod.addChilds(child2);
+                if (child1 == null) {
+                    //error recovery
+                    while (getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
                     return prod;
                 }
-                return null;
+                if (!child1.getChilds().isEmpty()) {
+                    child2 = left14();
+                }
+                if (child2 == null) {
+                    return null;
+                }
+                if (child2.getChilds().isEmpty()) {
+                    //TODO:nie som si istý
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.RIGHT_BRACES) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
+                }
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.getChilds().addAll(child2.getChilds());
+                //prod.addChilds(child2);
+                return prod;
             case Tag.IDENTIFIER:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
@@ -2029,18 +2160,41 @@ public class Parser {
                 if (child1 != null) {
                     child2 = enumerator_list();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 == null) {
+                    //error recovery
+                    while (getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                }
+                if (!child2.getChilds().isEmpty()) {
                     child3 = left14();
                 }
-                if (child3 != null && !child3.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
-                };
-                return null;
+                if (child3 == null) {
+                    return  null;
+                }
+                if (child3.getChilds().isEmpty()) {
+                    //TODO:nie som si istý
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.RIGHT_BRACES) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
+                }
+                prod.addChilds(terminal);
+                prod.addChilds(child1);
+                prod.addChilds(child2);
+                prod.getChilds().addAll(child3.getChilds());
+                //prod.addChilds(child3);
+                return prod;
         }
         return prod;
     }
@@ -2063,12 +2217,23 @@ public class Parser {
                 Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 Node child1 = expect(Tag.RIGHT_BRACES);
-                if ( child1 != null) {
+                if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     return prod;
+                } else {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.RIGHT_BRACES) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
                 }
-                return null;
         }
         return prod;
     }
@@ -2085,7 +2250,7 @@ public class Parser {
         Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest17();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2137,9 +2302,9 @@ public class Parser {
         Production prod = new Production("enumerator");
         Node child1 = enumeration_constant();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = left15();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2163,7 +2328,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = constant_expression();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (!child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -2203,7 +2368,7 @@ public class Parser {
         Production prod = new Production("declarator");
         Node child1 = pointer();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = direct_declarator();
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(child1);
@@ -2212,12 +2377,12 @@ public class Parser {
             return prod;
         }
         child1 = direct_declarator();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
-        }
         if (child1 == null) {
             return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
         return prod;
     }
@@ -2274,7 +2439,6 @@ public class Parser {
      *          | '(' left17
      *          | epsilon
      * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
     private Node rest18() {
@@ -2332,7 +2496,7 @@ public class Parser {
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
                     child2 = rest18();
-                    if (child2 == null || child2.getChilds().isEmpty()) {
+                    if (child2 == null) {
                         return null;
                     } else {
                         prod.addChilds(terminal);
@@ -2370,7 +2534,10 @@ public class Parser {
         }
         Node child3;
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -2388,7 +2555,10 @@ public class Parser {
             }
         }
         child1 = type_qualifier_list();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left19();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -2417,7 +2587,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = rest18();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
                 prod.addChilds(child1);
@@ -2426,8 +2596,11 @@ public class Parser {
             return null;
         }
         child1 = parameter_type_list();
-        Node child2 = null, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        Node child2, child3;
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
@@ -2445,7 +2618,10 @@ public class Parser {
             }
         }
         child1 = identifier_list();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest18();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -2469,8 +2645,11 @@ public class Parser {
     private Node left18() {
         Production prod = new Production("left18");
         Node child1 = type_qualifier_list();
+        if (child1 == null) {
+            return null;
+        }
         Node child2, child3, child4;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -2494,7 +2673,10 @@ public class Parser {
             }
         }
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -2535,7 +2717,7 @@ public class Parser {
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
                     child2 = rest18();
-                    if (child2 == null || child2.getChilds().isEmpty()) {
+                    if (child2 == null) {
                         return null;
                     } else {
                         prod.addChilds(terminal);
@@ -2558,7 +2740,7 @@ public class Parser {
                 if (child2 != null) {
                     child3 = rest18();
                 }
-                if (child3 != null && !child3.getChilds().isEmpty()) {
+                if (child3 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
@@ -2571,7 +2753,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = rest18();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
@@ -2580,7 +2762,10 @@ public class Parser {
                 return null;
         }
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -2634,25 +2819,18 @@ public class Parser {
         Production prod = new Production("left20");
         Node child1 = type_qualifier_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
-            child2 = left21();
-            if (child2 == null || child2.getChilds().isEmpty()) {
-                return null;
-            } else {
-                prod.addChilds(child1);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
-                return prod;
-            }
-        }
         if (child1 == null) {
             return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
+            child2 = left21();
+            prod.addChilds(child1);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
+            return prod;
         }
         child1 = pointer();
-        if (child1 == null) {
-            return null;
-        }
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -2669,10 +2847,7 @@ public class Parser {
     private Node left21() {
         Production prod = new Production("left21");
         Node child1 = pointer();
-        if (child1 == null) {
-            return null;
-        }
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -2690,9 +2865,9 @@ public class Parser {
         Production prod = new Production("type_qualifier_list");
         Node child1 = type_qualifier();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest19();
-            if (child2 == null ||child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2714,9 +2889,9 @@ public class Parser {
         Production prod = new Production("rest19");
         Node child1 = type_qualifier();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest19();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2724,9 +2899,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if(child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;
@@ -2742,9 +2914,12 @@ public class Parser {
         Production prod = new Production("parameter_type_list");
         Node child1 = parameter_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left37();
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
@@ -2789,9 +2964,12 @@ public class Parser {
         Production prod = new Production("parameter_list");
         Node child1 = parameter_declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest20();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2843,7 +3021,10 @@ public class Parser {
         Production prod = new Production("parameter_declaration");
         Node child1 = declaration_specifiers();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left22();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -2868,18 +3049,18 @@ public class Parser {
     private Node left22() {
         Production prod = new Production("left22");
         Node child1 = declarator();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
-        }
         if (child1 == null) {
             return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
         child1 = abstract_declarator();
         if (child1 == null) {
             return null;
         }
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -2899,7 +3080,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = rest21();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
@@ -2950,9 +3131,12 @@ public class Parser {
         Production prod = new Production("type_name");
         Node child1 = specifier_qualifier_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left23();
-            if (child2 == null ||child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2976,7 +3160,7 @@ public class Parser {
         if (child1 == null) {
             return null;
         }
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -2995,9 +3179,9 @@ public class Parser {
         Production prod = new Production("abstractor_declarator");
         Node child1 = pointer();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             child2 = left24();
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
@@ -3005,12 +3189,12 @@ public class Parser {
             return prod;
         }
         child1 = direct_abstract_declarator();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
-        }
         if (child1 == null) {
             return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+            return prod;
         }
         return prod;
     }
@@ -3027,7 +3211,7 @@ public class Parser {
         if (child1 == null) {
             return null;
         }
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -3100,7 +3284,10 @@ public class Parser {
         }
         child1 = abstract_declarator();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
@@ -3118,7 +3305,10 @@ public class Parser {
             }
         }
         child1 = parameter_type_list();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
@@ -3198,7 +3388,10 @@ public class Parser {
         }
         child1 = assignment_expression();
         Node child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -3216,7 +3409,10 @@ public class Parser {
             }
         }
         child1 = type_qualifier_list();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left28();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3241,7 +3437,10 @@ public class Parser {
         Production prod = new Production("left27");
         Node child1 = type_qualifier_list();
         Node child2, child3, child4;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3265,7 +3464,10 @@ public class Parser {
             }
         }
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -3330,7 +3532,10 @@ public class Parser {
                 return null;
         }
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
@@ -3414,7 +3619,10 @@ public class Parser {
         }
         child1 = parameter_type_list();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
@@ -3448,20 +3656,45 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = initializer_list();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
-                child2 = left14();
-            }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
-                prod.addChilds(terminal);
-                prod.addChilds(child1);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
+            if (child1 == null) {
+                while (getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                nextToken();
+                prod.addChilds(new Leaf((byte) 254, "Error", -1));
                 return prod;
             }
-            return null;
+            if (!child1.getChilds().isEmpty()) {
+                child2 = left14();
+            }
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                //TODO:nie som si istý
+                //error recovery
+                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                if (getTokenTag() == Tag.RIGHT_BRACES) {
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
+                    return null;
+                }
+            }
+            prod.addChilds(terminal);
+            prod.addChilds(child1);
+            prod.getChilds().addAll(child2.getChilds());
+            //prod.addChilds(child2);
+            return prod;
         }
         child1 = assignment_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -3479,7 +3712,10 @@ public class Parser {
         Production prod = new Production("initialize_list");
         Node child1= designation();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = initializer();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3497,7 +3733,10 @@ public class Parser {
             }
         }
         child1 = initializer();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest23();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3547,7 +3786,10 @@ public class Parser {
         Production prod = new Production("left30");
         Node child1 = designation();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = initializer();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3565,7 +3807,10 @@ public class Parser {
             }
         }
         child1 = initializer();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest23();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3588,7 +3833,10 @@ public class Parser {
     private Node designation() {
         Production prod = new Production("designation");
         Node child1 = designator_list();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             if (getTokenValue().equals("=")) {
                 prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
@@ -3610,7 +3858,10 @@ public class Parser {
         Production prod = new Production("designator_list");
         Node child1 = designator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest24();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3634,7 +3885,10 @@ public class Parser {
         Production prod = new Production("rest24");
         Node child1 = designator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest24();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -3644,9 +3898,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if (child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;
@@ -3668,7 +3919,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = constant_expression();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (!child1.getChilds().isEmpty()) {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
@@ -3706,32 +3957,47 @@ public class Parser {
     private Node statement() {
         Production prod = new Production("statement");
         Node child1 = labeled_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = compound_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = expression_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = selection_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = iteration_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = jump_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -3785,7 +4051,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = constant_expression();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (!child1.getChilds().isEmpty()) {
                     child2 = expect(Tag.COLON);
                 }
                 if (child2 != null) {
@@ -3815,13 +4081,19 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = left31();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1.getChilds().isEmpty()) {
+                //error recovery
+                while (getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                nextToken();
+                prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            } else {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
-                return prod;
             }
-            return null;
+            return prod;
         }
         return prod;
     }
@@ -3842,15 +4114,29 @@ public class Parser {
         }
         Node child1 = block_item_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            //error recovery
+            while (getTokenTag() != Tag.RIGHT_BRACES) {
+                nextToken();
+            }
+            nextToken();
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            return prod;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACES);
             if (child2 == null) {
-                return null;
+                //error recovery
+                while (getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                nextToken();
+                prod.addChilds(new Leaf((byte) 254, "Error", -1));
             } else {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
-                return prod;
             }
+            return prod;
         }
         return prod;
     }
@@ -3889,9 +4175,12 @@ public class Parser {
         Production prod = new Production("rest25");
         Node child1 = block_item();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest25();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -3899,9 +4188,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if (child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;
@@ -3914,16 +4200,21 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa na chyby
     private Node block_item() {
         Production prod = new Production("block_item");
         Node child1 = declaration();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -3946,10 +4237,29 @@ public class Parser {
         }
         Node child1 = expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            //error recovery
+            while (getTokenTag() != Tag.SEMICOLON) {
+                nextToken();
+            }
+            nextToken();
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            return prod;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.SEMICOLON);
             if (child2 == null) {
-                return null;
+                //error recovery
+                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                if (getTokenTag() == Tag.SEMICOLON) {
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
+                    return null;
+                }
             } else {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
@@ -3987,7 +4297,7 @@ public class Parser {
                 if (child4 != null && !child4.getChilds().isEmpty()) {
                     child5 = left32();
                 }
-                if (child5 != null && !child5.getChilds().isEmpty()) {
+                if (child5 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
@@ -4104,6 +4414,15 @@ public class Parser {
                 if (child5 != null) {
                     child6 = expect(Tag.SEMICOLON);
                 }
+                if (child1 == null || child2 == null || child3 == null || child4 == null || child5 == null) {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON) {
+                        nextToken();
+                    }
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                }
                 if (child6 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
@@ -4113,8 +4432,19 @@ public class Parser {
                     prod.addChilds(child5);
                     prod.addChilds(child6);
                     return prod;
+                } else {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.SEMICOLON) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
                 }
-                return null;
             case Tag.FOR:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
@@ -4145,7 +4475,10 @@ public class Parser {
         Production prod = new Production("left33");
         Node child1 = expression_statement();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expression_statement();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -4163,7 +4496,10 @@ public class Parser {
             }
         }
         child1 = declaration();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expression_statement();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -4206,7 +4542,10 @@ public class Parser {
         }
         child1 = expression();
         Node child2, child3;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
@@ -4237,13 +4576,21 @@ public class Parser {
     private Node jump_statement() {
         Production prod = new Production("jump_statement");
         Leaf terminal;
-        Node child1, child2 = null;
+        Node child1, child2;
         switch (getTokenTag()) {
             case Tag.GOTO:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = expect(Tag.IDENTIFIER);
-                if (child1 != null) {
+                if (child1 == null) {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON) {
+                        nextToken();
+                    }
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
                     child2 = expect(Tag.SEMICOLON);
                 }
                 if (child2 != null) {
@@ -4251,8 +4598,19 @@ public class Parser {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
                     return prod;
+                } else {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.SEMICOLON) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
                 }
-                return null;
             case Tag.CONTINUE:
             case Tag.BREAK:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4262,8 +4620,19 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     return prod;
+                } else {
+                    //error recovery
+                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                        nextToken();
+                    }
+                    if (getTokenTag() == Tag.SEMICOLON) {
+                        nextToken();
+                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                        return prod;
+                    } else {
+                        return null;
+                    }
                 }
-                return null;
             case Tag.RETURN:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
@@ -4295,10 +4664,29 @@ public class Parser {
         }
         Node child1 = expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            //error recovery
+            while (getTokenTag() != Tag.SEMICOLON) {
+                nextToken();
+            }
+            nextToken();
+            prod.addChilds(new Leaf((byte) 254, "Error", -1));
+            return prod;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = expect(Tag.SEMICOLON);
             if (child2 == null) {
-                return null;
+                //error recovery
+                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+                    nextToken();
+                }
+                if (getTokenTag() == Tag.SEMICOLON) {
+                    nextToken();
+                    prod.addChilds(new Leaf((byte) 254, "Error", -1));
+                    return prod;
+                } else {
+                    return null;
+                }
             } else {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
@@ -4342,7 +4730,10 @@ public class Parser {
         Production prod = new Production("rest26");
         Node child1 = external_declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest26();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -4352,9 +4743,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if (child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;
@@ -4370,12 +4758,15 @@ public class Parser {
     private Node external_declaration() {
         Production prod = new Production("external_declaration");
         Node child1 = function_definition();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
         child1 = declaration();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -4426,7 +4817,7 @@ public class Parser {
             return prod;
         }
         child1 = compound_statement();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -4443,7 +4834,10 @@ public class Parser {
         Production prod = new Production("declaration_list");
         Node child1 = declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest27();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -4468,7 +4862,10 @@ public class Parser {
         Production prod = new Production("rest27");
         Node child1 = declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest27();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -4478,9 +4875,6 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
-        }
-        if (child1 == null) {
-            return null;
         }
         prod.addChilds(new Leaf((byte) 255,"E",0));
         return prod;

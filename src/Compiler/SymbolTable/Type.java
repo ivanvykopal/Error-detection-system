@@ -39,4 +39,8 @@ public class Type {
     public static byte FLOAT = 26;
     public static byte DOUBLE = 27;
     public static byte LONGDOUBLE = 28;
+
+    public static byte UNION = 29;
+    public static byte STRUCT = 30;
+    public static byte ENUM = 31;
 }

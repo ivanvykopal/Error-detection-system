@@ -33,6 +33,18 @@ public class Record {
     }
 
     /**
+     *
+     * @param type
+     * @param line
+     * @param kind
+     */
+    public Record(byte type, int line, byte kind) {
+        this.type = type;
+        this.declarationLine = line;
+        this.kind = kind;
+    }
+
+    /**
      * Funkcia na zistenie hodnoty dátového typu.
      * @return dátový typ
      */

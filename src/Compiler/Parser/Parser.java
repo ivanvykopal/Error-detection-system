@@ -3,6 +3,8 @@ package Compiler.Parser;
 import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
+import Compiler.SymbolTable.SymbolTable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,6 +12,8 @@ public class Parser {
     private int position = 0;
     private ArrayList<Token> tokenStream = new ArrayList<>();
     private Production parseTree;
+
+    public SymbolTable symbolTable = null;
 
     public Parser(String file) {
         Scanner scanner = new Scanner(file);
@@ -500,7 +504,10 @@ public class Parser {
         Production prod = new Production("left3");
         Node child1 = unary_expression();
         Node child2 = null;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -652,7 +659,10 @@ public class Parser {
         Production prod = new Production("additive_expression");
         Node child1 = multiplicative_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest4();
             if (child2 == null) {
                 return null;
@@ -709,7 +719,10 @@ public class Parser {
         Production prod = new Production("shift_expression");
         Node child1 = additive_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest5();
             if (child2 == null) {
                 return null;
@@ -766,7 +779,10 @@ public class Parser {
         Production prod = new Production("relational_expression");
         Node child1 = shift_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest6();
             if (child2 == null) {
                 return null;
@@ -827,7 +843,10 @@ public class Parser {
         Production prod = new Production("equality_expression");
         Node child1 = relational_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest7();
             if (child2 == null) {
                 return null;
@@ -884,7 +903,10 @@ public class Parser {
         Production prod = new Production("and_expression");
         Node child1 = equality_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest8();
             if (child2 == null) {
                 return null;
@@ -938,7 +960,10 @@ public class Parser {
         Production prod = new Production("exclusive_or_expression");
         Node child1 = and_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest9();
             if (child2 == null) {
                 return null;
@@ -992,7 +1017,10 @@ public class Parser {
         Production prod = new Production("inclusive_or_expression");
         Node child1 = exclusive_or_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest10();
             if (child2 == null) {
                 return null;
@@ -1046,7 +1074,10 @@ public class Parser {
         Production prod = new Production("logical_and_expression");
         Node child1 = inclusive_or_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest11();
             if (child2 == null) {
                 return null;
@@ -1100,7 +1131,10 @@ public class Parser {
         Production prod = new Production("logical_or_expression");
         Node child1 = logical_and_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest12();
             if (child2 == null) {
                 return null;
@@ -1154,7 +1188,10 @@ public class Parser {
         Production prod = new Production("conditional_expression");
         Node child1 = logical_or_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left4();
             if (child2 == null) {
                 return null;
@@ -1261,7 +1298,10 @@ public class Parser {
         Production prod = new Production("expression");
         Node child1 = assignment_expression();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest13();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1314,7 +1354,10 @@ public class Parser {
     private Node constant_expression() {
         Production prod = new Production("constant_expression");
         Node child1 = conditional_expression();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
@@ -1331,7 +1374,10 @@ public class Parser {
         Production prod = new Production("declaration");
         Node child1 = declaration_specifiers();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left5();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1413,7 +1459,10 @@ public class Parser {
             }
         }
         child1 = type_specifier();
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left6();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1470,7 +1519,10 @@ public class Parser {
         Production prod = new Production("init_declarator_lis");
         Node child1 = init_declarator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest14();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1525,7 +1577,10 @@ public class Parser {
         Production prod = new Production("init_declarator");
         Node child1 = declarator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left7();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1791,7 +1846,10 @@ public class Parser {
         Production prod = new Production("struct_declaration_list");
         Node child1 = struct_declaration();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest15();
             if (child2 == null) {
                 return null;
@@ -1843,7 +1901,10 @@ public class Parser {
         Production prod = new Production("struct_declaration");
         Node child1 = specifier_qualifier_list();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left10();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1915,7 +1976,10 @@ public class Parser {
         Production prod = new Production("specifier_qualifier_ist");
         Node child1 = type_specifier();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = left11();
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
@@ -1972,7 +2036,10 @@ public class Parser {
         Production prod = new Production("struct_declarator_list");
         Node child1 = struct_declarator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest16();
             if (child2 == null) {
                 return null;
@@ -2030,7 +2097,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = constant_expression();
-            if (!child1.getChilds().isEmpty()) {
+            if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -2068,7 +2135,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = constant_expression();
-            if (!child1.getChilds().isEmpty()) {
+            if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -2248,7 +2315,10 @@ public class Parser {
         Production prod = new Production("enumerator_list");
         Node child1 = enumerator();
         Node child2;
-        if (child1 != null && !child1.getChilds().isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.getChilds().isEmpty()) {
             child2 = rest17();
             if (child2 == null) {
                 return null;
@@ -2328,7 +2398,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = constant_expression();
-            if (!child1.getChilds().isEmpty()) {
+            if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
@@ -3919,7 +3989,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = constant_expression();
-                if (!child1.getChilds().isEmpty()) {
+                if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
@@ -3953,7 +4023,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //TODO: pozrieť sa na chyby
     private Node statement() {
         Production prod = new Production("statement");
         Node child1 = labeled_statement();
@@ -4051,7 +4120,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = constant_expression();
-                if (!child1.getChilds().isEmpty()) {
+                if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = expect(Tag.COLON);
                 }
                 if (child2 != null) {
@@ -4112,6 +4181,12 @@ public class Parser {
             nextToken();
             return prod;
         }
+        SymbolTable parent = symbolTable;
+        //vytvorenie vnorenej tabuľky
+        symbolTable = new SymbolTable(symbolTable);
+        if (parent != null) {
+            parent.addChild(symbolTable);
+        }
         Node child1 = block_item_list();
         Node child2;
         if (child1 == null) {
@@ -4133,6 +4208,7 @@ public class Parser {
                 nextToken();
                 prod.addChilds(new Leaf((byte) 254, "Error", -1));
             } else {
+                symbolTable = parent;
                 prod.addChilds(child1);
                 prod.addChilds(child2);
             }
@@ -4754,7 +4830,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //TODO: pozrieť sa na chyby
     private Node external_declaration() {
         Production prod = new Production("external_declaration");
         Node child1 = function_definition();

@@ -1,5 +1,6 @@
 package Compiler.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -8,6 +9,8 @@ import java.util.HashMap;
 public class SymbolTable {
     SymbolTable parent = null;
     HashMap<String, Record> table;
+    ArrayList<SymbolTable> childs = null;
+
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.
      * @param parent - rodičovská tabuľka
@@ -20,7 +23,7 @@ public class SymbolTable {
     /**
      * Funkcia na vyhľadanie hodnoty v symbolickej tabuľke.
      * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
-     * @return
+     * @return záznam zo symbolickej tabuľky
      */
     public Record lookup(String key) {
         return table.get(key);
@@ -52,5 +55,22 @@ public class SymbolTable {
         if (item == null) {
             table.put(key, newValue);
         }
+    }
+
+    /**
+     * Funkcia na pridanie vnorenej tabuľky.
+     * @param newSymbolTable vnorená tabuľka
+     */
+    public void addChild(SymbolTable newSymbolTable) {
+        childs.add(newSymbolTable);
+    }
+
+    /**
+     * Funkcia na vrátenie symbolickej tabuľky
+     * @param index pozícia v ArrayListe
+     * @return symbolická tabuľka
+     */
+    public SymbolTable getChilds(int index) {
+        return childs.get(index);
     }
 }

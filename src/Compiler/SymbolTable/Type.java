@@ -43,4 +43,6 @@ public class Type {
     public static byte UNION = 29;
     public static byte STRUCT = 30;
     public static byte ENUM = 31;
+
+    public static byte VOID = 32;
 }

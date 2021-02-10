@@ -1,7 +1,5 @@
 package Compiler.SymbolTable;
 
-import Compiler.Lexer.Tag;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,7 +26,14 @@ public class SymbolTable {
      * @return záznam zo symbolickej tabuľky
      */
     public Record lookup(String key) {
-        return table.get(key);
+        Record record;
+        for (SymbolTable curr = this; curr != null; curr = curr.parent) {
+            record = curr.table.get(key);
+            if (record != null) {
+                return record;
+            }
+        }
+        return null;
     }
 
     /**
@@ -41,35 +46,45 @@ public class SymbolTable {
     }
 
     /**
-     *
-     * @param key
-     * @param type
-     * @param line
+     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * @param key identifikátor
+     * @param type typ
+     * @param line riadok deklarácie
      */
     public void insert(String key, String type, int line) {
-        Record record = new Record(findType(type), line, Kind.VARIABLE);
+        Record record;
+        if (type.contains("typedef")) {
+            record = new Record(findType(type), line, Kind.TYPEDEF_NAME);
+        } else {
+            record = new Record(findType(type), line, Kind.VARIABLE);
+        }
         insert(key, record);
     }
 
     /**
-     *
-     * @param key
-     * @param type
-     * @param line
-     * @param kind
+     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * @param key identifikátor
+     * @param type typ
+     * @param line riadok deklarácie
+     * @param kind typ identifikátora
      */
     public void insert(String key, String type, int line, byte kind) {
-        Record record = new Record(findType(type), line, kind);
+        Record record;
+        if (type.contains("typedef")) {
+             record = new Record(findType(type), line, Kind.TYPEDEF_NAME);
+        } else {
+            record = new Record(findType(type), line, kind);
+        }
         insert(key, record);
     }
 
     /**
-     *
-     * @param key
-     * @param type
-     * @param line
-     * @param kind
-     * @param size
+     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * @param key identifikátor
+     * @param type typ
+     * @param line riadok deklarácie
+     * @param kind typ identifikátora
+     * @param size veľkosť poľa
      */
     public void insert(String key, String type, int line, byte kind, int size) {
         Record record = new Record(findType(type), line, kind);
@@ -113,43 +128,74 @@ public class SymbolTable {
         return childs.get(index);
     }
 
-    //TODO: vymyslieť lepší spôsob -> vymyslieť vlastný hash!!
+    /**
+     * Funkcia na zistenie typu.
+     * @param type typ (String)
+     * @return typ (byte)
+     */
     private byte findType(String type) {
-        HashMap<String, Byte> types = new HashMap<String, Byte>(){{
-            put("char ", Type.CHAR);
-            put("signed char ", Type.SIGNEDCHAR);
-            put("unsigned char ", Type.UNSIGNEDCHAR);
-            put("short ", Type.SHORT);
-            put("signed short ", Type.SIGNEDSHORT);
-            put("unsigned short", Type.UNSIGNEDSHORT);
-            put("int ", Type.INT);
-            put("signed ", Type.SIGNED);
-            put("signed int ", Type.SIGNEDINT);
-            put("unsigned ", Type.UNSIGNED);
-            put("unsigned int ", Type.UNSIGNEDINT);
-            put("short int ", Type.SHORTINT);
-            put("signed short int ", Type.SIGNEDSHORTINT);
-            put("unsigned short int ", Type.UNSIGNEDSHORTINT);
-            put("long", Type.LONG);
-            put("signed long", Type.SIGNEDLONG);
-            put("unsigned long", Type.UNSIGNEDLONG);
-            put("long int", Type.LONGINT);
-            put("signed long int", Type.SIGNEDLONGINT);
-            put("unsigned long int", Type.UNSIGNEDLONGINT);
-            put("long long", Type.LONGLONG);
-            put("long long int", Type.LONGLONGINT);
-            put("signed long long", Type.SIGNEDLONGLONG);
-            put("signed long long int", Type.SIGNEDLONGLONGINT);
-            put("unsigned long long", Type.UNSIGNEDLONGLONG);
-            put("unsigned long long int", Type.UNSIGNEDLONGLONGINT);
-            put("float", Type.FLOAT);
-            put("double", Type.DOUBLE);
-            put("long double", Type.LONGDOUBLE);
-            put("union", Type.UNION);
-            put("struct", Type.STRUCT);
-            put("enum", Type.ENUM);
-        }};
+        //vymazanie poslednej medzery
+        type = type.substring(0, type.length() - 1);
+        byte pointer = 0;
+        //riešenie smerníkov
+        if (type.contains("*")) {
+            pointer = 100;
+            type = type.replace("* ", "");
+        }
 
-        return types.get(type);
+        //TODO: nájsť efektívnejšie riešenie
+        //riešenie EXTERN, STATIC, AUTO, REGISTER, CONST, VOLATILE
+        if (type.contains("extern")) {
+            type = type.replace("extern ", "");
+        } else if (type.contains("static")) {
+            type = type.replace("static ", "");
+        } else if (type.contains("auto ")) {
+            type = type.replace("auto ", "");
+        } else if (type.contains("register")) {
+            type = type.replace("register ", "");
+        } else if (type.contains("const")) {
+            type = type.replace("const ", "");
+        } else if (type.contains("volatile")) {
+            type = type.replace("volatile ", "");
+        }
+
+        //riešenie typov
+        switch (type.hashCode()) {
+            case 3052374: return (byte) (Type.CHAR + pointer);
+            case -359586342: return (byte) (Type.SIGNEDCHAR + pointer);
+            case 986197409: return (byte) (Type.UNSIGNEDCHAR + pointer);
+            case 109413500: return (byte) (Type.SHORT + pointer);
+            case 1752515192: return (byte) (Type.SIGNEDSHORT + pointer);
+            case 522138513: return (byte) (Type.UNSIGNEDSHORT + pointer);
+            case 104431: return (byte) (Type.INT + pointer);
+            case -902467812: return (byte) (Type.SIGNED + pointer);
+            case -981424917: return (byte) (Type.SIGNEDINT + pointer);
+            case -15964427: return (byte) (Type.UNSIGNED + pointer);
+            case 1140197444: return (byte) (Type.UNSIGNEDINT + pointer);
+            case -2029581749: return (byte) (Type.SHORTINT + pointer);
+            case -827364793: return (byte) (Type.SIGNEDSHORTINT + pointer);
+            case 1314465504: return (byte) (Type.UNSIGNEDSHORTINT + pointer);
+            case 3327612: return (byte) (Type.LONG + pointer);
+            case -359311104: return (byte) (Type.SIGNEDLONG + pointer);
+            case 986472647: return (byte) (Type.UNSIGNEDLONG + pointer);
+            case -2075964341: return (byte) (Type.LONGINT + pointer);
+            case 2119236815: return (byte) (Type.SIGNEDLONGINT + pointer);
+            case 1218496790: return (byte) (Type.UNSIGNEDLONGINT + pointer);
+            case 69705120: return (byte) (Type.LONGLONG + pointer);
+            case 1173352815: return (byte) (Type.LONGLONGINT + pointer);
+            case 1271922076: return (byte) (Type.SIGNEDLONGLONG + pointer);
+            case -1037044885: return (byte) (Type.SIGNEDLONGLONGINT + pointer);
+            case -881214923: return (byte) (Type.UNSIGNEDLONGLONG + pointer);
+            case -1492665468: return (byte) (Type.UNSIGNEDLONGLONGINT + pointer);
+            case 97526364: return (byte) (Type.FLOAT + pointer);
+            case -1325958191: return (byte) (Type.DOUBLE + pointer);
+            case -1961682443: return (byte) (Type.LONGDOUBLE + pointer);
+            case 111433423: return (byte) (Type.UNION + pointer);
+            case -891974699: return (byte) (Type.STRUCT + pointer);
+            case 3118337: return (byte) (Type.ENUM + pointer);
+            case 3625364: return (byte) (Type.VOID + pointer);
+        }
+
+        return -1;
     }
 }

@@ -4,6 +4,7 @@ import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
 import Compiler.SymbolTable.Kind;
+import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1684,6 +1685,17 @@ public class Parser {
                 prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                 nextToken();
                 return prod;
+            case Tag.IDENTIFIER:
+                //riešenie TYPEDEF_NAME
+                Record record = symbolTable.lookup(getTokenValue());
+                if (record != null) {
+                    if (record.getKind() == Kind.TYPEDEF_NAME) {
+                        prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
+                        nextToken();
+                        return prod;
+                    }
+                }
+                return prod;
         }
         Node child1 = struct_or_union_specifier(flag);
         if (child1 == null) {
@@ -1701,7 +1713,6 @@ public class Parser {
             prod.addChilds(child1);
             return prod;
         }
-        //TODO: TYPEDEF_NAME vyriešiť
         return prod;
     }
 

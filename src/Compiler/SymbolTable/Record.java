@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class Record {
     private byte type;
+    private String typeString;
     private int declarationLine;
     private String declarationValue;
     private int firstUsage;
@@ -19,27 +20,31 @@ public class Record {
     private int size;
 
     /**
-     * Konštruktor, v ktorom nastavujeme základné hodnoty
+     * Konštruktor, v ktorom nastavujeme základné hodnoty.
      * @param type - dátovy typ premennej, resp. návratová hodnota
+     * @param typeString - dátový typ premennej (String)
      * @param line - riadok deklarácie
      * @param value - hodnota pri deklarácii
      * @param kind - typ (premenná, pole, funkcia, parameter)
      */
-    public Record(byte type, int line, String value, byte kind) {
+    public Record(byte type, String typeString, int line, String value, byte kind) {
         this.type = type;
+        this.typeString = typeString;
         this.declarationLine = line;
         this.declarationValue = value;
         this.kind = kind;
     }
 
     /**
-     *
-     * @param type
-     * @param line
-     * @param kind
+     * Konštruktor, v ktorom nastavujeme základné hodnoty
+     * @param type - dátovy typ premennej, resp. návratová hodnota
+     * @param typeString - dátový typ premennej (String)
+     * @param line - riadok deklarácie
+     * @param kind  - typ (premenná, pole, funkcia, parameter)
      */
-    public Record(byte type, int line, byte kind) {
+    public Record(byte type, String typeString, int line, byte kind) {
         this.type = type;
+        this.typeString = typeString;
         this.declarationLine = line;
         this.kind = kind;
     }
@@ -156,4 +161,19 @@ public class Record {
         this.size = size;
     }
 
+    /**
+     * Funkcia na zistenie dátového typu (String).
+     * @return dátový typ (String)
+     */
+    public String getTypeString() {
+        return typeString;
+    }
+
+    /**
+     * Funkcia na nastaenie dátového typu (String).
+     * @param typeString dátový typ (String)
+     */
+    public void setTypeString(String typeString) {
+        this.typeString = typeString;
+    }
 }

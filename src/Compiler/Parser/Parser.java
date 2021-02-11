@@ -1660,7 +1660,7 @@ public class Parser {
      * type_specifier ->  VOID | CHAR | SHORT | INT | LONG | FLOAT | DOUBLE | SIGNED | UNSIGNED
      *                  | struct_or_union_specifier
      *                  | enum_specifier
-     *                  | TYPEDEF_NAME ???
+     *                  | TYPEDEF_NAME
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
@@ -1690,6 +1690,11 @@ public class Parser {
                 Record record = symbolTable.lookup(getTokenValue());
                 if (record != null) {
                     if (record.getKind() == Kind.TYPEDEF_NAME) {
+                        //zisťovanie typu identifikátora
+                        if (flag) {
+                            type += getTokenValue() + " ";
+                        }
+
                         prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                         nextToken();
                         return prod;

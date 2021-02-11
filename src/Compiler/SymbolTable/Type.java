@@ -45,4 +45,5 @@ public class Type {
     public static byte ENUM = 31;
 
     public static byte VOID = 32;
+    public static byte TYPEDEF_TYPE = 33;
 }

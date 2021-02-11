@@ -53,10 +53,12 @@ public class SymbolTable {
      */
     public void insert(String key, String type, int line) {
         Record record;
+        type = extractAttribute(type);
         if (type.contains("typedef")) {
-            record = new Record(findType(type), line, Kind.TYPEDEF_NAME);
+            type = type.replace("typedef ", "");
+            record = new Record(findType(type), type, line, Kind.TYPEDEF_NAME);
         } else {
-            record = new Record(findType(type), line, Kind.VARIABLE);
+            record = new Record(findType(type), type, line, Kind.VARIABLE);
         }
         insert(key, record);
     }
@@ -70,10 +72,12 @@ public class SymbolTable {
      */
     public void insert(String key, String type, int line, byte kind) {
         Record record;
+        type = extractAttribute(type);
         if (type.contains("typedef")) {
-             record = new Record(findType(type), line, Kind.TYPEDEF_NAME);
+            type = type.replace("typedef ", "");
+            record = new Record(findType(type), type, line, Kind.TYPEDEF_NAME);
         } else {
-            record = new Record(findType(type), line, kind);
+            record = new Record(findType(type), type, line, kind);
         }
         insert(key, record);
     }
@@ -87,7 +91,8 @@ public class SymbolTable {
      * @param size veľkosť poľa
      */
     public void insert(String key, String type, int line, byte kind, int size) {
-        Record record = new Record(findType(type), line, kind);
+        type = extractAttribute(type);
+        Record record = new Record(findType(type), type, line, kind);
         record.setSize(size);
         insert(key, record);
     }
@@ -143,6 +148,46 @@ public class SymbolTable {
             type = type.replace("* ", "");
         }
 
+        //riešenie typov
+        switch (type.hashCode()) {
+            case 3052374: return (byte) (Type.CHAR + pointer);                      // char
+            case -359586342: return (byte) (Type.SIGNEDCHAR + pointer);             // signed char
+            case 986197409: return (byte) (Type.UNSIGNEDCHAR + pointer);            // unsigned char
+            case 109413500: return (byte) (Type.SHORT + pointer);                   // short
+            case 1752515192: return (byte) (Type.SIGNEDSHORT + pointer);            // signed short
+            case 522138513: return (byte) (Type.UNSIGNEDSHORT + pointer);           // unsigned short
+            case 104431: return (byte) (Type.INT + pointer);                        // int
+            case -902467812: return (byte) (Type.SIGNED + pointer);                 // signed
+            case -981424917: return (byte) (Type.SIGNEDINT + pointer);              // signed int
+            case -15964427: return (byte) (Type.UNSIGNED + pointer);                // unsigned
+            case 1140197444: return (byte) (Type.UNSIGNEDINT + pointer);            // unsigned int
+            case -2029581749: return (byte) (Type.SHORTINT + pointer);              // short int
+            case -827364793: return (byte) (Type.SIGNEDSHORTINT + pointer);         // signed short int
+            case 1314465504: return (byte) (Type.UNSIGNEDSHORTINT + pointer);       // unsigned short int
+            case 3327612: return (byte) (Type.LONG + pointer);                      // long
+            case -359311104: return (byte) (Type.SIGNEDLONG + pointer);             // signed long
+            case 986472647: return (byte) (Type.UNSIGNEDLONG + pointer);            // unsigned long
+            case -2075964341: return (byte) (Type.LONGINT + pointer);               // long int
+            case 2119236815: return (byte) (Type.SIGNEDLONGINT + pointer);          // signed long int
+            case 1218496790: return (byte) (Type.UNSIGNEDLONGINT + pointer);        // unsigned long int
+            case 69705120: return (byte) (Type.LONGLONG + pointer);                 // long long
+            case 1173352815: return (byte) (Type.LONGLONGINT + pointer);            // long long int
+            case 1271922076: return (byte) (Type.SIGNEDLONGLONG + pointer);         // signed long long
+            case -1037044885: return (byte) (Type.SIGNEDLONGLONGINT + pointer);     // signed long long int
+            case -881214923: return (byte) (Type.UNSIGNEDLONGLONG + pointer);       // unsigned long long
+            case -1492665468: return (byte) (Type.UNSIGNEDLONGLONGINT + pointer);   // unsigned long long int
+            case 97526364: return (byte) (Type.FLOAT + pointer);                    // float
+            case -1325958191: return (byte) (Type.DOUBLE + pointer);                // double
+            case -1961682443: return (byte) (Type.LONGDOUBLE + pointer);            // long double
+            case 111433423: return (byte) (Type.UNION + pointer);                   // union
+            case -891974699: return (byte) (Type.STRUCT + pointer);                 // struct
+            case 3118337: return (byte) (Type.ENUM + pointer);                      // enum
+            case 3625364: return (byte) (Type.VOID + pointer);                      // void
+            default: return Type.TYPEDEF_TYPE;                                      // vlastný typ
+        }
+    }
+
+    private String extractAttribute(String type) {
         //TODO: nájsť efektívnejšie riešenie
         //riešenie EXTERN, STATIC, AUTO, REGISTER, CONST, VOLATILE
         if (type.contains("extern")) {
@@ -158,44 +203,6 @@ public class SymbolTable {
         } else if (type.contains("volatile")) {
             type = type.replace("volatile ", "");
         }
-
-        //riešenie typov
-        switch (type.hashCode()) {
-            case 3052374: return (byte) (Type.CHAR + pointer);
-            case -359586342: return (byte) (Type.SIGNEDCHAR + pointer);
-            case 986197409: return (byte) (Type.UNSIGNEDCHAR + pointer);
-            case 109413500: return (byte) (Type.SHORT + pointer);
-            case 1752515192: return (byte) (Type.SIGNEDSHORT + pointer);
-            case 522138513: return (byte) (Type.UNSIGNEDSHORT + pointer);
-            case 104431: return (byte) (Type.INT + pointer);
-            case -902467812: return (byte) (Type.SIGNED + pointer);
-            case -981424917: return (byte) (Type.SIGNEDINT + pointer);
-            case -15964427: return (byte) (Type.UNSIGNED + pointer);
-            case 1140197444: return (byte) (Type.UNSIGNEDINT + pointer);
-            case -2029581749: return (byte) (Type.SHORTINT + pointer);
-            case -827364793: return (byte) (Type.SIGNEDSHORTINT + pointer);
-            case 1314465504: return (byte) (Type.UNSIGNEDSHORTINT + pointer);
-            case 3327612: return (byte) (Type.LONG + pointer);
-            case -359311104: return (byte) (Type.SIGNEDLONG + pointer);
-            case 986472647: return (byte) (Type.UNSIGNEDLONG + pointer);
-            case -2075964341: return (byte) (Type.LONGINT + pointer);
-            case 2119236815: return (byte) (Type.SIGNEDLONGINT + pointer);
-            case 1218496790: return (byte) (Type.UNSIGNEDLONGINT + pointer);
-            case 69705120: return (byte) (Type.LONGLONG + pointer);
-            case 1173352815: return (byte) (Type.LONGLONGINT + pointer);
-            case 1271922076: return (byte) (Type.SIGNEDLONGLONG + pointer);
-            case -1037044885: return (byte) (Type.SIGNEDLONGLONGINT + pointer);
-            case -881214923: return (byte) (Type.UNSIGNEDLONGLONG + pointer);
-            case -1492665468: return (byte) (Type.UNSIGNEDLONGLONGINT + pointer);
-            case 97526364: return (byte) (Type.FLOAT + pointer);
-            case -1325958191: return (byte) (Type.DOUBLE + pointer);
-            case -1961682443: return (byte) (Type.LONGDOUBLE + pointer);
-            case 111433423: return (byte) (Type.UNION + pointer);
-            case -891974699: return (byte) (Type.STRUCT + pointer);
-            case 3118337: return (byte) (Type.ENUM + pointer);
-            case 3625364: return (byte) (Type.VOID + pointer);
-        }
-
-        return -1;
+        return type;
     }
 }

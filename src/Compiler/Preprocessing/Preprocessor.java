@@ -22,7 +22,7 @@ public class Preprocessor {
         position++;
     }
 
-    private void preprocess() {
+    private String preprocess() {
         lines = oldFile.split("\n");
 
         for (; position < lines.length; nextLine()) {
@@ -46,6 +46,8 @@ public class Preprocessor {
                 newFile = newFile.concat(lines[position]);
             }
         }
+
+        return newFile;
     }
 
     private void preprocessDefine(String[] words) {

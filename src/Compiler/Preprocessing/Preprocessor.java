@@ -28,10 +28,20 @@ public class Preprocessor {
         for (; position < lines.length; nextLine()) {
             //odstránenie zbytočných medzier
             String temp = lines[position].trim().replaceAll(" +", " ");
-            //rozdelenie na slová
-            String[] words = temp.split(" ");
-            if (words[0].charAt(0) == '#') {
-                //zistiť aké slovo to je
+            if (temp.charAt(0) == '#') {
+                while (lines[position].contains("\\")) {
+                    temp = temp.replace("\\"," ");
+                    nextLine();
+                    temp = temp.concat(lines[position].trim().replaceAll(" +"," "));
+                }
+
+                if (temp.contains("define")) {
+                    //# define
+                    preprocessDefine(temp.split(" "));
+                } else if (temp.contains("if") || temp.contains("else")) {
+                    //# if, #ifdef, #ifndef, #else, #elif
+                    preprocessConditions();
+                }
             } else {
                 newFile = newFile.concat(lines[position]);
             }
@@ -39,7 +49,6 @@ public class Preprocessor {
     }
 
     private void preprocessDefine(String[] words) {
-        //TODO: vyriešiť aj \ ak je na konci riadku
         if (words[0].length() == 1) {
             // typ: # define ...
             String name = words[2];

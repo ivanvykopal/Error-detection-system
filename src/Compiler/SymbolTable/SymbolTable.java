@@ -110,9 +110,13 @@ public class SymbolTable {
      * @param newValue - nová hodnota, ktorá sa zapíše pre daný kľúč
      */
     public void setValue(String key, Record newValue) {
-        Record item = table.replace(key, newValue);
-        if (item == null) {
-            table.put(key, newValue);
+        Record record;
+        for (SymbolTable curr = this; curr != null; curr = curr.parent) {
+            record = curr.table.get(key);
+            if (record != null) {
+                curr.table.replace(key, newValue);
+                break;
+            }
         }
     }
 

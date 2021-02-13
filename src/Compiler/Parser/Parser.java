@@ -34,9 +34,8 @@ public class Parser {
         }
     }
 
-    //TODO:pozrieť sa na error recovery a jeho riešenie
     private void nextToken() {
-        if (position != tokenStream.size()) {
+        if (position != tokenStream.size() - 1) {
             position++;
         }
     }
@@ -1442,6 +1441,10 @@ public class Parser {
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON) {
                 nextToken();
+                //ak je koniec súboru
+                if (position == tokenStream.size() - 1) {
+                    return null;
+                }
             }
             nextToken();
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -1457,6 +1460,10 @@ public class Parser {
         //error recovery
         while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
             nextToken();
+            //ak je koniec súboru
+            if (position == tokenStream.size() - 1) {
+                return null;
+            }
         }
         if (getTokenTag() == Tag.SEMICOLON) {
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -1607,7 +1614,7 @@ public class Parser {
      */
     private Node init_declarator() {
         Production prod = new Production("init_declarator");
-        Node child1 = declarator(Kind.VARIABLE);
+        Node child1 = declarator(Kind.VARIABLE, "");
         Node child2;
         if (child1 == null) {
             return null;
@@ -1783,6 +1790,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     nextToken();
                     prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -1800,6 +1811,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.RIGHT_BRACES) {
                         nextToken();
@@ -1847,6 +1862,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 nextToken();
                 prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -1864,6 +1883,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 if (getTokenTag() == Tag.RIGHT_BRACES) {
                     nextToken();
@@ -2003,6 +2026,10 @@ public class Parser {
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON) {
                 nextToken();
+                //ak je koniec súboru
+                if (position == tokenStream.size() - 1) {
+                    return null;
+                }
             }
             nextToken();
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -2169,7 +2196,7 @@ public class Parser {
             }
             return null;
         }
-        child1 = declarator(Kind.VARIABLE);
+        child1 = declarator(Kind.VARIABLE, "");
         Node child2;
         if (child1 == null) {
             return null;
@@ -2260,6 +2287,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     nextToken();
                     prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -2276,6 +2307,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.RIGHT_BRACES) {
                         nextToken();
@@ -2306,6 +2341,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     nextToken();
                     prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -2322,6 +2361,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.RIGHT_BRACES) {
                         nextToken();
@@ -2367,6 +2410,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.RIGHT_BRACES) {
                         nextToken();
@@ -2514,19 +2561,19 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node declarator(byte kind) {
+    private Node declarator(byte kind, String id) {
         Production prod = new Production("declarator");
         Node child1 = pointer(true);
         Node child2;
         if (!child1.getChilds().isEmpty()) {
-            child2 = direct_declarator(kind);
+            child2 = direct_declarator(kind, id);
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
             }
             return prod;
         }
-        child1 = direct_declarator(kind);
+        child1 = direct_declarator(kind, id);
         if (child1 == null) {
             return null;
         }
@@ -2543,7 +2590,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node direct_declarator(byte kind) {
+    private Node direct_declarator(byte kind, String id) {
         Production prod = new Production("direct_declarator");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -2556,8 +2603,17 @@ public class Parser {
                     if (kind == Kind.PARAMETER) {
                         //ide o parameter funkcie
                         symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY_PARAMETER);
+                        //pridanie parametru k funkcii
+                        Record record = symbolTable.lookup(id);
+                        record.getParameters().add(getTokenValue());
+                        symbolTable.setValue(id, record);
                     } else {
-                        symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY);
+                        if (getTokenTag(position + 2) == Tag.NUMBER) {
+                            //viem veľkosť poľa
+                            symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY, Integer.parseInt(getTokenValue(position + 2)));
+                        } else {
+                            symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY);
+                        }
                     }
                 } else if (getTokenTag(position + 1) == Tag.LEFT_BRACKETS) {
                     //ide o funkciu
@@ -2565,6 +2621,10 @@ public class Parser {
                 } else {
                     if (kind == Kind.PARAMETER) {
                         symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.PARAMETER);
+                        //pridanie parametru k funkcii
+                        Record record = symbolTable.lookup(id);
+                        record.getParameters().add(getTokenValue());
+                        symbolTable.setValue(id, record);
                     } else {
                         symbolTable.insert(getTokenValue(), type, getTokenLine());
                     }
@@ -2573,7 +2633,7 @@ public class Parser {
 
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest18();
+                child1 = rest18(terminal.getValue());
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
@@ -2584,12 +2644,12 @@ public class Parser {
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = declarator(kind);
+                child1 = declarator(kind, "");
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = accept(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
-                    child3 = rest18();
+                    child3 = rest18("");
                 }
                 if (child3 != null && !child3.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
@@ -2612,7 +2672,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest18() {
+    private Node rest18(String id) {
         Production prod = new Production("rest18");
         Leaf terminal;
         Node child1;
@@ -2631,7 +2691,7 @@ public class Parser {
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left17();
+                child1 = left17(id);
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
@@ -2666,7 +2726,7 @@ public class Parser {
                 nextToken();
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = rest18();
+                    child2 = rest18("");
                     if (child2 == null) {
                         return null;
                     } else {
@@ -2694,7 +2754,7 @@ public class Parser {
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest18();
+                child1 = rest18("");
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
@@ -2713,7 +2773,7 @@ public class Parser {
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18();
+                child3 = rest18("");
                 if (child3 == null || child3.getChilds().isEmpty()) {
                     return null;
                 } else {
@@ -2751,13 +2811,13 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left17() {
+    private Node left17(String id) {
         Production prod = new Production("left17");
         Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = rest18();
+            child1 = rest18("");
             if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
@@ -2766,7 +2826,7 @@ public class Parser {
             }
             return null;
         }
-        child1 = parameter_type_list();
+        child1 = parameter_type_list(id);
         Node child2, child3;
         if (child1 == null) {
             return null;
@@ -2776,7 +2836,7 @@ public class Parser {
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18();
+                child3 = rest18("");
                 if (child3 == null || child3.getChilds().isEmpty()) {
                     return null;
                 } else {
@@ -2793,7 +2853,7 @@ public class Parser {
             return null;
         }
         if (!child1.getChilds().isEmpty()) {
-            child2 = rest18();
+            child2 = rest18("");
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
@@ -2829,7 +2889,7 @@ public class Parser {
                 if (child3 == null) {
                     return null;
                 } else {
-                    child4 = rest18();
+                    child4 = rest18("");
                     if (child4 == null || child4.getChilds().isEmpty()) {
                         return null;
                     } else {
@@ -2852,7 +2912,7 @@ public class Parser {
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18();
+                child3 = rest18("");
                 if (child3 == null || child3.getChilds().isEmpty()) {
                     return null;
                 } else {
@@ -2887,7 +2947,7 @@ public class Parser {
                 nextToken();
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = rest18();
+                    child2 = rest18("");
                     if (child2 == null) {
                         return null;
                     } else {
@@ -2909,7 +2969,7 @@ public class Parser {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    child3 = rest18();
+                    child3 = rest18("");
                 }
                 if (child3 != null) {
                     prod.addChilds(terminal);
@@ -2923,7 +2983,7 @@ public class Parser {
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest18();
+                child1 = rest18("");
                 if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
@@ -2941,7 +3001,7 @@ public class Parser {
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18();
+                child3 = rest18("");
                 if (child3 == null ||child3.getChilds().isEmpty()) {
                     return null;
                 } else {
@@ -3089,9 +3149,9 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_type_list() {
+    private Node parameter_type_list(String id) {
         Production prod = new Production("parameter_type_list");
-        Node child1 = parameter_list();
+        Node child1 = parameter_list(id);
         Node child2;
         if (child1 == null) {
             return null;
@@ -3139,15 +3199,15 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_list() {
+    private Node parameter_list(String id) {
         Production prod = new Production("parameter_list");
-        Node child1 = parameter_declaration();
+        Node child1 = parameter_declaration(id);
         Node child2;
         if (child1 == null) {
             return null;
         }
         if (!child1.getChilds().isEmpty()) {
-            child2 = rest20();
+            child2 = rest20(id);
             if (child2 == null) {
                 return null;
             } else {
@@ -3166,15 +3226,15 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest20() {
+    private Node rest20(String id) {
         Production prod = new Production("rest20");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = parameter_declaration();
+            child1 = parameter_declaration(id);
             if (child1 != null && !child1.getChilds().isEmpty()) {
-                child2 = rest20();
+                child2 = rest20(id);
             }
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
@@ -3196,7 +3256,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_declaration() {
+    private Node parameter_declaration(String id) {
         Production prod = new Production("parameter_declaration");
         Node child1 = declaration_specifiers();
         Node child2;
@@ -3204,7 +3264,7 @@ public class Parser {
             return null;
         }
         if (!child1.getChilds().isEmpty()) {
-            child2 = left22();
+            child2 = left22(id);
             if (child2 == null || child2.getChilds().isEmpty()) {
                 return null;
             } else {
@@ -3225,9 +3285,9 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left22() {
+    private Node left22(String id) {
         Production prod = new Production("left22");
-        Node child1 = declarator(Kind.PARAMETER);
+        Node child1 = declarator(Kind.PARAMETER, id);
         if (child1 == null) {
             return null;
         }
@@ -3483,7 +3543,7 @@ public class Parser {
                 }
             }
         }
-        child1 = parameter_type_list();
+        child1 = parameter_type_list("");
         if (child1 == null) {
             return null;
         }
@@ -3796,7 +3856,7 @@ public class Parser {
             }
             return null;
         }
-        child1 = parameter_type_list();
+        child1 = parameter_type_list("");
         Node child2, child3;
         if (child1 == null) {
             return null;
@@ -3854,6 +3914,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 if (getTokenTag() == Tag.RIGHT_BRACES) {
                     nextToken();
@@ -4263,6 +4327,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 nextToken();
                 prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4302,6 +4370,10 @@ public class Parser {
             //error recovery
             while (getTokenTag() != Tag.RIGHT_BRACES) {
                 nextToken();
+                //ak je koniec súboru
+                if (position == tokenStream.size() - 1) {
+                    return null;
+                }
             }
             nextToken();
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4313,6 +4385,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 nextToken();
                 prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4426,6 +4502,10 @@ public class Parser {
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON) {
                 nextToken();
+                //ak je koniec súboru
+                if (position == tokenStream.size() - 1) {
+                    return null;
+                }
             }
             nextToken();
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4437,6 +4517,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 if (getTokenTag() == Tag.SEMICOLON) {
                     nextToken();
@@ -4603,6 +4687,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     nextToken();
                     prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4621,6 +4709,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.SEMICOLON) {
                         nextToken();
@@ -4771,6 +4863,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     nextToken();
                     prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4787,6 +4883,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.SEMICOLON) {
                         nextToken();
@@ -4809,6 +4909,10 @@ public class Parser {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                         nextToken();
+                        //ak je koniec súboru
+                        if (position == tokenStream.size() - 1) {
+                            return null;
+                        }
                     }
                     if (getTokenTag() == Tag.SEMICOLON) {
                         nextToken();
@@ -4853,6 +4957,10 @@ public class Parser {
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON) {
                 nextToken();
+                //ak je koniec súboru
+                if (position == tokenStream.size() - 1) {
+                    return null;
+                }
             }
             nextToken();
             prod.addChilds(new Leaf((byte) 254, "Error", -1));
@@ -4864,6 +4972,10 @@ public class Parser {
                 //error recovery
                 while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
+                    //ak je koniec súboru
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                 }
                 if (getTokenTag() == Tag.SEMICOLON) {
                     nextToken();
@@ -4967,7 +5079,7 @@ public class Parser {
         Node child1 = declaration_specifiers();
         Node child2 = null, child3 = null;
         if(child1 != null && !child1.getChilds().isEmpty()) {
-            child2 = declarator(Kind.FUNCTION);
+            child2 = declarator(Kind.FUNCTION, "");
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             child3 = left36();

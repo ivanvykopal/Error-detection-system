@@ -15,7 +15,7 @@ public class Parser {
     private Production parseTree;
     private String type = "";
 
-    public SymbolTable symbolTable = null;
+    public SymbolTable symbolTable = new SymbolTable(null);
 
     public Parser(String file) {
         Scanner scanner = new Scanner(file);
@@ -34,8 +34,11 @@ public class Parser {
         }
     }
 
+    //TODO:pozrieť sa na error recovery a jeho riešenie
     private void nextToken() {
-        position++;
+        if (position != tokenStream.size()) {
+            position++;
+        }
     }
 
     private int getTokenLine() {
@@ -97,7 +100,17 @@ public class Parser {
                 System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
                 break;
             default:
-                System.out.println("Chyba na riadku " + getTokenLine() + "!");
+                switch (getTokenTag(position - 1)) {
+                    case Tag.LEFT_BRACKETS:
+                    case Tag.RIGHT_BRACKETS:
+                    case Tag.LEFT_BRACES:
+                    case Tag.RIGHT_BRACES:
+                        System.out.println("Zátvorka naviac na riadku " + getTokenLine() + "!");
+                        break;
+                    default:
+                        System.out.println("Chyba na riadku " + getTokenLine() + "!");
+                }
+
                 break;
         }
         return null;
@@ -1264,12 +1277,17 @@ public class Parser {
         Production prod = new Production("assignment_expression");
         Node child1 = unary_expression();
         Node child2 = null, child3;
+        int pos = position;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_operator();
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             child3 = assignment_expression();
             if (child3 == null || child3.getChilds().isEmpty()) {
+                if (getTokenValue(pos).equals("=")) {
+                    //TODO: nie som si istý
+                    System.out.println("Chyba na riadku " + getTokenLine(pos) + " '=' namiesto '=='!");
+                }
                 return null;
             } else {
                 prod.addChilds(child1);

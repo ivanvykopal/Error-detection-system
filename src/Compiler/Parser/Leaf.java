@@ -1,5 +1,7 @@
 package Compiler.Parser;
 
+import java.util.ArrayList;
+
 public class Leaf extends Node {
     private byte tag;
     private String value;
@@ -63,5 +65,10 @@ public class Leaf extends Node {
      */
     public void setLine(int line) {
         this.line = line;
+    }
+
+    @Override
+    public ArrayList<Node> getChilds() {
+        return null;
     }
 }

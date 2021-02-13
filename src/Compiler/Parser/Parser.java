@@ -34,6 +34,10 @@ public class Parser {
         }
     }
 
+    public void parse() {
+        parseTree = translation_unit();
+    }
+
     private void nextToken() {
         if (position != tokenStream.size() - 1) {
             position++;
@@ -124,7 +128,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node primary_expression() {
+    private Production primary_expression() {
         Production prod = new Production("primary_expression");
         int pos = position;
         Node child1;
@@ -166,7 +170,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node constant() {
+    private Production constant() {
         Production prod = new Production("constant");
         switch (getTokenTag()) {
             case Tag.NUMBER:
@@ -184,7 +188,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node enumeration_constant() {
+    private Production enumeration_constant() {
         Production prod = new Production("enumeration_constant");
         Node child = accept(Tag.IDENTIFIER);
         if (child != null) {
@@ -199,7 +203,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node postfix_expression() {
+    private Production postfix_expression() {
         Production prod = new Production("postfix_expression");
         int pos = position;
         Node child1, child2 = null;
@@ -257,7 +261,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest1() {
+    private Production rest1() {
         Production prod = new Production("rest1");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -333,7 +337,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left1() {
+    private Production left1() {
         Production prod = new Production("left1");
         Leaf terminal;
         Node child1, child2 = null;
@@ -376,7 +380,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left2() {
+    private Production left2() {
         Production prod = new Production("left2");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -415,7 +419,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node argument_expression_list() {
+    private Production argument_expression_list() {
         Production prod = new Production("argument_expression_list");
         Node child1 = assignment_expression();
         Node child2 = null;
@@ -437,7 +441,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest2() {
+    private Production rest2() {
         Production prod = new Production("rest2");
         Leaf terminal;
         Node child1, child2 = null;
@@ -472,7 +476,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node unary_expression() {
+    private Production unary_expression() {
         Production prod = new Production("unary_expression");
         Leaf terminal;
         Node child1, child2;
@@ -526,7 +530,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left3() {
+    private Production left3() {
         Production prod = new Production("left3");
         Node child1 = unary_expression();
         Node child2 = null;
@@ -561,7 +565,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node unary_operator() {
+    private Production unary_operator() {
         Production prod = new Production("unary_operator");
         switch (getTokenTag()) {
             case Tag.AND:
@@ -584,7 +588,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node cast_expression() {
+    private Production cast_expression() {
         Production prod = new Production("cast_expression");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -621,7 +625,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node multiplicative_expression() {
+    private Production multiplicative_expression() {
         Production prod = new Production("multiplicative_expression");
         Node child1 = cast_expression();
         Node child2;
@@ -648,7 +652,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest3() {
+    private Production rest3() {
         Production prod = new Production("rest3");
         Leaf terminal;
         Node child1, child2 = null;
@@ -681,7 +685,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node additive_expression() {
+    private Production additive_expression() {
         Production prod = new Production("additive_expression");
         Node child1 = multiplicative_expression();
         Node child2;
@@ -709,7 +713,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest4() {
+    private Production rest4() {
         Production prod = new Production("rest4");
         Leaf terminal;
         Node child1, child2 = null;
@@ -741,7 +745,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node shift_expression() {
+    private Production shift_expression() {
         Production prod = new Production("shift_expression");
         Node child1 = additive_expression();
         Node child2;
@@ -769,7 +773,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest5() {
+    private Production rest5() {
         Production prod = new Production("rest5");
         Leaf terminal;
         Node child1, child2 = null;
@@ -801,7 +805,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node relational_expression() {
+    private Production relational_expression() {
         Production prod = new Production("relational_expression");
         Node child1 = shift_expression();
         Node child2;
@@ -831,7 +835,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest6() {
+    private Production rest6() {
         Production prod = new Production("rest6");
         Leaf terminal;
         Node child1, child2 = null;
@@ -865,7 +869,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node equality_expression() {
+    private Production equality_expression() {
         Production prod = new Production("equality_expression");
         Node child1 = relational_expression();
         Node child2;
@@ -893,7 +897,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest7() {
+    private Production rest7() {
         Production prod = new Production("rest7");
         Leaf terminal;
         Node child1, child2 = null;
@@ -925,7 +929,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node and_expression() {
+    private Production and_expression() {
         Production prod = new Production("and_expression");
         Node child1 = equality_expression();
         Node child2;
@@ -952,7 +956,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest8() {
+    private Production rest8() {
         Production prod = new Production("rest8");
         Leaf terminal;
         Node child1, child2 = null;
@@ -982,7 +986,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node exclusive_or_expression() {
+    private Production exclusive_or_expression() {
         Production prod = new Production("exclusive_or_expression");
         Node child1 = and_expression();
         Node child2;
@@ -1009,7 +1013,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest9() {
+    private Production rest9() {
         Production prod = new Production("rest9");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1039,7 +1043,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node inclusive_or_expression() {
+    private Production inclusive_or_expression() {
         Production prod = new Production("inclusive_or_expression");
         Node child1 = exclusive_or_expression();
         Node child2;
@@ -1066,7 +1070,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest10() {
+    private Production rest10() {
         Production prod = new Production("rest10");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1096,7 +1100,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node logical_and_expression() {
+    private Production logical_and_expression() {
         Production prod = new Production("logical_and_expression");
         Node child1 = inclusive_or_expression();
         Node child2;
@@ -1123,7 +1127,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest11() {
+    private Production rest11() {
         Production prod = new Production("rest11");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1153,7 +1157,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node logical_or_expression() {
+    private Production logical_or_expression() {
         Production prod = new Production("logical_or_expression");
         Node child1 = logical_and_expression();
         Node child2;
@@ -1180,7 +1184,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest12() {
+    private Production rest12() {
         Production prod = new Production("rest12");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1210,7 +1214,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node conditional_expression() {
+    private Production conditional_expression() {
         Production prod = new Production("conditional_expression");
         Node child1 = logical_or_expression();
         Node child2;
@@ -1238,7 +1242,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left4() {
+    private Production left4() {
         Production prod = new Production("left4");
         Node child1, child2 = null, child3 = null;
         if (getTokenTag() == Tag.QMARK) {
@@ -1272,7 +1276,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node assignment_expression() {
+    private Production assignment_expression() {
         Production prod = new Production("assignment_expression");
         Node child1 = unary_expression();
         Node child2 = null, child3;
@@ -1311,7 +1315,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node assignment_operator() {
+    private Production assignment_operator() {
         Production prod = new Production("assignment_operator");
         Node child1 = accept(Tag.ASSIGNMENT);
         if (child1 != null) {
@@ -1325,7 +1329,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node expression() {
+    private Production expression() {
         Production prod = new Production("expression");
         Node child1 = assignment_expression();
         Node child2;
@@ -1352,7 +1356,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest13() {
+    private Production rest13() {
         Production prod = new Production("rest13");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1382,7 +1386,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node constant_expression() {
+    private Production constant_expression() {
         Production prod = new Production("constant_expression");
         Node child1 = conditional_expression();
         if (child1 == null) {
@@ -1401,7 +1405,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node declaration() {
+    private Production declaration() {
         Production prod = new Production("declaration");
         Node child1 = declaration_specifiers();
         Node child2;
@@ -1428,7 +1432,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left5() {
+    private Production left5() {
         Production prod = new Production("left5");
         if (getTokenTag() == Tag.SEMICOLON) {
             prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -1482,7 +1486,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node declaration_specifiers() {
+    private Production declaration_specifiers() {
         Production prod = new Production("declaration_specifiers");
         Node child1 = storage_class_specifier();
         Node child2;
@@ -1534,7 +1538,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left6() {
+    private Production left6() {
         Production prod = new Production("left6");
         Node child1 = declaration_specifiers();
         if (child1 == null) {
@@ -1554,7 +1558,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node init_declarator_list() {
+    private Production init_declarator_list() {
         Production prod = new Production("init_declarator_lis");
         Node child1 = init_declarator();
         Node child2;
@@ -1581,7 +1585,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest14() {
+    private Production rest14() {
         Production prod = new Production("rest14");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1612,7 +1616,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node init_declarator() {
+    private Production init_declarator() {
         Production prod = new Production("init_declarator");
         Node child1 = declarator(Kind.VARIABLE, "");
         Node child2;
@@ -1639,7 +1643,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left7() {
+    private Production left7() {
         Production prod = new Production("left7");
         Leaf terminal;
         if (getTokenValue().equals("=")) {
@@ -1663,7 +1667,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node storage_class_specifier() {
+    private Production storage_class_specifier() {
         Production prod = new Production("storage_class_specifier");
         switch (getTokenTag()) {
             case Tag.TYPEDEF:
@@ -1690,7 +1694,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node type_specifier(boolean flag) {
+    private Production type_specifier(boolean flag) {
         Production prod = new Production("type_specifier");
         switch (getTokenTag()) {
             case Tag.VOID:
@@ -1752,7 +1756,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node struct_or_union_specifier(boolean flag) {
+    private Production struct_or_union_specifier(boolean flag) {
         Production prod = new Production("struct_or_union_specifier");
         Node child1 = struct_or_union(flag);
         Node child2;
@@ -1777,7 +1781,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left8(boolean flag) {
+    private Production left8(boolean flag) {
         Production prod = new Production("left8");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1850,7 +1854,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left9() {
+    private Production left9() {
         Production prod = new Production("left9");
         Leaf terminal;
         Node child1, child2 = null;
@@ -1907,7 +1911,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node struct_or_union(boolean flag) {
+    private Production struct_or_union(boolean flag) {
         Production prod = new Production("struct_or_union");
         switch (getTokenTag()) {
             case Tag.STRUCT:
@@ -1930,7 +1934,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node struct_declaration_list() {
+    private Production struct_declaration_list() {
         Production prod = new Production("struct_declaration_list");
         Node child1 = struct_declaration();
         Node child2;
@@ -1957,7 +1961,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest15() {
+    private Production rest15() {
         Production prod = new Production("rest15");
         Node child1 = struct_declaration();
         Node child2;
@@ -1985,7 +1989,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node struct_declaration() {
+    private Production struct_declaration() {
         Production prod = new Production("struct_declaration");
         Node child1 = specifier_qualifier_list(true);
         Node child2;
@@ -2013,7 +2017,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left10() {
+    private Production left10() {
         Production prod = new Production("left10");
         if (getTokenTag() == Tag.SEMICOLON) {
             prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -2064,7 +2068,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node specifier_qualifier_list(boolean flag) {
+    private Production specifier_qualifier_list(boolean flag) {
         Production prod = new Production("specifier_qualifier_ist");
         Node child1 = type_specifier(flag);
         Node child2;
@@ -2104,7 +2108,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left11(boolean flag) {
+    private Production left11(boolean flag) {
         Production prod = new Production("left11");
         Node child1 = specifier_qualifier_list(flag);
         if (child1 == null) {
@@ -2124,7 +2128,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node struct_declarator_list() {
+    private Production struct_declarator_list() {
         Production prod = new Production("struct_declarator_list");
         Node child1 = struct_declarator();
         Node child2;
@@ -2151,7 +2155,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest16() {
+    private Production rest16() {
         Production prod = new Production("rest16");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
@@ -2182,7 +2186,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node struct_declarator() {
+    private Production struct_declarator() {
         Production prod = new Production("struct_declarator");
         Node child1;
         if (getTokenTag() == Tag.COLON) {
@@ -2221,7 +2225,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left12() {
+    private Production left12() {
         Production prod = new Production("left12");
         if (getTokenTag() == Tag.COLON) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -2245,7 +2249,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node enum_specifier(boolean flag) {
+    private Production enum_specifier(boolean flag) {
         Production prod = new Production("enum_specifier");
         if (getTokenTag() == Tag.ENUM) {
             //zisťovanie typu identifikátora
@@ -2274,7 +2278,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left13(boolean flag) {
+    private Production left13(boolean flag) {
         Production prod = new Production("left13");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -2391,7 +2395,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left14() {
+    private Production left14() {
         Production prod = new Production("left14");
         switch (getTokenTag()) {
             case Tag.RIGHT_BRACES:
@@ -2433,7 +2437,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node enumerator_list() {
+    private Production enumerator_list() {
         Production prod = new Production("enumerator_list");
         Node child1 = enumerator();
         Node child2;
@@ -2460,7 +2464,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest17() {
+    private Production rest17() {
         Production prod = new Production("rest17");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
@@ -2490,7 +2494,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node enumerator() {
+    private Production enumerator() {
         Production prod = new Production("enumerator");
         Node child1 = enumeration_constant();
         Node child2;
@@ -2514,7 +2518,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left15() {
+    private Production left15() {
         Production prod = new Production("left15");
         if (getTokenValue().equals("=")) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -2537,7 +2541,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node type_qualifier(boolean flag) {
+    private Production type_qualifier(boolean flag) {
         Production prod = new Production("type_qualifier");
         switch (getTokenTag()) {
             case Tag.CONST:
@@ -2561,7 +2565,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node declarator(byte kind, String id) {
+    private Production declarator(byte kind, String id) {
         Production prod = new Production("declarator");
         Node child1 = pointer(true);
         Node child2;
@@ -2590,7 +2594,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node direct_declarator(byte kind, String id) {
+    private Production direct_declarator(byte kind, String id) {
         Production prod = new Production("direct_declarator");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -2672,7 +2676,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest18(String id) {
+    private Production rest18(String id) {
         Production prod = new Production("rest18");
         Leaf terminal;
         Node child1;
@@ -2715,7 +2719,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left16() {
+    private Production left16() {
         Production prod = new Production("left16");
         int pos = position;
         Node child1, child2;
@@ -2811,7 +2815,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left17(String id) {
+    private Production left17(String id) {
         Production prod = new Production("left17");
         Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
@@ -2873,7 +2877,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left18() {
+    private Production left18() {
         Production prod = new Production("left18");
         Node child1 = type_qualifier_list(false);
         if (child1 == null) {
@@ -2936,7 +2940,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left19() {
+    private Production left19() {
         Production prod = new Production("left19");
         int pos = position;
         Node child1, child2 = null, child3 = null;
@@ -3021,7 +3025,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node pointer(boolean flag) {
+    private Production pointer(boolean flag) {
         Production prod = new Production("pointer");
         int pos = position;
         if (getTokenTag() == Tag.MULT) {
@@ -3054,7 +3058,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left20(boolean flag) {
+    private Production left20(boolean flag) {
         Production prod = new Production("left20");
         Node child1 = type_qualifier_list(flag);
         Node child2;
@@ -3083,7 +3087,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left21(boolean flag) {
+    private Production left21(boolean flag) {
         Production prod = new Production("left21");
         Node child1 = pointer(flag);
         if (!child1.getChilds().isEmpty()) {
@@ -3100,7 +3104,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node type_qualifier_list(boolean flag) {
+    private Production type_qualifier_list(boolean flag) {
         Production prod = new Production("type_qualifier_list");
         Node child1 = type_qualifier(flag);
         Node child2;
@@ -3124,7 +3128,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest19(boolean flag) {
+    private Production rest19(boolean flag) {
         Production prod = new Production("rest19");
         Node child1 = type_qualifier(flag);
         Node child2;
@@ -3149,7 +3153,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_type_list(String id) {
+    private Production parameter_type_list(String id) {
         Production prod = new Production("parameter_type_list");
         Node child1 = parameter_list(id);
         Node child2;
@@ -3175,7 +3179,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left37() {
+    private Production left37() {
         Production prod = new Production("left37");
         if (getTokenTag() == Tag.COMMA) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -3199,7 +3203,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_list(String id) {
+    private Production parameter_list(String id) {
         Production prod = new Production("parameter_list");
         Node child1 = parameter_declaration(id);
         Node child2;
@@ -3226,7 +3230,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest20(String id) {
+    private Production rest20(String id) {
         Production prod = new Production("rest20");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
@@ -3256,7 +3260,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node parameter_declaration(String id) {
+    private Production parameter_declaration(String id) {
         Production prod = new Production("parameter_declaration");
         Node child1 = declaration_specifiers();
         Node child2;
@@ -3285,7 +3289,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left22(String id) {
+    private Production left22(String id) {
         Production prod = new Production("left22");
         Node child1 = declarator(Kind.PARAMETER, id);
         if (child1 == null) {
@@ -3313,7 +3317,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node identifier_list() {
+    private Production identifier_list() {
         Production prod = new Production("identifier_list");
         if (getTokenTag() == Tag.IDENTIFIER) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -3336,7 +3340,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest21() {
+    private Production rest21() {
         Production prod = new Production("rest21");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.COMMA) {
@@ -3366,7 +3370,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node type_name() {
+    private Production type_name() {
         Production prod = new Production("type_name");
         Node child1 = specifier_qualifier_list(false);
         Node child2;
@@ -3393,7 +3397,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left23() {
+    private Production left23() {
         Production prod = new Production("left23");
         Node child1 = abstract_declarator();
         if (child1 == null) {
@@ -3414,7 +3418,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node abstract_declarator() {
+    private Production abstract_declarator() {
         Production prod = new Production("abstractor_declarator");
         Node child1 = pointer(false);
         Node child2;
@@ -3444,7 +3448,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left24() {
+    private Production left24() {
         Production prod = new Production("left24");
         Node child1 = direct_abstract_declarator();
         if (child1 == null) {
@@ -3465,7 +3469,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node direct_abstract_declarator() {
+    private Production direct_abstract_declarator() {
         Production prod = new Production("direct_abstract_declarator");
         Leaf terminal;
         Node child1;
@@ -3506,7 +3510,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left25() {
+    private Production left25() {
         Production prod = new Production("left25");
         Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
@@ -3577,7 +3581,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left26() {
+    private Production left26() {
         Production prod = new Production("left26");
         int pos = position;
         Leaf terminal;
@@ -3672,7 +3676,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left27() {
+    private Production left27() {
         Production prod = new Production("left27");
         Node child1 = type_qualifier_list(false);
         Node child2, child3, child4;
@@ -3734,7 +3738,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left28() {
+    private Production left28() {
         Production prod = new Production("left28");
         Leaf terminal;
         Node child1, child2 = null, child3 = null;
@@ -3801,7 +3805,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest22() {
+    private Production rest22() {
         Production prod = new Production("rest22");
         Leaf terminal;
         Node child1;
@@ -3841,7 +3845,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left29() {
+    private Production left29() {
         Production prod = new Production("left29");
         Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
@@ -3888,7 +3892,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node initializer() {
+    private Production initializer() {
         Production prod = new Production("initializer");
         Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_BRACES) {
@@ -3951,7 +3955,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node initializer_list() {
+    private Production initializer_list() {
         Production prod = new Production("initialize_list");
         Node child1= designation();
         Node child2, child3;
@@ -3999,7 +4003,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest23() {
+    private Production rest23() {
         Production prod = new Production("rest23");
         if (getTokenTag() == Tag.COMMA) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4025,7 +4029,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left30() {
+    private Production left30() {
         Production prod = new Production("left30");
         Node child1 = designation();
         Node child2, child3;
@@ -4073,7 +4077,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node designation() {
+    private Production designation() {
         Production prod = new Production("designation");
         Node child1 = designator_list();
         if (child1 == null) {
@@ -4097,7 +4101,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node designator_list() {
+    private Production designator_list() {
         Production prod = new Production("designator_list");
         Node child1 = designator();
         Node child2;
@@ -4124,7 +4128,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest24() {
+    private Production rest24() {
         Production prod = new Production("rest24");
         Node child1 = designator();
         Node child2;
@@ -4153,7 +4157,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node designator() {
+    private Production designator() {
         Production prod = new Production("designator");
         Node child1, child2 = null;
         Leaf terminal;
@@ -4196,7 +4200,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node statement() {
+    private Production statement() {
         Production prod = new Production("statement");
         Node child1 = labeled_statement();
         if (child1 == null) {
@@ -4254,7 +4258,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node labeled_statement() {
+    private Production labeled_statement() {
         Production prod = new Production("labeled_statement");
         int pos = position;
         Node child1, child2 = null, child3 = null;
@@ -4317,7 +4321,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node compound_statement() {
+    private Production compound_statement() {
         Production prod = new Production("compound_statement");
         if (getTokenTag() == Tag.LEFT_BRACES) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4351,7 +4355,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left31() {
+    private Production left31() {
         Production prod = new Production("left31");
         if (getTokenTag() == Tag.RIGHT_BRACES) {
             prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -4408,7 +4412,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node block_item_list() {
+    private Production block_item_list() {
         Production prod = new Production("block_item_list");
         Node child1 = block_item();
         Node child2;
@@ -4432,7 +4436,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest25() {
+    private Production rest25() {
         Production prod = new Production("rest25");
         Node child1 = block_item();
         Node child2;
@@ -4461,7 +4465,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node block_item() {
+    private Production block_item() {
         Production prod = new Production("block_item");
         Node child1 = declaration();
         if (child1 == null) {
@@ -4489,7 +4493,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node expression_statement() {
+    private Production expression_statement() {
         Production prod = new Production("expression_statement");
         if (getTokenTag() == Tag.SEMICOLON) {
             prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -4545,7 +4549,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node selection_statement() {
+    private Production selection_statement() {
         Production prod = new Production("selection_statement");
         Node child1, child2 = null, child3 = null, child4 = null, child5 = null;
         Leaf terminal;
@@ -4609,7 +4613,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node left32() {
+    private Production left32() {
         Production prod = new Production("left32");
         if (getTokenTag() == Tag.ELSE) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4636,7 +4640,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node iteration_statement() {
+    private Production iteration_statement() {
         Production prod = new Production("iteration_statement");
         Leaf terminal;
         Node child1, child2 = null, child3 = null, child4 = null;
@@ -4748,7 +4752,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left33() {
+    private Production left33() {
         Production prod = new Production("left33");
         Node child1 = expression_statement();
         Node child2, child3;
@@ -4803,7 +4807,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left34() {
+    private Production left34() {
         Production prod = new Production("left34");
         Node child1;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
@@ -4850,7 +4854,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node jump_statement() {
+    private Production jump_statement() {
         Production prod = new Production("jump_statement");
         Leaf terminal;
         Node child1, child2;
@@ -4944,7 +4948,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left35() {
+    private Production left35() {
         Production prod = new Production("left35");
         if (getTokenTag() == Tag.SEMICOLON) {
             prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -4999,7 +5003,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node translation_unit() {
+    private Production translation_unit() {
         Production prod = new Production("translation_unit");
         Node child1 = external_declaration();
         Node child2;
@@ -5023,7 +5027,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest26() {
+    private Production rest26() {
         Production prod = new Production("rest26");
         Node child1 = external_declaration();
         Node child2;
@@ -5051,7 +5055,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node external_declaration() {
+    private Production external_declaration() {
         Production prod = new Production("external_declaration");
         Node child1 = function_definition();
         if (!child1.getChilds().isEmpty()) {
@@ -5074,7 +5078,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node function_definition() {
+    private Production function_definition() {
         Production prod = new Production("functional_definiton");
         Node child1 = declaration_specifiers();
         Node child2 = null, child3 = null;
@@ -5100,7 +5104,7 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private Node left36() {
+    private Production left36() {
         Production prod = new Production("left36");
         Node child1 = declaration_list();
         Node child2 = null;
@@ -5126,7 +5130,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node declaration_list() {
+    private Production declaration_list() {
         Production prod = new Production("declaration_list");
         Node child1 = declaration();
         Node child2;
@@ -5154,7 +5158,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest27() {
+    private Production rest27() {
         Production prod = new Production("rest27");
         Node child1 = declaration();
         Node child2;

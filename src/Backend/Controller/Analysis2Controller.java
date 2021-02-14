@@ -18,7 +18,7 @@ public class Analysis2Controller {
     @FXML
     public void getFolder(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Vyberte súbor");
+        directoryChooser.setTitle("Vyberte priečinok");
 
         File selectedDirectory = directoryChooser.showDialog(null);
 

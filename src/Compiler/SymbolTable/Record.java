@@ -16,7 +16,7 @@ public class Record {
     private byte kind;
 
     // atribúty pre pole
-    private ArrayList<String> parameters;
+    private ArrayList<String> parameters = new ArrayList<>();
     private int size;
 
     /**

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Parser {
     private int position = 0;
-    private ArrayList<Token> tokenStream = new ArrayList<>();
+    public ArrayList<Token> tokenStream = new ArrayList<>();
     private Production parseTree;
     private String type = "";
 
@@ -1278,18 +1278,19 @@ public class Parser {
      */
     private Production assignment_expression() {
         Production prod = new Production("assignment_expression");
+        int pos = position;
         Node child1 = unary_expression();
         Node child2 = null, child3;
-        int pos = position;
+        int pos1 = position;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_operator();
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             child3 = assignment_expression();
             if (child3 == null || child3.getChilds().isEmpty()) {
-                if (getTokenValue(pos).equals("=")) {
+                if (getTokenValue(pos1).equals("=")) {
                     //TODO: nie som si istý
-                    System.out.println("Chyba na riadku " + getTokenLine(pos) + " '=' namiesto '=='!");
+                    System.out.println("Chyba na riadku " + getTokenLine(pos1) + " '=' namiesto '=='!");
                 }
                 return null;
             } else {
@@ -1299,6 +1300,7 @@ public class Parser {
                 return prod;
             }
         }
+        position = pos;
         child1 = conditional_expression();
         if (child1 == null) {
             return null;
@@ -4202,6 +4204,7 @@ public class Parser {
      */
     private Production statement() {
         Production prod = new Production("statement");
+        int pos = position;
         Node child1 = labeled_statement();
         if (child1 == null) {
             return null;
@@ -4210,6 +4213,7 @@ public class Parser {
             prod.addChilds(child1);
             return prod;
         }
+        position = pos;
         child1 = compound_statement();
         if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
@@ -5057,11 +5061,13 @@ public class Parser {
      */
     private Production external_declaration() {
         Production prod = new Production("external_declaration");
+        int pos = position;
         Node child1 = function_definition();
         if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
         }
+        position = pos;
         child1 = declaration();
         if (child1 == null) {
             return null;

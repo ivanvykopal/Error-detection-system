@@ -1,13 +1,17 @@
 package Backend.Controller;
 
+import Compiler.Lexer.Token;
+import Compiler.Parser.Parser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Analysis1Controller {
     String file;
@@ -44,6 +48,16 @@ public class Analysis1Controller {
         }
         else {
             System.out.println("Analyzujem kód!");
+            try {
+                //načíta súbor do reťazca
+                String text = new String(Files.readAllBytes(Paths.get(file)));
+                Parser parser = new Parser(text);
+                parser.parse();
+            } catch (IOException er) {
+                er.printStackTrace();
+                System.out.println("Chyba!");
+            }
+
         }
     }
 }

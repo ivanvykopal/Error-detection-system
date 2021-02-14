@@ -1,6 +1,7 @@
 package Compiler.Lexer;
 
 import Compiler.Errors.Error;
+import Compiler.Preprocessing.Preprocessor;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +24,8 @@ public class Scanner {
      * @param file - cesta k súboru
      */
     public Scanner(String file) {
-        this.file = file;
+        Preprocessor prep = new Preprocessor(file);
+        this.file = prep.preprocess();
 
         addKeywords();
     }
@@ -335,10 +337,11 @@ public class Scanner {
         // čísla
         if(Character.isDigit(peek)) {
             StringBuilder word = new StringBuilder("" + peek);
-            do {
-                readNextCharacter();
+            readNextCharacter();
+            while (Character.isDigit(peek)) {
                 word.append(peek);
-            } while (Character.isDigit(peek));
+                readNextCharacter();
+            }
             if (peek != '.') {
                 getPreviousPosition();
                 return new Token(Tag.NUMBER, word.toString(), line);
@@ -358,7 +361,7 @@ public class Scanner {
         }
         //TODO: chyba, nevedel zaradiť token
         System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
-        return null;
+        return new Token((byte) -1, "", line);
     }
 
     /**

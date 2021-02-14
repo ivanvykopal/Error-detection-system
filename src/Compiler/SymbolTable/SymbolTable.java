@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class SymbolTable {
     SymbolTable parent = null;
     HashMap<String, Record> table;
-    ArrayList<SymbolTable> childs = null;
+    ArrayList<SymbolTable> childs = new ArrayList<>();
 
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.

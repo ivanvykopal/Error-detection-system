@@ -1,17 +1,11 @@
 package Compiler.Preprocessing;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  *
  */
 public class Preprocessor {
     private int position = 0;
     private String oldFile;
-    private String newFile = "";
     String[] lines;
 
     public Preprocessor(String file) {
@@ -22,13 +16,14 @@ public class Preprocessor {
         position++;
     }
 
-    private String preprocess() {
+    public String preprocess() {
+        StringBuilder newFile = new StringBuilder();
         lines = oldFile.split("\n");
 
         for (; position < lines.length; nextLine()) {
             //odstránenie zbytočných medzier
             String temp = lines[position].trim().replaceAll(" +", " ");
-            if (temp.charAt(0) == '#') {
+            if (!temp.equals("") && temp.charAt(0) == '#') {
                 while (lines[position].contains("\\")) {
                     temp = temp.replace("\\"," ");
                     nextLine();
@@ -36,18 +31,19 @@ public class Preprocessor {
                 }
 
                 if (temp.contains("define")) {
-                    //# define
+                    //#define
                     preprocessDefine(temp.split(" "));
+                    lines = oldFile.split("\n");
                 } else if (temp.contains("if") || temp.contains("else")) {
-                    //# if, #ifdef, #ifndef, #else, #elif
+                    //#if, #ifdef, #ifndef, #else, #elif
                     preprocessConditions();
                 }
             } else {
-                newFile = newFile.concat(lines[position]);
+                newFile.append(lines[position]).append("\n");
             }
         }
 
-        return newFile;
+        return newFile.toString();
     }
 
     private void preprocessDefine(String[] words) {
@@ -82,6 +78,7 @@ public class Preprocessor {
                         continue;
                     }
 
+                    length = arr1.length;
                     String newString = "";
                     newString = temp.substring(temp.indexOf(")") + 1);
                     for (int i = 0; i < length; i++) {
@@ -156,7 +153,7 @@ public class Preprocessor {
         nextLine();
         while (true) {
             String line = lines[position].trim();
-            if (line.charAt(0) == '#' && (line.contains("#endif") || line.contains("# endif"))) {
+            if (!line.equals("") && line.charAt(0) == '#' && (line.contains("#endif") || line.contains("# endif"))) {
                 break;
             }
             nextLine();

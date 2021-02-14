@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Production extends Node {
     private String production;
-    private ArrayList<Node> childs;
+    private ArrayList<Node> childs = new ArrayList<>();
 
     /**
      * Konštruktor na nastavenie produkčného pravidla.

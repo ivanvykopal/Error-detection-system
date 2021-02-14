@@ -284,6 +284,10 @@ public class Parser {
                     //prod.addChilds(child3);
                     return prod;
                 }
+                if ((child1 != null && child1.getChilds().isEmpty()) ||
+                        (child3 != null && child3.getChilds().isEmpty())) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.DOT:
             case Tag.ARROW:
@@ -300,6 +304,9 @@ public class Parser {
                     //prod.addChilds(child2);
                     return prod;
                 }
+                if (child2 != null && child2.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.INC:
             case Tag.DEC:
@@ -312,6 +319,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -322,6 +332,9 @@ public class Parser {
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -352,6 +365,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.COMMA:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -366,6 +382,9 @@ public class Parser {
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child2 != null && child2.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -394,6 +413,9 @@ public class Parser {
                 //prod.addChilds(child1);
                 return prod;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         }
         child1 = argument_expression_list();
@@ -409,6 +431,9 @@ public class Parser {
             prod.getChilds().addAll(child3.getChilds());
             //prod.addChilds(child3);
             return prod;
+        }
+        if ((child1 != null && child1.getChilds().isEmpty()) || (child3 != null && child3.getChilds().isEmpty())) {
+            System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
         }
         return null;
     }
@@ -431,6 +456,9 @@ public class Parser {
             prod.getChilds().addAll(child2.getChilds());
             //prod.addChilds(child2);
             return prod;
+        }
+        if ((child1 != null && child1.getChilds().isEmpty()) || (child2 != null && child2.getChilds().isEmpty())) {
+            System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
         }
         return null;
     }
@@ -458,6 +486,9 @@ public class Parser {
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if ((child1 != null && child1.getChilds().isEmpty()) || (child2 != null && child2.getChilds().isEmpty())) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -491,6 +522,9 @@ public class Parser {
                     prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.SIZEOF:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -502,12 +536,16 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         child1 = unary_operator();
         if (!child1.getChilds().isEmpty()) {
             child2 = cast_expression();
             if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -553,6 +591,9 @@ public class Parser {
                 prod.addChilds(child1);
                 prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         }
@@ -666,12 +707,15 @@ public class Parser {
                 if (!child1.getChilds().isEmpty()) {
                     child2 = rest3();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -726,12 +770,15 @@ public class Parser {
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = rest4();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -786,12 +833,15 @@ public class Parser {
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = rest5();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -850,12 +900,15 @@ public class Parser {
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = rest6();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -910,12 +963,15 @@ public class Parser {
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     child2 = rest7();
                 }
-                if (child2 != null && !child2.getChilds().isEmpty()) {
+                if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -967,12 +1023,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest8();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1024,12 +1083,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest9();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1081,12 +1143,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest10();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1138,12 +1203,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest11();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1195,12 +1263,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest12();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1262,6 +1333,9 @@ public class Parser {
                 prod.addChilds(child3);
                 return prod;
             }
+            if ((child1 != null && child1.getChilds().isEmpty()) || (child3 != null && child3.getChilds().isEmpty())) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         } else {
             prod.addChilds(new Leaf((byte) 255,"E",0));
@@ -1281,17 +1355,16 @@ public class Parser {
         int pos = position;
         Node child1 = unary_expression();
         Node child2 = null, child3;
-        int pos1 = position;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = assignment_operator();
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             child3 = assignment_expression();
-            if (child3 == null || child3.getChilds().isEmpty()) {
-                if (getTokenValue(pos1).equals("=")) {
-                    //TODO: nie som si istý
-                    System.out.println("Chyba na riadku " + getTokenLine(pos1) + " '=' namiesto '=='!");
-                }
+            if (child3 == null)  {
+                return null;
+            }
+            if (child3.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1340,7 +1413,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest13();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1369,12 +1442,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest13();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty())  {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1416,7 +1492,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left5();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1449,6 +1529,7 @@ public class Parser {
                 nextToken();
                 //ak je koniec súboru
                 if (position == tokenStream.size() - 1) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 }
             }
@@ -1468,6 +1549,7 @@ public class Parser {
             nextToken();
             //ak je koniec súboru
             if (position == tokenStream.size() - 1) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             }
         }
@@ -1476,6 +1558,7 @@ public class Parser {
             nextToken();
             return prod;
         } else {
+            System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             return null;
         }
     }
@@ -1494,7 +1577,11 @@ public class Parser {
         Node child2;
         if (!child1.getChilds().isEmpty()) {
             child2 = left6();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1509,7 +1596,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left6();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1521,7 +1612,11 @@ public class Parser {
         child1 = type_qualifier(true);
         if (!child1.getChilds().isEmpty()) {
             child2 = left6();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1569,7 +1664,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest14();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1598,12 +1697,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest14();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1627,7 +1729,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left7();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1656,6 +1762,9 @@ public class Parser {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -1764,7 +1873,11 @@ public class Parser {
         Node child2;
         if (!child1.getChilds().isEmpty()) {
             child2 = left8(flag);
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -1844,6 +1957,9 @@ public class Parser {
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
         }
@@ -1972,7 +2088,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest15();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2000,7 +2116,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left10();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2079,7 +2199,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left11(flag);
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2091,7 +2215,11 @@ public class Parser {
         child1 = type_qualifier(flag);
         if (!child1.getChilds().isEmpty()) {
             child2 = left11(flag);
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2174,6 +2302,9 @@ public class Parser {
                 //prod.addChilds(child2);
                 return prod;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         } else {
             prod.addChilds(new Leaf((byte) 255,"E",0));
@@ -2200,6 +2331,9 @@ public class Parser {
                 prod.addChilds(child1);
                 return prod;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         }
         child1 = declarator(Kind.VARIABLE, "");
@@ -2209,7 +2343,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left12();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2237,6 +2375,9 @@ public class Parser {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -2267,6 +2408,9 @@ public class Parser {
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         }
@@ -2476,12 +2620,15 @@ public class Parser {
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 child2 = rest17();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -2530,6 +2677,9 @@ public class Parser {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -2646,6 +2796,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -2693,6 +2846,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -2703,6 +2859,9 @@ public class Parser {
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -2756,12 +2915,15 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = rest18("");
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
@@ -2843,7 +3005,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest18("");
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -2860,7 +3022,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest18("");
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -2888,7 +3050,11 @@ public class Parser {
         Node child2, child3, child4;
         if (!child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_PARENTHESES);
@@ -2896,7 +3062,7 @@ public class Parser {
                     return null;
                 } else {
                     child4 = rest18("");
-                    if (child4 == null || child4.getChilds().isEmpty()) {
+                    if (child4 == null) {
                         return null;
                     } else {
                         prod.addChilds(child1);
@@ -2919,7 +3085,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest18("");
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -2985,6 +3151,9 @@ public class Parser {
                     //prod.addChilds(child3);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -3008,7 +3177,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest18("");
-                if (child3 == null ||child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3239,7 +3408,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = parameter_declaration(id);
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 != null) {
                 child2 = rest20(id);
             }
             if (child2 != null && !child2.getChilds().isEmpty()) {
@@ -3248,6 +3417,9 @@ public class Parser {
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
+            }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
             }
             return null;
         } else {
@@ -3271,7 +3443,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left22(id);
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -3352,7 +3528,7 @@ public class Parser {
             if (child1 != null) {
                 child2 = rest21();
             }
-            if (child2 != null && !child2.getChilds().isEmpty()) {
+            if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 prod.getChilds().addAll(child2.getChilds());
@@ -3499,6 +3675,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         return prod;
@@ -3519,7 +3698,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = rest22();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
@@ -3538,7 +3717,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 }  else {
                     prod.addChilds(child1);
@@ -3559,7 +3738,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3593,7 +3772,7 @@ public class Parser {
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = rest22();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
@@ -3606,7 +3785,7 @@ public class Parser {
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
                     child2 = rest22();
-                    if (child2 == null ||child2.getChilds().isEmpty()) {
+                    if (child2 == null) {
                         return null;
                     } else {
                         prod.addChilds(terminal);
@@ -3629,6 +3808,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         child1 = assignment_expression();
@@ -3642,7 +3824,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3659,7 +3841,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = left28();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -3687,7 +3873,11 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = assignment_expression();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_PARENTHESES);
@@ -3695,7 +3885,7 @@ public class Parser {
                     return null;
                 } else {
                     child4 = rest22();
-                    if (child4 == null || child4.getChilds().isEmpty()) {
+                    if (child4 == null) {
                         return null;
                     } else {
                         prod.addChilds(child1);
@@ -3718,7 +3908,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3755,7 +3945,7 @@ public class Parser {
                 if (child2 != null) {
                     child3 = rest22();
                 }
-                if (child3 != null && !child3.getChilds().isEmpty()) {
+                if (child3 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
@@ -3763,12 +3953,15 @@ public class Parser {
                     //prod.addChilds(child3);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.RIGHT_PARENTHESES:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = rest22();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null) {
                     prod.addChilds(terminal);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
@@ -3786,7 +3979,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3822,6 +4015,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.LEFT_BRACKETS:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -3832,6 +4028,9 @@ public class Parser {
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
@@ -3854,7 +4053,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             child1 = rest22();
-            if (child1 != null && !child1.getChilds().isEmpty()) {
+            if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
@@ -3873,7 +4072,7 @@ public class Parser {
                 return null;
             } else {
                 child3 = rest22();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3902,7 +4101,11 @@ public class Parser {
             nextToken();
             child1 = initializer_list();
             if (child1 == null) {
+                //error recovery
                 while (getTokenTag() != Tag.RIGHT_BRACES) {
+                    if (position == tokenStream.size() - 1) {
+                        return null;
+                    }
                     nextToken();
                 }
                 nextToken();
@@ -3966,11 +4169,15 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = initializer();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = rest23();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -3987,7 +4194,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest23();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -4017,6 +4224,9 @@ public class Parser {
                 //prod.addChilds(child1);
                 return prod;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         } else {
             prod.addChilds(new Leaf((byte) 255,"E",0));
@@ -4040,11 +4250,15 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = initializer();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = rest23();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
                     return null;
                 }  else {
                     prod.addChilds(child1);
@@ -4061,7 +4275,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest23();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -4091,6 +4305,7 @@ public class Parser {
                 nextToken();
                 return prod;
             } else {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             }
         }
@@ -4112,7 +4327,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest24();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -4139,7 +4354,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest24();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -4176,6 +4391,9 @@ public class Parser {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
                     return prod;
+                }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             case Tag.DOT:
@@ -4215,6 +4433,9 @@ public class Parser {
         }
         position = pos;
         child1 = compound_statement();
+        if (child1 == null) {
+            return null;
+        }
         if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
@@ -4296,6 +4517,9 @@ public class Parser {
                     prod.addChilds(child2);
                     return prod;
                 }
+                if (child2 != null && child2.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.CASE:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4314,6 +4538,9 @@ public class Parser {
                     prod.addChilds(child3);
                     return prod;
                 }
+                if ((child1 != null && child1.getChilds().isEmpty()) || (child3 != null && child3.getChilds().isEmpty())) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         return prod;
@@ -4331,7 +4558,7 @@ public class Parser {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
             Node child1 = left31();
-            if (child1.getChilds().isEmpty()) {
+            if (child1 == null || child1.getChilds().isEmpty()) {
                 //error recovery
                 while (getTokenTag() != Tag.RIGHT_BRACES) {
                     nextToken();
@@ -4422,7 +4649,7 @@ public class Parser {
         Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest25();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -4584,6 +4811,9 @@ public class Parser {
                     //prod.addChilds(child5);
                     return prod;
                 }
+                if ((child2 != null && child2.getChilds().isEmpty()) || (child4 != null && child4.getChilds().isEmpty())) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
             case Tag.SWITCH:
                 terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -4606,6 +4836,9 @@ public class Parser {
                     prod.addChilds(child4);
                     return prod;
                 }
+                if ((child2 != null && child2.getChilds().isEmpty()) || (child4 != null && child4.getChilds().isEmpty())) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         return prod;
@@ -4627,9 +4860,11 @@ public class Parser {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
                 return prod;
-            } else {
-                return null;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
+            return null;
         } else {
             prod.addChilds(new Leaf((byte) 255,"E",0));
             return prod;
@@ -4670,6 +4905,9 @@ public class Parser {
                     prod.addChilds(child3);
                     prod.addChilds(child4);
                     return prod;
+                }
+                if ((child2 != null && child2.getChilds().isEmpty()) || (child4 != null && child4.getChilds().isEmpty())) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             case Tag.DO:
@@ -4744,6 +4982,9 @@ public class Parser {
                     //prod.addChilds(child2);
                     return prod;
                 }
+                if (child2 != null && child2.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         return prod;
@@ -4765,11 +5006,19 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = expression_statement();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+             if (child2.getChilds().isEmpty()) {
+                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = left34();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
+                    return null;
+                }
+                if (child3.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -4786,11 +5035,19 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = expression_statement();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
                 child3 = left34();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
+                    return null;
+                }
+                if (child3.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -4823,6 +5080,9 @@ public class Parser {
                 prod.addChilds(child1);
                 return prod;
             }
+            if (child1 != null && child1.getChilds().isEmpty()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+            }
             return null;
         }
         child1 = expression();
@@ -4836,7 +5096,11 @@ public class Parser {
                 return null;
             } else {
                 child3 = statement();
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                if (child3 == null) {
+                    return null;
+                }
+                if (child3.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 } else {
                     prod.addChilds(child1);
@@ -4940,6 +5204,9 @@ public class Parser {
                     //prod.addChilds(child1);
                     return prod;
                 }
+                if (child1 != null && child1.getChilds().isEmpty()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                }
                 return null;
         }
         return prod;
@@ -5013,7 +5280,7 @@ public class Parser {
         Node child2;
         if (child1 != null && !child1.getChilds().isEmpty()) {
             child2 = rest26();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -5040,7 +5307,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest26();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -5123,6 +5390,9 @@ public class Parser {
             return prod;
         }
         child1 = compound_statement();
+        if (child1 == null) {
+            return null;
+        }
         if (!child1.getChilds().isEmpty()) {
             prod.addChilds(child1);
             return prod;
@@ -5145,7 +5415,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest27();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);
@@ -5173,7 +5443,7 @@ public class Parser {
         }
         if (!child1.getChilds().isEmpty()) {
             child2 = rest27();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+            if (child2 == null) {
                 return null;
             } else {
                 prod.addChilds(child1);

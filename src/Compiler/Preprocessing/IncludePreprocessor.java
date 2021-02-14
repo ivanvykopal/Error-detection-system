@@ -12,7 +12,6 @@ public class IncludePreprocessor {
      */
     public IncludePreprocessor(String file) {
         this.file = file;
-
     }
 
     /**
@@ -23,10 +22,9 @@ public class IncludePreprocessor {
     public boolean process() {
         String[] lines = file.split("\n");
 
-        int length = lines.length;
-        for (int i = 0; i < length; i++) {
-            if (lines[i].trim().charAt(0) == '#' && lines[i].contains("include")) {
-                if (!preprocessInclude(lines[i])) {
+        for (String line : lines) {
+            if (line.trim().charAt(0) == '#' && line.contains("include")) {
+                if (!preprocessInclude(line)) {
                     return false;
                 }
             }

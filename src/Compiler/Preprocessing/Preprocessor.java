@@ -6,6 +6,7 @@ package Compiler.Preprocessing;
 public class Preprocessor {
     private int position = 0;
     private String oldFile;
+    private StringBuilder newFile = new StringBuilder();
     String[] lines;
 
     public Preprocessor(String file) {
@@ -17,7 +18,6 @@ public class Preprocessor {
     }
 
     public String preprocess() {
-        StringBuilder newFile = new StringBuilder();
         lines = oldFile.split("\n");
 
         for (; position < lines.length; nextLine()) {
@@ -25,6 +25,7 @@ public class Preprocessor {
             String temp = lines[position].trim().replaceAll(" +", " ");
             if (!temp.equals("") && temp.charAt(0) == '#') {
                 while (lines[position].contains("\\")) {
+                    newFile.append("\n");
                     temp = temp.replace("\\"," ");
                     nextLine();
                     temp = temp.concat(lines[position].trim().replaceAll(" +"," "));
@@ -33,6 +34,7 @@ public class Preprocessor {
                 if (temp.contains("define")) {
                     //#define
                     preprocessDefine(temp.split(" "));
+                    newFile.append("\n");
                     lines = oldFile.split("\n");
                 } else if (temp.contains("if") || temp.contains("else")) {
                     //#if, #ifdef, #ifndef, #else, #elif
@@ -150,12 +152,15 @@ public class Preprocessor {
     }
 
     private void preprocessConditions() {
+        newFile.append("\n");
         nextLine();
         while (true) {
             String line = lines[position].trim();
             if (!line.equals("") && line.charAt(0) == '#' && (line.contains("#endif") || line.contains("# endif"))) {
+                newFile.append("\n");
                 break;
             }
+            newFile.append("\n");
             nextLine();
         }
     }

@@ -100,7 +100,11 @@ public class Parser {
                 System.out.println("Chybajúci operátor na riadku " + getTokenLine() + "!");
                 break;
             case Tag.IDENTIFIER:
-                System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
+                if (getTokenTag(position - 1) < 32) {
+                    System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
+                } else {
+                    System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
+                }
                 break;
             default:
                 switch (getTokenTag(position - 1)) {
@@ -111,9 +115,12 @@ public class Parser {
                         System.out.println("Zátvorka naviac na riadku " + getTokenLine() + "!");
                         break;
                     default:
-                        System.out.println("Chyba na riadku " + getTokenLine() + "!");
+                        if (tag < 32 && getTokenTag(position - 1) == Tag.IDENTIFIER) {
+                            System.out.println("Chybné kľúčové slovo na riadku " + getTokenLine() + "!");
+                        } else {
+                            System.out.println("Chyba na riadku " + getTokenLine() + "!");
+                        }
                 }
-
                 break;
         }
         return null;
@@ -504,7 +511,7 @@ public class Parser {
      *                    | unary_operator cast_expression
      *                    | SIZEOF left3
      * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     *         0 ak sa zhoda nenašlarest
      *         -1 ak sa vyskytla chyba
      */
     private Production unary_expression() {
@@ -1529,7 +1536,6 @@ public class Parser {
                 nextToken();
                 //ak je koniec súboru
                 if (position == tokenStream.size() - 1) {
-                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 }
             }
@@ -1549,7 +1555,6 @@ public class Parser {
             nextToken();
             //ak je koniec súboru
             if (position == tokenStream.size() - 1) {
-                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             }
         }
@@ -1962,6 +1967,10 @@ public class Parser {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
+        }
+        if (getTokenTag() < 32) {
+            System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
+            return null;
         }
         return prod;
     }
@@ -2531,6 +2540,10 @@ public class Parser {
                 //prod.addChilds(child3);
                 return prod;
         }
+        if (getTokenTag() < 32) {
+            System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
+            return null;
+        }
         return prod;
     }
 
@@ -2820,6 +2833,11 @@ public class Parser {
                 }
                 position = pos;
                 return prod;
+        }
+        //TODO: nie som si istý
+        if (getTokenTag() < 32) {
+            System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
+            return null;
         }
         return prod;
     }
@@ -3507,6 +3525,10 @@ public class Parser {
                 //prod.addChilds(child1);
                 return prod;
             }
+            return null;
+        }
+        if (getTokenTag() < 32) {
+            System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
             return null;
         }
         return prod;

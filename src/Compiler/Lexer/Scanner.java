@@ -42,7 +42,7 @@ public class Scanner {
             if (ignoreComments()) {
                 //TODO: Chýbajúca časť uzavretia
                 System.out.println("Chyba: E-LA-03 " + err.getError("E-LA-03"));
-                return null;
+                return new Token((byte) -1, "", line);
             };
             if (peek == '\n') {
                 line++;
@@ -247,7 +247,7 @@ public class Scanner {
                 //TODO: prekročenie dĺžky názvu identifikátoru
                 if (word.toString().length() > 31) {
                     System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                    return null;
+                    return new Token((byte) -1, "", line);
                 } else {
                     return new Token(Tag.IDENTIFIER, word.toString(), line);
                 }
@@ -262,7 +262,7 @@ public class Scanner {
                     //TODO: prekročenie dĺžky názvu identifikátoru
                     if (word.toString().length() > 31) {
                         System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                        return null;
+                        return new Token((byte) -1, "", line);
                     } else {
                         return new Token(Tag.IDENTIFIER, word.toString(), line);
                     }
@@ -285,7 +285,7 @@ public class Scanner {
             //TODO: prekročenie dĺžky názvu identifikátoru
             if (word.toString().length() > 31) {
                 System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                return null;
+                return new Token((byte) -1, "", line);
             } else {
                 return new Token(Tag.IDENTIFIER, word.toString(), line);
             }
@@ -306,7 +306,7 @@ public class Scanner {
                 } else if (peek == '\n'){
                     //TODO: Chýbajúce úvodzovky pre reťazcovú konštantu
                     System.out.println("Chyba: E-LA-04 " + err.getError("E-LA-04"));
-                    return null;
+                    return new Token((byte) -1, "", line);
                 } else {
                     word.append(peek);
                 }
@@ -320,7 +320,7 @@ public class Scanner {
             readNextCharacter();
             if (peek == '\\' || peek == '\'') {
                 System.out.print("Chyba pre znak!");
-                return null;
+                return new Token((byte) -1, "", line);
             } else {
                 word.append(peek);
             }
@@ -330,7 +330,7 @@ public class Scanner {
                 return new Token(Tag.CHARACTER, word.toString(), line);
             } else {
                 System.out.print("Chyba pre znak!");
-                return null;
+                return new Token((byte) -1, "", line);
             }
         }
 

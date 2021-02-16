@@ -34,8 +34,22 @@ public class Parser {
         }
     }
 
+    public void printTree(Node parent, String indent) {
+        parent.printData(indent);
+        if (parent.getChilds() != null) {
+            for (Node child: parent.getChilds()) {
+                printTree(child, indent + "   ");
+            }
+        }
+    }
+
     public void parse() {
         parseTree = translation_unit();
+        if (parseTree == null) {
+            System.out.println("Chyba v parse tree!");
+        } else {
+            printTree(parseTree, "");
+        }
     }
 
     private void nextToken() {
@@ -141,6 +155,13 @@ public class Parser {
         Node child1;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
+                Record record = symbolTable.lookup(getTokenValue());
+                if (record.getKind() != Kind.ENUMERATION_CONSTANT) {
+                    prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
+                    nextToken();
+                    return prod;
+                }
+                break;
             case Tag.CHARACTER:
             case Tag.STRING:
                 prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -162,24 +183,25 @@ public class Parser {
                 }
                 position = pos;
                 return prod;
-            default:
-                child1 = constant();
-                if (!child1.getChilds().isEmpty()) {
-                    prod.addChilds(child1);
-                }
-                return prod;
         }
+        child1 = constant();
+        if (!child1.getChilds().isEmpty()) {
+            prod.addChilds(child1);
+        }
+        return prod;
     }
 
     /**
      * constant ->  NUMBER
      *            | REAL
+     *            | ENUMERATION_CONSTANT
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
     private Production constant() {
         Production prod = new Production("constant");
         switch (getTokenTag()) {
+            case Tag.IDENTIFIER:
             case Tag.NUMBER:
             case Tag.REAL:
                 prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
@@ -197,9 +219,12 @@ public class Parser {
      */
     private Production enumeration_constant() {
         Production prod = new Production("enumeration_constant");
-        Node child = accept(Tag.IDENTIFIER);
-        if (child != null) {
-            prod.addChilds(child);
+        if (getTokenTag() == Tag.IDENTIFIER) {
+            //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
+            symbolTable.insert(getTokenValue(), "", getTokenLine(), Kind.ENUMERATION_CONSTANT);
+
+            prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
+            nextToken();
         }
         return prod;
     }
@@ -3007,7 +3032,7 @@ public class Parser {
             if (child1 != null) {
                 prod.addChilds(terminal);
                 prod.getChilds().addAll(child1.getChilds());
-                prod.addChilds(child1);
+                //prod.addChilds(child1);
                 return prod;
             }
             return null;

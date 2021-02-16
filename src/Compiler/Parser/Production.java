@@ -51,4 +51,9 @@ public class Production extends Node {
     public String getProduction() {
         return this.production;
     }
+
+    @Override
+    public void printData(String indent) {
+        System.out.println(indent + production);
+    }
 }

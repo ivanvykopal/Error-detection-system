@@ -152,6 +152,10 @@ public class SymbolTable {
             type = type.replace("* ", "");
         }
 
+        if (type.equals("")) {
+            return -1;
+        }
+
         //riešenie typov
         switch (type.hashCode()) {
             case 3052374: return (byte) (Type.CHAR + pointer);                      // char

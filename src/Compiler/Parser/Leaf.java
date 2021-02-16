@@ -71,4 +71,9 @@ public class Leaf extends Node {
     public ArrayList<Node> getChilds() {
         return null;
     }
+
+    @Override
+    public void printData(String indent) {
+        System.out.println(indent + tag + ", " + value + ", " + line);
+    }
 }

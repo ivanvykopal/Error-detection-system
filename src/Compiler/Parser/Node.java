@@ -16,4 +16,6 @@ public abstract class Node {
      */
     abstract public ArrayList<Node> getChilds();
 
+    abstract public void printData(String indent);
+
 }

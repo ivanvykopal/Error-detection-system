@@ -11,4 +11,5 @@ public class Kind {
     public static byte PARAMETER = 3;
     public static byte ARRAY_PARAMETER = 4;
     public static byte TYPEDEF_NAME = 5;
+    public static byte ENUMERATION_CONSTANT = 6;
 }

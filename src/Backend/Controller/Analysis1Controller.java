@@ -53,6 +53,7 @@ public class Analysis1Controller {
                 String text = new String(Files.readAllBytes(Paths.get(file)));
                 Parser parser = new Parser(text);
                 parser.parse();
+                System.out.println("Koniec!");
             } catch (IOException er) {
                 er.printStackTrace();
                 System.out.println("Chyba!");

@@ -18,4 +18,5 @@ public abstract class Node {
 
     abstract public void printData(String indent);
 
+    abstract public byte getTag();
 }

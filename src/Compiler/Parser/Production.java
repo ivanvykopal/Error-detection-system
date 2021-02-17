@@ -56,4 +56,9 @@ public class Production extends Node {
     public void printData(String indent) {
         System.out.println(indent + production);
     }
+
+    @Override
+    public byte getTag() {
+        return -2;
+    }
 }

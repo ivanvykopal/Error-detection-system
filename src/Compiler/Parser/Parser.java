@@ -140,6 +140,17 @@ public class Parser {
         return null;
     }
 
+    private void clearEpsilon(Node child) {
+        //vymazanie epsilonu
+        int length = child.getChilds().size();
+        for (int i = 0; i < length; i++) {
+            if (child.getChilds().get(i).getTag() == -1) {
+                child.getChilds().remove(i);
+                break;
+            }
+        }
+    }
+
     /**
      * primary_expression ->  IDENTIFIER
      *                      | constant
@@ -156,7 +167,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 Record record = symbolTable.lookup(getTokenValue());
-                if (record.getKind() != Kind.ENUMERATION_CONSTANT) {
+                if (record == null || record.getKind() != Kind.ENUMERATION_CONSTANT) {
                     prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));
                     nextToken();
                     return prod;
@@ -275,6 +286,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
+            //vymazanie epsilonu
+            clearEpsilon(child2);
             prod.getChilds().addAll(child2.getChilds());
             //prod.addChilds(child2);
             return prod;
@@ -312,6 +325,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -332,6 +347,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -347,6 +364,8 @@ public class Parser {
                 child1 = rest1();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -393,6 +412,8 @@ public class Parser {
                 child1 = rest1();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -411,6 +432,8 @@ public class Parser {
                 if (child2 != null && !child2.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -441,6 +464,8 @@ public class Parser {
             child1 = rest1();
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -460,6 +485,8 @@ public class Parser {
         if (child3 != null && !child3.getChilds().isEmpty()) {
             prod.addChilds(child1);
             prod.addChilds(child2);
+            //vymazanie epsilonu
+            clearEpsilon(child3);
             prod.getChilds().addAll(child3.getChilds());
             //prod.addChilds(child3);
             return prod;
@@ -485,6 +512,8 @@ public class Parser {
         }
         if (child2 != null && !child2.getChilds().isEmpty()) {
             prod.addChilds(child1);
+            //vymazanie epsilonu
+            clearEpsilon(child2);
             prod.getChilds().addAll(child2.getChilds());
             //prod.addChilds(child2);
             return prod;
@@ -515,6 +544,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -708,6 +739,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -742,6 +775,8 @@ public class Parser {
                 if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -774,6 +809,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -805,6 +842,8 @@ public class Parser {
                 if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -837,6 +876,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -868,6 +909,8 @@ public class Parser {
                 if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -900,6 +943,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -935,6 +980,8 @@ public class Parser {
                 if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -967,6 +1014,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -998,6 +1047,8 @@ public class Parser {
                 if (child2 != null) {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
+                    //vymazanie epsilonu
+                    clearEpsilon(child2);
                     prod.getChilds().addAll(child2.getChilds());
                     //prod.addChilds(child2);
                     return prod;
@@ -1030,6 +1081,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1058,6 +1111,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1090,6 +1145,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1118,6 +1175,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1150,6 +1209,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1178,6 +1239,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1210,6 +1273,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1238,6 +1303,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1270,6 +1337,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1298,6 +1367,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1330,6 +1401,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1449,6 +1522,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1477,6 +1552,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1615,6 +1692,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1634,6 +1713,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1650,6 +1731,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1702,6 +1785,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1730,6 +1815,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1767,6 +1854,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -1984,6 +2073,8 @@ public class Parser {
                 child1 = left9();
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -2099,6 +2190,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2126,6 +2219,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2241,6 +2336,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2257,6 +2354,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2305,6 +2404,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2332,6 +2433,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2385,6 +2488,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2634,6 +2739,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2661,6 +2768,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2691,6 +2800,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -2830,6 +2941,8 @@ public class Parser {
                 child1 = rest18(terminal.getValue());
                 if (child1 != null && !child1.getChilds().isEmpty()) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -2852,6 +2965,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -2940,6 +3055,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
+                        //vymazanie epsilonu
+                        clearEpsilon(child2);
                         prod.getChilds().addAll(child2.getChilds());
                         //prod.addChilds(child2);
                         return prod;
@@ -2968,6 +3085,8 @@ public class Parser {
                 child1 = rest18("");
                 if (child1 != null) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -2990,6 +3109,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3031,6 +3152,8 @@ public class Parser {
             child1 = rest18("");
             if (child1 != null) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -3053,6 +3176,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3069,6 +3194,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3111,6 +3238,8 @@ public class Parser {
                         prod.addChilds(child1);
                         prod.addChilds(child2);
                         prod.addChilds(child3);
+                        //vymazanie epsilonu
+                        clearEpsilon(child4);
                         prod.getChilds().addAll(child4.getChilds());
                         //prod.addChilds(child4);
                         return prod;
@@ -3133,6 +3262,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3168,6 +3299,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
+                        //vymazanie epsilonu
+                        clearEpsilon(child2);
                         prod.getChilds().addAll(child2.getChilds());
                         //prod.addChilds(child2);
                         return prod;
@@ -3190,6 +3323,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3204,6 +3339,8 @@ public class Parser {
                 child1 = rest18("");
                 if (child1 != null) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -3225,6 +3362,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3253,6 +3392,8 @@ public class Parser {
             Node child1 = left20(flag);
             if (child1 != null && !child1.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -3282,6 +3423,8 @@ public class Parser {
         if (!child1.getChilds().isEmpty()) {
             child2 = left21(flag);
             prod.addChilds(child1);
+            //vymazanie epsilonu
+            clearEpsilon(child2);
             prod.getChilds().addAll(child2.getChilds());
             //prod.addChilds(child2);
             return prod;
@@ -3328,6 +3471,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3352,6 +3497,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3378,6 +3525,8 @@ public class Parser {
             child2 = left37();
             if (child2 != null) {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3430,6 +3579,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3457,6 +3608,8 @@ public class Parser {
             if (child2 != null && !child2.getChilds().isEmpty()) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3494,6 +3647,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3546,6 +3701,8 @@ public class Parser {
             Node child1 = rest21();
             if (child1 != null) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -3578,6 +3735,8 @@ public class Parser {
             if (child2 != null) {
                 prod.addChilds(terminal);
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3608,6 +3767,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -3651,6 +3812,8 @@ public class Parser {
             child2 = left24();
             if (child2 != null) {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
             }
@@ -3747,6 +3910,8 @@ public class Parser {
             child1 = rest22();
             if (child1 != null) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -3769,6 +3934,8 @@ public class Parser {
                 }  else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3790,6 +3957,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3821,6 +3990,8 @@ public class Parser {
                 child1 = rest22();
                 if (child1 != null) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -3837,6 +4008,8 @@ public class Parser {
                     } else {
                         prod.addChilds(terminal);
                         prod.addChilds(child1);
+                        //vymazanie epsilonu
+                        clearEpsilon(child2);
                         prod.getChilds().addAll(child2.getChilds());
                         //prod.addChilds(child2);
                         return prod;
@@ -3876,6 +4049,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3938,6 +4113,8 @@ public class Parser {
                         prod.addChilds(child1);
                         prod.addChilds(child2);
                         prod.addChilds(child3);
+                        //vymazanie epsilonu
+                        clearEpsilon(child4);
                         prod.getChilds().addAll(child4.getChilds());
                         //prod.addChilds(child4);
                         return prod;
@@ -3960,6 +4137,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -3996,6 +4175,8 @@ public class Parser {
                     prod.addChilds(terminal);
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -4010,6 +4191,8 @@ public class Parser {
                 child1 = rest22();
                 if (child1 != null) {
                     prod.addChilds(terminal);
+                    //vymazanie epsilonu
+                    clearEpsilon(child1);
                     prod.getChilds().addAll(child1.getChilds());
                     //prod.addChilds(child1);
                     return prod;
@@ -4031,6 +4214,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -4102,6 +4287,8 @@ public class Parser {
             child1 = rest22();
             if (child1 != null) {
                 prod.addChilds(terminal);
+                //vymazanie epsilonu
+                clearEpsilon(child1);
                 prod.getChilds().addAll(child1.getChilds());
                 //prod.addChilds(child1);
                 return prod;
@@ -4124,6 +4311,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -4229,6 +4418,8 @@ public class Parser {
                 } else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -4245,6 +4436,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4310,6 +4503,8 @@ public class Parser {
                 }  else {
                     prod.addChilds(child1);
                     prod.addChilds(child2);
+                    //vymazanie epsilonu
+                    clearEpsilon(child3);
                     prod.getChilds().addAll(child3.getChilds());
                     //prod.addChilds(child3);
                     return prod;
@@ -4326,6 +4521,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4378,6 +4575,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4405,6 +4604,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4700,6 +4901,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4727,6 +4930,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -4854,6 +5059,8 @@ public class Parser {
                     prod.addChilds(child2);
                     prod.addChilds(child3);
                     prod.addChilds(child4);
+                    //vymazanie epsilonu
+                    clearEpsilon(child5);
                     prod.getChilds().addAll(child5.getChilds());
                     //prod.addChilds(child5);
                     return prod;
@@ -5331,6 +5538,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -5358,6 +5567,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -5466,6 +5677,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;
@@ -5494,6 +5707,8 @@ public class Parser {
                 return null;
             } else {
                 prod.addChilds(child1);
+                //vymazanie epsilonu
+                clearEpsilon(child2);
                 prod.getChilds().addAll(child2.getChilds());
                 //prod.addChilds(child2);
                 return prod;

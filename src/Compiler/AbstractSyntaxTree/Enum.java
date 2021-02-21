@@ -14,4 +14,14 @@ public class Enum extends Node {
         //System.out.println(name);
         values.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

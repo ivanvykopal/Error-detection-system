@@ -15,4 +15,19 @@ public class ParameterList extends Node {
             param.traverse();
         }
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public void addParameter(Node param) {
+        parameters.add(param);
+    }
+
 }

@@ -17,4 +17,14 @@ public class Assignment extends Node {
         //System.out.println(operator);
         right.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

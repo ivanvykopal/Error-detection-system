@@ -21,4 +21,14 @@ public class FunctionDefinition extends Node {
         }
         body.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

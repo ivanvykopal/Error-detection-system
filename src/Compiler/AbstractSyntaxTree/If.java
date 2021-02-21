@@ -17,4 +17,14 @@ public class If extends Node {
         truePart.traverse();
         falsePart.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

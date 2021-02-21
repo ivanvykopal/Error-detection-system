@@ -11,4 +11,14 @@ public class Return extends Node {
     public void traverse() {
         expression.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

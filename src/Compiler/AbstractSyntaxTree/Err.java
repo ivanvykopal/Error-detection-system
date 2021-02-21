@@ -1,10 +1,8 @@
 package Compiler.AbstractSyntaxTree;
 
-public class Break extends Node {
-
+public class Err extends Node {
     @Override
     public void traverse() {
-
     }
 
     @Override

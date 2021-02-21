@@ -1,6 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
-public class Break extends Node {
+public class None extends Node {
 
     @Override
     public void traverse() {
@@ -9,7 +9,7 @@ public class Break extends Node {
 
     @Override
     public boolean isNone() {
-        return false;
+        return true;
     }
 
     @Override

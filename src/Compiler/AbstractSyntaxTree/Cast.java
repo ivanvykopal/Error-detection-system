@@ -14,4 +14,14 @@ public class Cast extends Node {
         type.traverse();
         expression.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

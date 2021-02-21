@@ -19,4 +19,14 @@ public class TypeDeclaration extends Node {
         //qualifiers -> sout
         type.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

@@ -19,4 +19,14 @@ public class ArrayDeclaration extends Node {
         dimension.traverse();
         // dimensionQualifiers -> sout
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

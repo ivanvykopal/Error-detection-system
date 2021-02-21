@@ -15,4 +15,14 @@ public class AST extends Node {
             ext.traverse();
         }
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

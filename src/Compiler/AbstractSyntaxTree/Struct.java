@@ -18,4 +18,14 @@ public class Struct extends Node {
             decl.traverse();
         }
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

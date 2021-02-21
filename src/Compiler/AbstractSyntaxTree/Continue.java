@@ -5,4 +5,14 @@ public class Continue extends Node {
     public void traverse() {
 
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

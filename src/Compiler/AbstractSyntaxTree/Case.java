@@ -15,4 +15,14 @@ public class Case extends Node {
         //System.out.print(":");
         statement.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

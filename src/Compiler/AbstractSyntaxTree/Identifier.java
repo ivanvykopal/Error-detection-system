@@ -11,4 +11,14 @@ public class Identifier extends Node {
     public void traverse() {
         //System.out.println(name);
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

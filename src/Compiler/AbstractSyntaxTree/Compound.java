@@ -15,4 +15,14 @@ public class Compound extends Node {
             stmt.traverse();
         }
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

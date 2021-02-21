@@ -1,24 +1,18 @@
 package Compiler.AbstractSyntaxTree;
 
-public class For extends Node {
+public class InitDeclarator extends Node {
+    Node declarator;
     Node initializer;
-    Node condition;
-    Node next;
-    Node statement;
 
-    public For(Node init, Node cond, Node next, Node stmt) {
+    public InitDeclarator(Node decl, Node init) {
+        this.declarator = decl;
         this.initializer = init;
-        this.condition = cond;
-        this.next = next;
-        this.statement = stmt;
     }
 
     @Override
     public void traverse() {
+        declarator.traverse();
         initializer.traverse();
-        condition.traverse();
-        next.traverse();
-        statement.traverse();
     }
 
     @Override

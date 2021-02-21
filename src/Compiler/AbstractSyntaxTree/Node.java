@@ -8,4 +8,8 @@ public abstract class Node {
 
     abstract public void traverse();
 
+    abstract public boolean isNone();
+
+    abstract public boolean isEmpty();
+
 }

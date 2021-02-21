@@ -14,4 +14,14 @@ public class FunctionCall extends Node {
         name.traverse();
         arguments.traverse();
     }
+
+    @Override
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

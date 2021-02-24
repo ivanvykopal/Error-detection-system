@@ -29,4 +29,9 @@ public class InitializationList extends Node {
     public void addExpression(Node expr) {
         expressions.add(expr);
     }
+
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
 }

@@ -22,4 +22,9 @@ public class Goto extends Node {
         return false;
     }
 
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
+
 }

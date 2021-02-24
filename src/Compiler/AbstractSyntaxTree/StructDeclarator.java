@@ -1,15 +1,18 @@
 package Compiler.AbstractSyntaxTree;
 
-public class IdentifierType extends Node {
-    String name;
+public class StructDeclarator extends Node {
+    Node declaration;
+    Node bitsize;
 
-    public IdentifierType(String name) {
-        this.name = name;
+    public StructDeclarator(Node decl, Node bitsize) {
+        this.declaration = decl;
+        this.bitsize = bitsize;
     }
 
     @Override
     public void traverse() {
-        //System.out.println(name);
+        declaration.traverse();
+        bitsize.traverse();
     }
 
     @Override

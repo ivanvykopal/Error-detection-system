@@ -1,6 +1,4 @@
-package Compiler.Parser;
-
-import java.util.ArrayList;
+package Compiler.AbstractSyntaxTree;
 
 public class Leaf extends Node {
     private byte tag;
@@ -67,13 +65,24 @@ public class Leaf extends Node {
         this.line = line;
     }
 
+
     @Override
-    public ArrayList<Node> getChilds() {
-        return null;
+    public void traverse() {
+
     }
 
     @Override
-    public void printData(String indent) {
-        System.out.println(indent + tag + ", " + value + ", " + line);
+    public boolean isNone() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
     }
 }

@@ -12,4 +12,6 @@ public abstract class Node {
 
     abstract public boolean isEmpty();
 
+    abstract public boolean isEnumStructUnion();
+
 }

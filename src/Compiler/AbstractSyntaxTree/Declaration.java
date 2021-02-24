@@ -6,7 +6,6 @@ public class Declaration extends Node {
     String name;
     ArrayList<String> qualifiers;
     ArrayList<String> storage;
-    //ArrayList<String> funspec
     Node type;
     Node initValues;
     Node size;
@@ -37,6 +36,11 @@ public class Declaration extends Node {
 
     @Override
     public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnumStructUnion() {
         return false;
     }
 }

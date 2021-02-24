@@ -26,8 +26,17 @@ public class ParameterList extends Node {
         return false;
     }
 
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
+
     public void addParameter(Node param) {
         parameters.add(param);
+    }
+
+    public ArrayList<Node> getParameters() {
+        return parameters;
     }
 
 }

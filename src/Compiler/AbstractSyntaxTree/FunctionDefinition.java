@@ -31,4 +31,9 @@ public class FunctionDefinition extends Node {
     public boolean isEmpty() {
         return false;
     }
+
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
 }

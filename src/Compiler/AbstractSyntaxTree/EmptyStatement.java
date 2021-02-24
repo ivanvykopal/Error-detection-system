@@ -16,4 +16,9 @@ public class EmptyStatement extends Node {
     public boolean isEmpty() {
         return true;
     }
+
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
 }

@@ -26,4 +26,9 @@ public class DeclarationList extends Node {
         return false;
     }
 
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
+
 }

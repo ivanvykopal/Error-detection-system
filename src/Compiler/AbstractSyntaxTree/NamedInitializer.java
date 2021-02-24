@@ -30,4 +30,9 @@ public class NamedInitializer extends Node {
         return false;
     }
 
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
+
 }

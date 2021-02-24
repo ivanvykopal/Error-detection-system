@@ -24,4 +24,9 @@ public class Cast extends Node {
     public boolean isEmpty() {
         return false;
     }
+
+    @Override
+    public boolean isEnumStructUnion() {
+        return false;
+    }
 }

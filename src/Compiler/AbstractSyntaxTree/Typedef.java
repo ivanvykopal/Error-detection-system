@@ -37,4 +37,19 @@ public class Typedef extends Node {
     public boolean isEnumStructUnion() {
         return false;
     }
+
+    @Override
+    public boolean isTypeDeclaration() {
+        return false;
+    }
+
+    @Override
+    public Node getType() {
+        return type;
+    }
+
+    @Override
+    public void addType(Node type) {
+        this.type = type;
+    }
 }

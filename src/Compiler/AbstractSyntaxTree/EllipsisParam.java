@@ -21,4 +21,19 @@ public class EllipsisParam extends Node {
     public boolean isEnumStructUnion() {
         return false;
     }
+
+    @Override
+    public boolean isTypeDeclaration() {
+        return false;
+    }
+
+    @Override
+    public Node getType() {
+        return null;
+    }
+
+    @Override
+    public void addType(Node type) {
+
+    }
 }

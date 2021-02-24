@@ -14,4 +14,10 @@ public abstract class Node {
 
     abstract public boolean isEnumStructUnion();
 
+    abstract public boolean isTypeDeclaration();
+
+    abstract public Node getType();
+
+    abstract public void addType(Node type);
+
 }

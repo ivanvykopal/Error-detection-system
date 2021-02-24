@@ -33,4 +33,19 @@ public class Struct extends Node {
     public boolean isEnumStructUnion() {
         return true;
     }
+
+    @Override
+    public boolean isTypeDeclaration() {
+        return false;
+    }
+
+    @Override
+    public Node getType() {
+        return null;
+    }
+
+    @Override
+    public void addType(Node type) {
+
+    }
 }

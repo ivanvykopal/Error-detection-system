@@ -1906,28 +1906,25 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa direct_declarator
+    //DONE
     private Node declarator(byte kind, String id) {
-        Production prod = new Production("declarator");
         Node child1 = pointer(true);
         Node child2;
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = direct_declarator(kind, id);
-            if (child2 != null && !child2.getChilds().isEmpty()) {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
+            if (child2 != null && !child2.isNone()) {
+                return modifyType(child2, child1);
             }
-            return prod;
+            return new None();
         }
         child1 = direct_declarator(kind, id);
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
+        if (!child1.isNone()) {
+            return child1;
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -1936,12 +1933,13 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //TODO: pozrieť sa
+    //DONE
     private Node direct_declarator(byte kind, String id) {
         Node child1, child2 = null, child3 = null;
         int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
+                //TODO: pozrieť sa na pridávanie do symolickej tabuľky
                 //pridanie identifikátoru do
                 if(getTokenTag(position + 1) == Tag.LEFT_PARENTHESES) {
                     //ide o pole
@@ -1976,50 +1974,44 @@ public class Parser {
                 }
                 type = "";
 
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
+                String terminal = getTokenValue();
                 nextToken();
-                child1 = rest18(terminal.getValue());
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    //vymazanie epsilonu
-                    clearEpsilon(child1);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                //TODO: potom pozieť quals a type
+                Node declarator = new TypeDeclaration(terminal, null, null);
+                child1 = rest18(terminal, declarator);
+                if (child1 == null) {
+                    return null;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
-                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                if (child1.isEmpty()) {
+                    return declarator;
+                } else {
+                    return child1;
                 }
-                return null;
+                //TODO: pozrieť neskôr
             case Tag.LEFT_BRACKETS:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = declarator(kind, "");
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null && !child1.isNone()) {
                     child2 = accept(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
-                    child3 = rest18("");
+                    child3 = rest18("", child1);
                 }
-                if (child3 != null && !child3.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                if (child3 != null && !child3.isEmpty()) {
+                    return child3;
+                }
+                if (child3 != null && child3.isEmpty()) {
+                    return child1;
                 }
                 position = pos;
-                return prod;
+                return new None();
         }
         //TODO: nie som si istý
         if (getTokenTag() < 32) {
             System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
             return null;
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2029,42 +2021,32 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest18(String id) {
-        Production prod = new Production("rest18");
-        //Leaf terminal;
+    //DONE
+    private Node rest18(String id, Node declarator) {
         Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left16();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left16(declarator);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             case Tag.LEFT_BRACKETS:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left17(id);
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left17(id, declarator);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
-                //prod.addChilds(new Leaf((byte) 255,"E",0));
-                return prod;
+                return new EmptyStatement();
         }
     }
 
@@ -2078,98 +2060,94 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left16() {
-        Production prod = new Production("left16");
+    //DONE
+    private Node left16(Node declarator) {
         int pos = position;
         Node child1, child2;
-        //Leaf terminal;
+        Node decl;
         switch (getTokenTag()) {
             case Tag.MULT:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = rest18("");
+                    decl = new ArrayDeclaration(null, new Identifier("*"), new ArrayList<>());
+                    Node child = modifyType(declarator, decl);
+                    child2 = rest18("", child);
                     if (child2 == null) {
                         return null;
+                    }
+                    if (!child2.isEmpty()) {
+                        return child2;
                     } else {
-                        prod.addChilds(terminal);
-                        prod.addChilds(child1);
-                        //vymazanie epsilonu
-                        clearEpsilon(child2);
-                        prod.getChilds().addAll(child2.getChilds());
-                        //prod.addChilds(child2);
-                        return prod;
+                        return child;
                     }
                 } else {
                     position = pos;
                     break;
                 }
             case Tag.STATIC:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left18();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left18(declarator);
+                if (child1 == null) {
+                    return null;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (!child1.isNone()) {
+                    return child1;
+                } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                    return null;
                 }
-                return null;
             case Tag.RIGHT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest18("");
-                if (child1 != null) {
-                    prod.addChilds(terminal);
-                    //vymazanie epsilonu
-                    clearEpsilon(child1);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                decl = new ArrayDeclaration(null, null, new ArrayList<>());
+                Node child = modifyType(declarator, decl);
+                child1 = rest18("", child);
+                if (child1 == null) {
+                    return null;
                 }
-                return null;
+                if (!child1.isEmpty()) {
+                    return child1;
+                } else {
+                    return child;
+                }
         }
         Node child3;
         child1 = assignment_expression();
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18("");
-                if (child3 == null || child3.getChilds().isEmpty()) {
+                decl = new ArrayDeclaration(null, child1, new ArrayList<>());
+                Node child = modifyType(declarator, decl);
+                child3 = rest18("", child);
+                if (child3 == null ) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
-        child1 = type_qualifier_list(false);
-        if (!child1.getChilds().isEmpty()) {
-            child2 = left19();
-            if (child2 == null || child2.getChilds().isEmpty()) {
+        ArrayList<String> child4 = type_qualifier_list(false);
+        if (!child4.isEmpty()) {
+            child2 = left19(child4, declarator);
+            if (child2 == null) {
+                return null;
+            }
+            if (child2.isNone()) {
+                System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                prod.addChilds(child1);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
-                return prod;
+                return child2;
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2180,44 +2158,43 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left17(String id) {
-        Production prod = new Production("left17");
-        Node child1;
+    //DONE
+    private Node left17(String id, Node declarator) {
+        Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-            //Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = rest18("");
-            if (child1 != null) {
-                prod.addChilds(terminal);
-                //vymazanie epsilonu
-                clearEpsilon(child1);
-                prod.getChilds().addAll(child1.getChilds());
-                //prod.addChilds(child1);
-                return prod;
+            decl = new FunctionDeclaration(null, null);
+            child = modifyType(declarator, decl);
+            child1 = rest18("", child);
+            if (child1 == null) {
+                return null;
             }
-            return null;
+            if (!child1.isEmpty()) {
+                return child1;
+            } else {
+                return child;
+            }
         }
         child1 = parameter_type_list(id);
         Node child2, child3;
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18("");
+                decl = new FunctionDeclaration(child1, null);
+                child = modifyType(declarator, decl);
+                child3 = rest18("", child);
                 if (child3 == null) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
@@ -2225,20 +2202,20 @@ public class Parser {
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            child2 = rest18("");
+        if (!child1.isNone()) {
+            decl = new FunctionDeclaration(child1, null);
+            child = modifyType(declarator, decl);
+            child2 = rest18("", child);
             if (child2 == null) {
                 return null;
+            }
+            if (!child2.isEmpty()) {
+                return child2;
             } else {
-                prod.addChilds(child1);
-                //vymazanie epsilonu
-                clearEpsilon(child2);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
-                return prod;
+                return child;
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2248,16 +2225,16 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left18() {
-        Production prod = new Production("left18");
-        Node child1 = type_qualifier_list(false);
-        Node child2, child3, child4;
-        if (!child1.getChilds().isEmpty()) {
+    //DONE
+    private Node left18(Node declarator) {
+        ArrayList<String> child1 = type_qualifier_list(false);
+        Node decl, child2, child3, child4;
+        if (!child1.isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null) {
                 return null;
             }
-            if (child2.getChilds().isEmpty()) {
+            if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
@@ -2265,46 +2242,49 @@ public class Parser {
                 if (child3 == null) {
                     return null;
                 } else {
-                    child4 = rest18("");
+                    //pridanie static medzi qualifiers na začiatok
+                    child1.add(0, "static");
+
+                    decl = new ArrayDeclaration(null, child2, child1);
+                    Node child = modifyType(declarator, decl);
+                    child4 = rest18("", child);
                     if (child4 == null) {
                         return null;
+                    }
+                    if (!child4.isEmpty()) {
+                        return child4;
                     } else {
-                        prod.addChilds(child1);
-                        prod.addChilds(child2);
-                        prod.addChilds(child3);
-                        //vymazanie epsilonu
-                        clearEpsilon(child4);
-                        prod.getChilds().addAll(child4.getChilds());
-                        //prod.addChilds(child4);
-                        return prod;
+                        return child;
                     }
                 }
             }
         }
-        child1 = assignment_expression();
-        if (child1 == null) {
+        child2 = assignment_expression();
+        if (child2 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
-            if (child2 == null) {
+        if (!child2.isNone()) {
+            child3 = expect(Tag.RIGHT_PARENTHESES);
+            if (child3 == null) {
                 return null;
             } else {
-                child3 = rest18("");
-                if (child3 == null) {
+                child1 = new ArrayList<>();
+                child1.add("static");
+
+                decl = new ArrayDeclaration(null, child2, child1);
+                Node child = modifyType(declarator, decl);
+                child4 = rest18("", child);
+                if (child4 == null) {
                     return null;
+                }
+                if (!child4.isEmpty()) {
+                    return child4;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2316,95 +2296,93 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left19() {
-        Production prod = new Production("left19");
+    //DONE
+    private Node left19(ArrayList<String> qualifiers, Node declarator) {
         int pos = position;
         Node child1, child2 = null, child3 = null;
-        // terminal;
+        Node decl, child = null;
         switch (getTokenTag()) {
             case Tag.MULT:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = rest18("");
+                    decl = new ArrayDeclaration(null, new Identifier("*"), qualifiers);
+                    child = modifyType(declarator, decl);
+                    child2 = rest18("", child);
                     if (child2 == null) {
                         return null;
+                    }
+                    if (!child2.isEmpty()) {
+                        return child2;
                     } else {
-                        prod.addChilds(terminal);
-                        prod.addChilds(child1);
-                        //vymazanie epsilonu
-                        clearEpsilon(child2);
-                        prod.getChilds().addAll(child2.getChilds());
-                        //prod.addChilds(child2);
-                        return prod;
+                        return child;
                     }
                 } else {
                     position = pos;
                     break;
                 }
             case Tag.STATIC:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = assignment_expression();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                    return null;
+                }
+                if (child1 != null && !child1.isNone()) {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    child3 = rest18("");
+                    qualifiers.add("static");
+
+                    decl = new ArrayDeclaration(null, child1, qualifiers);
+                    child = modifyType(declarator, decl);
+                    child3 = rest18("", child);
                 }
-                if (child3 != null) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                if (child3 == null) {
+                    return null;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
-                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                if (!child3.isEmpty()) {
+                    return child3;
+                } else {
+                    return child;
                 }
-                return null;
             case Tag.RIGHT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest18("");
-                if (child1 != null) {
-                    prod.addChilds(terminal);
-                    //vymazanie epsilonu
-                    clearEpsilon(child1);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                decl = new ArrayDeclaration(null, null, qualifiers);
+                child = modifyType(declarator, decl);
+                child1 = rest18("", child);
+                if (child1 == null) {
+                    return null;
                 }
-                return null;
+                if (!child1.isEmpty()) {
+                    return child1;
+                } else {
+                    return child;
+                }
         }
         child1 = assignment_expression();
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest18("");
+                decl = new ArrayDeclaration(null, child1, qualifiers);
+                child = modifyType(declarator, decl);
+                child3 = rest18("", child);
                 if (child3 == null) {
                     return null;
-                } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
+                } else  {
+                    return child;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2415,41 +2393,45 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //TODO: pozrieť
+    //DONE
     private Node pointer(boolean flag) {
-        Production prod = new Production("pointer");
         if (getTokenTag() == Tag.MULT) {
             //zisťovanie typu identifikátora
             if (flag) {
                 type += getTokenValue() + " ";
             }
 
-            //Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            Node child1 = type_qualifier_list(flag);
+            ArrayList<String> child1 = type_qualifier_list(flag);
             Node child2;
-            if (!child1.getChilds().isEmpty()) {
+            if (!child1.isEmpty()) {
                 child2 = pointer(flag);
-                if (!child2.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
+                if (!child2.isNone()) {
+                    Node tail = child2;
+                    while (tail.getType() != null) {
+                        tail = tail.getType();
+                    }
+
+                    tail.addType(new PointerDeclaration(child1, null));
+                    return tail;
                 } else {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
+                    return new PointerDeclaration(child1, null);
                 }
-                return prod;
             }
-            child1 = pointer(flag);
-            if (!child1.getChilds().isEmpty()) {
-                prod.addChilds(terminal);
-                prod.addChilds(child1);
+            child2 = pointer(flag);
+            if (!child2.isNone()) {
+                Node tail = child2;
+                while (tail.getType() != null) {
+                    tail = tail.getType();
+                }
+
+                tail.addType(new PointerDeclaration(new ArrayList<>(), null));
+                return tail;
             } else {
-                prod.addChilds(terminal);
+                return new PointerDeclaration(new ArrayList<>(), null);
             }
-            return prod;
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2580,6 +2562,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
+    //TODO: pozrieť sa
     private Node left22(String id) {
         Production prod = new Production("left22");
         Node child1 = declarator(Kind.PARAMETER, id);
@@ -2673,23 +2656,20 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa _type_modify_decl
+    //DONE
     private Node abstract_declarator() {
-        Production prod = new Production("abstractor_declarator");
         Node child1 = pointer(false);
         Node child2;
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = direct_abstract_declarator();
             if (child2 == null) {
                 return null;
             }
-            if (!child2.getChilds().isEmpty()) {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
+            if (!child2.isNone()) {
+                return modifyType(child2, child1);
             } else {
-                prod.addChilds(child1);
+                return modifyType(new TypeDeclaration(null, null, null), child1);
             }
-            return prod;
         }
         child1 = direct_abstract_declarator();
         if (child1 == null) {
@@ -2708,41 +2688,31 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa
+    //DONE
     private Node direct_abstract_declarator() {
-        Production prod = new Production("direct_abstract_declarator");
-        //Leaf terminal;
         Node child1;
         int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = left25();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
                 position = pos;
-                return prod;
+                return new None();
             case Tag.LEFT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left26();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left26(null);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2753,44 +2723,40 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
+    //DONE
     private Node left25() {
-        Production prod = new Production("left25");
-        Node child1;
+        Node child1, decl;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-            //Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = rest22();
-            if (child1 != null) {
-                prod.addChilds(terminal);
-                //vymazanie epsilonu
-                clearEpsilon(child1);
-                prod.getChilds().addAll(child1.getChilds());
-                //prod.addChilds(child1);
-                return prod;
+            decl = new FunctionDeclaration(null, null);
+            child1 = rest22(decl);
+            if (child1 == null) {
+                return null;
             }
-            return null;
+            if (!child1.isEmpty()) {
+                return child1;
+            } else {
+                return decl;
+            }
         }
         child1 = abstract_declarator();
         Node child2, child3;
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22();
+                child3 = rest22(child1);
                 if (child3 == null) {
                     return null;
-                }  else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
+                } else {
+                    return child1;
                 }
             }
         }
@@ -2798,26 +2764,24 @@ public class Parser {
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22();
+                decl = new FunctionDeclaration(child1, null);
+                child3 = rest22(decl);
                 if (child3 == null) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return decl;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2830,57 +2794,61 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left26() {
-        Production prod = new Production("left26");
+    //DONE
+    private Node left26(Node declarator) {
         int pos = position;
-        //Leaf terminal;
         Node child1, child2;
+        Node decl, child;
         switch (getTokenTag()) {
             case Tag.RIGHT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest22();
-                if (child1 != null) {
-                    prod.addChilds(terminal);
-                    //vymazanie epsilonu
-                    clearEpsilon(child1);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                if (declarator != null) {
+                    decl = new ArrayDeclaration(null, null, new ArrayList<>());
+                    child = modifyType(declarator, decl);
+                } else {
+                    child = new ArrayDeclaration(new TypeDeclaration(null, null, null), null,
+                            new ArrayList<>());;
                 }
-                return null;
+                child1 = rest22(child);
+                if (child1 == null) {
+                    return null;
+                }
+                if (!child1.isEmpty()) {
+                    return child1;
+                } else {
+                    return child;
+                }
             case Tag.MULT:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = accept(Tag.RIGHT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = rest22();
+                    if (declarator != null) {
+                        decl = new ArrayDeclaration(null, new Identifier("*"), new ArrayList<>());
+                        child = modifyType(declarator, decl);
+                    } else {
+                        child = new ArrayDeclaration(new TypeDeclaration(null, null, null),
+                                new Identifier("*"), new ArrayList<>());;
+                    }
+                    child2 = rest22(child);
                     if (child2 == null) {
                         return null;
+                    }
+                    if (!child2.isEmpty()) {
+                        return child2;
                     } else {
-                        prod.addChilds(terminal);
-                        prod.addChilds(child1);
-                        //vymazanie epsilonu
-                        clearEpsilon(child2);
-                        prod.getChilds().addAll(child2.getChilds());
-                        //prod.addChilds(child2);
-                        return prod;
+                        return child;
                     }
                 } else {
                     position = pos;
                     break;
                 }
             case Tag.STATIC:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left27();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left27(declarator);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
@@ -2890,42 +2858,43 @@ public class Parser {
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22();
+                if (declarator != null) {
+                    decl = new ArrayDeclaration(null, child1, new ArrayList<>());
+                    child = modifyType(declarator, decl);
+                } else {
+                    child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child1,
+                            new ArrayList<>());
+                }
+                child3 = rest22(child);
                 if (child3 == null) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
-        child1 = type_qualifier_list(false);
-        if (!child1.getChilds().isEmpty()) {
-            child2 = left28();
+        ArrayList<String> child4 = type_qualifier_list(false);
+        if (!child4.isEmpty()) {
+            child2 = left28(child4, declarator);
             if (child2 == null) {
                 return null;
             }
-            if (child2.getChilds().isEmpty()) {
+            if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                prod.addChilds(child1);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
-                return prod;
+                return child2;
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -2935,16 +2904,16 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left27() {
-        Production prod = new Production("left27");
-        Node child1 = type_qualifier_list(false);
-        Node child2, child3, child4;
-        if (!child1.getChilds().isEmpty()) {
+    //DONE
+    private Node left27(Node declarator) {
+        ArrayList<String> child1 = type_qualifier_list(false);
+        Node child2, child3, child4, decl, child;
+        if (!child1.isEmpty()) {
             child2 = assignment_expression();
             if (child2 == null) {
                 return null;
             }
-            if (child2.getChilds().isEmpty()) {
+            if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
@@ -2952,46 +2921,59 @@ public class Parser {
                 if (child3 == null) {
                     return null;
                 } else {
-                    child4 = rest22();
+                    //pridanie satic na ziačiatok qualifiers
+                    child1.add(0, "static");
+
+                    if (declarator != null) {
+                        decl = new ArrayDeclaration(null, child2, child1);
+                        child = modifyType(declarator, decl);
+                    } else {
+                        child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child2,
+                                child1);
+                    }
+                    child4 = rest22(child);
                     if (child4 == null) {
                         return null;
+                    }
+                    if (!child4.isEmpty()) {
+                        return child4;
                     } else {
-                        prod.addChilds(child1);
-                        prod.addChilds(child2);
-                        prod.addChilds(child3);
-                        //vymazanie epsilonu
-                        clearEpsilon(child4);
-                        prod.getChilds().addAll(child4.getChilds());
-                        //prod.addChilds(child4);
-                        return prod;
+                        return child;
                     }
                 }
             }
         }
-        child1 = assignment_expression();
-        if (child1 == null) {
+        child2 = assignment_expression();
+        if (child2 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
-            if (child2 == null) {
+        if (!child2.isNone()) {
+            child3 = expect(Tag.RIGHT_PARENTHESES);
+            if (child3 == null) {
                 return null;
             } else {
-                child3 = rest22();
-                if (child3 == null) {
-                    return null;
+                child1 = new ArrayList<>();
+                child1.add("static");
+
+                if (declarator != null) {
+                    decl = new ArrayDeclaration(null, child2, child1);
+                    child = modifyType(declarator, decl);
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child2,
+                            child1);
+                }
+                child4 = rest22(child);
+                if (child4 == null) {
+                    return null;
+                }
+                if (!child4.isEmpty()) {
+                    return child4;
+                } else {
+                    return child;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -3002,73 +2984,85 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left28() {
-        Production prod = new Production("left28");
-        //Leaf terminal;
-        Node child1, child2 = null, child3 = null;
+    //DONE
+    private Node left28(ArrayList<String> qualifiers, Node declarator) {
+        Node child1, child2 = null, child3 = null, decl, child = null;
         switch (getTokenTag()) {
             case Tag.STATIC:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
                 child1 = assignment_expression();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
+                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                    return null;
+                }
+                if (child1 != null && !child1.isNone()) {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    child3 = rest22();
+                    qualifiers.add("static");
+
+                    if (declarator != null) {
+                        decl = new ArrayDeclaration(null, child1, qualifiers);
+                        child = modifyType(declarator, decl);
+                    } else {
+                        child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child1,
+                                qualifiers);
+                    }
+                    child3 = rest22(child);
                 }
-                if (child3 != null) {
-                    prod.addChilds(terminal);
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                if (child3 == null) {
+                    return null;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
-                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                if (!child3.isEmpty()) {
+                    return child3;
+                } else {
+                    return child;
                 }
-                return null;
             case Tag.RIGHT_PARENTHESES:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = rest22();
-                if (child1 != null) {
-                    prod.addChilds(terminal);
-                    //vymazanie epsilonu
-                    clearEpsilon(child1);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                decl = new ArrayDeclaration(new TypeDeclaration(null, null, null), null, qualifiers);
+                if (declarator != null) {
+                    child = modifyType(declarator, decl);
+                } else {
+                    child = decl;
                 }
-                return null;
+                child1 = rest22(child);
+                if (child1 == null) {
+                    return null;
+                }
+                if (!child1.isEmpty()) {
+                    return child1;
+                } else {
+                    return child;
+                }
         }
         child1 = assignment_expression();
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22();
+                decl = new ArrayDeclaration(new TypeDeclaration(null, null, null), child1, qualifiers);
+                if (declarator != null) {
+                    child = modifyType(declarator, decl);
+                } else {
+                    child = decl;
+                }
+                child3 = rest22(child);
                 if (child3 == null) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -3078,42 +3072,32 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    private Node rest22() {
-        Production prod = new Production("rest22");
-        //Leaf terminal;
+    //DONE
+    private Node rest22(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
-                // terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left26();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left26(declarator);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             case Tag.LEFT_BRACKETS:
-                //terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
                 nextToken();
-                child1 = left29();
-                if (child1 != null && !child1.getChilds().isEmpty()) {
-                    prod.addChilds(terminal);
-                    prod.getChilds().addAll(child1.getChilds());
-                    //prod.addChilds(child1);
-                    return prod;
+                child1 = left29(declarator);
+                if (child1 != null && !child1.isNone()) {
+                    return child1;
                 }
-                if (child1 != null && child1.getChilds().isEmpty()) {
+                if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
             default:
-                prod.addChilds(new Leaf((byte) 255,"E",0));
-                return prod;
+                return new EmptyStatement();
         }
     }
 
@@ -3124,48 +3108,47 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node left29() {
-        Production prod = new Production("left29");
-        Node child1;
+    //DONE
+    private Node left29(Node declarator) {
+        Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_BRACKETS) {
-            //Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
             nextToken();
-            child1 = rest22();
-            if (child1 != null) {
-                prod.addChilds(terminal);
-                //vymazanie epsilonu
-                clearEpsilon(child1);
-                prod.getChilds().addAll(child1.getChilds());
-                //prod.addChilds(child1);
-                return prod;
+            decl = new FunctionDeclaration(null, null);
+            child = modifyType(declarator, decl);
+            child1 = rest22(child);
+            if (child1 == null) {
+                return null;
             }
-            return null;
+            if (!child1.isEmpty()){
+                return child1;
+            } else {
+                return child;
+            }
         }
         child1 = parameter_type_list("");
         Node child2, child3;
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
             child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22();
+                decl = new FunctionDeclaration(child1, null);
+                child = modifyType(declarator, decl);
+                child3 = rest22(child);
                 if (child3 == null) {
                     return null;
+                }
+                if (!child3.isEmpty()) {
+                    return child3;
                 } else {
-                    prod.addChilds(child1);
-                    prod.addChilds(child2);
-                    //vymazanie epsilonu
-                    clearEpsilon(child3);
-                    prod.getChilds().addAll(child3.getChilds());
-                    //prod.addChilds(child3);
-                    return prod;
+                    return child;
                 }
             }
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -4259,4 +4242,34 @@ public class Parser {
 
         return null;
     }*/
+
+    /**
+     *
+     * @param declaration
+     * @param modifier
+     * @return
+     */
+    private Node modifyType(Node declaration, Node modifier) {
+        Node tail = modifier;
+
+        while (tail.getType() != null) {
+            tail = tail.getType();
+        }
+
+        if (declaration.isTypeDeclaration()) {
+            tail.addType(declaration);
+            return modifier;
+        } else {
+            Node declaration_tail = declaration;
+
+            while (!declaration_tail.getType().isTypeDeclaration()) {
+                declaration_tail = declaration_tail.getType();
+            }
+
+            tail.addType(declaration_tail.getType());
+            declaration_tail.addType(modifier);
+
+            return declaration;
+        }
+    }
 }

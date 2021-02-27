@@ -14,12 +14,15 @@ public class FunctionDefinition extends Node {
     }
 
     @Override
-    public void traverse() {
-        declaration.traverse();
-        for (Node param : parameters) {
-            param.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "FunctionDefinition: ");
+        if (declaration != null) declaration.traverse(indent + "    ");
+        if (parameters != null) {
+            for (Node param : parameters) {
+                param.traverse(indent + "    ");
+            }
         }
-        body.traverse();
+        if (body != null) body.traverse(indent + "    ");
     }
 
     @Override
@@ -50,5 +53,10 @@ public class FunctionDefinition extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

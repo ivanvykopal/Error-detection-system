@@ -57,7 +57,7 @@ public class Analysis2Controller {
                         System.out.println("Súbor " + name + " nie je korektný!");
                         continue;
                     }
-                    if (!name.substring(name.lastIndexOf('.') + 1).equals(".c")) {
+                    if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
                         System.out.println("Súbor " + name + " nemá príponu .c!");
                         continue;
                     }

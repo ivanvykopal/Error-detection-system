@@ -10,9 +10,12 @@ public class DeclarationList extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node decl : declarations) {
-            decl.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "DeclarationList: ");
+        if (declarations != null) {
+            for (Node decl : declarations) {
+                decl.traverse(indent + "    ");
+            }
         }
     }
 
@@ -45,5 +48,11 @@ public class DeclarationList extends Node {
     public void addType(Node type) {
 
     }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
+    }
+
 
 }

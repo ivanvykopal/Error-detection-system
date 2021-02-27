@@ -10,9 +10,10 @@ public class Enum extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
-        values.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Enum: ");
+        if (name != null) System.out.println(indent + name);
+        if (values != null) values.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class Enum extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

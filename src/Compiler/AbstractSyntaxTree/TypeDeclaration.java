@@ -13,11 +13,30 @@ public class TypeDeclaration extends Node {
         this.type = type;
     }
 
+    public String getDeclname() {
+        return declname;
+    }
+
+    public void addDeclname(String declname) {
+        this.declname = declname;
+    }
+
+    public void addQualifiers(ArrayList<String> quals) {
+        this.qualifiers = quals;
+    }
+
     @Override
-    public void traverse() {
-        //System.out.println(declname);
-        //qualifiers -> sout
-        type.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "TypeDeclaration: ");
+        if (declname != null) System.out.println(indent + declname);
+        if (qualifiers != null) {
+            System.out.print(indent);
+            for (String qual : qualifiers) {
+                System.out.print(qual + ", ");
+            }
+            System.out.print("\n");
+        }
+        if (type != null) type.traverse(indent + "    ");
     }
 
     @Override
@@ -48,5 +67,10 @@ public class TypeDeclaration extends Node {
     @Override
     public void addType(Node type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

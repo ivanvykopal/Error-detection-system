@@ -13,11 +13,14 @@ public class NamedInitializer extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node name : names) {
-            name.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "NamedInitializer: ");
+        if (names != null) {
+            for (Node name : names) {
+                name.traverse(indent + "    ");
+            }
         }
-        expression.traverse();
+        if (expression != null) expression.traverse(indent + "    ");
     }
 
     @Override
@@ -48,6 +51,11 @@ public class NamedInitializer extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 
 }

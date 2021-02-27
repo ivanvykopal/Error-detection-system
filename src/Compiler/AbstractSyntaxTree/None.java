@@ -3,7 +3,7 @@ package Compiler.AbstractSyntaxTree;
 public class None extends Node {
 
     @Override
-    public void traverse() {
+    public void traverse(String indent) {
 
     }
 
@@ -35,5 +35,10 @@ public class None extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

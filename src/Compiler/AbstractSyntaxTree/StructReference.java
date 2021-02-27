@@ -12,10 +12,11 @@ public class StructReference extends Node {
     }
 
     @Override
-    public void traverse() {
-        name.traverse();
-        //System.out.println(type);
-        field.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "StructReference: ");
+        if (name != null) name.traverse(indent + "    ");
+        if (type != null) System.out.println(indent + type);
+        if (field != null) field.traverse(indent + "    ");
     }
 
     @Override
@@ -46,5 +47,10 @@ public class StructReference extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

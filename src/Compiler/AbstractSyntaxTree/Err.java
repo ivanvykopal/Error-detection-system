@@ -2,7 +2,8 @@ package Compiler.AbstractSyntaxTree;
 
 public class Err extends Node {
     @Override
-    public void traverse() {
+    public void traverse(String indent) {
+        System.out.println(indent + "Err:");
     }
 
     @Override
@@ -33,5 +34,10 @@ public class Err extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

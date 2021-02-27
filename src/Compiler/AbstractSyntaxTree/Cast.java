@@ -10,9 +10,10 @@ public class Cast extends Node {
     }
 
     @Override
-    public void traverse() {
-        type.traverse();
-        expression.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Cast:");
+        if (type != null) type.traverse(indent + "    ");
+        if (expression != null) expression.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class Cast extends Node {
     @Override
     public void addType(Node type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

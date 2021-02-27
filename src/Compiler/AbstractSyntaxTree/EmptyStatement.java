@@ -3,8 +3,8 @@ package Compiler.AbstractSyntaxTree;
 public class EmptyStatement extends Node {
 
     @Override
-    public void traverse() {
-
+    public void traverse(String indent) {
+        System.out.println(indent + "EmptyStatement: ");
     }
 
     @Override
@@ -35,5 +35,10 @@ public class EmptyStatement extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

@@ -10,9 +10,12 @@ public class ParameterList extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node param : parameters) {
-            param.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "ParameterList: ");
+        if (parameters != null) {
+            for (Node param : parameters) {
+                param.traverse(indent + "    ");
+            }
         }
     }
 
@@ -52,6 +55,11 @@ public class ParameterList extends Node {
 
     public ArrayList<Node> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 
 }

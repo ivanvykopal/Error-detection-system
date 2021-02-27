@@ -8,8 +8,9 @@ public class Identifier extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
+    public void traverse(String indent) {
+        System.out.println(indent + "Identifier: ");
+        if (name != null)System.out.println(indent + name);
     }
 
     @Override
@@ -40,5 +41,10 @@ public class Identifier extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

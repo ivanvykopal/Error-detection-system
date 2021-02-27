@@ -12,10 +12,11 @@ public class Assignment extends Node {
     }
 
     @Override
-    public void traverse() {
-        left.traverse();
-        //System.out.println(operator);
-        right.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Assignmnent: ");
+        if (left != null) left.traverse(indent + "    ");
+        if (operator != null) System.out.println(indent + operator);
+        if (right != null) right.traverse(indent + "    ");
     }
 
     @Override
@@ -46,5 +47,10 @@ public class Assignment extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

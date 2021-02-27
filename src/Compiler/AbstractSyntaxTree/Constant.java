@@ -10,9 +10,10 @@ public class Constant extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(type);
-        //System.out.println(value);
+    public void traverse(String indent) {
+        System.out.println(indent + "Constant: ");
+        if (type != null) System.out.println(indent + type);
+        if (value != null) System.out.println(indent + value);
     }
 
     @Override
@@ -43,5 +44,10 @@ public class Constant extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

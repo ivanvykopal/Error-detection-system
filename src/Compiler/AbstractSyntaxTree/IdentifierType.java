@@ -1,15 +1,33 @@
 package Compiler.AbstractSyntaxTree;
 
-public class IdentifierType extends Node {
-    String name;
+import java.util.ArrayList;
 
-    public IdentifierType(String name) {
-        this.name = name;
+public class IdentifierType extends Node {
+    ArrayList<String> names;
+
+    public IdentifierType(ArrayList<String> name) {
+        this.names = name;
     }
 
+    public String getName(int index) {
+        return names.get(index);
+    }
+
+    public ArrayList<String> getNames() {
+        return names;
+    }
+
+
     @Override
-    public void traverse() {
-        //System.out.println(name);
+    public void traverse(String indent) {
+        System.out.println(indent + "Identifier Type");
+        if (names != null) {
+            System.out.print(indent);
+            for (String name : names) {
+                System.out.print(name + ", ");
+            }
+            System.out.print("\n");
+        }
     }
 
     @Override
@@ -40,5 +58,10 @@ public class IdentifierType extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return true;
     }
 }

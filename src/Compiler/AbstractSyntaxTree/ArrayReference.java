@@ -10,9 +10,10 @@ public class ArrayReference extends Node {
     }
 
     @Override
-    public void traverse() {
-        name.traverse();
-        index.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "ArrayReference: ");
+        if (name != null) name.traverse(indent + "    ");
+        if (index != null) index.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class ArrayReference extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

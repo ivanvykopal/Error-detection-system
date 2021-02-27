@@ -8,8 +8,9 @@ public class Return extends Node {
     }
 
     @Override
-    public void traverse() {
-        expression.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Return:");
+        if (expression != null) expression.traverse(indent + "    ");
     }
 
     @Override
@@ -40,5 +41,10 @@ public class Return extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

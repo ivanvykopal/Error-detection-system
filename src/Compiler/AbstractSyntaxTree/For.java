@@ -14,11 +14,12 @@ public class For extends Node {
     }
 
     @Override
-    public void traverse() {
-        initializer.traverse();
-        condition.traverse();
-        next.traverse();
-        statement.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "For: ");
+        if (initializer != null) initializer.traverse(indent + "    ");
+        if (condition != null) condition.traverse(indent + "    ");
+        if (next != null) next.traverse(indent + "    ");
+        if (statement != null) statement.traverse(indent + "    ");
     }
 
     @Override
@@ -49,5 +50,10 @@ public class For extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

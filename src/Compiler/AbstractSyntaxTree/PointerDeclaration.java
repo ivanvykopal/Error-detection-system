@@ -12,9 +12,16 @@ public class PointerDeclaration extends Node {
     }
 
     @Override
-    public void traverse() {
-        //qualifiers -> sout
-        type.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "PointerDeclaration: ");
+        System.out.print(indent);
+        if (qualifiers != null) {
+            for (String qual : qualifiers) {
+                System.out.print(qual + ", ");
+            }
+            System.out.print("\n");
+        }
+        if (type != null) type.traverse(indent + "    ");
     }
 
     @Override
@@ -45,5 +52,10 @@ public class PointerDeclaration extends Node {
     @Override
     public void addType(Node type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

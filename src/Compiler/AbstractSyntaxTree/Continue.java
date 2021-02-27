@@ -2,8 +2,8 @@ package Compiler.AbstractSyntaxTree;
 
 public class Continue extends Node {
     @Override
-    public void traverse() {
-
+    public void traverse(String indent) {
+        System.out.println(indent + "Continue: ");
     }
 
     @Override
@@ -34,5 +34,10 @@ public class Continue extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

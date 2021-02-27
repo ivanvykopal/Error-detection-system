@@ -23,7 +23,7 @@ public class IncludePreprocessor {
         String[] lines = file.split("\n");
 
         for (String line : lines) {
-            if (line.trim().charAt(0) == '#' && line.contains("include")) {
+            if (!line.trim().equals("") && line.trim().charAt(0) == '#' && line.contains("include")) {
                 if (!preprocessInclude(line)) {
                     return false;
                 }
@@ -48,37 +48,39 @@ public class IncludePreprocessor {
             }
         }
 
-        switch (word.hashCode()) {
-            case Libraries.ASSERT: return true;           //assert.h
-            case Libraries.COMPLEX: return true;          //complex.h
-            case Libraries.CTYPE: return true;            //ctype.h
-            case Libraries.ERRNO: return true;            //errno.h
-            case Libraries.FENV: return true;             //fenv.h
-            case Libraries.FLOAT: return true;            //float.h
-            case Libraries.INTTYPES: return true;         //inttypes.h
-            case Libraries.ISO646: return true;           //iso646.h
-            case Libraries.LIMITS: return true;           //limits.h
-            case Libraries.LOCALE: return true;           //locale.h
-            case Libraries.MATH: return true;             //math.h
-            case Libraries.SETJMP: return true;           //setjmp.h
-            case Libraries.SIGNAL: return true;           //signal.h
-            case Libraries.STDALIGN: return true;         //stdalign.h
-            case Libraries.STDARG: return true;           //stdarg.h
-            case Libraries.STDATOMIC: return true;        //stdatomic.h
-            case Libraries.STDBOOL: return true;          //stdbool.h
-            case Libraries.STDDEF: return true;           //stddef.h
-            case Libraries.STDINT: return true;           //stdint.h
-            case Libraries.STDIO: return true;            //stdio.h
-            case Libraries.STDLIB: return true;           //stdlib.h
-            case Libraries.STDNORETURN: return true;      //stdnoreturn.h
-            case Libraries.STRING: return true;           //string.h
-            case Libraries.TGMATH: return true;           //tgmath.h
-            case Libraries.THREADS: return true;          //threads.h
-            case Libraries.TIME: return true;             //time.h
-            case Libraries.UCHAR: return true;            //uchar.h
-            case Libraries.WCHAR: return true;            //wchar.h
-            case Libraries.WCTYPE: return true;           //wctype.h
-            default: return false;
+        switch (word.toString()) {
+            case "assert.h":
+            case "complex.h":
+            case "ctype.h":
+            case "errno.h":
+            case "fenv.h":
+            case "float.h":
+            case "inttypes.h":
+            case "iso646.h":
+            case "limits.h":
+            case "locale.h":
+            case "math.h":
+            case "setjmp.h":
+            case "signal.h":
+            case "stdalign.h":
+            case "stdarg.h":
+            case "stdatomic.h":
+            case "stdbool.h":
+            case "stddef.h":
+            case "stdint.h":
+            case "stdio.h":
+            case "stdlib.h":
+            case "stdnoreturn.h":
+            case "string.h":
+            case "tgmath.h":
+            case "threads.h":
+            case "time.h":
+            case "uchar.h":
+            case "wchar.h":
+            case "wctype.h":
+                return true;
+            default:
+                return false;
         }
     }
 }

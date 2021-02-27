@@ -12,10 +12,13 @@ public class Struct extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
-        for (Node decl : declarations) {
-            decl.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Struct: ");
+        if (name != null) System.out.println(indent + name);
+        if (declarations != null) {
+            for (Node decl : declarations) {
+                decl.traverse(indent + "    ");
+            }
         }
     }
 
@@ -47,5 +50,10 @@ public class Struct extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

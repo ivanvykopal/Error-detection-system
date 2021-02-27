@@ -10,9 +10,12 @@ public class ExpressionList extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node expr : expressions) {
-            expr.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "ExpressionList: ");
+        if (expressions != null) {
+            for (Node expr : expressions) {
+                expr.traverse(indent + "    ");
+            }
         }
     }
 
@@ -44,5 +47,10 @@ public class ExpressionList extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

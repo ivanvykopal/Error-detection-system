@@ -10,9 +10,10 @@ public class UnaryOperator extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(operator);
-        expression.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "UnaryOperator");
+        if (operator != null) System.out.println(indent + operator);
+        if (expression != null) expression.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class UnaryOperator extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

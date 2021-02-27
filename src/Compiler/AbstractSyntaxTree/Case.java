@@ -10,10 +10,10 @@ public class Case extends Node {
     }
 
     @Override
-    public void traverse() {
-        constant.traverse();
-        //System.out.print(":");
-        statement.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Case: ");
+        if (constant != null) constant.traverse(indent + "    ");
+        if (statement != null) statement.traverse(indent + "    ");
     }
 
     @Override
@@ -44,5 +44,10 @@ public class Case extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

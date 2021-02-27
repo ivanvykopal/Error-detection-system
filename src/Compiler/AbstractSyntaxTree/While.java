@@ -10,9 +10,10 @@ public class While extends Node {
     }
 
     @Override
-    public void traverse() {
-        condition.traverse();
-        statement.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "While:");
+        if (condition != null) condition.traverse(indent + "    ");
+        if (statement != null) statement.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class While extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

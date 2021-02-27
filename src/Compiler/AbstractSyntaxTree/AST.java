@@ -10,9 +10,12 @@ public class AST extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node ext : exts) {
-            ext.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "AST: ");
+        if (exts != null) {
+            for (Node ext : exts) {
+                ext.traverse(indent + "    ");
+            }
         }
     }
 
@@ -44,5 +47,10 @@ public class AST extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

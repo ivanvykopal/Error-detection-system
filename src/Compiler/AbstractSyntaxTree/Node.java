@@ -6,7 +6,7 @@ public abstract class Node {
 
     }
 
-    abstract public void traverse();
+    abstract public void traverse(String indent);
 
     abstract public boolean isNone();
 
@@ -19,5 +19,7 @@ public abstract class Node {
     abstract public Node getType();
 
     abstract public void addType(Node type);
+
+    abstract public boolean isIdentifierType();
 
 }

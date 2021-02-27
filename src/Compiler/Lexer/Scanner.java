@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class Scanner {
     private String file;
-    private HashMap<String, Byte> keywords = new HashMap<>();
+    private HashMap<String, Byte> keywords;
     private char peek = ' ';
     private int position = 0;
     private Error err = new Error();
@@ -24,6 +24,10 @@ public class Scanner {
      * @param file - cesta k súboru
      */
     public Scanner(String file) {
+        position = 0;
+        line = 1;
+        peek = ' ';
+        keywords = new HashMap<>();
         Preprocessor prep = new Preprocessor(file);
         this.file = prep.preprocess();
 

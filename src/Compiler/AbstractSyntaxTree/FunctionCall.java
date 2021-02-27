@@ -10,9 +10,10 @@ public class FunctionCall extends Node {
     }
 
     @Override
-    public void traverse() {
-        name.traverse();
-        arguments.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "FunctionCall: ");
+        if (name != null) name.traverse(indent + "    ");
+        if (arguments != null) arguments.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class FunctionCall extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

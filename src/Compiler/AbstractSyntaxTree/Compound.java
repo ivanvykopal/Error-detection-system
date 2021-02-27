@@ -10,9 +10,12 @@ public class Compound extends Node {
     }
 
     @Override
-    public void traverse() {
-        for (Node stmt: statements) {
-            stmt.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Compound: ");
+        if (statements != null) {
+            for (Node stmt : statements) {
+                stmt.traverse(indent + "    ");
+            }
         }
     }
 
@@ -44,5 +47,10 @@ public class Compound extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

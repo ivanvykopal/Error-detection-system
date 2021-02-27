@@ -2,51 +2,23 @@ package Compiler.AbstractSyntaxTree;
 
 import java.util.ArrayList;
 
-public class Typename extends Node {
-    String name;
-    ArrayList<String> qualifiers;
-    Node type;
+public class Typename extends DeclarationNode {
 
     public Typename(String name, ArrayList<String> quals, Node type) {
-        this.name = name;
-        this.qualifiers = quals;
-        this.type = type;
+        super(name, quals, type);
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
-        //qualifiers -> sout
-        type.traverse();
-    }
-
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return type;
-    }
-
-    @Override
-    public void addType(Node type) {
-        this.type = type;
+    public void traverse(String indent) {
+        System.out.println(indent + "Typename: ");
+        if (name != null) System.out.println(indent + name);
+        if (qualifiers != null) {
+            System.out.print(indent);
+            for (String qual : qualifiers) {
+                System.out.print(qual + ", ");
+            }
+            System.out.print("\n");
+        }
+        if (type != null) type.traverse(indent + "    ");
     }
 }

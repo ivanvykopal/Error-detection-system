@@ -12,10 +12,11 @@ public class If extends Node {
     }
 
     @Override
-    public void traverse() {
-        condition.traverse();
-        truePart.traverse();
-        falsePart.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "If: ");
+        if (condition != null) condition.traverse(indent + "    ");
+        if (truePart != null) truePart.traverse(indent + "    ");
+        if (falsePart != null) falsePart.traverse(indent + "    ");
     }
 
     @Override
@@ -46,5 +47,10 @@ public class If extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

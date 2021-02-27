@@ -14,9 +14,10 @@ public class ArrayDeclaration extends Node {
     }
 
     @Override
-    public void traverse() {
-        type.traverse();
-        dimension.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "ArrayDeclaration: ");
+        if (type != null) type.traverse(indent + "    ");
+        if (dimension != null) dimension.traverse(indent + "    ");
         // dimensionQualifiers -> sout
     }
 
@@ -48,5 +49,10 @@ public class ArrayDeclaration extends Node {
     @Override
     public void addType(Node type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

@@ -41,6 +41,10 @@ public class Type extends Node {
         return types.get(index);
     }
 
+    public Node getLastType() {
+        return types.get(types.size() - 1);
+    }
+
     public String getStorage(int index) {
         return storage.get(index);
     }
@@ -49,13 +53,36 @@ public class Type extends Node {
         return qualifiers.get(index);
     }
 
+    public void removeType(int index) {
+        types.remove(index);
+    }
+
+    public void removeLastType() {
+        types.remove(types.size() - 1);
+    }
+
     @Override
-    public void traverse() {
-        for (Node type : types) {
-            type.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Type: ");
+        if (types != null) {
+            for (Node type : types) {
+                type.traverse(indent + "    ");
+            }
         }
-        //storage -> sout
-        //qualifiers -> sout
+        if (storage != null) {
+            System.out.print(indent);
+            for (String stor : storage) {
+                System.out.print(stor + ", ");
+            }
+            System.out.print("\n");
+        }
+        if (qualifiers != null) {
+            System.out.print(indent);
+            for (String qual : qualifiers) {
+                System.out.print(qual + ", ");
+            }
+            System.out.print("\n");
+        }
     }
 
     @Override
@@ -81,5 +108,10 @@ public class Type extends Node {
     @Override
     public Node getType() {
         return null;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

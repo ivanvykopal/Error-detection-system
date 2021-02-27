@@ -10,9 +10,10 @@ public class FunctionDeclaration extends Node {
     }
 
     @Override
-    public void traverse() {
-        type.traverse();
-        arguments.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "FunctionDeclaration: ");
+        if (type != null) type.traverse(indent + "    ");
+        if (arguments != null) arguments.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class FunctionDeclaration extends Node {
     @Override
     public void addType(Node type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

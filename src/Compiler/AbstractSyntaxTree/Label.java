@@ -10,9 +10,10 @@ public class Label extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
-        statement.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Label: ");
+        if (name != null) System.out.println(indent + name);
+        if (statement != null) statement.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class Label extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

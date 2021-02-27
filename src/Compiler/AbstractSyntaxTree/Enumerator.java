@@ -10,9 +10,10 @@ public class Enumerator extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
-        value.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "Enumerator: ");
+        if (name != null) System.out.println(indent + name);
+        if (value != null) value.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class Enumerator extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

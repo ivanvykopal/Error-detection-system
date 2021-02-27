@@ -8,8 +8,9 @@ public class Goto extends Node {
     }
 
     @Override
-    public void traverse() {
-        //System.out.println(name);
+    public void traverse(String indent) {
+        System.out.println(indent + "Goto: ");
+        if (name != null) System.out.println(indent + name);
     }
 
     @Override
@@ -41,5 +42,11 @@ public class Goto extends Node {
     public void addType(Node type) {
 
     }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
+    }
+
 
 }

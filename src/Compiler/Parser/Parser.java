@@ -28,6 +28,7 @@ public class Parser {
                 if (tok.tag == Tag.EOF) {
                     break;
                 } else {
+                    //System.out.println(tok.line + ": " + tok.value);
                     tokenStream.add(tok);
                 }
             } catch (IOException e) {
@@ -52,6 +53,7 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
+            parseTree.traverse("");
             //printTree(parseTree, "");
         }
     }
@@ -1073,7 +1075,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa na p_decl_body
+    //TODO: vyriešiť Error recovery
     private ArrayList<Node> declaration() {
         Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(type);
@@ -1087,18 +1089,24 @@ public class Parser {
                 }
             }
             nextToken();
-            return new Err();
+            ArrayList<Node> arr = new ArrayList<>();
+            arr.add(new Err());
+            return arr;
         }
         if (!child1.isNone()) {
             Type child = (Type) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
-                if (child.getType(0).isEnumStructUnion()) {
+                if (child.getTypes().size() == 1 && child.getType(0).isEnumStructUnion()) {
+                    ArrayList<Node> decls = new ArrayList<>();
+                    decls.add(new Declaration(null, child.getQualifiers(), child.getStorage(), child.getType(0),
+                            null, null));
+                    return decls;
+                } else {
                     ArrayList<Node> arr = new ArrayList<>();
-                    arr.add(new Declaration(null, child.getQualifiers(), child.getStorage(), child.getType(0), null, null));
-                    return arr;
+                    arr.add(new Declarator(null, null));
+                    return createDeclaration(child, arr);
                 }
                 //TODO: neviem, chyba??
-                return null;
             }
             ArrayList<Node> child2 = init_declarator_list();
             Node child3 = null;
@@ -1112,13 +1120,15 @@ public class Parser {
                     }
                 }
                 nextToken();
-                return new Err();
+                ArrayList<Node> arr = new ArrayList<>();
+                arr.add(new Err());
+                return arr;
             }
             if (!child2.isEmpty()) {
                 child3 = expect(Tag.SEMICOLON);
             }
             if (child3 != null) {
-                // Vysporiadať sa s viacerými premennými deklarovanými v jednom riadku
+                return createDeclaration(child, child2);
 
             }
             //error recovery
@@ -1131,7 +1141,9 @@ public class Parser {
             }
             if (getTokenTag() == Tag.SEMICOLON) {
                 nextToken();
-                return new Err();
+                ArrayList<Node> arr = new ArrayList<>();
+                arr.add(new Err());
+                return arr;
             } else {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
@@ -1299,6 +1311,7 @@ public class Parser {
      */
     //DONE
     private Node type_specifier(boolean flag) {
+        ArrayList<String> arr = new ArrayList<>();
         switch (getTokenTag()) {
             case Tag.VOID:
             case Tag.CHAR:
@@ -1315,7 +1328,8 @@ public class Parser {
                 }
 
                 nextToken();
-                return new IdentifierType(getTokenValue(position - 1));
+                arr.add(getTokenValue(position - 1));
+                return new IdentifierType(arr);
             case Tag.IDENTIFIER:
                 //riešenie TYPEDEF_NAME
                 Record record = symbolTable.lookup(getTokenValue());
@@ -1327,7 +1341,8 @@ public class Parser {
                         }
 
                         nextToken();
-                        return new IdentifierType(getTokenValue(position - 1));
+                        arr.add(getTokenValue(position - 1));
+                        return new IdentifierType(arr);
                     }
                 }
                 return new None();
@@ -1527,21 +1542,26 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa
+    //TODO: vyriešiť ErrorRecovery
     private ArrayList<Node> struct_declaration() {
-        Type type = new Type(new ArrayList<Node>(), new ArrayList<String>(), new ArrayList<String>());
+        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = specifier_qualifier_list(true, type);
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
+            Type child = (Type) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
-                //prod.addChilds(child1);                                                     // specifier_qualifier_list
-                //prod.addChilds(new Leaf(getTokenTag(), getTokenValue(), getTokenLine()));   // ;
                 nextToken();
-                //return prod;
+                ArrayList<Node> arr = new ArrayList<>();
+                if (child.getTypes().size() == 1) {
+                    arr.add(new Declarator(child.getType(0), null));
+                } else {
+                    arr.add(new Declarator(null, null));
+                }
+                return createDeclaration(child, arr);
             }
-            Node child2 = struct_declarator_list();
+            ArrayList<Node> child2 = struct_declarator_list();
             Node child3;
             if (child2 == null) {
                 //error recovery
@@ -1553,10 +1573,11 @@ public class Parser {
                     }
                 }
                 nextToken();
-                prod.addChilds(new Leaf((byte) 254, "Error", -1));
-                return prod;
+                ArrayList<Node> arr = new ArrayList<>();
+                arr.add(new Err());
+                return arr;
             }
-            if (!child2.getChilds().isEmpty()) {
+            if (!child2.isEmpty()) {
                 child3 = expect(Tag.SEMICOLON);
                 if (child3 == null) {
                     // error recovery
@@ -1565,16 +1586,14 @@ public class Parser {
                     }
                     if (getTokenTag() == Tag.SEMICOLON) {
                         nextToken();
-                        prod.addChilds(new Leaf((byte) 254, "Error", -1));
-                        return prod;
+                        ArrayList<Node> arr = new ArrayList<>();
+                        arr.add(new Err());
+                        return arr;
                     } else {
                         return null;
                     }
                 } else {
-                    prod.addChilds(child1);                         // specifier_qualifier_list
-                    prod.addChilds(child2);                         // struct_declarator_list
-                    prod.addChilds(child3);                         // ;
-                    return prod;
+                    return createDeclaration(child, child2);
                 }
             }
         }
@@ -2526,32 +2545,28 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa na typy
+    //DONE
     private Node parameter_declaration(String id) {
-        Production prod = new Production("parameter_declaration");
-        Node child1 = declaration_specifiers();
+        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = declaration_specifiers(type);
         Node child2;
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            child2 = left22(id);
+        if (!child1.isNone()) {
+            Type child = (Type) child1;
+            child2 = left22(id, child);
             if (child2 == null) {
                 return null;
             }
-            if (child2.getChilds().isEmpty()) {
+            if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                prod.addChilds(child1);
-                //vymazanie epsilonu
-                clearEpsilon(child2);
-                prod.getChilds().addAll(child2.getChilds());
-                //prod.addChilds(child2);
-                return prod;
+                return child2;
             }
         }
-        return prod;
+        return new Err();
     }
 
     /**
@@ -2562,27 +2577,48 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa
-    private Node left22(String id) {
-        Production prod = new Production("left22");
+    //DONE
+    private Node left22(String id, Type type) {
+        if (type.getTypes().isEmpty()) {
+            ArrayList<String> arr = new ArrayList<>();
+            arr.add("int");
+            type.addType(new IdentifierType(arr));
+        }
+
         Node child1 = declarator(Kind.PARAMETER, id);
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
+        if (!child1.isNone()) {
+            ArrayList<Node> decls = new ArrayList<>();
+            decls.add(new Declarator(child1, null));
+            return createDeclaration(type, decls).get(0);
         }
         child1 = abstract_declarator();
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
-            prod.addChilds(child1);
-            return prod;
+        if (!child1.isNone()) {
+            if (type.getTypes().size() > 1) {
+                ArrayList<Node> decls = new ArrayList<>();
+                decls.add(new Declarator(child1, null));
+                return createDeclaration(type, decls).get(0);
+            } else {
+                Node decl = new Typename("", type.getQualifiers(), child1);
+                decl = fixTypes(decl, type.getTypes());
+                return decl;
+            }
         }
-        //prod.addChilds(new Leaf((byte) 255,"E",0));
-        return prod;
+        if (type.getTypes().size() > 1) {
+            ArrayList<Node> decls = new ArrayList<>();
+            decls.add(new Declarator(null, null));
+            return createDeclaration(type, decls).get(0);
+        } else {
+            Node decl = new Typename("", type.getQualifiers(), new TypeDeclaration(null, null,
+                    null));
+            decl = fixTypes(decl, type.getTypes());
+            return decl;
+        }
     }
 
     /**
@@ -2624,28 +2660,28 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //TODO: pozrieť sa _fix_decl_name_type
+    //DONE
     private Node type_name() {
-        Production prod = new Production("type_name");
-        Node child1 = specifier_qualifier_list(false);
+        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = specifier_qualifier_list(false, type);
         Node child2;
         if (child1 == null) {
             return null;
         }
-        if (!child1.getChilds().isEmpty()) {
+        if (!child1.isNone()) {
+            Type child = (Type) child1;
             child2 = abstract_declarator();
             if (child2 == null) {
                 return null;
             }
-            if (!child2.getChilds().isEmpty()) {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
+            if (!child2.isNone()) {
+                return fixTypes(new Typename("", child.getQualifiers(), child2), child.getTypes());
             } else {
-                prod.addChilds(child1);
+                return  fixTypes(new Typename("", child.getQualifiers(), new TypeDeclaration(null,
+                        null, null)), child.getTypes());
             }
-            return prod;
         }
-        return prod;
+        return new None();
     }
 
     /**
@@ -4173,33 +4209,27 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //TODO: pozrieť sa
+    //DONE
     private Node function_definition() {
-        Type type = new Type(new ArrayList<Node>(), new ArrayList<String>(), new ArrayList<String>());
+        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(type);
         Node child2 = null, child3;
-        if(child1 != null && !child1.getChilds().isEmpty()) {
+        if(child1 != null && !child1.isNone()) {
             child2 = declarator(Kind.FUNCTION, "");
         }
-        if (child2 != null && !child2.getChilds().isEmpty()) {
+        if (child2 != null && !child2.isNone()) {
+            type = (Type) child1;
             ArrayList<Node> child = declaration_list();
             Node child4 = null;
             if (child != null && !child.isEmpty()) {
                 child4 = compound_statement();
             }
-            if (child4 != null && !child4.getChilds().isEmpty()) {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
-                //prod.addChilds(child3);
-                prod.addChilds(child4);
-                return prod;
+            if (child4 != null && !child4.isNone()) {
+                return createFunction(type, child2, child, child4);
             }
             child3 = compound_statement();
-            if (child3 != null && !child3.getChilds().isEmpty()) {
-                prod.addChilds(child1);
-                prod.addChilds(child2);
-                prod.addChilds(child3);
-                return prod;
+            if (child3 != null && !child3.isNone()) {
+                return createFunction(type, child2, null, child3);
             }
         }
         return new None();
@@ -4237,11 +4267,111 @@ public class Parser {
         return new ArrayList<>();
     }
 
-    /*private ArrayList<Node> create_declaration(Type type, ArrayList<Node> declarations) {
+    /**
+     *
+     * @param type
+     * @param declarations
+     * @return
+     */
+    private ArrayList<Node> createDeclaration(Type type, ArrayList<Node> declarations) {
         ArrayList<Node> decls = new ArrayList<>();
 
-        return null;
-    }*/
+        boolean typedef = type.getStorage().contains("typedef");
+
+        Declarator declarator = (Declarator) declarations.get(0);
+
+        if (declarator.getDeclarator() == null) {
+            declarator.addDeclarator(new TypeDeclaration(((IdentifierType) type.getLastType()).getName(0),
+                    null, null));
+            type.removeLastType();
+        } else if (!declarator.getDeclarator().isEnumStructUnion() && !declarator.isIdentifierType()) {
+            Node tail = declarator.getDeclarator();
+
+            while(!tail.isTypeDeclaration()) {
+                tail = tail.getType();
+            }
+
+            if (((TypeDeclaration) tail).getDeclname() == null) {
+                String name = ((IdentifierType) type.getLastType()).getName(0);
+                ((TypeDeclaration) tail).addDeclname(name);
+                type.removeLastType();
+            }
+
+            Node declaration;
+            for (Node decl : declarations) {
+                if (((Declarator) decl).getDeclarator() == null) return null;
+                if (typedef) {
+                    declaration = new Typedef(null, type.getQualifiers(), type.getStorage(),
+                            ((Declarator) decl).getDeclarator());
+                } else {
+                    //TODO: pozrieť sa na bitsize
+                    declaration = new Declaration(null, type.getQualifiers(), type.getStorage(),
+                            ((Declarator) decl).getDeclarator(), ((Declarator) decl).getInitializer(),null);
+                }
+                if (!declaration.getType().isEnumStructUnion() && !declaration.getType().isIdentifierType()) {
+                    declaration = fixTypes(declaration, type.getTypes());
+                }
+
+                //TODO: pridanie do symbolickej tabuľky
+
+                decls.add(declaration);
+            }
+        }
+
+        return decls;
+    }
+
+    /**
+     *
+     * @param declaration
+     * @param typename
+     * @return
+     */
+    private Node fixTypes(Node declaration, ArrayList<Node> typename) {
+        Declaration decl = (Declaration) declaration;
+
+        Node type = declaration;
+        while (!type.isTypeDeclaration()) {
+            type = type.getType();
+        }
+
+        assert type instanceof TypeDeclaration;
+        decl.addName(((TypeDeclaration) type).getDeclname());
+        ((TypeDeclaration) type).addQualifiers(decl.getQualifiers());
+
+        //Riešenie chýb
+        for (Node t_name : typename) {
+            if (!t_name.isIdentifierType()) {
+                if (typename.size() > 1) {
+                    //TODO: Chyba
+                    System.out.println("Chybný typ!");
+                    return null;
+                } else {
+                    type.addType(t_name);
+                    return decl;
+                }
+            }
+        }
+
+        if (typename.isEmpty()) {
+            if (!(decl.getType() instanceof FunctionDeclaration)) {
+                System.out.println("Chýbajúci typ!");
+                return null;
+            }
+            ArrayList<String> arr = new ArrayList<>();
+            arr.add("int");
+            type.addType(new IdentifierType(arr));
+        } else {
+            ArrayList<String> arr = new ArrayList<>();
+            for (Node t_name : typename) {
+                arr.addAll(((IdentifierType) t_name).getNames());
+            }
+
+            type.addType(new IdentifierType(arr));
+        }
+
+        return decl;
+    }
 
     /**
      *
@@ -4271,5 +4401,14 @@ public class Parser {
 
             return declaration;
         }
+    }
+
+    private Node createFunction(Type type, Node declaration, ArrayList<Node> parameters, Node body) {
+
+        ArrayList<Node> arr = new ArrayList<>();
+        arr.add(new Declarator(declaration, null));
+        Node decl = createDeclaration(type, arr).get(0);
+
+        return new FunctionDefinition(decl, parameters, body);
     }
 }

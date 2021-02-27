@@ -10,9 +10,10 @@ public class DoWhile extends Node {
     }
 
     @Override
-    public void traverse() {
-        condition.traverse();
-        statement.traverse();
+    public void traverse(String indent) {
+        System.out.println(indent + "DoWhile: ");
+        if (condition != null) condition.traverse(indent + "    ");
+        if (statement != null) statement.traverse(indent + "    ");
     }
 
     @Override
@@ -43,5 +44,10 @@ public class DoWhile extends Node {
     @Override
     public void addType(Node type) {
 
+    }
+
+    @Override
+    public boolean isIdentifierType() {
+        return false;
     }
 }

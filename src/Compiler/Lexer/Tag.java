@@ -70,10 +70,10 @@ public class Tag {
     public static final byte ASSIGNMENT = 59;         // = += -= *= /= %= <<= >>= &= ^= |=
 
     // symbols
-    public static final byte LEFT_PARENTHESES = 60;   // [
-    public static final byte RIGHT_PARENTHESES = 61;  // ]
-    public static final byte LEFT_BRACKETS = 62;      // (
-    public static final byte RIGHT_BRACKETS = 63;     // )
+    public static final byte LEFT_PARENTHESES = 60;   // (
+    public static final byte RIGHT_PARENTHESES = 61;  // )
+    public static final byte LEFT_BRACKETS = 62;      // [
+    public static final byte RIGHT_BRACKETS = 63;     // ]
     public static final byte LEFT_BRACES = 64;        // {
     public static final byte RIGHT_BRACES = 65;       // }
     public static final byte COMMA = 66;              // ,

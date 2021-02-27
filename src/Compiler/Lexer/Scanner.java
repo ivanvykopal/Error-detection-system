@@ -197,13 +197,13 @@ public class Scanner {
             case '?':
                 return new Token(Tag.QMARK, "?", line);
             case '[':
-                return new Token(Tag.LEFT_PARENTHESES, "[", line);
+                return new Token(Tag.LEFT_BRACKETS, "[", line);
             case ']':
-                return new Token(Tag.RIGHT_PARENTHESES, "]", line);
+                return new Token(Tag.RIGHT_BRACKETS, "]", line);
             case '(':
-                return new Token(Tag.LEFT_BRACKETS, "(", line);
+                return new Token(Tag.LEFT_PARENTHESES, "(", line);
             case ')':
-                return new Token(Tag.RIGHT_BRACKETS, ")", line);
+                return new Token(Tag.RIGHT_PARENTHESES, ")", line);
             case '{':
                 return new Token(Tag.LEFT_BRACES, "{", line);
             case '}':
@@ -222,6 +222,10 @@ public class Scanner {
                     readNextCharacter();
                     if (peek == '.') {
                         return new Token(Tag.ELLIPSIS, "...", line);
+                    } else {
+                        //TODO: chyba, nevedel zaradiť token
+                        System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
+                        return new Token((byte) -1, "", line);
                     }
                 } else {
                     getPreviousPosition();

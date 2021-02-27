@@ -37,15 +37,6 @@ public class Parser {
         }
     }
 
-    /*public void printTree(Node parent, String indent) {
-        parent.printData(indent);
-        if (parent.getChilds() != null) {
-            for (Node child: parent.getChilds()) {
-                printTree(child, indent + "   ");
-            }
-        }
-    }*/
-
     public void parse() {
         ArrayList<Node> child = translation_unit();
         if (child == null) {
@@ -54,7 +45,6 @@ public class Parser {
         } else {
             parseTree = new AST(child);
             parseTree.traverse("");
-            //printTree(parseTree, "");
         }
     }
 
@@ -105,6 +95,8 @@ public class Parser {
         switch (tag) {
             case Tag.LEFT_BRACKETS:
             case Tag.RIGHT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
+            case Tag.RIGHT_PARENTHESES:
             case Tag.LEFT_BRACES:
             case Tag.RIGHT_BRACES:
                 System.out.println("Chybajúca zátvorka na riadku " + getTokenLine() + "!");
@@ -120,22 +112,24 @@ public class Parser {
                 System.out.println("Chybajúci operátor na riadku " + getTokenLine() + "!");
                 break;
             case Tag.IDENTIFIER:
-                if (getTokenTag(position - 1) < 32) {
+                if (getTokenTag() < 32) {
                     System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
                 } else {
                     System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
                 }
                 break;
             default:
-                switch (getTokenTag(position - 1)) {
+                switch (getTokenTag()) {
                     case Tag.LEFT_BRACKETS:
                     case Tag.RIGHT_BRACKETS:
                     case Tag.LEFT_BRACES:
                     case Tag.RIGHT_BRACES:
+                    case Tag.LEFT_PARENTHESES:
+                    case Tag.RIGHT_PARENTHESES:
                         System.out.println("Zátvorka naviac na riadku " + getTokenLine() + "!");
                         break;
                     default:
-                        if (tag < 32 && getTokenTag(position - 1) == Tag.IDENTIFIER) {
+                        if (tag < 32 && getTokenTag() == Tag.IDENTIFIER) {
                             System.out.println("Chybné kľúčové slovo na riadku " + getTokenLine() + "!");
                         } else {
                             System.out.println("Chyba na riadku " + getTokenLine() + "!");
@@ -145,17 +139,6 @@ public class Parser {
         }
         return null;
     }
-
-    /*private void clearEpsilon(Node child) {
-        //vymazanie epsilonu
-        int length = child.getChilds().size();
-        for (int i = 0; i < length; i++) {
-            if (child.getChilds().get(i).getTag() == -1) {
-                child.getChilds().remove(i);
-                break;
-            }
-        }
-    }*/
 
     /**
      * primary_expression ->  IDENTIFIER
@@ -184,12 +167,12 @@ public class Parser {
             case Tag.STRING:
                 nextToken();
                 return new Constant("string", getTokenValue(position - 1));
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = expression();
                 Node child2 = null;
                 if (child1 != null && !child1.isNone()) {
-                    child2 = accept(Tag.RIGHT_BRACKETS);
+                    child2 = accept(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
                     return child1;
@@ -219,11 +202,11 @@ public class Parser {
             case Tag.NUMBER:
                 nextToken();
                 //TODO: pridať zisťovanie typu
-                return new Constant("1", getTokenValue(position - 1));
+                return new Constant("NUMBER", getTokenValue(position - 1));
             case Tag.REAL:
                 nextToken();
                 //TODO: pridať zisťovanie typu
-                return new Constant("2", getTokenValue(position - 1));
+                return new Constant("REAL", getTokenValue(position - 1));
             default:
                 return new None();
         }
@@ -257,12 +240,12 @@ public class Parser {
     private Node postfix_expression() {
         int pos = position;
         Node child1, child2 = null;
-        if (getTokenTag() == Tag.LEFT_BRACKETS) {
+        if (getTokenTag() == Tag.LEFT_PARENTHESES) {
             nextToken();
             child1 = type_name();
             Node child3 = null, child4 = null, child5;
             if (child1 != null && !child1.isNone()) {
-                child2 = accept(Tag.RIGHT_BRACKETS);
+                child2 = accept(Tag.RIGHT_PARENTHESES);
             }
             if (child2 != null) {
                 child3 = accept(Tag.LEFT_BRACES);
@@ -335,11 +318,11 @@ public class Parser {
         Node ref = null;
         String terminal;
         switch (getTokenTag()) {
-            case Tag.LEFT_PARENTHESES:
+            case Tag.LEFT_BRACKETS:
                 nextToken();
                 child1 = expression();
                 if (child1 != null && !child1.isNone()) {
-                    child2 = expect(Tag.RIGHT_PARENTHESES);
+                    child2 = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
                     ref = new ArrayReference(child, child1);
@@ -384,9 +367,9 @@ public class Parser {
                     return ref;
                 }
                 return null;
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
-                if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+                if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                     nextToken();
                     ref = new FunctionCall(child, null);
                     child1 = rest1(ref);
@@ -400,14 +383,14 @@ public class Parser {
                 }
                 child1 = argument_expression_list();
                 if (child1 != null && !child1.isNone()) {
-                    child2 = expect(Tag.RIGHT_BRACKETS);
+                    child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
                     ref = new FunctionCall(child, child1);
                     child3 = rest1(ref);
                 }
                 if (child3 != null && !child3.isEmpty()) {
-                    return child1;
+                    return child3;
                 }
                 if (child3 != null && child3.isEmpty()) {
                     return ref;
@@ -486,12 +469,12 @@ public class Parser {
             case Tag.SIZEOF:
                 terminal = getTokenValue();
                 nextToken();
-                if (getTokenTag() == Tag.LEFT_BRACKETS) {
+                if (getTokenTag() == Tag.LEFT_PARENTHESES) {
                     nextToken();
                     child1 = type_name();
                     child2 = null;
                     if (child1 != null && !child1.isNone()) {
-                        child2 = expect(Tag.RIGHT_BRACKETS);
+                        child2 = expect(Tag.RIGHT_PARENTHESES);
                     }
                     if (child2 != null) {
                         return new UnaryOperator(child1, terminal);
@@ -509,9 +492,9 @@ public class Parser {
                         return new UnaryOperator(child1, terminal);
                     } else {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
+                        return null;
                     }
                 }
-                return null;
         }
         String operator = unary_operator();
         if (!operator.equals("")) {
@@ -562,11 +545,11 @@ public class Parser {
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
         int pos = position;
-        if (getTokenTag() == Tag.LEFT_BRACKETS) {
+        if (getTokenTag() == Tag.LEFT_PARENTHESES) {
             nextToken();
             child1 = type_name();
             if (child1 != null && !child1.isNone()) {
-                child2 = accept(Tag.RIGHT_BRACKETS);
+                child2 = accept(Tag.RIGHT_PARENTHESES);
             }
             if (child2 != null) {
                 child3 = cast_expression();
@@ -1094,19 +1077,18 @@ public class Parser {
             return arr;
         }
         if (!child1.isNone()) {
-            Type child = (Type) child1;
+            type = (Type) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
-                if (child.getTypes().size() == 1 && child.getType(0).isEnumStructUnion()) {
+                if (type.getTypes().size() == 1 && type.getType(0).isEnumStructUnion()) {
                     ArrayList<Node> decls = new ArrayList<>();
-                    decls.add(new Declaration(null, child.getQualifiers(), child.getStorage(), child.getType(0),
+                    decls.add(new Declaration(null, type.getQualifiers(), type.getStorage(), type.getType(0),
                             null, null));
                     return decls;
                 } else {
                     ArrayList<Node> arr = new ArrayList<>();
                     arr.add(new Declarator(null, null));
-                    return createDeclaration(child, arr);
+                    return createDeclaration(type, arr);
                 }
-                //TODO: neviem, chyba??
             }
             ArrayList<Node> child2 = init_declarator_list();
             Node child3 = null;
@@ -1128,8 +1110,7 @@ public class Parser {
                 child3 = expect(Tag.SEMICOLON);
             }
             if (child3 != null) {
-                return createDeclaration(child, child2);
-
+                return createDeclaration(type, child2);
             }
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
@@ -1191,7 +1172,7 @@ public class Parser {
                 return null;
             }
             if (!child3.isNone()) {
-                return child2;
+                return child3;
             } else {
                 return type;
             }
@@ -1271,7 +1252,10 @@ public class Parser {
                 }
                 return null;
             } else {
-                //TODO: zachytiť == ??
+                if (getTokenValue().equals("==")) {
+                    System.out.println("Využitie '==' namiesto '=' na riadku " + getTokenLine() + "!");
+                    return null;
+                }
                 return new InitDeclarator(child1, null);
             }
         }
@@ -1532,7 +1516,7 @@ public class Parser {
             }
             return decl;
         }
-        return new ArrayList<Node>();
+        return new ArrayList<>();
     }
 
     /**
@@ -1550,16 +1534,16 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            Type child = (Type) child1;
+            type = (Type) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
                 nextToken();
                 ArrayList<Node> arr = new ArrayList<>();
-                if (child.getTypes().size() == 1) {
-                    arr.add(new Declarator(child.getType(0), null));
+                if (type.getTypes().size() == 1) {
+                    arr.add(new Declarator(type.getType(0), null));
                 } else {
                     arr.add(new Declarator(null, null));
                 }
-                return createDeclaration(child, arr);
+                return createDeclaration(type, arr);
             }
             ArrayList<Node> child2 = struct_declarator_list();
             Node child3;
@@ -1593,7 +1577,7 @@ public class Parser {
                         return null;
                     }
                 } else {
-                    return createDeclaration(child, child2);
+                    return createDeclaration(type, child2);
                 }
             }
         }
@@ -1799,7 +1783,7 @@ public class Parser {
                 String terminal = getTokenValue();
                 nextToken();
                 if (getTokenTag() == Tag.LEFT_BRACES) {
-                    expect(Tag.LEFT_BRACES);
+                    nextToken();
                     child1 = enumerator_list();
                     if (child1 != null && !child1.isNone()) {
                         switch (getTokenTag()) {
@@ -1995,7 +1979,7 @@ public class Parser {
 
                 String terminal = getTokenValue();
                 nextToken();
-                //TODO: potom pozieť quals a type
+                //TODO: potom pozrieť quals a type
                 Node declarator = new TypeDeclaration(terminal, null, null);
                 child1 = rest18(terminal, declarator);
                 if (child1 == null) {
@@ -2006,12 +1990,11 @@ public class Parser {
                 } else {
                     return child1;
                 }
-                //TODO: pozrieť neskôr
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = declarator(kind, "");
                 if (child1 != null && !child1.isNone()) {
-                    child2 = accept(Tag.RIGHT_BRACKETS);
+                    child2 = accept(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
                     child3 = rest18("", child1);
@@ -2044,7 +2027,7 @@ public class Parser {
     private Node rest18(String id, Node declarator) {
         Node child1;
         switch (getTokenTag()) {
-            case Tag.LEFT_PARENTHESES:
+            case Tag.LEFT_BRACKETS:
                 nextToken();
                 child1 = left16(declarator);
                 if (child1 != null && !child1.isNone()) {
@@ -2054,7 +2037,7 @@ public class Parser {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = left17(id, declarator);
                 if (child1 != null && !child1.isNone()) {
@@ -2087,7 +2070,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.MULT:
                 nextToken();
-                child1 = accept(Tag.RIGHT_PARENTHESES);
+                child1 = accept(Tag.RIGHT_BRACKETS);
                 if (child1 != null) {
                     decl = new ArrayDeclaration(null, new Identifier("*"), new ArrayList<>());
                     Node child = modifyType(declarator, decl);
@@ -2116,7 +2099,7 @@ public class Parser {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
                 }
-            case Tag.RIGHT_PARENTHESES:
+            case Tag.RIGHT_BRACKETS:
                 nextToken();
                 decl = new ArrayDeclaration(null, null, new ArrayList<>());
                 Node child = modifyType(declarator, decl);
@@ -2136,7 +2119,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
+            child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
@@ -2180,7 +2163,7 @@ public class Parser {
     //DONE
     private Node left17(String id, Node declarator) {
         Node child1, decl, child;
-        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null);
             child = modifyType(declarator, decl);
@@ -2200,7 +2183,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_BRACKETS);
+            child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
@@ -2257,7 +2240,7 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                child3 = expect(Tag.RIGHT_PARENTHESES);
+                child3 = expect(Tag.RIGHT_BRACKETS);
                 if (child3 == null) {
                     return null;
                 } else {
@@ -2283,7 +2266,7 @@ public class Parser {
             return null;
         }
         if (!child2.isNone()) {
-            child3 = expect(Tag.RIGHT_PARENTHESES);
+            child3 = expect(Tag.RIGHT_BRACKETS);
             if (child3 == null) {
                 return null;
             } else {
@@ -2323,7 +2306,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.MULT:
                 nextToken();
-                child1 = accept(Tag.RIGHT_PARENTHESES);
+                child1 = accept(Tag.RIGHT_BRACKETS);
                 if (child1 != null) {
                     decl = new ArrayDeclaration(null, new Identifier("*"), qualifiers);
                     child = modifyType(declarator, decl);
@@ -2348,7 +2331,7 @@ public class Parser {
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
-                    child2 = expect(Tag.RIGHT_PARENTHESES);
+                    child2 = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
                     qualifiers.add("static");
@@ -2365,7 +2348,7 @@ public class Parser {
                 } else {
                     return child;
                 }
-            case Tag.RIGHT_PARENTHESES:
+            case Tag.RIGHT_BRACKETS:
                 nextToken();
                 decl = new ArrayDeclaration(null, null, qualifiers);
                 child = modifyType(declarator, decl);
@@ -2384,7 +2367,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
+            child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
@@ -2432,7 +2415,7 @@ public class Parser {
                     }
 
                     tail.addType(new PointerDeclaration(child1, null));
-                    return tail;
+                    return child2;
                 } else {
                     return new PointerDeclaration(child1, null);
                 }
@@ -2445,7 +2428,7 @@ public class Parser {
                 }
 
                 tail.addType(new PointerDeclaration(new ArrayList<>(), null));
-                return tail;
+                return child2;
             } else {
                 return new PointerDeclaration(new ArrayList<>(), null);
             }
@@ -2554,8 +2537,8 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            Type child = (Type) child1;
-            child2 = left22(id, child);
+            type = (Type) child1;
+            child2 = left22(id, type);
             if (child2 == null) {
                 return null;
             }
@@ -2566,7 +2549,7 @@ public class Parser {
                 return child2;
             }
         }
-        return new Err();
+        return new None();
     }
 
     /**
@@ -2585,6 +2568,7 @@ public class Parser {
             type.addType(new IdentifierType(arr));
         }
 
+        int pos = position;
         Node child1 = declarator(Kind.PARAMETER, id);
         if (child1 == null) {
             return null;
@@ -2594,6 +2578,7 @@ public class Parser {
             decls.add(new Declarator(child1, null));
             return createDeclaration(type, decls).get(0);
         }
+        position = pos;
         child1 = abstract_declarator();
         if (child1 == null) {
             return null;
@@ -2669,16 +2654,16 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            Type child = (Type) child1;
+            type = (Type) child1;
             child2 = abstract_declarator();
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
-                return fixTypes(new Typename("", child.getQualifiers(), child2), child.getTypes());
+                return fixTypes(new Typename("", type.getQualifiers(), child2), type.getTypes());
             } else {
-                return  fixTypes(new Typename("", child.getQualifiers(), new TypeDeclaration(null,
-                        null, null)), child.getTypes());
+                return  fixTypes(new Typename("", type.getQualifiers(), new TypeDeclaration(null,
+                        null, null)), type.getTypes());
             }
         }
         return new None();
@@ -2729,7 +2714,7 @@ public class Parser {
         Node child1;
         int pos = position;
         switch (getTokenTag()) {
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = left25();
                 if (child1 != null && !child1.isNone()) {
@@ -2737,7 +2722,7 @@ public class Parser {
                 }
                 position = pos;
                 return new None();
-            case Tag.LEFT_PARENTHESES:
+            case Tag.LEFT_BRACKETS:
                 nextToken();
                 child1 = left26(null);
                 if (child1 != null && !child1.isNone()) {
@@ -2762,7 +2747,7 @@ public class Parser {
     //DONE
     private Node left25() {
         Node child1, decl;
-        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null);
             child1 = rest22(decl);
@@ -2781,7 +2766,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_BRACKETS);
+            child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
@@ -2801,7 +2786,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_BRACKETS);
+            child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
@@ -2836,7 +2821,7 @@ public class Parser {
         Node child1, child2;
         Node decl, child;
         switch (getTokenTag()) {
-            case Tag.RIGHT_PARENTHESES:
+            case Tag.RIGHT_BRACKETS:
                 nextToken();
                 if (declarator != null) {
                     decl = new ArrayDeclaration(null, null, new ArrayList<>());
@@ -2856,7 +2841,7 @@ public class Parser {
                 }
             case Tag.MULT:
                 nextToken();
-                child1 = accept(Tag.RIGHT_PARENTHESES);
+                child1 = accept(Tag.RIGHT_BRACKETS);
                 if (child1 != null) {
                     if (declarator != null) {
                         decl = new ArrayDeclaration(null, new Identifier("*"), new ArrayList<>());
@@ -2895,7 +2880,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
+            child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
@@ -2953,7 +2938,7 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                child3 = expect(Tag.RIGHT_PARENTHESES);
+                child3 = expect(Tag.RIGHT_BRACKETS);
                 if (child3 == null) {
                     return null;
                 } else {
@@ -2984,7 +2969,7 @@ public class Parser {
             return null;
         }
         if (!child2.isNone()) {
-            child3 = expect(Tag.RIGHT_PARENTHESES);
+            child3 = expect(Tag.RIGHT_BRACKETS);
             if (child3 == null) {
                 return null;
             } else {
@@ -3032,7 +3017,7 @@ public class Parser {
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
-                    child2 = expect(Tag.RIGHT_PARENTHESES);
+                    child2 = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
                     qualifiers.add("static");
@@ -3054,7 +3039,7 @@ public class Parser {
                 } else {
                     return child;
                 }
-            case Tag.RIGHT_PARENTHESES:
+            case Tag.RIGHT_BRACKETS:
                 nextToken();
                 decl = new ArrayDeclaration(new TypeDeclaration(null, null, null), null, qualifiers);
                 if (declarator != null) {
@@ -3077,7 +3062,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_PARENTHESES);
+            child2 = expect(Tag.RIGHT_BRACKETS);
             if (child2 == null) {
                 return null;
             } else {
@@ -3112,7 +3097,7 @@ public class Parser {
     private Node rest22(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
-            case Tag.LEFT_PARENTHESES:
+            case Tag.RIGHT_BRACKETS:
                 nextToken();
                 child1 = left26(declarator);
                 if (child1 != null && !child1.isNone()) {
@@ -3122,7 +3107,7 @@ public class Parser {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 }
                 return null;
-            case Tag.LEFT_BRACKETS:
+            case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = left29(declarator);
                 if (child1 != null && !child1.isNone()) {
@@ -3147,7 +3132,7 @@ public class Parser {
     //DONE
     private Node left29(Node declarator) {
         Node child1, decl, child;
-        if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+        if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null);
             child = modifyType(declarator, decl);
@@ -3167,7 +3152,7 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
-            child2 = expect(Tag.RIGHT_BRACKETS);
+            child2 = expect(Tag.RIGHT_PARENTHESES);
             if (child2 == null) {
                 return null;
             } else {
@@ -3257,9 +3242,8 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                NamedInitializer nam = new NamedInitializer(child1, child2);
                 ArrayList<Node> arr = new ArrayList<>();
-                arr.add(nam);
+                arr.add(new NamedInitializer(child1, child2));
                 InitializationList init = new InitializationList(arr);
                 child3 = rest23(init);
                 if (child3 == null) {
@@ -3407,11 +3391,11 @@ public class Parser {
     private Node designator() {
         Node child1, child2 = null;
         switch (getTokenTag()) {
-            case Tag.LEFT_PARENTHESES:
+            case Tag.LEFT_BRACKETS:
                 nextToken();
                 child1 = constant_expression();
                 if (child1 != null && !child1.isNone()) {
-                    child2 = expect(Tag.RIGHT_PARENTHESES);
+                    child2 = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
                     return child1;
@@ -3727,12 +3711,12 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.IF:
                 nextToken();
-                child1 = expect(Tag.LEFT_BRACKETS);
+                child1 = expect(Tag.LEFT_PARENTHESES);
                 if (child1 != null) {
                     child2 = expression();
                 }
                 if (child2 != null && !child2.isNone()) {
-                    child3 = expect(Tag. RIGHT_BRACKETS);
+                    child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
                     child4 = statement();
@@ -3755,12 +3739,12 @@ public class Parser {
                 return null;
             case Tag.SWITCH:
                 nextToken();
-                child1 = expect(Tag.LEFT_BRACKETS);
+                child1 = expect(Tag.LEFT_PARENTHESES);
                 if (child1 != null) {
                     child2 = expression();
                 }
                 if (child2 != null && !child2.isNone()) {
-                    child3 = expect(Tag. RIGHT_BRACKETS);
+                    child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
                     child4 = statement();
@@ -3791,12 +3775,12 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.WHILE:
                 nextToken();
-                child1 = expect(Tag. LEFT_BRACKETS);
+                child1 = expect(Tag. LEFT_PARENTHESES);
                 if (child1 != null) {
                     child2 = expression();
                 }
                 if (child2 != null && !child2.isNone()) {
-                    child3 = expect(Tag. RIGHT_BRACKETS);
+                    child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
                     child4 = statement();
@@ -3815,13 +3799,13 @@ public class Parser {
                     child2 = expect(Tag.WHILE);
                 }
                 if (child2 != null) {
-                    child3 = expect(Tag. LEFT_BRACKETS);
+                    child3 = expect(Tag.LEFT_PARENTHESES);
                 }
                 if (child3 != null) {
                     child4 = expression();
                 }
                 if (child4 != null && !child4.isNone()) {
-                    child5 = expect(Tag. RIGHT_BRACKETS);
+                    child5 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child5 != null) {
                     child6 = expect(Tag.SEMICOLON);
@@ -3858,7 +3842,7 @@ public class Parser {
                 }
             case Tag.FOR:
                 nextToken();
-                child1 = expect(Tag. LEFT_BRACKETS);
+                child1 = expect(Tag.LEFT_PARENTHESES);
                 if (child1 != null) {
                     child2 = left33();
                 }
@@ -3900,7 +3884,7 @@ public class Parser {
                  System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                 if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+                 if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                      nextToken();
                      child3 = statement();
                      if (child3 != null && !child3.isNone()) {
@@ -3923,7 +3907,7 @@ public class Parser {
                      return null;
                  }
                  if (!child3.isNone()) {
-                     child4 = expect(Tag.RIGHT_BRACKETS);
+                     child4 = expect(Tag.RIGHT_PARENTHESES);
                      if (child4 == null) {
                          return null;
                      } else {
@@ -3963,7 +3947,7 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                if (getTokenTag() == Tag.RIGHT_BRACKETS) {
+                if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                     nextToken();
                     child3 = statement();
                     if (child3 != null && !child3.isNone()) {
@@ -3983,7 +3967,7 @@ public class Parser {
                     return null;
                 }
                 if (!child3.isNone()) {
-                    child4 = expect(Tag.RIGHT_BRACKETS);
+                    child4 = expect(Tag.RIGHT_PARENTHESES);
                     if (child4 == null) {
                         return null;
                     } else {
@@ -4214,7 +4198,7 @@ public class Parser {
         Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(type);
         Node child2 = null, child3;
-        if(child1 != null && !child1.isNone()) {
+        if (child1 != null && !child1.isNone()) {
             child2 = declarator(Kind.FUNCTION, "");
         }
         if (child2 != null && !child2.isNone()) {

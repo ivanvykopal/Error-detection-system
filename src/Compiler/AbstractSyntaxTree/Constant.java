@@ -9,6 +9,10 @@ public class Constant extends Node {
         this.value = value;
     }
 
+    public String getTypeSpecifier() {
+        return type;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Constant: ");

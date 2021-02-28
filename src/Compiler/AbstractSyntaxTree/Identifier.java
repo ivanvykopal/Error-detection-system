@@ -7,6 +7,10 @@ public class Identifier extends Node {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Identifier: ");

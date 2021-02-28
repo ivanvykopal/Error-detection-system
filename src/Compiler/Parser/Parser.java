@@ -358,7 +358,7 @@ public class Parser {
             case Tag.DEC:
                 terminal = getTokenValue();
                 nextToken();
-                ref = new UnaryOperator(child, terminal);
+                ref = new UnaryOperator(child, terminal, symbolTable);
                 child1 = rest1(ref);
                 if (child1 != null && !child1.isEmpty()) {
                     return child1;
@@ -460,7 +460,7 @@ public class Parser {
                 nextToken();
                 child1 = unary_expression();
                 if (child1 != null && !child1.isNone()) {
-                    return new UnaryOperator(child1, terminal);
+                    return new UnaryOperator(child1, terminal, symbolTable);
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
@@ -477,7 +477,7 @@ public class Parser {
                         child2 = expect(Tag.RIGHT_PARENTHESES);
                     }
                     if (child2 != null) {
-                        return new UnaryOperator(child1, terminal);
+                        return new UnaryOperator(child1, terminal, symbolTable);
                     }
                     if (child1 != null && child1.isNone()) {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
@@ -489,7 +489,7 @@ public class Parser {
                         return null;
                     }
                     if (!child1.isNone()) {
-                        return new UnaryOperator(child1, terminal);
+                        return new UnaryOperator(child1, terminal, symbolTable);
                     } else {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                         return null;
@@ -503,7 +503,7 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                return new UnaryOperator(child1, operator);
+                return new UnaryOperator(child1, operator, symbolTable);
             }
         }
         child1 = postfix_expression();
@@ -585,7 +585,7 @@ public class Parser {
                 binOperator = child1;
                 child1 = cast_expression();
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -620,7 +620,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -655,7 +655,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -692,7 +692,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -727,7 +727,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -761,7 +761,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -795,7 +795,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -829,7 +829,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -863,7 +863,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -897,7 +897,7 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1);
+                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                     return null;
@@ -970,7 +970,7 @@ public class Parser {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
                 return null;
             } else {
-                return new Assignment(child1, operator, child2);
+                return new Assignment(child1, operator, child2, symbolTable);
             }
         }
         position = pos;
@@ -4288,6 +4288,12 @@ public class Parser {
                     declaration = new Typedef(null, type.getQualifiers(), type.getStorage(),
                             ((Declarator) decl).getDeclarator());
                 } else {
+                    if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
+                        //TODO: Sémantická chyba
+                        System.out.println("Sémantická chyba!");
+                        return null;
+                    }
+
                     //TODO: pozrieť sa na bitsize
                     declaration = new Declaration(null, type.getQualifiers(), type.getStorage(),
                             ((Declarator) decl).getDeclarator(), ((Declarator) decl).getInitializer(),null);
@@ -4395,4 +4401,162 @@ public class Parser {
 
         return new FunctionDefinition(decl, parameters, body);
     }
+
+    private boolean typeChecking(Node declarator, Node initializer) {
+        if (initializer == null || declarator == null) {
+            return true;
+        }
+
+        if (declarator instanceof TypeDeclaration) {
+            Node tail = declarator.getType();
+
+            while (!(tail instanceof IdentifierType)) {
+                tail = tail.getType();
+            }
+
+            //tail je IdentifierType
+            byte type1 = findType(String.join(" ", ((IdentifierType) tail).getNames()));
+            byte type2 = getInitializer(initializer);
+
+            if (type1 == -1 || type2 < 0) {
+                return false;
+            }
+
+            if (type1 == Compiler.SymbolTable.Type.BOOL || type2 == Compiler.SymbolTable.Type.BOOL ||
+                    type1 == Compiler.SymbolTable.Type.VOID || type2 == Compiler.SymbolTable.Type.VOID) {
+                return false;
+            }
+            return true;
+        } else if (declarator instanceof ArrayDeclaration) {
+            byte type2 = getInitializer(initializer);
+            if (type2 == -1) {
+                return true;
+            }
+            return false;
+        } else if (declarator instanceof PointerDeclaration) {
+            //TODO: doriešiť pointre
+        } else {
+            return false;
+        }
+
+        return false;
+    }
+
+    private byte getInitializer(Node initializer) {
+        if (initializer instanceof InitializationList) {
+            return -1;
+        } else if (initializer instanceof BinaryOperator) {
+            return ((BinaryOperator) initializer).getTypeCategory();
+        } else if (initializer instanceof Assignment) {
+            return ((Assignment) initializer).getLeftType(symbolTable);
+        } else if (initializer instanceof TernaryOperator) {
+            //TODO: vymyslieť aj pre Assignment
+            return 0;
+        } else if (initializer instanceof Cast) {
+            Node tail = initializer.getType();
+
+            while (!(tail instanceof IdentifierType)) {
+                tail = tail.getType();
+            }
+
+            //spojí všetky typy do stringu a konvertuje ich na byte
+            return findType(String.join(" ", ((IdentifierType) tail).getNames()));
+        } else if (initializer instanceof UnaryOperator) {
+            return ((UnaryOperator) initializer).getTypeCategory();
+        } else if (initializer instanceof Identifier) {
+            //nájsť v symbolickej tabuľke
+            Record record = symbolTable.lookup(((Identifier) initializer).getName());
+            if (record == null) {
+                return -128;
+            } else {
+                return record.getType();
+            }
+        } else if (initializer instanceof Constant) {
+            return findType(((Constant) initializer).getTypeSpecifier());
+        } else if (initializer instanceof FunctionCall) {
+            Identifier id = (Identifier) ((FunctionCall) initializer).getName();
+            Record record = symbolTable.lookup(id.getName());
+            if (record == null) {
+                return -1;
+            } else {
+                return record.getType();
+            }
+        } else if (initializer instanceof ArrayReference) {
+            Identifier id = (Identifier) ((ArrayReference) initializer).getName();
+            Record record = symbolTable.lookup(id.getName());
+            if (record == null) {
+                return -1;
+            } else {
+                return record.getType();
+            }
+        } else if (initializer instanceof  StructReference) {
+            Identifier id = (Identifier) ((StructReference) initializer).getName();
+            Record record = symbolTable.lookup(id.getName());
+            if (record == null) {
+                return -1;
+            } else {
+                return record.getType();
+            }
+        } else {
+            return -128;
+        }
+    }
+
+    /**
+     * Funkcia na zistenie typu.
+     * @param type typ (String)
+     * @return typ (byte)
+     */
+    private byte findType(String type) {
+        //vymazanie poslednej medzery
+        byte pointer = 0;
+        //riešenie smerníkov
+        if (type.contains("*")) {
+            pointer = 100;
+            type = type.replace("* ", "");
+        }
+
+        if (type.equals("")) {
+            return -1;
+        }
+
+        //riešenie typov
+        switch (type.hashCode()) {
+            case 3052374: return (byte) (Compiler.SymbolTable.Type.CHAR + pointer);                      // char
+            case -359586342: return (byte) (Compiler.SymbolTable.Type.SIGNEDCHAR + pointer);             // signed char
+            case 986197409: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDCHAR + pointer);            // unsigned char
+            case 109413500: return (byte) (Compiler.SymbolTable.Type.SHORT + pointer);                   // short
+            case 1752515192: return (byte) (Compiler.SymbolTable.Type.SIGNEDSHORT + pointer);            // signed short
+            case 522138513: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDSHORT + pointer);           // unsigned short
+            case 104431: return (byte) (Compiler.SymbolTable.Type.INT + pointer);                        // int
+            case -902467812: return (byte) (Compiler.SymbolTable.Type.SIGNED + pointer);                 // signed
+            case -981424917: return (byte) (Compiler.SymbolTable.Type.SIGNEDINT + pointer);              // signed int
+            case -15964427: return (byte) (Compiler.SymbolTable.Type.UNSIGNED + pointer);                // unsigned
+            case 1140197444: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDINT + pointer);            // unsigned int
+            case -2029581749: return (byte) (Compiler.SymbolTable.Type.SHORTINT + pointer);              // short int
+            case -827364793: return (byte) (Compiler.SymbolTable.Type.SIGNEDSHORTINT + pointer);         // signed short int
+            case 1314465504: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDSHORTINT + pointer);       // unsigned short int
+            case 3327612: return (byte) (Compiler.SymbolTable.Type.LONG + pointer);                      // long
+            case -359311104: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONG + pointer);             // signed long
+            case 986472647: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONG + pointer);            // unsigned long
+            case -2075964341: return (byte) (Compiler.SymbolTable.Type.LONGINT + pointer);               // long int
+            case 2119236815: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGINT + pointer);          // signed long int
+            case 1218496790: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGINT + pointer);        // unsigned long int
+            case 69705120: return (byte) (Compiler.SymbolTable.Type.LONGLONG + pointer);                 // long long
+            case 1173352815: return (byte) (Compiler.SymbolTable.Type.LONGLONGINT + pointer);            // long long int
+            case 1271922076: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGLONG + pointer);         // signed long long
+            case -1037044885: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGLONGINT + pointer);     // signed long long int
+            case -881214923: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGLONG + pointer);       // unsigned long long
+            case -1492665468: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGLONGINT + pointer);   // unsigned long long int
+            case 97526364: return (byte) (Compiler.SymbolTable.Type.FLOAT + pointer);                    // float
+            case -1325958191: return (byte) (Compiler.SymbolTable.Type.DOUBLE + pointer);                // double
+            case -1961682443: return (byte) (Compiler.SymbolTable.Type.LONGDOUBLE + pointer);            // long double
+            case 111433423: return (byte) (Compiler.SymbolTable.Type.UNION + pointer);                   // union
+            case -891974699: return (byte) (Compiler.SymbolTable.Type.STRUCT + pointer);                 // struct
+            case 3118337: return (byte) (Compiler.SymbolTable.Type.ENUM + pointer);                      // enum
+            case 3625364: return (byte) (Compiler.SymbolTable.Type.VOID + pointer);                      // void
+            default: return Compiler.SymbolTable.Type.TYPEDEF_TYPE;                                      // vlastný typ
+        }
+    }
+
 }

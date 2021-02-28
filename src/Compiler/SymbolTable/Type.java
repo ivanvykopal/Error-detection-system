@@ -5,29 +5,33 @@ package Compiler.SymbolTable;
  */
 public class Type {
 
-    // Character
+    // Character 1B
     public static byte CHAR = 0;
     public static byte SIGNEDCHAR = 1;
     public static byte UNSIGNEDCHAR = 2;
 
-    // Integer types
+    // Integer types 2B
     public static byte SHORT = 3;
     public static byte SIGNEDSHORT = 4;
     public static byte UNSIGNEDSHORT = 5;
-    public static byte INT = 6;
-    public static byte SIGNED = 7;
-    public static byte SIGNEDINT = 8;
-    public static byte UNSIGNED = 9;
-    public static byte UNSIGNEDINT = 10;
-    public static byte SHORTINT = 11;
-    public static byte SIGNEDSHORTINT = 12;
-    public static byte UNSIGNEDSHORTINT = 13;
+    public static byte SHORTINT = 6;
+    public static byte SIGNEDSHORTINT = 7;
+    public static byte UNSIGNEDSHORTINT = 8;
+
+    //Integer types 4B
+    public static byte INT = 9;
+    public static byte SIGNED = 10;
+    public static byte SIGNEDINT = 11;
+    public static byte UNSIGNED = 12;
+    public static byte UNSIGNEDINT = 13;
     public static byte LONG = 14;
     public static byte SIGNEDLONG = 15;
     public static byte UNSIGNEDLONG = 16;
     public static byte LONGINT = 17;
     public static byte SIGNEDLONGINT = 18;
     public static byte UNSIGNEDLONGINT = 19;
+
+    //Integer types 8B
     public static byte LONGLONG = 20;
     public static byte LONGLONGINT = 21;
     public static byte SIGNEDLONGLONG = 22;
@@ -46,4 +50,6 @@ public class Type {
 
     public static byte VOID = 32;
     public static byte TYPEDEF_TYPE = 33;
+
+    public static byte BOOL = 34;
 }

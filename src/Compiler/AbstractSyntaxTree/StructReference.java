@@ -11,6 +11,10 @@ public class StructReference extends Node {
         this.field = field;
     }
 
+    public Node getName() {
+        return name;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "StructReference: ");

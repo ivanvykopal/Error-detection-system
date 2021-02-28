@@ -9,6 +9,12 @@ public class FunctionCall extends Node {
         this.arguments = args;
     }
 
+    public Node getName() {
+        return name;
+    }
+
+    //TODO: type checking pre argumenty
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "FunctionCall: ");

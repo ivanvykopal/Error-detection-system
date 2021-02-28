@@ -9,6 +9,10 @@ public class ArrayReference extends Node {
         this.index = index;
     }
 
+    public Node getName() {
+        return name;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "ArrayReference: ");

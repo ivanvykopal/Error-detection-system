@@ -7,6 +7,8 @@ public class Return extends Node {
         this.expression = expr;
     }
 
+    //TODO: type checking, či vracia vhodný typ pre funkciu ak má expression
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Return:");

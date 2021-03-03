@@ -49,7 +49,7 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            parseTree.traverse("");
+            //parseTree.traverse("");
         }
     }
 
@@ -2705,7 +2705,7 @@ public class Parser {
             if (!child2.isNone()) {
                 return fixTypes(new Typename("", typeNode.getQualifiers(), child2), typeNode.getTypes());
             } else {
-                return  fixTypes(new Typename("", typeNode.getQualifiers(), new TypeDeclaration(null,
+                return fixTypes(new Typename("", typeNode.getQualifiers(), new TypeDeclaration(null,
                         null, null)), typeNode.getTypes());
             }
         }
@@ -4677,7 +4677,7 @@ public class Parser {
                                 pointer = false;
                                 boolean array = false;
                                 Node param_tail = param.getType();
-                                String param_name = ((Declaration) param).getName();
+                                String param_name = ((DeclarationNode) param).getName();
                                 String param_type = "";
 
                                 while (!(param_tail instanceof IdentifierType)) {
@@ -4747,7 +4747,7 @@ public class Parser {
      * @return
      */
     private Node fixTypes(Node declaration, ArrayList<Node> typename) {
-        Declaration decl = (Declaration) declaration;
+        DeclarationNode decl = (DeclarationNode) declaration;
 
         Node type = declaration;
         while (!type.isTypeDeclaration()) {
@@ -4764,6 +4764,7 @@ public class Parser {
                 if (typename.size() > 1) {
                     //TODO: Chyba
                     System.out.println("Chybný typ!");
+                    errorDatabase.addErrorMessage(111, err.getError("E-SmA-01"), "E-SmA-01");
                     return null;
                 } else {
                     type.addType(t_name);
@@ -4775,6 +4776,7 @@ public class Parser {
         if (typename.isEmpty()) {
             if (!(decl.getType() instanceof FunctionDeclaration)) {
                 System.out.println("Chýbajúci typ!");
+                errorDatabase.addErrorMessage(111, err.getError("E-SmA-01"), "E-SmA-01");
                 return null;
             }
             ArrayList<String> arr = new ArrayList<>();

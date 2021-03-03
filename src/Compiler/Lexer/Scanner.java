@@ -51,15 +51,16 @@ public class Scanner {
                 System.out.println("Chyba: E-LA-03 " + err.getError("E-LA-03"));
                 errorDatabase.addErrorMessage(line, err.getError("E-LA-03"), "E-LA-03");
                 return new Token((byte) -1, "", line);
-            };
+            }
             if (peek == '\n') {
                 line++;
                 continue;
             }
             // ak sú ešte prázdne znaky opakuje cyklus
-            if(peek == ' ' || peek == '\t') continue;
+            if(peek == ' ' || peek == '\t' || peek == '\r') continue;
             if (peek == '/') {
                 readNextCharacter();
+                //System.out.println("SOM TU");
                 // ak nasleduje komentár opakuje cyklus
                 if (peek == '/' || peek == '*') {
                     position -= 2;
@@ -335,9 +336,14 @@ public class Scanner {
         if (peek == '\'') {
             StringBuilder word = new StringBuilder("" + peek);
             readNextCharacter();
-            if (peek == '\\' || peek == '\'') {
+            if (peek == '\'') {
                 System.out.print("Chyba pre znak!");
                 return new Token((byte) -1, "", line);
+            }
+            if (peek == '\\') {
+                word.append(peek);
+                readNextCharacter();
+                word.append(peek);
             } else {
                 word.append(peek);
             }
@@ -437,7 +443,7 @@ public class Scanner {
             // kontrola pre medzeru a tabulátor
             if (peek == ' ' || peek == '\t') continue;
             // kontrola pre CR znak
-            if ((int)peek == 13) continue;
+            if (peek == '\r') continue;
             // kontrola nového riadku
             if (peek == '\n') line++;
             else break;
@@ -456,7 +462,10 @@ public class Scanner {
                     // komentár typu /* */
                     while(true) {
                         readNextCharacter();
-                        if (peek == '*' && readNextCharacter('/')) break;
+                        if (peek == '*' && readNextCharacter('/')) {
+                            readNextCharacter();
+                            break;
+                        }
                         if (peek == '§') {
                             // koniec súboru
                             return true;

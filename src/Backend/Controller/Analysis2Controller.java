@@ -75,9 +75,11 @@ public class Analysis2Controller {
                         System.out.println("Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
                         continue;
                     }
+                    System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
                     ErrorDatabase errorDatabase = new ErrorDatabase();
                     Parser parser = new Parser(text, errorDatabase);
                     parser.parse();
+                    System.out.print("\n");
                     errorDatabase.getErrorMessages();
                 }
             }

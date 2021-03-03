@@ -12,4 +12,6 @@ public class Kind {
     public static byte ARRAY_PARAMETER = 4;
     public static byte TYPEDEF_NAME = 5;
     public static byte ENUMERATION_CONSTANT = 6;
+    public static byte STRUCT_PARAMETER = 7;
+    public static byte STRUCT_ARRAY_PARAMETER = 8;
 }

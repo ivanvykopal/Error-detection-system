@@ -13,6 +13,10 @@ public class DeclarationNode extends Node {
         this.type = type;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void addName(String name) {
         this.name = name;
     }

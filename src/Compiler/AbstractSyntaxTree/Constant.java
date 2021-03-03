@@ -20,6 +20,10 @@ public class Constant extends Node {
         if (value != null) System.out.println(indent + value);
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public boolean isNone() {
         return false;

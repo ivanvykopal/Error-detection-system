@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * Trieda, ktorá obsahuje informácie o premenných, funkciách a parametroch.
  */
-public class SymbolTable {
+public class SymbolTable implements Cloneable {
     SymbolTable parent = null;
     HashMap<String, Record> table;
     ArrayList<SymbolTable> childs = new ArrayList<>();
@@ -148,7 +148,7 @@ public class SymbolTable {
         byte pointer = 0;
         //riešenie smerníkov
         if (type.contains("*")) {
-            pointer = 100;
+            pointer = 50;
             type = type.replace("* ", "");
         }
 
@@ -212,5 +212,10 @@ public class SymbolTable {
             type = type.replace("volatile ", "");
         }
         return type;
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
     }
 }

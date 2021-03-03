@@ -2,12 +2,12 @@ package Compiler.AbstractSyntaxTree;
 
 import java.util.ArrayList;
 
-public class Type extends Node {
+public class TypeNode extends Node {
     ArrayList<Node> types;
     ArrayList<String> storage;
     ArrayList<String> qualifiers;
 
-    public Type(ArrayList<Node> types, ArrayList<String> storage, ArrayList<String> quals) {
+    public TypeNode(ArrayList<Node> types, ArrayList<String> storage, ArrayList<String> quals) {
         this.types = types;
         this.storage = storage;
         this.qualifiers = quals;

@@ -10,6 +10,7 @@ import Compiler.SymbolTable.SymbolTable;
 import java.io.IOException;
 import java.util.ArrayList;
 import Compiler.AbstractSyntaxTree.*;
+import Compiler.SymbolTable.Type;
 
 public class Parser {
     private int position = 0;
@@ -102,7 +103,7 @@ public class Parser {
                 System.out.println("Chybajúca zátvorka na riadku " + getTokenLine() + "!");
                 break;
             case Tag.SEMICOLON:
-                System.out.println("Chybajúca ; na riadku " + getTokenLine() + "!");
+                System.out.println("Chybajúca ; na riadku " + getTokenLine() + "!" + getTokenValue());
                 break;
             case Tag.PLUS:
             case Tag.MINUS:
@@ -151,6 +152,12 @@ public class Parser {
      */
     //DONE
     private Node primary_expression() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1;
         switch (getTokenTag()) {
@@ -178,6 +185,7 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
+                symbolTable = copy;
                 return new None();
         }
         child1 = constant();
@@ -219,6 +227,7 @@ public class Parser {
      */
     //DONE
     private String enumeration_constant() {
+        //TODO: pozreiť sa kde sa vkladá
         if (getTokenTag() == Tag.IDENTIFIER) {
             //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
             symbolTable.insert(getTokenValue(), "", getTokenLine(), Kind.ENUMERATION_CONSTANT);
@@ -238,6 +247,12 @@ public class Parser {
      */
     //DONE
     private Node postfix_expression() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_PARENTHESES) {
@@ -285,6 +300,7 @@ public class Parser {
                 }
             }
             position = pos;
+            symbolTable = copy;
         }
         child1 = primary_expression();
         child2 = null;
@@ -544,6 +560,12 @@ public class Parser {
     //DONE
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         if (getTokenTag() == Tag.LEFT_PARENTHESES) {
             nextToken();
@@ -558,6 +580,7 @@ public class Parser {
                 return new Cast(child1, child3);
             }
             position = pos;
+            symbolTable = copy;
         }
         child1 = unary_expression();
         if (child1 != null && !child1.isNone()) {
@@ -954,6 +977,12 @@ public class Parser {
      */
     //DONE
     private Node assignment_expression() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1 = unary_expression();
         String operator = "";
@@ -974,6 +1003,7 @@ public class Parser {
             }
         }
         position = pos;
+        symbolTable = copy;
         child1 = conditional_expression();
         if (child1 == null) {
             return null;
@@ -1060,8 +1090,8 @@ public class Parser {
      */
     //TODO: vyriešiť Error recovery
     private ArrayList<Node> declaration() {
-        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        Node child1 = declaration_specifiers(type);
+        TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = declaration_specifiers(typeNode);
         if (child1 == null) {
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON) {
@@ -1077,17 +1107,18 @@ public class Parser {
             return arr;
         }
         if (!child1.isNone()) {
-            type = (Type) child1;
+            typeNode = (TypeNode) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
-                if (type.getTypes().size() == 1 && type.getType(0).isEnumStructUnion()) {
+                nextToken();
+                if (typeNode.getTypes().size() == 1 && typeNode.getType(0).isEnumStructUnion()) {
                     ArrayList<Node> decls = new ArrayList<>();
-                    decls.add(new Declaration(null, type.getQualifiers(), type.getStorage(), type.getType(0),
+                    decls.add(new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(), typeNode.getType(0),
                             null, null));
                     return decls;
                 } else {
                     ArrayList<Node> arr = new ArrayList<>();
                     arr.add(new Declarator(null, null));
-                    return createDeclaration(type, arr);
+                    return createDeclaration(typeNode, arr);
                 }
             }
             ArrayList<Node> child2 = init_declarator_list();
@@ -1110,7 +1141,7 @@ public class Parser {
                 child3 = expect(Tag.SEMICOLON);
             }
             if (child3 != null) {
-                return createDeclaration(type, child2);
+                return createDeclaration(typeNode, child2);
             }
             //error recovery
             while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
@@ -1145,49 +1176,49 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node declaration_specifiers(Type type) {
+    private Node declaration_specifiers(TypeNode typeNode) {
         String child1 = storage_class_specifier();
         Node child2;
         if (!child1.equals("")) {
-            type.addStorage(child1);
-            child2 = declaration_specifiers(type);
+            typeNode.addStorage(child1);
+            child2 = declaration_specifiers(typeNode);
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
                 return child2;
             } else {
-                return type;
+                return typeNode;
             }
         }
-        child2 = type_specifier(true);
+        child2 = type_specifier();
         Node child3;
         if (child2 == null) {
             return null;
         }
         if (!child2.isNone()) {
-            type.addType(child2);
-            child3 = declaration_specifiers(type);
+            typeNode.addType(child2);
+            child3 = declaration_specifiers(typeNode);
             if (child3 == null) {
                 return null;
             }
             if (!child3.isNone()) {
                 return child3;
             } else {
-                return type;
+                return typeNode;
             }
         }
-        child1 = type_qualifier(true);
+        child1 = type_qualifier();
         if (!child1.equals("")) {
-            type.addQualifier(child1);
-            child2 = declaration_specifiers(type);
+            typeNode.addQualifier(child1);
+            child2 = declaration_specifiers(typeNode);
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
                 return child2;
             } else {
-                return type;
+                return typeNode;
             }
         }
         return new None();
@@ -1236,7 +1267,7 @@ public class Parser {
      */
     //DONE
     private Node init_declarator() {
-        Node child1 = declarator(Kind.VARIABLE, "");
+        Node child1 = declarator();
         if (child1 == null) {
             return null;
         }
@@ -1275,8 +1306,6 @@ public class Parser {
             case Tag.STATIC:
             case Tag.AUTO:
             case Tag.REGISTER:
-                //zisťovanie typu identifikátoru
-                type += getTokenValue() + " ";
 
                 nextToken();
                 return getTokenValue(position - 1);
@@ -1294,7 +1323,7 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node type_specifier(boolean flag) {
+    private Node type_specifier() {
         ArrayList<String> arr = new ArrayList<>();
         switch (getTokenTag()) {
             case Tag.VOID:
@@ -1306,10 +1335,6 @@ public class Parser {
             case Tag.DOUBLE:
             case Tag.SIGNED:
             case Tag.UNSIGNED:
-                //zisťovanie typu identifikátora
-                if (flag) {
-                    type += getTokenValue() + " ";
-                }
 
                 nextToken();
                 arr.add(getTokenValue(position - 1));
@@ -1319,10 +1344,6 @@ public class Parser {
                 Record record = symbolTable.lookup(getTokenValue());
                 if (record != null) {
                     if (record.getKind() == Kind.TYPEDEF_NAME) {
-                        //zisťovanie typu identifikátora
-                        if (flag) {
-                            type += getTokenValue() + " ";
-                        }
 
                         nextToken();
                         arr.add(getTokenValue(position - 1));
@@ -1331,14 +1352,14 @@ public class Parser {
                 }
                 return new None();
         }
-        Node child1 = struct_or_union_specifier(flag);
+        Node child1 = struct_or_union_specifier();
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
             return child1;
         }
-        child1 = enum_specifier(flag);
+        child1 = enum_specifier();
         if (child1 == null) {
             return null;
         }
@@ -1357,8 +1378,8 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node struct_or_union_specifier(boolean flag) {
-        String child1 = struct_or_union(flag);
+    private Node struct_or_union_specifier() {
+        String child1 = struct_or_union();
         ArrayList<Node> child2;
         Node child3 = null;
         if (!child1.equals("")) {
@@ -1404,11 +1425,6 @@ public class Parser {
                         }
                     }
                 case Tag.IDENTIFIER:
-                    if (flag) {
-                        //pridanie záznamu do symbolickej tabuľky
-                        symbolTable.insert(getTokenValue(), type, getTokenLine());
-                        type = "";
-                    }
                     String terminal = getTokenValue();
                     nextToken();
                     if (getTokenTag() == Tag.LEFT_BRACES) {
@@ -1473,14 +1489,10 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private String struct_or_union(boolean flag) {
+    private String struct_or_union() {
         switch (getTokenTag()) {
             case Tag.STRUCT:
             case Tag.UNION:
-                //zisťovanie typu identifikátora
-                if (flag) {
-                    type += getTokenValue() + " ";
-                }
 
                 nextToken();
                 return getTokenValue(position - 1);
@@ -1528,22 +1540,22 @@ public class Parser {
      */
     //TODO: vyriešiť ErrorRecovery
     private ArrayList<Node> struct_declaration() {
-        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        Node child1 = specifier_qualifier_list(true, type);
+        TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = specifier_qualifier_list(typeNode);
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
-            type = (Type) child1;
+            typeNode = (TypeNode) child1;
             if (getTokenTag() == Tag.SEMICOLON) {
                 nextToken();
                 ArrayList<Node> arr = new ArrayList<>();
-                if (type.getTypes().size() == 1) {
-                    arr.add(new Declarator(type.getType(0), null));
+                if (typeNode.getTypes().size() == 1) {
+                    arr.add(new Declarator(typeNode.getType(0), null));
                 } else {
                     arr.add(new Declarator(null, null));
                 }
-                return createDeclaration(type, arr);
+                return createDeclaration(typeNode, arr, true);
             }
             ArrayList<Node> child2 = struct_declarator_list();
             Node child3;
@@ -1577,7 +1589,7 @@ public class Parser {
                         return null;
                     }
                 } else {
-                    return createDeclaration(type, child2);
+                    return createDeclaration(typeNode, child2, true);
                 }
             }
         }
@@ -1594,35 +1606,35 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node specifier_qualifier_list(boolean flag, Type type) {
-        Node child1 = type_specifier(flag);
+    private Node specifier_qualifier_list(TypeNode typeNode) {
+        Node child1 = type_specifier();
         Node child2;
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
-            type.addType(child1);
-            child2 = specifier_qualifier_list(flag, type);
+            typeNode.addType(child1);
+            child2 = specifier_qualifier_list(typeNode);
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
                 return child2;
             } else {
-                return type;
+                return typeNode;
             }
         }
-        String child = type_qualifier(flag);
+        String child = type_qualifier();
         if (!child.equals("")) {
-            type.addQualifier(child);
-            child2 = specifier_qualifier_list(flag, type);
+            typeNode.addQualifier(child);
+            child2 = specifier_qualifier_list(typeNode);
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
                 return child2;
             } else {
-                return type;
+                return typeNode;
             }
         }
         return new None();
@@ -1684,7 +1696,7 @@ public class Parser {
             }
             return null;
         }
-        child1 = declarator(Kind.VARIABLE, "");
+        child1 = declarator();
         if (child1 == null) {
             return null;
         }
@@ -1713,15 +1725,11 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node enum_specifier(boolean flag) {
+    private Node enum_specifier() {
         if (getTokenTag() == Tag.ENUM) {
-            //zisťovanie typu identifikátora
-            if (flag) {
-                type += getTokenValue() + " ";
-            }
 
             nextToken();
-            Node child1 = left13(flag);
+            Node child1 = left13();
             if (child1 != null && !child1.isNone()) {
                 return child1;
             }
@@ -1744,7 +1752,7 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node left13(boolean flag) {
+    private Node left13() {
         Node child1, child2, child3;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
@@ -1774,12 +1782,6 @@ public class Parser {
                 nextToken();
                 return new Err();
             case Tag.IDENTIFIER:
-                if (flag) {
-                    //pridanie záznamu do symbolickej tabuľky
-                    symbolTable.insert(getTokenValue(), type, getTokenLine());
-                    type = "";
-                }
-
                 String terminal = getTokenValue();
                 nextToken();
                 if (getTokenTag() == Tag.LEFT_BRACES) {
@@ -1887,14 +1889,10 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private String type_qualifier(boolean flag) {
+    private String type_qualifier() {
         switch (getTokenTag()) {
             case Tag.CONST:
             case Tag.VOLATILE:
-                //zisťovanie typu identifikátora
-                if (flag) {
-                    type += getTokenValue() + " ";
-                }
 
                 nextToken();
                 return getTokenValue(position - 1);
@@ -1910,17 +1908,17 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node declarator(byte kind, String id) {
-        Node child1 = pointer(true);
+    private Node declarator() {
+        Node child1 = pointer();
         Node child2;
         if (!child1.isNone()) {
-            child2 = direct_declarator(kind, id);
+            child2 = direct_declarator();
             if (child2 != null && !child2.isNone()) {
                 return modifyType(child2, child1);
             }
             return new None();
         }
-        child1 = direct_declarator(kind, id);
+        child1 = direct_declarator();
         if (child1 == null) {
             return null;
         }
@@ -1937,51 +1935,22 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private Node direct_declarator(byte kind, String id) {
+    private Node direct_declarator() {
         Node child1, child2 = null, child3 = null;
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 //TODO: pozrieť sa na pridávanie do symolickej tabuľky
-                //pridanie identifikátoru do
-                if(getTokenTag(position + 1) == Tag.LEFT_PARENTHESES) {
-                    //ide o pole
-                    if (kind == Kind.PARAMETER) {
-                        //ide o parameter funkcie
-                        symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY_PARAMETER);
-                        //pridanie parametru k funkcii
-                        Record record = symbolTable.lookup(id);
-                        record.getParameters().add(getTokenValue());
-                        symbolTable.setValue(id, record);
-                    } else {
-                        if (getTokenTag(position + 2) == Tag.NUMBER) {
-                            //viem veľkosť poľa
-                            symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY, Integer.parseInt(getTokenValue(position + 2)));
-                        } else {
-                            symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.ARRAY);
-                        }
-                    }
-                } else if (getTokenTag(position + 1) == Tag.LEFT_BRACKETS) {
-                    //ide o funkciu
-                    symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.FUNCTION);
-                } else {
-                    if (kind == Kind.PARAMETER) {
-                        symbolTable.insert(getTokenValue(), type, getTokenLine(), Kind.PARAMETER);
-                        //pridanie parametru k funkcii
-                        Record record = symbolTable.lookup(id);
-                        record.getParameters().add(getTokenValue());
-                        symbolTable.setValue(id, record);
-                    } else {
-                        symbolTable.insert(getTokenValue(), type, getTokenLine());
-                    }
-                }
-                type = "";
-
                 String terminal = getTokenValue();
                 nextToken();
-                //TODO: potom pozrieť quals a type
                 Node declarator = new TypeDeclaration(terminal, null, null);
-                child1 = rest18(terminal, declarator);
+                child1 = rest18(declarator);
                 if (child1 == null) {
                     return null;
                 }
@@ -1992,12 +1961,12 @@ public class Parser {
                 }
             case Tag.LEFT_PARENTHESES:
                 nextToken();
-                child1 = declarator(kind, "");
+                child1 = declarator();
                 if (child1 != null && !child1.isNone()) {
                     child2 = accept(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    child3 = rest18("", child1);
+                    child3 = rest18(child1);
                 }
                 if (child3 != null && !child3.isEmpty()) {
                     return child3;
@@ -2006,6 +1975,7 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
+                symbolTable = copy;
                 return new None();
         }
         //TODO: nie som si istý
@@ -2024,7 +1994,7 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node rest18(String id, Node declarator) {
+    private Node rest18(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
@@ -2039,7 +2009,7 @@ public class Parser {
                 return null;
             case Tag.LEFT_PARENTHESES:
                 nextToken();
-                child1 = left17(id, declarator);
+                child1 = left17(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2064,6 +2034,12 @@ public class Parser {
      */
     //DONE
     private Node left16(Node declarator) {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1, child2;
         Node decl;
@@ -2074,7 +2050,7 @@ public class Parser {
                 if (child1 != null) {
                     decl = new ArrayDeclaration(null, new Identifier("*"), new ArrayList<>());
                     Node child = modifyType(declarator, decl);
-                    child2 = rest18("", child);
+                    child2 = rest18(child);
                     if (child2 == null) {
                         return null;
                     }
@@ -2085,6 +2061,7 @@ public class Parser {
                     }
                 } else {
                     position = pos;
+                    symbolTable = copy;
                     break;
                 }
             case Tag.STATIC:
@@ -2103,7 +2080,7 @@ public class Parser {
                 nextToken();
                 decl = new ArrayDeclaration(null, null, new ArrayList<>());
                 Node child = modifyType(declarator, decl);
-                child1 = rest18("", child);
+                child1 = rest18(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -2125,7 +2102,7 @@ public class Parser {
             } else {
                 decl = new ArrayDeclaration(null, child1, new ArrayList<>());
                 Node child = modifyType(declarator, decl);
-                child3 = rest18("", child);
+                child3 = rest18(child);
                 if (child3 == null ) {
                     return null;
                 }
@@ -2136,7 +2113,7 @@ public class Parser {
                 }
             }
         }
-        ArrayList<String> child4 = type_qualifier_list(false);
+        ArrayList<String> child4 = type_qualifier_list();
         if (!child4.isEmpty()) {
             child2 = left19(child4, declarator);
             if (child2 == null) {
@@ -2161,13 +2138,13 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node left17(String id, Node declarator) {
+    private Node left17(Node declarator) {
         Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null);
             child = modifyType(declarator, decl);
-            child1 = rest18("", child);
+            child1 = rest18(child);
             if (child1 == null) {
                 return null;
             }
@@ -2177,7 +2154,7 @@ public class Parser {
                 return child;
             }
         }
-        child1 = parameter_type_list(id);
+        child1 = parameter_type_list();
         Node child2, child3;
         if (child1 == null) {
             return null;
@@ -2189,7 +2166,7 @@ public class Parser {
             } else {
                 decl = new FunctionDeclaration(child1, null);
                 child = modifyType(declarator, decl);
-                child3 = rest18("", child);
+                child3 = rest18(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -2207,7 +2184,7 @@ public class Parser {
         if (!child1.isNone()) {
             decl = new FunctionDeclaration(child1, null);
             child = modifyType(declarator, decl);
-            child2 = rest18("", child);
+            child2 = rest18(child);
             if (child2 == null) {
                 return null;
             }
@@ -2229,7 +2206,7 @@ public class Parser {
      */
     //DONE
     private Node left18(Node declarator) {
-        ArrayList<String> child1 = type_qualifier_list(false);
+        ArrayList<String> child1 = type_qualifier_list();
         Node decl, child2, child3, child4;
         if (!child1.isEmpty()) {
             child2 = assignment_expression();
@@ -2249,7 +2226,7 @@ public class Parser {
 
                     decl = new ArrayDeclaration(null, child2, child1);
                     Node child = modifyType(declarator, decl);
-                    child4 = rest18("", child);
+                    child4 = rest18(child);
                     if (child4 == null) {
                         return null;
                     }
@@ -2275,7 +2252,7 @@ public class Parser {
 
                 decl = new ArrayDeclaration(null, child2, child1);
                 Node child = modifyType(declarator, decl);
-                child4 = rest18("", child);
+                child4 = rest18(child);
                 if (child4 == null) {
                     return null;
                 }
@@ -2300,6 +2277,12 @@ public class Parser {
      */
     //DONE
     private Node left19(ArrayList<String> qualifiers, Node declarator) {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1, child2 = null, child3 = null;
         Node decl, child = null;
@@ -2310,7 +2293,7 @@ public class Parser {
                 if (child1 != null) {
                     decl = new ArrayDeclaration(null, new Identifier("*"), qualifiers);
                     child = modifyType(declarator, decl);
-                    child2 = rest18("", child);
+                    child2 = rest18(child);
                     if (child2 == null) {
                         return null;
                     }
@@ -2321,6 +2304,7 @@ public class Parser {
                     }
                 } else {
                     position = pos;
+                    symbolTable = copy;
                     break;
                 }
             case Tag.STATIC:
@@ -2338,7 +2322,7 @@ public class Parser {
 
                     decl = new ArrayDeclaration(null, child1, qualifiers);
                     child = modifyType(declarator, decl);
-                    child3 = rest18("", child);
+                    child3 = rest18(child);
                 }
                 if (child3 == null) {
                     return null;
@@ -2352,7 +2336,7 @@ public class Parser {
                 nextToken();
                 decl = new ArrayDeclaration(null, null, qualifiers);
                 child = modifyType(declarator, decl);
-                child1 = rest18("", child);
+                child1 = rest18(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -2373,7 +2357,7 @@ public class Parser {
             } else {
                 decl = new ArrayDeclaration(null, child1, qualifiers);
                 child = modifyType(declarator, decl);
-                child3 = rest18("", child);
+                child3 = rest18(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -2396,18 +2380,14 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private Node pointer(boolean flag) {
+    private Node pointer() {
         if (getTokenTag() == Tag.MULT) {
-            //zisťovanie typu identifikátora
-            if (flag) {
-                type += getTokenValue() + " ";
-            }
 
             nextToken();
-            ArrayList<String> child1 = type_qualifier_list(flag);
+            ArrayList<String> child1 = type_qualifier_list();
             Node child2;
             if (!child1.isEmpty()) {
-                child2 = pointer(flag);
+                child2 = pointer();
                 if (!child2.isNone()) {
                     Node tail = child2;
                     while (tail.getType() != null) {
@@ -2420,7 +2400,7 @@ public class Parser {
                     return new PointerDeclaration(child1, null);
                 }
             }
-            child2 = pointer(flag);
+            child2 = pointer();
             if (!child2.isNone()) {
                 Node tail = child2;
                 while (tail.getType() != null) {
@@ -2444,15 +2424,15 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private ArrayList<String> type_qualifier_list(boolean flag) {
-        String child1 = type_qualifier(flag);
+    private ArrayList<String> type_qualifier_list() {
+        String child1 = type_qualifier();
         ArrayList<String> arr = new ArrayList<>();
         if (!child1.equals("")) {
             arr.add(child1);
-            child1 = type_qualifier(flag);
+            child1 = type_qualifier();
             while (!child1.equals("")) {
                 arr.add(child1);
-                child1 = type_qualifier(flag);
+                child1 = type_qualifier();
             }
             return arr;
         }
@@ -2467,8 +2447,8 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node parameter_type_list(String id) {
-        ParameterList child1 = parameter_list(id);
+    private Node parameter_type_list() {
+        ParameterList child1 = parameter_list();
         if (child1 == null) {
             return null;
         }
@@ -2496,8 +2476,8 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private ParameterList parameter_list(String id) {
-        Node child1 = parameter_declaration(id);
+    private ParameterList parameter_list() {
+        Node child1 = parameter_declaration();
         if (child1 == null) {
             return null;
         }
@@ -2506,7 +2486,7 @@ public class Parser {
             arr.add(child1);
             while (getTokenTag() == Tag.COMMA) {
                 nextToken();
-                child1 = parameter_declaration(id);
+                child1 = parameter_declaration();
                 if (child1 == null) {
                     return null;
                 }
@@ -2529,16 +2509,16 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node parameter_declaration(String id) {
-        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        Node child1 = declaration_specifiers(type);
+    private Node parameter_declaration() {
+        TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = declaration_specifiers(typeNode);
         Node child2;
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
-            type = (Type) child1;
-            child2 = left22(id, type);
+            typeNode = (TypeNode) child1;
+            child2 = left22(typeNode);
             if (child2 == null) {
                 return null;
             }
@@ -2561,47 +2541,54 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node left22(String id, Type type) {
-        if (type.getTypes().isEmpty()) {
+    private Node left22(TypeNode typeNode) {
+        if (typeNode.getTypes().isEmpty()) {
             ArrayList<String> arr = new ArrayList<>();
             arr.add("int");
-            type.addType(new IdentifierType(arr));
+            typeNode.addType(new IdentifierType(arr));
         }
 
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
-        Node child1 = declarator(Kind.PARAMETER, id);
+        Node child1 = declarator();
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
             ArrayList<Node> decls = new ArrayList<>();
             decls.add(new Declarator(child1, null));
-            return createDeclaration(type, decls).get(0);
+            return createDeclaration(typeNode, decls, false, false).get(0);
         }
         position = pos;
+        symbolTable = copy;
         child1 = abstract_declarator();
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
-            if (type.getTypes().size() > 1) {
+            if (typeNode.getTypes().size() > 1) {
                 ArrayList<Node> decls = new ArrayList<>();
                 decls.add(new Declarator(child1, null));
-                return createDeclaration(type, decls).get(0);
+                return createDeclaration(typeNode, decls, false, false).get(0);
             } else {
-                Node decl = new Typename("", type.getQualifiers(), child1);
-                decl = fixTypes(decl, type.getTypes());
+                Node decl = new Typename("", typeNode.getQualifiers(), child1);
+                decl = fixTypes(decl, typeNode.getTypes());
                 return decl;
             }
         }
-        if (type.getTypes().size() > 1) {
+        if (typeNode.getTypes().size() > 1) {
             ArrayList<Node> decls = new ArrayList<>();
             decls.add(new Declarator(null, null));
-            return createDeclaration(type, decls).get(0);
+            return createDeclaration(typeNode, decls, false, false).get(0);
         } else {
-            Node decl = new Typename("", type.getQualifiers(), new TypeDeclaration(null, null,
+            Node decl = new Typename("", typeNode.getQualifiers(), new TypeDeclaration(null, null,
                     null));
-            decl = fixTypes(decl, type.getTypes());
+            decl = fixTypes(decl, typeNode.getTypes());
             return decl;
         }
     }
@@ -2647,23 +2634,23 @@ public class Parser {
      */
     //DONE
     private Node type_name() {
-        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        Node child1 = specifier_qualifier_list(false, type);
+        TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = specifier_qualifier_list(typeNode);
         Node child2;
         if (child1 == null) {
             return null;
         }
         if (!child1.isNone()) {
-            type = (Type) child1;
+            typeNode = (TypeNode) child1;
             child2 = abstract_declarator();
             if (child2 == null) {
                 return null;
             }
             if (!child2.isNone()) {
-                return fixTypes(new Typename("", type.getQualifiers(), child2), type.getTypes());
+                return fixTypes(new Typename("", typeNode.getQualifiers(), child2), typeNode.getTypes());
             } else {
-                return  fixTypes(new Typename("", type.getQualifiers(), new TypeDeclaration(null,
-                        null, null)), type.getTypes());
+                return  fixTypes(new Typename("", typeNode.getQualifiers(), new TypeDeclaration(null,
+                        null, null)), typeNode.getTypes());
             }
         }
         return new None();
@@ -2679,7 +2666,7 @@ public class Parser {
      */
     //DONE
     private Node abstract_declarator() {
-        Node child1 = pointer(false);
+        Node child1 = pointer();
         Node child2;
         if (!child1.isNone()) {
             child2 = direct_abstract_declarator();
@@ -2712,6 +2699,12 @@ public class Parser {
     //DONE
     private Node direct_abstract_declarator() {
         Node child1;
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
@@ -2721,6 +2714,7 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
+                symbolTable = copy;
                 return new None();
             case Tag.LEFT_BRACKETS:
                 nextToken();
@@ -2781,7 +2775,7 @@ public class Parser {
                 }
             }
         }
-        child1 = parameter_type_list("");
+        child1 = parameter_type_list();
         if (child1 == null) {
             return null;
         }
@@ -2817,6 +2811,12 @@ public class Parser {
      */
     //DONE
     private Node left26(Node declarator) {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1, child2;
         Node decl, child;
@@ -2861,6 +2861,7 @@ public class Parser {
                     }
                 } else {
                     position = pos;
+                    symbolTable = copy;
                     break;
                 }
             case Tag.STATIC:
@@ -2902,7 +2903,7 @@ public class Parser {
                 }
             }
         }
-        ArrayList<String> child4 = type_qualifier_list(false);
+        ArrayList<String> child4 = type_qualifier_list();
         if (!child4.isEmpty()) {
             child2 = left28(child4, declarator);
             if (child2 == null) {
@@ -2927,7 +2928,7 @@ public class Parser {
      */
     //DONE
     private Node left27(Node declarator) {
-        ArrayList<String> child1 = type_qualifier_list(false);
+        ArrayList<String> child1 = type_qualifier_list();
         Node child2, child3, child4, decl, child;
         if (!child1.isEmpty()) {
             child2 = assignment_expression();
@@ -3146,7 +3147,7 @@ public class Parser {
                 return child;
             }
         }
-        child1 = parameter_type_list("");
+        child1 = parameter_type_list();
         Node child2, child3;
         if (child1 == null) {
             return null;
@@ -3427,6 +3428,12 @@ public class Parser {
      */
     //DONE
     private Node statement() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1 = labeled_statement();
         if (child1 == null) {
@@ -3436,6 +3443,7 @@ public class Parser {
             return child1;
         }
         position = pos;
+        symbolTable = copy;
         child1 = compound_statement();
         if (child1 == null) {
             return null;
@@ -3484,6 +3492,12 @@ public class Parser {
      */
     //DONE
     private Node labeled_statement() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1, child2 = null, child3 = null;
         switch (getTokenTag()) {
@@ -3498,6 +3512,7 @@ public class Parser {
                     return new Label(terminal, child2);
                 }
                 position = pos;
+                symbolTable = copy;
                 break;
             case Tag.DEFAULT:
                 nextToken();
@@ -3547,12 +3562,14 @@ public class Parser {
                 nextToken();
                 return new Compound(null);
             }
+
             SymbolTable parent = symbolTable;
             //vytvorenie vnorenej tabuľky
             symbolTable = new SymbolTable(symbolTable);
             if (parent != null) {
                 parent.addChild(symbolTable);
             }
+
             ArrayList<Node> child1 = block_item_list();
             Node child2;
             if (child1 == null) {
@@ -3600,7 +3617,10 @@ public class Parser {
     private ArrayList<Node> block_item_list() {
         ArrayList<Node> arr = new ArrayList<>();
         ArrayList<Node> child1 = block_item();
-        if (child1 != null && !child1.isEmpty()) {
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.isEmpty()) {
             arr.addAll(child1);
             child1 = block_item();
             if (child1 == null) {
@@ -4169,6 +4189,12 @@ public class Parser {
      */
     //DONE
     private ArrayList<Node> external_declaration() {
+        SymbolTable copy = null;
+        try {
+            copy = (SymbolTable) symbolTable.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         int pos = position;
         Node child1 = function_definition();
         if (!child1.isNone()) {
@@ -4177,6 +4203,7 @@ public class Parser {
             return arr;
         }
         position = pos;
+        symbolTable = copy;
         ArrayList<Node> child2 = declaration();
         if (child2 == null) {
             return null;
@@ -4195,25 +4222,25 @@ public class Parser {
      */
     //DONE
     private Node function_definition() {
-        Type type = new Type(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        Node child1 = declaration_specifiers(type);
+        TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Node child1 = declaration_specifiers(typeNode);
         Node child2 = null, child3;
         if (child1 != null && !child1.isNone()) {
-            child2 = declarator(Kind.FUNCTION, "");
+            child2 = declarator();
         }
         if (child2 != null && !child2.isNone()) {
-            type = (Type) child1;
+            typeNode = (TypeNode) child1;
             ArrayList<Node> child = declaration_list();
             Node child4 = null;
             if (child != null && !child.isEmpty()) {
                 child4 = compound_statement();
             }
             if (child4 != null && !child4.isNone()) {
-                return createFunction(type, child2, child, child4);
+                return createFunction(typeNode, child2, child, child4);
             }
             child3 = compound_statement();
             if (child3 != null && !child3.isNone()) {
-                return createFunction(type, child2, null, child3);
+                return createFunction(typeNode, child2, null, child3);
             }
         }
         return new None();
@@ -4253,21 +4280,44 @@ public class Parser {
 
     /**
      *
-     * @param type
+     * @param typeNode
      * @param declarations
      * @return
      */
-    private ArrayList<Node> createDeclaration(Type type, ArrayList<Node> declarations) {
+    private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations) {
+        return createDeclaration(typeNode, declarations, true, false);
+    }
+
+    /**
+     *
+     * @param typeNode
+     * @param declarations
+     * @param structVariable
+     * @return
+     */
+    private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean structVariable) {
+        return createDeclaration(typeNode, declarations, true, structVariable);
+    }
+
+    /**
+     *
+     * @param typeNode
+     * @param declarations
+     * @param addToSymbolTable
+     * @return
+     */
+    private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean addToSymbolTable,
+                                              boolean structVariable) {
         ArrayList<Node> decls = new ArrayList<>();
 
-        boolean typedef = type.getStorage().contains("typedef");
+        boolean typedef = typeNode.getStorage().contains("typedef");
 
         Declarator declarator = (Declarator) declarations.get(0);
 
         if (declarator.getDeclarator() == null) {
-            declarator.addDeclarator(new TypeDeclaration(((IdentifierType) type.getLastType()).getName(0),
+            declarator.addDeclarator(new TypeDeclaration(((IdentifierType) typeNode.getLastType()).getName(0),
                     null, null));
-            type.removeLastType();
+            typeNode.removeLastType();
         } else if (!declarator.getDeclarator().isEnumStructUnion() && !declarator.isIdentifierType()) {
             Node tail = declarator.getDeclarator();
 
@@ -4276,33 +4326,330 @@ public class Parser {
             }
 
             if (((TypeDeclaration) tail).getDeclname() == null) {
-                String name = ((IdentifierType) type.getLastType()).getName(0);
+                String name = ((IdentifierType) typeNode.getLastType()).getName(0);
                 ((TypeDeclaration) tail).addDeclname(name);
-                type.removeLastType();
+                typeNode.removeLastType();
             }
 
             Node declaration;
             for (Node decl : declarations) {
-                if (((Declarator) decl).getDeclarator() == null) return null;
+                Declarator declarator1 = (Declarator) decl;
+                if (declarator1.getDeclarator() == null) return null;
                 if (typedef) {
-                    declaration = new Typedef(null, type.getQualifiers(), type.getStorage(),
-                            ((Declarator) decl).getDeclarator());
+                    declaration = new Typedef(null, typeNode.getQualifiers(), typeNode.getStorage(),
+                            declarator1.getDeclarator());
                 } else {
-                    if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
+                    /*if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
                         //TODO: Sémantická chyba
                         System.out.println("Sémantická chyba!");
                         return null;
-                    }
+                    }*/
 
                     //TODO: pozrieť sa na bitsize
-                    declaration = new Declaration(null, type.getQualifiers(), type.getStorage(),
-                            ((Declarator) decl).getDeclarator(), ((Declarator) decl).getInitializer(),null);
+                    declaration = new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(),
+                            declarator1.getDeclarator(), declarator1.getInitializer(),null);
                 }
                 if (!declaration.getType().isEnumStructUnion() && !declaration.getType().isIdentifierType()) {
-                    declaration = fixTypes(declaration, type.getTypes());
+                    declaration = fixTypes(declaration, typeNode.getTypes());
                 }
 
                 //TODO: pridanie do symbolickej tabuľky
+                if (typedef) {
+                    if (declarator1.getDeclarator() instanceof PointerDeclaration) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = "";
+                        String type = "";
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum * ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct * ";
+                                } else {
+                                    type = "union * ";
+                                }
+                                break;
+                            }
+                            if (decl_tail instanceof TypeDeclaration) {
+                                name = ((TypeDeclaration) decl_tail).getDeclname();
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (type.equals("")) {
+                            type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                        }
+
+                        //TODO: pridať riadok
+                        symbolTable.insert(name, type, 1111, Kind.TYPEDEF_NAME);
+                        System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.TYPEDEF_NAME");
+
+                    } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
+                        String type = "";
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct ";
+                                } else {
+                                    type = "union ";
+                                }
+                                break;
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (type.equals("")) {
+                            type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                        }
+                        //TODO: pridať riadok
+                        symbolTable.insert(name, type, 1111, Kind.TYPEDEF_NAME);
+                        System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.TYPEDEF_NAME");
+                    }
+                } else {
+                    if (declarator1.getDeclarator() instanceof PointerDeclaration && addToSymbolTable) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = "";
+                        String type = "";
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum * ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct * ";
+                                } else {
+                                    type = "union * ";
+                                }
+                                break;
+                            }
+                            if (decl_tail instanceof TypeDeclaration) {
+                                name = ((TypeDeclaration) decl_tail).getDeclname();
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (type.equals("")) {
+                            type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                        }
+
+                        //TODO: pridať riadok
+                        if (structVariable) {
+                            symbolTable.insert(name, type, 1111, Kind.STRUCT_PARAMETER);
+                            System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.STRUCT_PARAMETER");
+                        } else {
+                            symbolTable.insert(name, type, 1111, Kind.VARIABLE);
+                            System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.VARIABLE");
+                        }
+
+                    } else if (declarator1.getDeclarator() instanceof TypeDeclaration && addToSymbolTable) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
+                        String type = "";
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct ";
+                                } else {
+                                    type = "union ";
+                                }
+                                break;
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (type.equals("")) {
+                            type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                        }
+                        //TODO: pridať riadok
+                        if (structVariable) {
+                            symbolTable.insert(name, type, 1111, Kind.STRUCT_PARAMETER);
+                            System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.STRUCT_PARAMETER");
+                        } else {
+                            symbolTable.insert(name, type, 1111, Kind.VARIABLE);
+                            System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.VARIABLE");
+                        }
+
+                    } else if (declarator1.getDeclarator() instanceof ArrayDeclaration && addToSymbolTable) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = "";
+                        Node constant = ((ArrayDeclaration) declarator1.getDeclarator()).getDimension();
+                        String type = "";
+                        boolean pointer = false;
+                        int size = -1;
+
+                        if (constant instanceof Constant) {
+                            try {
+                                size = Integer.parseInt(((Constant) constant).getValue());
+                            } catch (NumberFormatException e) {
+                                System.out.println("Chyba veľkosti poľa!");
+                            }
+                        }
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail instanceof PointerDeclaration) {
+                                pointer = true;
+                            }
+                            if (decl_tail instanceof TypeDeclaration) {
+                                name = ((TypeDeclaration) decl_tail).getDeclname();
+                            }
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct ";
+                                } else {
+                                    type = "union ";
+                                }
+                                break;
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (pointer) {
+                            if (type.equals("")) {
+                                type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                            } else {
+                                type += "* ";
+                            }
+                        } else {
+                            if (type.equals("")) {
+                                type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                            }
+                        }
+
+                        //TODO: pridať riadok
+                        if (size < 0) {
+                            if (structVariable) {
+                                symbolTable.insert(name, type, 1111, Kind.STRUCT_ARRAY_PARAMETER);
+                                System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.STRUCT_ARRAY_PARAMETER");
+                            } else {
+                                symbolTable.insert(name, type, 1111, Kind.ARRAY);
+                                System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.ARRAY");
+                            }
+                        } else {
+                            if (structVariable) {
+                                symbolTable.insert(name, type, 1111, Kind.STRUCT_ARRAY_PARAMETER, size);
+                                System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.STRUCT_ARRAY_PARAMETER, " + size);
+                            } else {
+                                symbolTable.insert(name, type, 1111, Kind.ARRAY, size);
+                                System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.ARRAY, " + size);
+                            }
+                        }
+
+                    } else if (declarator1.getDeclarator() instanceof FunctionDeclaration && addToSymbolTable) {
+                        Node decl_tail = declarator1.getDeclarator().getType();
+                        String name = "";
+                        ParameterList parameters = (ParameterList) ((FunctionDeclaration) declarator1.getDeclarator()).getArguments();
+                        boolean pointer = false;
+                        String type = "";
+
+                        while (!(decl_tail instanceof IdentifierType)) {
+                            if (decl_tail instanceof PointerDeclaration) {
+                                pointer = true;
+                            }
+                            if (decl_tail instanceof TypeDeclaration) {
+                                name = ((TypeDeclaration) decl_tail).getDeclname();
+                            }
+                            if (decl_tail.isEnumStructUnion()) {
+                                if (decl_tail instanceof Enum) {
+                                    type = "enum ";
+                                } else if (decl_tail instanceof Struct) {
+                                    type = "struct ";
+                                } else {
+                                    type = "union ";
+                                }
+                                break;
+                            }
+                            decl_tail = decl_tail.getType();
+                        }
+
+                        if (pointer) {
+                            if (type.equals("")) {
+                                type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                            } else {
+                                type += "* ";
+                            }
+                        } else {
+                            if (type.equals("")) {
+                                type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                            }
+                        }
+
+                        //TODO: pridať riadok
+                        symbolTable.insert(name, type, 1111, Kind.FUNCTION);
+                        System.out.println("Insert: " + name + ", " + type + ", " + 1111 + ", Kind.FUNCTION");
+
+                        Record record = symbolTable.lookup(name);
+
+                        if (parameters != null) {
+                            for (Node param : parameters.getParameters()) {
+                                pointer = false;
+                                boolean array = false;
+                                Node param_tail = param.getType();
+                                String param_name = ((Declaration) param).getName();
+                                String param_type = "";
+
+                                while (!(param_tail instanceof IdentifierType)) {
+                                    if (param_tail instanceof ArrayDeclaration) {
+                                        array = true;
+                                    }
+                                    if (param_tail instanceof PointerDeclaration) {
+                                        pointer = true;
+                                    }
+                                    if (param_tail.isEnumStructUnion()) {
+                                        if (param_tail instanceof Enum) {
+                                            param_type = "enum ";
+                                        } else if (param_tail instanceof Struct) {
+                                            param_type = "struct ";
+                                        } else {
+                                            param_type = "union ";
+                                        }
+                                        break;
+                                    }
+                                    param_tail = param_tail.getType();
+                                }
+
+                                if (pointer) {
+                                    if (param_type.equals("")) {
+                                        param_type = String.join(" ", ((IdentifierType) param_tail).getNames()) + " * ";
+                                    } else {
+                                        param_type += "* ";
+                                    }
+                                } else {
+                                    if (param_type.equals("")) {
+                                        param_type = String.join(" ", ((IdentifierType) param_tail).getNames()) + " ";
+                                    }
+                                }
+
+                                //TODO: pridať riadok
+                                //Pridanie parametra do symbolickej tabuľky
+                                if (array) {
+                                    symbolTable.insert(param_name, param_type, 1111, Kind.ARRAY_PARAMETER);
+                                    System.out.println("Insert: " + param_name + ", " + param_type + ", " + 1111 + ", " +
+                                            "Kind.ARRAY_PARAMETER");
+                                } else {
+                                    symbolTable.insert(param_name, param_type, 1111, Kind.PARAMETER);
+                                    System.out.println("Insert: " + param_name + ", " + param_type + ", " + 1111 + ", " +
+                                            "Kind.PARAMETER");
+                                }
+
+                                //pridanie parametra pre funkciu
+                                record.getParameters().add(param_name);
+                                symbolTable.setValue(name, record);
+                                System.out.println("Update: " + name);
+                            }
+                        }
+                    }
+                }
 
                 decls.add(declaration);
             }
@@ -4393,11 +4740,11 @@ public class Parser {
         }
     }
 
-    private Node createFunction(Type type, Node declaration, ArrayList<Node> parameters, Node body) {
+    private Node createFunction(TypeNode typeNode, Node declaration, ArrayList<Node> parameters, Node body) {
 
         ArrayList<Node> arr = new ArrayList<>();
         arr.add(new Declarator(declaration, null));
-        Node decl = createDeclaration(type, arr).get(0);
+        Node decl = createDeclaration(typeNode, arr).get(0);
 
         return new FunctionDefinition(decl, parameters, body);
     }
@@ -4422,8 +4769,8 @@ public class Parser {
                 return false;
             }
 
-            if (type1 == Compiler.SymbolTable.Type.BOOL || type2 == Compiler.SymbolTable.Type.BOOL ||
-                    type1 == Compiler.SymbolTable.Type.VOID || type2 == Compiler.SymbolTable.Type.VOID) {
+            if (type1 == Type.BOOL || type2 == Type.BOOL ||
+                    type1 == Type.VOID || type2 == Type.VOID) {
                 return false;
             }
             return true;
@@ -4512,7 +4859,7 @@ public class Parser {
         byte pointer = 0;
         //riešenie smerníkov
         if (type.contains("*")) {
-            pointer = 100;
+            pointer = 50;
             type = type.replace("* ", "");
         }
 
@@ -4522,41 +4869,42 @@ public class Parser {
 
         //riešenie typov
         switch (type.hashCode()) {
-            case 3052374: return (byte) (Compiler.SymbolTable.Type.CHAR + pointer);                      // char
-            case -359586342: return (byte) (Compiler.SymbolTable.Type.SIGNEDCHAR + pointer);             // signed char
-            case 986197409: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDCHAR + pointer);            // unsigned char
-            case 109413500: return (byte) (Compiler.SymbolTable.Type.SHORT + pointer);                   // short
-            case 1752515192: return (byte) (Compiler.SymbolTable.Type.SIGNEDSHORT + pointer);            // signed short
-            case 522138513: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDSHORT + pointer);           // unsigned short
-            case 104431: return (byte) (Compiler.SymbolTable.Type.INT + pointer);                        // int
-            case -902467812: return (byte) (Compiler.SymbolTable.Type.SIGNED + pointer);                 // signed
-            case -981424917: return (byte) (Compiler.SymbolTable.Type.SIGNEDINT + pointer);              // signed int
-            case -15964427: return (byte) (Compiler.SymbolTable.Type.UNSIGNED + pointer);                // unsigned
-            case 1140197444: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDINT + pointer);            // unsigned int
-            case -2029581749: return (byte) (Compiler.SymbolTable.Type.SHORTINT + pointer);              // short int
-            case -827364793: return (byte) (Compiler.SymbolTable.Type.SIGNEDSHORTINT + pointer);         // signed short int
-            case 1314465504: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDSHORTINT + pointer);       // unsigned short int
-            case 3327612: return (byte) (Compiler.SymbolTable.Type.LONG + pointer);                      // long
-            case -359311104: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONG + pointer);             // signed long
-            case 986472647: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONG + pointer);            // unsigned long
-            case -2075964341: return (byte) (Compiler.SymbolTable.Type.LONGINT + pointer);               // long int
-            case 2119236815: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGINT + pointer);          // signed long int
-            case 1218496790: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGINT + pointer);        // unsigned long int
-            case 69705120: return (byte) (Compiler.SymbolTable.Type.LONGLONG + pointer);                 // long long
-            case 1173352815: return (byte) (Compiler.SymbolTable.Type.LONGLONGINT + pointer);            // long long int
-            case 1271922076: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGLONG + pointer);         // signed long long
-            case -1037044885: return (byte) (Compiler.SymbolTable.Type.SIGNEDLONGLONGINT + pointer);     // signed long long int
-            case -881214923: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGLONG + pointer);       // unsigned long long
-            case -1492665468: return (byte) (Compiler.SymbolTable.Type.UNSIGNEDLONGLONGINT + pointer);   // unsigned long long int
-            case 97526364: return (byte) (Compiler.SymbolTable.Type.FLOAT + pointer);                    // float
-            case -1325958191: return (byte) (Compiler.SymbolTable.Type.DOUBLE + pointer);                // double
-            case -1961682443: return (byte) (Compiler.SymbolTable.Type.LONGDOUBLE + pointer);            // long double
-            case 111433423: return (byte) (Compiler.SymbolTable.Type.UNION + pointer);                   // union
-            case -891974699: return (byte) (Compiler.SymbolTable.Type.STRUCT + pointer);                 // struct
-            case 3118337: return (byte) (Compiler.SymbolTable.Type.ENUM + pointer);                      // enum
-            case 3625364: return (byte) (Compiler.SymbolTable.Type.VOID + pointer);                      // void
-            default: return Compiler.SymbolTable.Type.TYPEDEF_TYPE;                                      // vlastný typ
+            case 3052374: return (byte) (Type.CHAR + pointer);                      // char
+            case -359586342: return (byte) (Type.SIGNEDCHAR + pointer);             // signed char
+            case 986197409: return (byte) (Type.UNSIGNEDCHAR + pointer);            // unsigned char
+            case 109413500: return (byte) (Type.SHORT + pointer);                   // short
+            case 1752515192: return (byte) (Type.SIGNEDSHORT + pointer);            // signed short
+            case 522138513: return (byte) (Type.UNSIGNEDSHORT + pointer);           // unsigned short
+            case 104431: return (byte) (Type.INT + pointer);                        // int
+            case -902467812: return (byte) (Type.SIGNED + pointer);                 // signed
+            case -981424917: return (byte) (Type.SIGNEDINT + pointer);              // signed int
+            case -15964427: return (byte) (Type.UNSIGNED + pointer);                // unsigned
+            case 1140197444: return (byte) (Type.UNSIGNEDINT + pointer);            // unsigned int
+            case -2029581749: return (byte) (Type.SHORTINT + pointer);              // short int
+            case -827364793: return (byte) (Type.SIGNEDSHORTINT + pointer);         // signed short int
+            case 1314465504: return (byte) (Type.UNSIGNEDSHORTINT + pointer);       // unsigned short int
+            case 3327612: return (byte) (Type.LONG + pointer);                      // long
+            case -359311104: return (byte) (Type.SIGNEDLONG + pointer);             // signed long
+            case 986472647: return (byte) (Type.UNSIGNEDLONG + pointer);            // unsigned long
+            case -2075964341: return (byte) (Type.LONGINT + pointer);               // long int
+            case 2119236815: return (byte) (Type.SIGNEDLONGINT + pointer);          // signed long int
+            case 1218496790: return (byte) (Type.UNSIGNEDLONGINT + pointer);        // unsigned long int
+            case 69705120: return (byte) (Type.LONGLONG + pointer);                 // long long
+            case 1173352815: return (byte) (Type.LONGLONGINT + pointer);            // long long int
+            case 1271922076: return (byte) (Type.SIGNEDLONGLONG + pointer);         // signed long long
+            case -1037044885: return (byte) (Type.SIGNEDLONGLONGINT + pointer);     // signed long long int
+            case -881214923: return (byte) (Type.UNSIGNEDLONGLONG + pointer);       // unsigned long long
+            case -1492665468: return (byte) (Type.UNSIGNEDLONGLONGINT + pointer);   // unsigned long long int
+            case 97526364: return (byte) (Type.FLOAT + pointer);                    // float
+            case -1325958191: return (byte) (Type.DOUBLE + pointer);                // double
+            case -1961682443: return (byte) (Type.LONGDOUBLE + pointer);            // long double
+            case 111433423: return (byte) (Type.UNION + pointer);                   // union
+            case -891974699: return (byte) (Type.STRUCT + pointer);                 // struct
+            case 3118337: return (byte) (Type.ENUM + pointer);                      // enum
+            case 3625364: return (byte) (Type.VOID + pointer);                      // void
+            default: return Type.TYPEDEF_TYPE;                                      // vlastný typ
         }
     }
+
 
 }

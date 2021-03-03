@@ -15,13 +15,12 @@ public class BinaryOperator extends Node {
         this.operator = op;
         this.right = right;
 
-        if (!typeCheck(table)) {
+        /*if (!typeCheck(table)) {
             //TODO: Sémantická chyba
             System.out.println("Sémantická chyba!");
-        }
+        }*/
     }
 
-    //TODO: type checking, má vracať typ nejakým spôsobom
     private boolean typeCheck(SymbolTable table) {
         byte var1 = findTypeCategory(left, table);
         byte var2 = findTypeCategory(right, table);
@@ -139,7 +138,7 @@ public class BinaryOperator extends Node {
         byte pointer = 0;
         //riešenie smerníkov
         if (type.contains("*")) {
-            pointer = 100;
+            pointer = 50;
             type = type.replace("* ", "");
         }
 

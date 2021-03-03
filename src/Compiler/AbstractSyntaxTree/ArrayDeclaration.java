@@ -21,6 +21,10 @@ public class ArrayDeclaration extends Node {
         // dimensionQualifiers -> sout
     }
 
+    public Node getDimension() {
+        return dimension;
+    }
+
     @Override
     public boolean isNone() {
         return false;

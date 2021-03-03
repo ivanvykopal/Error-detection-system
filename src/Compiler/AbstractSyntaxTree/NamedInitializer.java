@@ -2,7 +2,6 @@ package Compiler.AbstractSyntaxTree;
 
 import java.util.ArrayList;
 
-//TODO: Pozrieť sa na toto!!
 public class NamedInitializer extends Node {
     ArrayList<Node> names;
     Node expression;

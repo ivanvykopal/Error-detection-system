@@ -9,6 +9,10 @@ public class FunctionDeclaration extends Node {
         this.type = type;
     }
 
+    public Node getArguments() {
+        return arguments;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "FunctionDeclaration: ");

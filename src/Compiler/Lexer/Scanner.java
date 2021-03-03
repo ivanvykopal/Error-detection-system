@@ -1,6 +1,7 @@
 package Compiler.Lexer;
 
 import Compiler.Errors.Error;
+import Compiler.Errors.ErrorDatabase;
 import Compiler.Preprocessing.Preprocessor;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class Scanner {
     private char peek = ' ';
     private int position = 0;
     private Error err = new Error();
+    private ErrorDatabase errorDatabase;
 
     public static int line = 1;
 
@@ -23,7 +25,8 @@ public class Scanner {
      * pre ľahšiu kontrolu.
      * @param file - cesta k súboru
      */
-    public Scanner(String file) {
+    public Scanner(String file, ErrorDatabase errorDatabase) {
+        this.errorDatabase = errorDatabase;
         position = 0;
         line = 1;
         peek = ' ';
@@ -46,6 +49,7 @@ public class Scanner {
             if (ignoreComments()) {
                 //TODO: Chýbajúca časť uzavretia
                 System.out.println("Chyba: E-LA-03 " + err.getError("E-LA-03"));
+                errorDatabase.addErrorMessage(line, err.getError("E-LA-03"), "E-LA-03");
                 return new Token((byte) -1, "", line);
             };
             if (peek == '\n') {
@@ -225,6 +229,7 @@ public class Scanner {
                     } else {
                         //TODO: chyba, nevedel zaradiť token
                         System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
+                        errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
                         return new Token((byte) -1, "", line);
                     }
                 } else {
@@ -255,6 +260,7 @@ public class Scanner {
                 //TODO: prekročenie dĺžky názvu identifikátoru
                 if (word.toString().length() > 31) {
                     System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                    errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
                     return new Token((byte) -1, "", line);
                 } else {
                     return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -270,6 +276,7 @@ public class Scanner {
                     //TODO: prekročenie dĺžky názvu identifikátoru
                     if (word.toString().length() > 31) {
                         System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                        errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
                         return new Token((byte) -1, "", line);
                     } else {
                         return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -293,6 +300,7 @@ public class Scanner {
             //TODO: prekročenie dĺžky názvu identifikátoru
             if (word.toString().length() > 31) {
                 System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
+                errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
                 return new Token((byte) -1, "", line);
             } else {
                 return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -314,6 +322,7 @@ public class Scanner {
                 } else if (peek == '\n'){
                     //TODO: Chýbajúce úvodzovky pre reťazcovú konštantu
                     System.out.println("Chyba: E-LA-04 " + err.getError("E-LA-04"));
+                    errorDatabase.addErrorMessage(line, err.getError("E-LA-04"), "E-LA-04");
                     return new Token((byte) -1, "", line);
                 } else {
                     word.append(peek);
@@ -369,6 +378,7 @@ public class Scanner {
         }
         //TODO: chyba, nevedel zaradiť token
         System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
+        errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
         return new Token((byte) -1, "", line);
     }
 

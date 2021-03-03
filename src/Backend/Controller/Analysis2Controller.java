@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
 import javafx.event.ActionEvent;
@@ -74,8 +75,10 @@ public class Analysis2Controller {
                         System.out.println("Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
                         continue;
                     }
-                    Parser parser = new Parser(text);
+                    ErrorDatabase errorDatabase = new ErrorDatabase();
+                    Parser parser = new Parser(text, errorDatabase);
                     parser.parse();
+                    errorDatabase.getErrorMessages();
                 }
             }
         }

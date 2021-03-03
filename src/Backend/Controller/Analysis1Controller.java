@@ -1,7 +1,8 @@
 package Backend.Controller;
 
-import Compiler.Lexer.Token;
+import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
+import Compiler.Preprocessing.IncludePreprocessor;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -51,9 +52,16 @@ public class Analysis1Controller {
             try {
                 //načíta súbor do reťazca
                 String text = new String(Files.readAllBytes(Paths.get(file)));
-                Parser parser = new Parser(text);
+                IncludePreprocessor prep = new IncludePreprocessor(text);
+                if (!prep.process()) {
+                    System.out.println("Súbor " + file + " obsahuje aj študentom definované knižnice!");
+                    return;
+                }
+                ErrorDatabase errorDatabase = new ErrorDatabase();
+                Parser parser = new Parser(text, errorDatabase);
                 parser.parse();
                 System.out.println("Koniec!");
+                errorDatabase.getErrorMessages();
             } catch (IOException er) {
                 er.printStackTrace();
                 System.out.println("Chyba!");

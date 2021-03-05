@@ -6,11 +6,12 @@ public class For extends Node {
     Node next;
     Node statement;
 
-    public For(Node init, Node cond, Node next, Node stmt) {
+    public For(Node init, Node cond, Node next, Node stmt, int line) {
         this.initializer = init;
         this.condition = cond;
         this.next = next;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

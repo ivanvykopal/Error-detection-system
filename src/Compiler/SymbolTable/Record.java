@@ -11,8 +11,10 @@ public class Record {
     private byte type;
     private String typeString;
     private int declarationLine;
-    private String declarationValue;
+    private boolean declarated;
     private int firstUsage;
+    private ArrayList<Integer> usageLines;
+    private ArrayList<Integer> initializationLines;
     private byte kind;
 
     // atribúty pre pole
@@ -24,15 +26,17 @@ public class Record {
      * @param type - dátovy typ premennej, resp. návratová hodnota
      * @param typeString - dátový typ premennej (String)
      * @param line - riadok deklarácie
-     * @param value - hodnota pri deklarácii
+     * @param declarated - hodnota pri deklarácii
      * @param kind - typ (premenná, pole, funkcia, parameter)
      */
-    public Record(byte type, String typeString, int line, String value, byte kind) {
+    public Record(byte type, String typeString, int line, boolean declarated, byte kind) {
         this.type = type;
         this.typeString = typeString;
         this.declarationLine = line;
-        this.declarationValue = value;
+        this.declarated = declarated;
         this.kind = kind;
+        usageLines = new ArrayList<>();
+        initializationLines = new ArrayList<>();
     }
 
     /**
@@ -85,16 +89,16 @@ public class Record {
      * Funkcia na zistenie hodnoty deklarácie
      * @return hodnota deklarácie
      */
-    public String getDeclarationValue() {
-        return declarationValue;
+    public boolean getDeclarated() {
+        return declarated;
     }
 
     /**
      * Funkcia na nastavenie hodnoty deklarácie.
-     * @param declarationValue - hodnota deklarácie
+     * @param declarated - hodnota deklarácie
      */
-    public void setDeclarationValue(String declarationValue) {
-        this.declarationValue = declarationValue;
+    public void setDeclarated(boolean declarated) {
+        this.declarated = declarated;
     }
 
     /**
@@ -170,10 +174,58 @@ public class Record {
     }
 
     /**
-     * Funkcia na nastaenie dátového typu (String).
+     * Funkcia na nastavenie dátového typu (String).
      * @param typeString dátový typ (String)
      */
     public void setTypeString(String typeString) {
         this.typeString = typeString;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<Integer> getUsageLines() {
+        return usageLines;
+    }
+
+    /**
+     *
+     * @param usageLines
+     */
+    public void setUsageLines(ArrayList<Integer> usageLines) {
+        this.usageLines = usageLines;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<Integer> getInitializationLines() {
+        return initializationLines;
+    }
+
+    /**
+     *
+     * @param initializationLines
+     */
+    public void setInitializationLines(ArrayList<Integer> initializationLines) {
+        this.initializationLines = initializationLines;
+    }
+
+    /**
+     *
+     * @param line
+     */
+    public void addUsageLine(int line) {
+        usageLines.add(line);
+    }
+
+    /**
+     *
+     * @param line
+     */
+    public void addInitializationLine(int line) {
+        initializationLines.add(line);
     }
 }

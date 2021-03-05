@@ -3,8 +3,9 @@ package Compiler.AbstractSyntaxTree;
 public class Goto extends Node {
     String name;
 
-    public Goto(String name) {
+    public Goto(String name, int line) {
         this.name = name;
+        setLine(line);
     }
 
     @Override

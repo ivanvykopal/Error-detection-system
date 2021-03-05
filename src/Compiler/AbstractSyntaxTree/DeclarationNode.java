@@ -7,10 +7,11 @@ public class DeclarationNode extends Node {
     ArrayList<String> qualifiers;
     Node type;
 
-    public DeclarationNode(String name, ArrayList<String> quals, Node type) {
+    public DeclarationNode(String name, ArrayList<String> quals, Node type, int line) {
         this.name = name;
         this.qualifiers = quals;
         this.type = type;
+        setLine(line);
     }
 
     public String getName() {

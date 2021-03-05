@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Typename extends DeclarationNode {
 
-    public Typename(String name, ArrayList<String> quals, Node type) {
-        super(name, quals, type);
+    public Typename(String name, ArrayList<String> quals, Node type, int line) {
+        super(name, quals, type, line);
     }
 
     @Override

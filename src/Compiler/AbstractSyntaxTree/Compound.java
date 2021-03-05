@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class Compound extends Node {
     ArrayList<Node> statements;
 
-    public Compound(ArrayList<Node> stmts) {
+    public Compound(ArrayList<Node> stmts, int line) {
         this.statements = stmts;
+        setLine(line);
     }
 
     @Override

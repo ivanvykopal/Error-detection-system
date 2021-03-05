@@ -3,8 +3,9 @@ package Compiler.AbstractSyntaxTree;
 public class Return extends Node {
     Node expression;
 
-    public Return(Node expr) {
+    public Return(Node expr, int line) {
         this.expression = expr;
+        setLine(line);
     }
 
     //TODO: type checking, či vracia vhodný typ pre funkciu ak má expression

@@ -10,10 +10,11 @@ public class BinaryOperator extends Node {
     String operator;
     byte typeCategory;
 
-    public BinaryOperator(Node left, String op, Node right, SymbolTable table) {
+    public BinaryOperator(Node left, String op, Node right, SymbolTable table, int line) {
         this.left = left;
         this.operator = op;
         this.right = right;
+        setLine(line);
 
         /*if (!typeCheck(table)) {
             //TODO: Sémantická chyba

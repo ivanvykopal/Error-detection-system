@@ -5,10 +5,11 @@ public class StructReference extends Node {
     String type;
     Node field;
 
-    public StructReference(Node name, String type, Node field) {
+    public StructReference(Node name, String type, Node field, int line) {
         this.name = name;
         this.type = type;
         this.field = field;
+        setLine(line);
     }
 
     public Node getName() {

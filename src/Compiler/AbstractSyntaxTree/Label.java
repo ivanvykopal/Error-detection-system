@@ -4,9 +4,10 @@ public class Label extends Node {
     String name;
     Node statement;
 
-    public Label(String name, Node stmt) {
+    public Label(String name, Node stmt, int line) {
         this.name = name;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

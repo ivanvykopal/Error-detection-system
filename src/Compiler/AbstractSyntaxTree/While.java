@@ -4,9 +4,10 @@ public class While extends Node {
     Node condition;
     Node statement;
 
-    public While(Node cond, Node stmt) {
+    public While(Node cond, Node stmt, int line) {
         this.condition = cond;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

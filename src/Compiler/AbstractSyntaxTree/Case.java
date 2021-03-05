@@ -4,9 +4,10 @@ public class Case extends Node {
     Node constant;
     Node statement;
 
-    public Case(Node cont, Node stmt) {
+    public Case(Node cont, Node stmt, int line) {
         this.constant = cont;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

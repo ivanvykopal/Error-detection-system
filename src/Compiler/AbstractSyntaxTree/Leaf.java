@@ -3,7 +3,6 @@ package Compiler.AbstractSyntaxTree;
 public class Leaf extends Node {
     private byte tag;
     private String value;
-    private int line;
 
     /**
      * Konštruktor na nastavenie triedy tokenu, hodnoty a riadku.
@@ -14,7 +13,7 @@ public class Leaf extends Node {
     public Leaf(byte tag, String value, int line) {
         this.tag = tag;
         this.value = value;
-        this.line = line;
+        setLine(line);
     }
 
     /**

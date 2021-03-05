@@ -6,9 +6,10 @@ public class Union extends Node {
     String name;
     ArrayList<Node> declarations;
 
-    public Union(String name, ArrayList<Node> decls) {
+    public Union(String name, ArrayList<Node> decls, int line) {
         this.name = name;
         this.declarations = decls;
+        setLine(line);
     }
 
     @Override

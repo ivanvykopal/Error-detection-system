@@ -1,5 +1,8 @@
 package Compiler.SymbolTable;
 
+import Compiler.Errors.Error;
+import Compiler.Errors.ErrorDatabase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +13,8 @@ public class SymbolTable implements Cloneable {
     SymbolTable parent = null;
     HashMap<String, Record> table;
     ArrayList<SymbolTable> childs = new ArrayList<>();
+    Error err = new Error();
+
 
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.
@@ -41,8 +46,24 @@ public class SymbolTable implements Cloneable {
      * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
      * @param value - hodnota, ktorá je viazaná na kľúč
      */
-    public void insert(String key, Record value) {
-        table.put(key, value);
+    public void insert(String key, Record value, int line, ErrorDatabase database) {
+        Record record;
+        boolean isInSymbolTable = false;
+        for (SymbolTable curr = this; curr != null; curr = curr.parent) {
+            record = curr.table.get(key);
+            if (record != null) {
+                isInSymbolTable = record.getKind() != Kind.ENUMERATION_CONSTANT && record.getKind() != Kind.STRUCT_ARRAY_PARAMETER &&
+                        record.getKind() != Kind.STRUCT_PARAMETER && record.getKind() != Kind.ARRAY_PARAMETER
+                        && record.getKind() != Kind.PARAMETER;
+            }
+        }
+
+        if (!isInSymbolTable) {
+            table.put(key, value);
+        } else {
+            System.out.println("Chyba na riadku " + line + ": Viacnásobná deklarácia premennej!");
+            database.addErrorMessage(line, err.getError("E-SmA-02"), "E-SmA-02");
+        }
     }
 
     /**
@@ -51,7 +72,7 @@ public class SymbolTable implements Cloneable {
      * @param type typ
      * @param line riadok deklarácie
      */
-    public void insert(String key, String type, int line) {
+    public void insert(String key, String type, int line, ErrorDatabase database) {
         Record record;
         type = extractAttribute(type);
         if (type.contains("typedef")) {
@@ -60,7 +81,7 @@ public class SymbolTable implements Cloneable {
         } else {
             record = new Record(findType(type), type, line, Kind.VARIABLE);
         }
-        insert(key, record);
+        insert(key, record, line, database);
     }
 
     /**
@@ -70,7 +91,7 @@ public class SymbolTable implements Cloneable {
      * @param line riadok deklarácie
      * @param kind typ identifikátora
      */
-    public void insert(String key, String type, int line, byte kind) {
+    public void insert(String key, String type, int line, byte kind, ErrorDatabase database) {
         Record record;
         type = extractAttribute(type);
         if (type.contains("typedef")) {
@@ -79,7 +100,7 @@ public class SymbolTable implements Cloneable {
         } else {
             record = new Record(findType(type), type, line, kind);
         }
-        insert(key, record);
+        insert(key, record, line, database);
     }
 
     /**
@@ -90,11 +111,11 @@ public class SymbolTable implements Cloneable {
      * @param kind typ identifikátora
      * @param size veľkosť poľa
      */
-    public void insert(String key, String type, int line, byte kind, int size) {
+    public void insert(String key, String type, int line, byte kind, int size, ErrorDatabase database) {
         type = extractAttribute(type);
         Record record = new Record(findType(type), type, line, kind);
         record.setSize(size);
-        insert(key, record);
+        insert(key, record, line, database);
     }
 
     /**

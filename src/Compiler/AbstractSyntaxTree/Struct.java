@@ -6,9 +6,10 @@ public class Struct extends Node {
     String name;
     ArrayList<Node> declarations;
 
-    public Struct(String name, ArrayList<Node> decls) {
+    public Struct(String name, ArrayList<Node> decls, int line) {
         this.name = name;
         this.declarations = decls;
+        setLine(line);
     }
 
     @Override

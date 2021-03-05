@@ -9,15 +9,16 @@ public class Assignment extends Node {
     Node right;
     String operator;
 
-    public Assignment(Node left, String op, Node right, SymbolTable table) {
+    public Assignment(Node left, String op, Node right, SymbolTable table, int line) {
         this.left = left;
         this.operator = op;
         this.right = right;
+        setLine(line);
 
-        /*if (!typeCheck(table)) {
+        if (!typeCheck(table)) {
             //TODO: Sémantická chyba
             System.out.println("Sémantická chyba!");
-        }*/
+        }
     }
 
     private boolean typeCheck(SymbolTable table) {

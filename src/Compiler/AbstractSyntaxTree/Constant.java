@@ -4,9 +4,10 @@ public class Constant extends Node {
     String type;
     String value;
 
-    public Constant(String type, String value) {
+    public Constant(String type, String value, int line) {
         this.type = type;
         this.value = value;
+        setLine(line);
     }
 
     public String getTypeSpecifier() {

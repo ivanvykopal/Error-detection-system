@@ -1,6 +1,7 @@
 package Compiler.AbstractSyntaxTree;
 
 public abstract class Node {
+    protected int line;
 
     public Node() {
 
@@ -21,5 +22,13 @@ public abstract class Node {
     abstract public void addType(Node type);
 
     abstract public boolean isIdentifierType();
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getLine() {
+        return line;
+    }
 
 }

@@ -7,11 +7,12 @@ public class Declaration extends DeclarationNode {
     Node initValues;
     Node size;
 
-    public Declaration(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, Node init, Node size) {
-        super(name, quals, type);
+    public Declaration(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, Node init, Node size, int line) {
+        super(name, quals, type, line);
         this.storage = storage;
         this.initValues = init;
         this.size = size;
+        setLine(line);
     }
 
     @Override

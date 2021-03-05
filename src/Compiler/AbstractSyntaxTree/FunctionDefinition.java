@@ -7,10 +7,11 @@ public class FunctionDefinition extends Node {
     ArrayList<Node> parameters;
     Node body;
 
-    public FunctionDefinition(Node decl, ArrayList<Node> params, Node body) {
+    public FunctionDefinition(Node decl, ArrayList<Node> params, Node body, int line) {
         this.declaration = decl;
         this.parameters = params;
         this.body = body;
+        setLine(line);
     }
 
     @Override

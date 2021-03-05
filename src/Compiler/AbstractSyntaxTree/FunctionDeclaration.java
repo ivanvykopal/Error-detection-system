@@ -4,9 +4,10 @@ public class FunctionDeclaration extends Node {
     Node arguments;
     Node type;
 
-    public FunctionDeclaration(Node args, Node type) {
+    public FunctionDeclaration(Node args, Node type, int line) {
         this.arguments = args;
         this.type = type;
+        setLine(line);
     }
 
     public Node getArguments() {

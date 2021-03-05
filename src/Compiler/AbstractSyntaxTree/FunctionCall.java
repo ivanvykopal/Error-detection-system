@@ -4,9 +4,10 @@ public class FunctionCall extends Node {
     Node name;
     Node arguments;
 
-    public FunctionCall(Node name, Node args) {
+    public FunctionCall(Node name, Node args, int line) {
         this.name = name;
         this.arguments = args;
+        setLine(line);
     }
 
     public Node getName() {

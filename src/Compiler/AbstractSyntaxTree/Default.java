@@ -3,8 +3,9 @@ package Compiler.AbstractSyntaxTree;
 public class Default extends Node {
     Node statement;
 
-    public Default(Node stmt) {
+    public Default(Node stmt, int line) {
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

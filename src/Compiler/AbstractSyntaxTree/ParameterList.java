@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class ParameterList extends Node {
     ArrayList<Node> parameters;
 
-    public ParameterList(ArrayList<Node> params) {
+    public ParameterList(ArrayList<Node> params, int line) {
         this.parameters = params;
+        setLine(line);
     }
 
     @Override

@@ -7,10 +7,11 @@ public class ArrayDeclaration extends Node {
     Node dimension;
     ArrayList<String> dimensionQualifiers;
 
-    public ArrayDeclaration(Node type, Node dim, ArrayList<String> dims) {
+    public ArrayDeclaration(Node type, Node dim, ArrayList<String> dims, int line) {
         this.type = type;
         this.dimension = dim;
         this.dimensionQualifiers = dims;
+        setLine(line);
     }
 
     @Override

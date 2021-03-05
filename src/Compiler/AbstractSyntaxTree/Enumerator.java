@@ -4,9 +4,10 @@ public class Enumerator extends Node {
     String name;
     Node value;
 
-    public Enumerator(String name, Node value) {
+    public Enumerator(String name, Node value, int line) {
          this.name = name;
          this.value = value;
+        setLine(line);
     }
 
     @Override

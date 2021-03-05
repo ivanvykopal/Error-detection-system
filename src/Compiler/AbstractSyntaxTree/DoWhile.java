@@ -4,9 +4,10 @@ public class DoWhile extends Node {
     Node condition;
     Node statement;
 
-    public DoWhile(Node cond, Node stmt) {
+    public DoWhile(Node cond, Node stmt, int line) {
         this.condition = cond;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

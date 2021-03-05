@@ -6,9 +6,10 @@ public class PointerDeclaration extends Node {
     ArrayList<String> qualifiers;
     Node type;
 
-    public PointerDeclaration(ArrayList<String> quals, Node type) {
+    public PointerDeclaration(ArrayList<String> quals, Node type, int line) {
         this.qualifiers = quals;
         this.type = type;
+        setLine(line);
     }
 
     @Override

@@ -9,14 +9,15 @@ public class UnaryOperator extends Node {
     String operator;
     byte typeCategory;
 
-    public UnaryOperator(Node expr, String op, SymbolTable table) {
+    public UnaryOperator(Node expr, String op, SymbolTable table, int line) {
         this.expression = expr;
         this.operator = op;
+        setLine(line);
 
-        /*if (!typeCheck(table)) {
+        if (!typeCheck(table)) {
             //TODO: Sémantická chyba
             System.out.println("Sémantická chyba!");
-        }*/
+        }
     }
 
     private boolean typeCheck(SymbolTable table) {

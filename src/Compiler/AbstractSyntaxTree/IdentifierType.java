@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class IdentifierType extends Node {
     ArrayList<String> names;
 
-    public IdentifierType(ArrayList<String> name) {
+    public IdentifierType(ArrayList<String> name, int line) {
         this.names = name;
+        setLine(line);
     }
 
     public String getName(int index) {

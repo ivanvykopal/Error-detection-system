@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class EnumeratorList extends Node {
     ArrayList<Node> enumerators;
 
-    public EnumeratorList(ArrayList<Node> enums) {
+    public EnumeratorList(ArrayList<Node> enums, int line) {
         this.enumerators = enums;
+        setLine(line);
     }
 
     @Override

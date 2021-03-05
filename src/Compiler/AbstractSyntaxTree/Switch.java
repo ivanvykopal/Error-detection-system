@@ -4,9 +4,10 @@ public class Switch extends Node {
     Node condition;
     Node statement;
 
-    public Switch(Node cond, Node stmt) {
+    public Switch(Node cond, Node stmt, int line) {
         this.condition = cond;
         this.statement = stmt;
+        setLine(line);
     }
 
     @Override

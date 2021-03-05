@@ -5,10 +5,11 @@ public class If extends Node {
     Node truePart;
     Node falsePart;
 
-    public If(Node cond, Node truePart, Node falsePart) {
+    public If(Node cond, Node truePart, Node falsePart, int line) {
         this.condition = cond;
         this.truePart = truePart;
         this.falsePart = falsePart;
+        setLine(line);
     }
 
     @Override

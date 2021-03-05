@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class InitializationList extends Node {
     ArrayList<Node> expressions;
 
-    public InitializationList(ArrayList<Node> exprs) {
+    public InitializationList(ArrayList<Node> exprs, int line) {
         this.expressions = exprs;
+        setLine(line);
     }
 
     @Override

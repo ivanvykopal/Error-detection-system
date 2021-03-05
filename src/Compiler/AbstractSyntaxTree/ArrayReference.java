@@ -4,9 +4,10 @@ public class ArrayReference extends Node {
     Node name;
     Node index;
 
-    public ArrayReference(Node name, Node index) {
+    public ArrayReference(Node name, Node index, int line) {
         this.name = name;
         this.index = index;
+        setLine(line);
     }
 
     public Node getName() {

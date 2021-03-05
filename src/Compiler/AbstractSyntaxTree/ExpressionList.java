@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class ExpressionList extends Node {
     ArrayList<Node> expressions;
 
-    public ExpressionList(ArrayList<Node> exprs) {
+    public ExpressionList(ArrayList<Node> exprs, int line) {
         this.expressions = exprs;
+        setLine(line);
     }
 
     @Override

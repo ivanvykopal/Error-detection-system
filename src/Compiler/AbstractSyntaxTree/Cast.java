@@ -4,9 +4,10 @@ public class Cast extends Node {
     Node type;
     Node expression;
 
-    public Cast(Node type, Node expr) {
+    public Cast(Node type, Node expr, int line) {
         this.type = type;
         this.expression = expr;
+        setLine(line);
     }
 
     @Override

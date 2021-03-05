@@ -4,9 +4,10 @@ public class Enum extends Node {
     String name;
     Node values;
 
-    public Enum(String name, Node values) {
+    public Enum(String name, Node values, int line) {
         this.name = name;
         this.values = values;
+        setLine(line);
     }
 
     @Override

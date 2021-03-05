@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Typedef extends DeclarationNode {
     ArrayList<String> storage;
 
-    public Typedef(String name, ArrayList<String> quals, ArrayList<String> storage, Node type) {
-        super(name, quals, type);
+    public Typedef(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, int line) {
+        super(name, quals, type, line);
         this.storage = storage;
     }
 

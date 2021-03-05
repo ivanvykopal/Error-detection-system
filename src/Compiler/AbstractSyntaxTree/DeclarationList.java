@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class DeclarationList extends Node {
     ArrayList<Node> declarations;
 
-    public DeclarationList ( ArrayList<Node> decls) {
+    public DeclarationList ( ArrayList<Node> decls, int line) {
         this.declarations = decls;
+        setLine(line);
     }
 
     @Override

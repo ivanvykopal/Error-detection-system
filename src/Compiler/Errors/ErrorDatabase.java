@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  *
  */
-public class ErrorDatabase {
+public class ErrorDatabase implements Cloneable {
 
     private HashMap<Integer, ErrorRecord> errorTable = new HashMap<>();
 
@@ -25,6 +25,11 @@ public class ErrorDatabase {
             ErrorRecord record = errorTable.get(index);
             System.out.println(record.toString());
         }
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
     }
 
 }

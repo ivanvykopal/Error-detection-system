@@ -39,6 +39,8 @@ public class Preprocessor {
                 } else if (temp.contains("if") || temp.contains("else")) {
                     //#if, #ifdef, #ifndef, #else, #elif
                     preprocessConditions();
+                } else {
+                    newFile.append("\n");
                 }
             } else {
                 newFile.append(lines[position]).append("\n");

@@ -353,20 +353,103 @@ public class Scanner {
 
         // čísla
         if(Character.isDigit(peek)) {
+            boolean hexa = false;
+            boolean flag = false;       // flag obsahuje informáciu, či číslo obsahuje x, u alebo l
+            boolean real = false;
             StringBuilder word = new StringBuilder("" + peek);
             readNextCharacter();
-            while (Character.isDigit(peek)) {
-                word.append(peek);
-                readNextCharacter();
+            while (true) {
+                while (Character.isDigit(peek)) {
+                    word.append(peek);
+                    readNextCharacter();
+                }
+                if (hexa) {
+                    if ((peek >= 65 && peek <= 70) || (peek >= 97 && peek <= 102)) {
+                        word.append(peek);
+                        readNextCharacter();
+                        continue;
+                    }
+                }
+                if (!hexa && (peek == 'e' || peek == 'E')) {
+                    word.append(peek);
+                    readNextCharacter();
+                    real = true;
+                    continue;
+                }
+                if (real) {
+                    if (peek == '-' || peek == '+') {
+                        word.append(peek);
+                        readNextCharacter();
+                        continue;
+                    }
+                }
+                if (peek == 'x' || peek == 'X') {
+                    word.append(peek);
+                    readNextCharacter();
+                    hexa = true;
+                    continue;
+                }
+                if (peek == 'u' || peek == 'U' || peek == 'l' || peek == 'L') {
+                    word.append(peek);
+                    readNextCharacter();
+                    flag = true;
+                } else {
+                    break;
+                }
             }
             if (peek != '.') {
                 getPreviousPosition();
-                return new Token(Tag.NUMBER, word.toString(), line);
+                if (real) {
+                    return new Token(Tag.REAL, word.toString(), line);
+                } else {
+                    return new Token(Tag.NUMBER, word.toString(), line);
+                }
             } else {
-                do {
-                    word.append(peek);
-                    readNextCharacter();
-                } while (Character.isDigit(peek));
+                if (flag) {
+                    while (peek != ' ') {
+                        readNextCharacter();
+                    }
+                    System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
+                    errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
+                    return new Token((byte) -1, "", line);
+                }
+                flag = false;
+                hexa = false;
+                while (true) {
+                    do {
+                        if (peek == ';' || peek == ')') {
+                            break;
+                        }
+                        word.append(peek);
+                        readNextCharacter();
+                    } while (Character.isDigit(peek));
+
+                    if (hexa) {
+                        if ((peek >= 65 && peek <= 70) || (peek >= 97 && peek <= 102)) {
+                            word.append(peek);
+                            readNextCharacter();
+                            continue;
+                        }
+                    }
+                    if (peek == 'e' || peek == 'E') {
+                        word.append(peek);
+                        readNextCharacter();
+                        flag = true;
+                        continue;
+                    }
+                    if (peek == 'x' || peek == 'X') {
+                        word.append(peek);
+                        readNextCharacter();
+                        hexa = true;
+                        continue;
+                    }
+                    if (flag && (peek == '-' || peek == 'l' || peek == 'L')) {
+                        word.append(peek);
+                        readNextCharacter();
+                    } else {
+                        break;
+                    }
+                }
                 getPreviousPosition();
                 return new Token(Tag.REAL, word.toString(), line);
             }
@@ -520,5 +603,8 @@ public class Scanner {
         keywords.put("void", Tag.VOID);
         keywords.put("volatile", Tag.VOLATILE);
         keywords.put("while", Tag.WHILE);
+
+        keywords.put("size_t", Tag.SIZE_T);
+        keywords.put("FILE", Tag.FILE);
     }
 }

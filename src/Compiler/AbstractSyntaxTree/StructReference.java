@@ -13,7 +13,7 @@ public class StructReference extends Node {
     }
 
     public Node getName() {
-        return name;
+        return field;
     }
 
     @Override

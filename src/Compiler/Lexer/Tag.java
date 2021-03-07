@@ -85,5 +85,8 @@ public class Tag {
     public static final byte ARROW = 72;              // ->
     public static final byte ELLIPSIS = 73;           // ...
 
-    public static final byte EOF = 74;
+    public static final byte SIZE_T = 74;             // size_t z exterených knižníc
+    public static final byte FILE = 75;               // FILE z knižnice stdio.h
+
+    public static final byte EOF = 76;
 }

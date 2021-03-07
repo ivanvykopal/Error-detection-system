@@ -52,4 +52,6 @@ public class Type {
     public static byte TYPEDEF_TYPE = 33;
 
     public static byte BOOL = 34;
+    public static byte STRING = 35;
+    public static byte FILE = 36;
 }

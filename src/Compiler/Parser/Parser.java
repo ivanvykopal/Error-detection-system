@@ -33,7 +33,7 @@ public class Parser {
                 if (tok.tag == Tag.EOF) {
                     break;
                 } else {
-                    //System.out.println(tok.line + ": " + tok.value);
+                    System.out.println(tok.line + ": " + tok.value);
                     tokenStream.add(tok);
                 }
             } catch (IOException e) {
@@ -164,9 +164,11 @@ public class Parser {
      */
     //DONE
     private Node primary_expression() {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -197,7 +199,8 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
-                symbolTable = copy;
+                symbolTable = copySymbolTable;
+                errorDatabase = copyErrorDatabase;
                 return new None();
         }
         child1 = constant();
@@ -220,13 +223,45 @@ public class Parser {
                 nextToken();
                 return new Constant("enumeration_constant", getTokenValue(position - 1), getTokenLine( position - 1));
             case Tag.NUMBER:
+                int u = 0;
+                int l = 0;
+                for (int i = 0; i < getTokenValue().length(); i++) {
+                    if (getTokenValue().charAt(i) == 'l' || getTokenValue().charAt(i) == 'L') {
+                        l++;
+                    }
+                    if (getTokenValue().charAt(i) == 'u' || getTokenValue().charAt(i) == 'U') {
+                        u++;
+                    }
+                }
+                if (u > 1 || l > 2) {
+                    System.out.println("Error");
+                }
+                StringBuilder type = new StringBuilder();
+                if (u > 0) {
+                    type.append("unsigned ");
+                }
+                while (l > 0) {
+                    type.append("long ");
+                    l--;
+                }
+                type.append("int");
                 nextToken();
-                //TODO: pridať zisťovanie typu
-                return new Constant("NUMBER", getTokenValue(position - 1), getTokenLine(position - 1));
+                return new Constant(type.toString(), getTokenValue(position - 1), getTokenLine(position - 1));
             case Tag.REAL:
+                String t = "";
+                if (getTokenValue().contains("x")) {
+                    t = "float";
+                } else {
+                    if(getTokenValue().contains("f") || getTokenValue().contains("F")) {
+                        t = "float";
+                    } else if (getTokenValue().contains("l") || getTokenValue().contains("L")) {
+                        t = "long double";
+                    } else {
+                        t = "double";
+                    }
+                }
                 nextToken();
-                //TODO: pridať zisťovanie typu
-                return new Constant("REAL", getTokenValue(position - 1), getTokenLine(position - 1));
+                return new Constant(t, getTokenValue(position - 1), getTokenLine(position - 1));
             default:
                 return new None();
         }
@@ -241,7 +276,7 @@ public class Parser {
     private String enumeration_constant() {
         if (getTokenTag() == Tag.IDENTIFIER) {
             //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
-            symbolTable.insert(getTokenValue(), "", getTokenLine(), Kind.ENUMERATION_CONSTANT, errorDatabase);
+            //symbolTable.insert(getTokenValue(), "", getTokenLine(), Kind.ENUMERATION_CONSTANT, errorDatabase);
 
             nextToken();
             return getTokenValue(position - 1);
@@ -258,9 +293,11 @@ public class Parser {
      */
     //DONE
     private Node postfix_expression() {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -311,7 +348,8 @@ public class Parser {
                 }
             }
             position = pos;
-            symbolTable = copy;
+            symbolTable = copySymbolTable;
+            errorDatabase = copyErrorDatabase;
         }
         child1 = primary_expression();
         child2 = null;
@@ -477,6 +515,7 @@ public class Parser {
      *                    | '--' unary_expression
      *                    | unary_operator cast_expression
      *                    | SIZEOF '(' type_name ')'
+     *                    | SIZEOF '(' unary_expression ')'
      *                    | SIZEOF unary_expression
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašlarest
@@ -507,6 +546,13 @@ public class Parser {
                     nextToken();
                     child1 = type_name();
                     child2 = null;
+                    if (child1 != null && !child1.isNone()) {
+                        child2 = expect(Tag.RIGHT_PARENTHESES);
+                    }
+                    if (child2 != null) {
+                        return new UnaryOperator(child1, terminal, symbolTable, child1.getLine());
+                    }
+                    child1 = unary_expression();
                     if (child1 != null && !child1.isNone()) {
                         child2 = expect(Tag.RIGHT_PARENTHESES);
                     }
@@ -581,9 +627,11 @@ public class Parser {
     //DONE
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -602,7 +650,8 @@ public class Parser {
                 return new Cast(child1, child3, line);
             }
             position = pos;
-            symbolTable = copy;
+            symbolTable = copySymbolTable;
+            errorDatabase = copyErrorDatabase;
         }
         child1 = unary_expression();
         if (child1 != null && !child1.isNone()) {
@@ -987,7 +1036,7 @@ public class Parser {
                     child4 = conditional_expression();
                 }
                 if (child4 != null && !child4.isNone()) {
-                    return new TernaryOperator(child1, child2, child4, child1.getLine());
+                    return new TernaryOperator(child1, child2, child4, symbolTable, child1.getLine());
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
@@ -1010,9 +1059,11 @@ public class Parser {
      */
     //DONE
     private Node assignment_expression() {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -1037,7 +1088,8 @@ public class Parser {
             }
         }
         position = pos;
-        symbolTable = copy;
+        symbolTable = copySymbolTable;
+        errorDatabase = copyErrorDatabase;
         child1 = conditional_expression();
         if (child1 == null) {
             return null;
@@ -1353,7 +1405,7 @@ public class Parser {
     }
 
     /**
-     * type_specifier ->  VOID | CHAR | SHORT | INT | LONG | FLOAT | DOUBLE | SIGNED | UNSIGNED
+     * type_specifier ->  VOID | CHAR | SHORT | INT | LONG | FLOAT | DOUBLE | SIGNED | UNSIGNED | SIZE_T | FILE
      *                  | struct_or_union_specifier
      *                  | enum_specifier
      *                  | TYPEDEF_NAME
@@ -1374,6 +1426,8 @@ public class Parser {
             case Tag.DOUBLE:
             case Tag.SIGNED:
             case Tag.UNSIGNED:
+            case Tag.SIZE_T:
+            case Tag.FILE:
 
                 nextToken();
                 arr.add(getTokenValue(position - 1));
@@ -1987,9 +2041,11 @@ public class Parser {
     //DONE
     private Node direct_declarator() {
         Node child1, child2 = null, child3 = null;
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2024,7 +2080,8 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
-                symbolTable = copy;
+                symbolTable = copySymbolTable;
+                errorDatabase = copyErrorDatabase;
                 return new None();
         }
         //TODO: nie som si istý
@@ -2086,9 +2143,11 @@ public class Parser {
      */
     //DONE
     private Node left16(Node declarator) {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) symbolTable.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2114,7 +2173,8 @@ public class Parser {
                     }
                 } else {
                     position = pos;
-                    symbolTable = copy;
+                    symbolTable = copySymbolTable;
+                    errorDatabase = copyErrorDatabase;
                     break;
                 }
             case Tag.STATIC:
@@ -2333,9 +2393,11 @@ public class Parser {
      */
     //DONE
     private Node left19(ArrayList<String> qualifiers, Node declarator) {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2361,7 +2423,8 @@ public class Parser {
                     }
                 } else {
                     position = pos;
-                    symbolTable = copy;
+                    symbolTable = copySymbolTable;
+                    errorDatabase = copyErrorDatabase;
                     break;
                 }
             case Tag.STATIC:
@@ -2552,9 +2615,8 @@ public class Parser {
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
-                    return null;
+                   position--;
+                   return new ParameterList(arr, line);
                 }
             }
             return new ParameterList(arr, line);
@@ -2609,9 +2671,11 @@ public class Parser {
             typeNode.addType(new IdentifierType(arr, 0));
         }
 
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2623,10 +2687,11 @@ public class Parser {
         if (!child1.isNone()) {
             ArrayList<Node> decls = new ArrayList<>();
             decls.add(new Declarator(child1, null));
-            return createDeclaration(typeNode, decls, false, false).get(0);
+            return createDeclaration(typeNode, decls, true, false).get(0);
         }
         position = pos;
-        symbolTable = copy;
+        symbolTable = copySymbolTable;
+        errorDatabase = copyErrorDatabase;
         child1 = abstract_declarator();
         if (child1 == null) {
             return null;
@@ -2635,7 +2700,7 @@ public class Parser {
             if (typeNode.getTypes().size() > 1) {
                 ArrayList<Node> decls = new ArrayList<>();
                 decls.add(new Declarator(child1, null));
-                return createDeclaration(typeNode, decls, false, false).get(0);
+                return createDeclaration(typeNode, decls, true, false).get(0);
             } else {
                 Node decl = new Typename("", typeNode.getQualifiers(), child1, child1.getLine());
                 decl = fixTypes(decl, typeNode.getTypes());
@@ -2645,7 +2710,7 @@ public class Parser {
         if (typeNode.getTypes().size() > 1) {
             ArrayList<Node> decls = new ArrayList<>();
             decls.add(new Declarator(null, null));
-            return createDeclaration(typeNode, decls, false, false).get(0);
+            return createDeclaration(typeNode, decls, true, false).get(0);
         } else {
             Node decl = new Typename("", typeNode.getQualifiers(), new TypeDeclaration(null, null,
                     null), 0);
@@ -2763,9 +2828,11 @@ public class Parser {
     //DONE
     private Node direct_abstract_declarator() {
         Node child1;
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2778,7 +2845,8 @@ public class Parser {
                     return child1;
                 }
                 position = pos;
-                symbolTable = copy;
+                symbolTable = copySymbolTable;
+                errorDatabase = copyErrorDatabase;
                 return new None();
             case Tag.LEFT_BRACKETS:
                 nextToken();
@@ -2876,9 +2944,11 @@ public class Parser {
      */
     //DONE
     private Node left26(Node declarator) {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2927,7 +2997,8 @@ public class Parser {
                     }
                 } else {
                     position = pos;
-                    symbolTable = copy;
+                    symbolTable = copySymbolTable;
+                    errorDatabase = copyErrorDatabase;
                     break;
                 }
             case Tag.STATIC:
@@ -3505,10 +3576,12 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private Node statement() {
-        SymbolTable copy = null;
+    private Node statement(boolean createSymbolTable) {
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -3521,8 +3594,9 @@ public class Parser {
             return child1;
         }
         position = pos;
-        symbolTable = copy;
-        child1 = compound_statement();
+        symbolTable = copySymbolTable;
+        errorDatabase = copyErrorDatabase;
+        child1 = compound_statement(createSymbolTable);
         if (child1 == null) {
             return null;
         }
@@ -3570,9 +3644,11 @@ public class Parser {
      */
     //DONE
     private Node labeled_statement() {
-        SymbolTable copy = null;
+        SymbolTable copySymbolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -3586,20 +3662,21 @@ public class Parser {
                 nextToken();
                 child1 = accept(Tag.COLON);
                 if (child1 != null) {
-                    child2 = statement();
+                    child2 = statement(true);
                 }
                 if (child2 != null && !child2.isNone()) {
                     return new Label(terminal, child2, line);
                 }
                 position = pos;
-                symbolTable = copy;
+                symbolTable = copySymbolTable;
+                errorDatabase = copyErrorDatabase;
                 break;
             case Tag.DEFAULT:
                 line = getTokenLine();
                 nextToken();
                 child1 = expect(Tag.COLON);
                 if (child1 != null) {
-                    child2 = statement();
+                    child2 = statement(true);
                 }
                 if (child2 != null && !child2.isNone()) {
                     return new Default(child2, line);
@@ -3617,7 +3694,7 @@ public class Parser {
                     child2 = expect(Tag.COLON);
                 }
                 if (child2 != null) {
-                    child3 = statement();
+                    child3 = statement(true);
                 }
                 if (child3 != null && !child3.isNone()) {
                     return new Case(child1, child3, line);
@@ -3639,7 +3716,7 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node compound_statement() {
+    private Node compound_statement(boolean createSymbolTable) {
         if (getTokenTag() == Tag.LEFT_BRACES) {
             int line = getTokenLine();
             nextToken();
@@ -3649,10 +3726,12 @@ public class Parser {
             }
 
             SymbolTable parent = symbolTable;
-            //vytvorenie vnorenej tabuľky
-            symbolTable = new SymbolTable(symbolTable);
-            if (parent != null) {
-                parent.addChild(symbolTable);
+            if (createSymbolTable) {
+                //vytvorenie vnorenej tabuľky
+                symbolTable = new SymbolTable(symbolTable);
+                if (parent != null) {
+                    parent.addChild(symbolTable);
+                }
             }
 
             ArrayList<Node> child1 = block_item_list();
@@ -3683,7 +3762,9 @@ public class Parser {
                     nextToken();
                     return new Err();
                 } else {
-                    symbolTable = parent;
+                    if (createSymbolTable) {
+                        symbolTable = parent;
+                    }
                     return new Compound(child1, line);
                 }
             }
@@ -3739,7 +3820,7 @@ public class Parser {
         if (!child1.isEmpty()) {
             return child1;
         }
-        Node child2 = statement();
+        Node child2 = statement(true);
         if (child2 == null) {
             return null;
         }
@@ -3826,12 +3907,12 @@ public class Parser {
                     child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
-                    child4 = statement();
+                    child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
                     if (getTokenTag() == Tag.ELSE) {
                         nextToken();
-                        child5 = statement();
+                        child5 = statement(true);
                         if (child5 != null && !child5.isNone()) {
                             return new If(child2, child4, child5, line);
                         }
@@ -3856,7 +3937,7 @@ public class Parser {
                     child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
-                    child4 = statement();
+                    child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
                     return new Switch(child2, child4, line);
@@ -3895,7 +3976,7 @@ public class Parser {
                     child3 = expect(Tag. RIGHT_PARENTHESES);
                 }
                 if (child3 != null) {
-                    child4 = statement();
+                    child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
                     return new While(child2, child4, line);
@@ -3908,7 +3989,7 @@ public class Parser {
             case Tag.DO:
                 line = getTokenLine();
                 nextToken();
-                child1 = statement();
+                child1 = statement(true);
                 if (child1 != null && !child1.isNone()) {
                     child2 = expect(Tag.WHILE);
                 }
@@ -3986,6 +4067,13 @@ public class Parser {
      */
     //DONE
     private Node left33(int line) {
+        SymbolTable parent = symbolTable;
+        //vytvorenie vnorenej tabuľky
+        symbolTable = new SymbolTable(symbolTable);
+        if (parent != null) {
+            parent.addChild(symbolTable);
+        }
+
         Node child1 = expression_statement();
         Node child2, child3;
         if (child1 == null) {
@@ -4003,7 +4091,8 @@ public class Parser {
             } else {
                  if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                      nextToken();
-                     child3 = statement();
+                     child3 = statement(false);
+                     symbolTable = parent;
                      if (child3 != null && !child3.isNone()) {
                          if (child1.isEmpty()) {
                              child1 = null;
@@ -4029,7 +4118,8 @@ public class Parser {
                      if (child4 == null) {
                          return null;
                      } else {
-                         child5 = statement();
+                         child5 = statement(false);
+                         symbolTable = parent;
                          if (child5 == null) {
                              return null;
                          }
@@ -4070,7 +4160,8 @@ public class Parser {
             } else {
                 if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                     nextToken();
-                    child3 = statement();
+                    child3 = statement(false);
+                    symbolTable = parent;
                     if (child3 != null && !child3.isNone()) {
                         if (child2.isEmpty()) {
                             child2 = null;
@@ -4093,7 +4184,8 @@ public class Parser {
                     if (child4 == null) {
                         return null;
                     } else {
-                        child5 = statement();
+                        child5 = statement(false);
+                        symbolTable = parent;
                         if (child5 == null) {
                             return null;
                         }
@@ -4298,9 +4390,11 @@ public class Parser {
      */
     //DONE
     private ArrayList<Node> external_declaration() {
-        SymbolTable copy = null;
+        SymbolTable copySmybolTable = null;
+        ErrorDatabase copyErrorDatabase = null;
         try {
-            copy = (SymbolTable) symbolTable.clone();
+            copySmybolTable = (SymbolTable) symbolTable.clone();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -4312,7 +4406,8 @@ public class Parser {
             return arr;
         }
         position = pos;
-        symbolTable = copy;
+        symbolTable = copySmybolTable;
+        errorDatabase = copyErrorDatabase;
         ArrayList<Node> child2 = declaration();
         if (child2 == null) {
             return null;
@@ -4342,12 +4437,12 @@ public class Parser {
             ArrayList<Node> child = declaration_list();
             Node child4 = null;
             if (child != null && !child.isEmpty()) {
-                child4 = compound_statement();
+                child4 = compound_statement(true);
             }
             if (child4 != null && !child4.isNone()) {
                 return createFunction(typeNode, child2, child, child4);
             }
-            child3 = compound_statement();
+            child3 = compound_statement(true);
             if (child3 != null && !child3.isNone()) {
                 return createFunction(typeNode, child2, null, child3);
             }
@@ -4394,7 +4489,7 @@ public class Parser {
      * @return
      */
     private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations) {
-        return createDeclaration(typeNode, declarations, true, false);
+        return createDeclaration(typeNode, declarations, false, false);
     }
 
     /**
@@ -4405,17 +4500,17 @@ public class Parser {
      * @return
      */
     private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean structVariable) {
-        return createDeclaration(typeNode, declarations, true, structVariable);
+        return createDeclaration(typeNode, declarations, false, structVariable);
     }
 
     /**
      *
      * @param typeNode
      * @param declarations
-     * @param addToSymbolTable
+     * @param parameter
      * @return
      */
-    private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean addToSymbolTable,
+    private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean parameter,
                                               boolean structVariable) {
         ArrayList<Node> decls = new ArrayList<>();
 
@@ -4463,7 +4558,7 @@ public class Parser {
                     //return null
                 }
 
-                addRecordToSymbolTable(declarator1, typedef, addToSymbolTable, structVariable);
+                addRecordToSymbolTable(declarator1, typedef, parameter, structVariable);
 
                 decls.add(declaration);
             }
@@ -4559,10 +4654,10 @@ public class Parser {
      *
      * @param declarator1
      * @param typedef
-     * @param addToSymbolTable
+     * @param parameter
      * @param structVariable
      */
-    private void addRecordToSymbolTable(Declarator declarator1, boolean typedef, boolean addToSymbolTable,
+    private void addRecordToSymbolTable(Declarator declarator1, boolean typedef, boolean parameter,
                                         boolean structVariable) {
 
         if (typedef) {
@@ -4571,16 +4666,21 @@ public class Parser {
                 int line = 0;
                 String name = "";
                 String type = "";
+                String struct_name = "";
+                byte typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
                             line = decl_tail.getLine();
                         }
@@ -4595,9 +4695,13 @@ public class Parser {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                     line = decl_tail.getLine();
+                    typeCategory = findType(type);
+                } else {
+                    typeCategory = findType(type);
+                    type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
-                symbolTable.insert(name, type, line, Kind.TYPEDEF_NAME, errorDatabase);
+                symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
 
             } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
@@ -4605,16 +4709,21 @@ public class Parser {
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
                 int line = 0;
                 String type = "";
+                byte typeCategory;
+                String struct_name = "";
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union ";
                             line = decl_tail.getLine();
                         }
@@ -4626,27 +4735,36 @@ public class Parser {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                     line = decl_tail.getLine();
+                    typeCategory = findType(type);
+                } else {
+                    typeCategory = findType(type);
+                    type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
-                symbolTable.insert(name, type, line, Kind.TYPEDEF_NAME, errorDatabase);
+                symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
             }
         } else {
-            if (declarator1.getDeclarator() instanceof PointerDeclaration && addToSymbolTable) {
+            if (declarator1.getDeclarator() instanceof PointerDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 int line = 0;
                 String name = "";
                 String type = "";
+                String struct_name = "";
+                byte typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
                             line = decl_tail.getLine();
                         }
@@ -4661,31 +4779,45 @@ public class Parser {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                     line = decl_tail.getLine();
+                    typeCategory = findType(type);
+                } else {
+                    typeCategory = findType(type);
+                    type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
                 if (structVariable) {
-                    symbolTable.insert(name, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
+                    symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
-                    symbolTable.insert(name, type, line, Kind.VARIABLE, errorDatabase);
-                    System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
+                    if (parameter) {
+                        symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
+                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
+                    } else {
+                        symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
+                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
+                    }
                 }
 
-            } else if (declarator1.getDeclarator() instanceof TypeDeclaration && addToSymbolTable) {
+            } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
                 int line = 0;
                 String type = "";
+                String struct_name = "";
+                byte typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union ";
                             line = decl_tail.getLine();
                         }
@@ -4697,17 +4829,26 @@ public class Parser {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                     line = decl_tail.getLine();
+                    typeCategory = findType(type);
+                } else {
+                    typeCategory = findType(type);
+                    type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
                 if (structVariable) {
-                    symbolTable.insert(name, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
+                    symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
-                    symbolTable.insert(name, type, line, Kind.VARIABLE, errorDatabase);
-                    System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
+                    if (parameter) {
+                        symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
+                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
+                    } else {
+                        symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
+                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
+                    }
                 }
 
-            } else if (declarator1.getDeclarator() instanceof ArrayDeclaration && addToSymbolTable) {
+            } else if (declarator1.getDeclarator() instanceof ArrayDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = "";
                 int line = 0;
@@ -4715,6 +4856,8 @@ public class Parser {
                 String type = "";
                 boolean pointer = false;
                 int size = -1;
+                String struct_name = "";
+                byte typeCategory;
 
                 if (constant instanceof Constant) {
                     try {
@@ -4733,12 +4876,15 @@ public class Parser {
                     }
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union ";
                             line = decl_tail.getLine();
                         }
@@ -4751,41 +4897,60 @@ public class Parser {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                         line = decl_tail.getLine();
+                        typeCategory = findType(type);
                     } else {
                         type += "* ";
+                        typeCategory = findType(type);
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                         line = decl_tail.getLine();
+                        typeCategory = findType(type);
+                    } else {
+                        typeCategory = findType(type);
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }
 
                 if (size < 0) {
                     if (structVariable) {
-                        symbolTable.insert(name, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
+                        symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER");
                     } else {
-                        symbolTable.insert(name, type, line, Kind.ARRAY, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY");
+                        if (parameter) {
+                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, errorDatabase);
+                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER");
+                        } else {
+                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, errorDatabase);
+                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY");
+                        }
                     }
                 } else {
                     if (structVariable) {
-                        symbolTable.insert(name, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
+                        symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER, " + size);
                     } else {
-                        symbolTable.insert(name, type, line, Kind.ARRAY, size, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY, " + size);
+                        if (parameter) {
+                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, size, errorDatabase);
+                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER, " + size);
+                        } else {
+                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, size, errorDatabase);
+                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY, " + size);
+                        }
                     }
                 }
 
-            } else if (declarator1.getDeclarator() instanceof FunctionDeclaration && addToSymbolTable) {
+            } else if (declarator1.getDeclarator() instanceof FunctionDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = "";
                 int line = 0;
                 ParameterList parameters = (ParameterList) ((FunctionDeclaration) declarator1.getDeclarator()).getArguments();
                 boolean pointer = false;
                 String type = "";
+                String struct_name = "";
+                byte typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail instanceof PointerDeclaration) {
@@ -4796,12 +4961,15 @@ public class Parser {
                     }
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
+                            struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
                             line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
+                            struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
                             line = decl_tail.getLine();
                         } else {
+                            struct_name = ((Union) decl_tail).getName();
                             type = "union ";
                             line = decl_tail.getLine();
                         }
@@ -4814,77 +4982,37 @@ public class Parser {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                         line = decl_tail.getLine();
+                        typeCategory = findType(type);
                     } else {
                         type += "* ";
+                        typeCategory = findType(type);
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                         line = decl_tail.getLine();
+                        typeCategory = findType(type);
+                    } else {
+                        typeCategory = findType(type);
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }
 
-                symbolTable.insert(name, type, line, Kind.FUNCTION, errorDatabase);
+                symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
 
                 Record record = symbolTable.lookup(name);
 
                 if (parameters != null) {
                     for (Node param : parameters.getParameters()) {
-                        pointer = false;
-                        boolean array = false;
-                        Node param_tail = param.getType();
+                        if (param instanceof EllipsisParam) {
+                            record.getParameters().add("...");
+                            symbolTable.setValue(name, record);
+                            System.out.println("Update: " + name);
+                            break;
+                        }
                         String param_name = ((DeclarationNode) param).getName();
-                        int param_line = 0;
-                        String param_type = "";
-
-                        while (!(param_tail instanceof IdentifierType)) {
-                            if (param_tail instanceof ArrayDeclaration) {
-                                array = true;
-                            }
-                            if (param_tail instanceof PointerDeclaration) {
-                                pointer = true;
-                            }
-                            if (param_tail.isEnumStructUnion()) {
-                                if (param_tail instanceof Enum) {
-                                    param_type = "enum ";
-                                    param_line = param_tail.getLine();
-                                } else if (param_tail instanceof Struct) {
-                                    param_type = "struct ";
-                                    param_line = param_tail.getLine();
-                                } else {
-                                    param_type = "union ";
-                                    param_line = param_tail.getLine();
-                                }
-                                break;
-                            }
-                            param_tail = param_tail.getType();
-                        }
-
-                        if (pointer) {
-                            if (param_type.equals("")) {
-                                param_type = String.join(" ", ((IdentifierType) param_tail).getNames()) + " * ";
-                                param_line = param_tail.getLine();
-                            } else {
-                                param_type += "* ";
-                            }
-                        } else {
-                            if (param_type.equals("")) {
-                                param_type = String.join(" ", ((IdentifierType) param_tail).getNames()) + " ";
-                                param_line = param_tail.getLine();
-                            }
-                        }
-
-                        //Pridanie parametra do symbolickej tabuľky
-                        if (array) {
-                            symbolTable.insert(param_name, param_type, param_line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            System.out.println("Insert: " + param_name + ", " + param_type + ", " + param_line + ", " +
-                                    "Kind.ARRAY_PARAMETER");
-                        } else {
-                            symbolTable.insert(param_name, param_type, param_line, Kind.PARAMETER, errorDatabase);
-                            System.out.println("Insert: " + param_name + ", " + param_type + ", " + param_line + ", " +
-                                    "Kind.PARAMETER");
-                        }
 
                         //pridanie parametra pre funkciu
                         record.getParameters().add(param_name);
@@ -4934,6 +5062,10 @@ public class Parser {
             //tail je IdentifierType
             byte type1 = findType(type);
             byte type2 = getInitializer(initializer);
+
+            if (type2 == -2) {
+                return true;
+            }
 
             if (type1 == -1 || type2 < 0) {
                 return false;
@@ -4990,6 +5122,14 @@ public class Parser {
 
             byte type1 = findType(type);
             byte type2 = getInitializer(initializer);
+
+            if (type2 == -2) {
+                return true;
+            }
+
+            if((type1 == Type.CHAR || type1 == Type.UNSIGNEDCHAR || type1 == Type.SIGNEDCHAR) && type2 == Type.STRING) {
+                return true;
+            }
             if (type2 == -1) {
                 return true;
             }
@@ -5021,6 +5161,11 @@ public class Parser {
 
             byte type1 = findType(type);
             byte type2 = getInitializer(initializer);
+
+            if (type2 == -2) {
+                return true;
+            }
+
             if (type2 < 0 || type1 == -1) {
                 return false;
             }
@@ -5051,8 +5196,7 @@ public class Parser {
         } else if (initializer instanceof Assignment) {
             return ((Assignment) initializer).getLeftType(symbolTable);
         } else if (initializer instanceof TernaryOperator) {
-            //TODO: vymyslieť aj pre Assignment
-            return 0;
+            return ((TernaryOperator) initializer).getTypeCategory();
         } else if (initializer instanceof Cast) {
             Node tail = initializer.getType();
             String type = "";
@@ -5095,17 +5239,17 @@ public class Parser {
             //nájsť v symbolickej tabuľke
             Record record = symbolTable.lookup(((Identifier) initializer).getName());
             if (record == null) {
-                return -128;
+                return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
         } else if (initializer instanceof Constant) {
-            return findType(((Constant) initializer).getTypeSpecifier());
+            return findType(((Constant) initializer).getTypeSpecifier() + " ");
         } else if (initializer instanceof FunctionCall) {
             Identifier id = (Identifier) ((FunctionCall) initializer).getName();
             Record record = symbolTable.lookup(id.getName());
             if (record == null) {
-                return -128;
+                return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
@@ -5183,6 +5327,9 @@ public class Parser {
             case "struct ": return (byte) (Type.STRUCT + pointer);                                          // struct
             case "enum ": return (byte) (Type.ENUM + pointer);                                              // enum
             case "void ": return (byte) (Type.VOID + pointer);                                              // void
+            case "size_t ": return (byte) (Type.UNSIGNEDINT + pointer);                                     // size_t
+            case "FILE ": return (byte) (Type.FILE + pointer);                                              // FILE
+            case "string ": return Type.STRING;
             default: return Type.TYPEDEF_TYPE;                                                              // vlastný typ
         }
     }

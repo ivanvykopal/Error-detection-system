@@ -1,8 +1,8 @@
 package Compiler.AbstractSyntaxTree;
 
 import Compiler.Errors.ErrorDatabase;
-import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.SymbolTableFiller;
 
 public class Cast extends Node {
     Node type;
@@ -13,7 +13,7 @@ public class Cast extends Node {
         this.expression = expr;
         setLine(line);
 
-        resolveUsage(expression, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(expression, table, errorDatabase);
     }
 
     @Override
@@ -21,26 +21,6 @@ public class Cast extends Node {
         System.out.println(indent + "Cast:");
         if (type != null) type.traverse(indent + "    ");
         if (expression != null) expression.traverse(indent + "    ");
-    }
-
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
     }
 
     @Override
@@ -53,8 +33,4 @@ public class Cast extends Node {
         this.type = type;
     }
 
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 }

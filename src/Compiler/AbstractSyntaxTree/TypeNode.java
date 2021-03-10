@@ -13,6 +13,7 @@ public class TypeNode extends Node {
         this.qualifiers = quals;
     }
 
+    @Override
     public void addType(Node type) {
         types.add(type);
     }
@@ -85,33 +86,4 @@ public class TypeNode extends Node {
         }
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return null;
-    }
-
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 }

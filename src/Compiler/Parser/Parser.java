@@ -6,13 +6,11 @@ import Compiler.Errors.ErrorDatabase;
 import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
-import Compiler.SymbolTable.Kind;
-import Compiler.SymbolTable.Record;
-import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import Compiler.AbstractSyntaxTree.*;
-import Compiler.SymbolTable.Type;
 
 public class Parser {
     private int position = 0;
@@ -4534,10 +4532,10 @@ public class Parser {
             declarator.addDeclarator(new TypeDeclaration(((IdentifierType) typeNode.getLastType()).getName(0),
                     null, null));
             typeNode.removeLastType();
-        } else if (!declarator.getDeclarator().isEnumStructUnion() && !declarator.isIdentifierType()) {
+        } else if (!declarator.getDeclarator().isEnumStructUnion() && !(declarator.getDeclarator() instanceof IdentifierType)) {
             Node tail = declarator.getDeclarator();
 
-            while(!tail.isTypeDeclaration()) {
+            while(!(tail instanceof TypeDeclaration)) {
                 tail = tail.getType();
             }
 
@@ -4560,20 +4558,18 @@ public class Parser {
                     declaration = new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(),
                             declarator1.getDeclarator(), declarator1.getInitializer(),null, declarator1.getDeclarator().getLine());
                 }
-                if (!declaration.getType().isEnumStructUnion() && !declaration.getType().isIdentifierType()) {
+                if (!declaration.getType().isEnumStructUnion() && !(declaration.getType() instanceof IdentifierType)) {
                     declaration = fixTypes(declaration, typeNode.getTypes());
                 }
 
                 if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
-                    //TODO: Sémantická chyba + zistiť riadok problém ak je TypeDeclaration
                     System.out.println("Sémantická chyba na riadku " + declarator1.getInitializer().getLine() + "!");
-                    //return null
                 }
 
-                addRecordToSymbolTable(declarator1, typedef, parameter, structVariable);
+                SymbolTableFiller.addRecordToSymbolTable(declarator1, typedef, parameter, structVariable, symbolTable, errorDatabase);
 
                 if (declarator1.getInitializer() != null) {
-                    resolveUsage(declarator1.getInitializer(), symbolTable);
+                    SymbolTableFiller.resolveUsage(declarator1.getInitializer(), symbolTable, errorDatabase);
                 }
 
                 decls.add(declaration);
@@ -4593,17 +4589,16 @@ public class Parser {
         DeclarationNode decl = (DeclarationNode) declaration;
 
         Node type = declaration;
-        while (!type.isTypeDeclaration()) {
+        while (!(type instanceof TypeDeclaration)) {
             type = type.getType();
         }
 
-        assert type instanceof TypeDeclaration;
         decl.addName(((TypeDeclaration) type).getDeclname());
         ((TypeDeclaration) type).addQualifiers(decl.getQualifiers());
 
         //Riešenie chýb
         for (Node t_name : typename) {
-            if (!t_name.isIdentifierType()) {
+            if (!(t_name instanceof IdentifierType)) {
                 if (typename.size() > 1) {
                     System.out.println("Chybný typ!");
                     errorDatabase.addErrorMessage(111, Error.getError("E-SmA-01"), "E-SmA-01");
@@ -4649,13 +4644,13 @@ public class Parser {
             tail = tail.getType();
         }
 
-        if (declaration.isTypeDeclaration()) {
+        if (declaration instanceof TypeDeclaration) {
             tail.addType(declaration);
             return modifier;
         } else {
             Node declaration_tail = declaration;
 
-            while (!declaration_tail.getType().isTypeDeclaration()) {
+            while (!(declaration_tail.getType() instanceof TypeDeclaration)) {
                 declaration_tail = declaration_tail.getType();
             }
 
@@ -4663,456 +4658,6 @@ public class Parser {
             declaration_tail.addType(modifier);
 
             return declaration;
-        }
-    }
-
-    /**
-     *
-     * @param declarator1
-     * @param typedef
-     * @param parameter
-     * @param structVariable
-     */
-    private void addRecordToSymbolTable(Declarator declarator1, boolean typedef, boolean parameter,
-                                        boolean structVariable) {
-
-        if (typedef) {
-            if (declarator1.getDeclarator() instanceof PointerDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                int line = 0;
-                String name = "";
-                String type = "";
-                String struct_name = "";
-                short typeCategory;
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum * ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct * ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union * ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    if (decl_tail instanceof TypeDeclaration) {
-                        name = ((TypeDeclaration) decl_tail).getDeclname();
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                    line = decl_tail.getLine();
-                    typeCategory = findType(type);
-                } else {
-                    typeCategory = findType(type);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
-                }
-
-                Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
-                System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
-
-            } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
-                int line = 0;
-                String type = "";
-                short typeCategory;
-                String struct_name = "";
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    line = decl_tail.getLine();
-                    typeCategory = findType(type);
-                } else {
-                    typeCategory = findType(type);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
-                }
-
-                Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
-
-                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
-                System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
-            }
-        } else {
-            if (declarator1.getDeclarator() instanceof PointerDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                int line = 0;
-                String name = "";
-                String type = "";
-                String struct_name = "";
-                short typeCategory;
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum * ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct * ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union * ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    if (decl_tail instanceof TypeDeclaration) {
-                        name = ((TypeDeclaration) decl_tail).getDeclname();
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                    line = decl_tail.getLine();
-                    typeCategory = findType(type);
-                } else {
-                    typeCategory = findType(type);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
-                }
-
-                Record record = new Record(typeCategory, type, line, false);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                if (structVariable) {
-                    record.setKind(Kind.STRUCT_PARAMETER);
-                    symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
-
-                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
-                    System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
-                } else {
-                    if (parameter) {
-                        record.setKind(Kind.PARAMETER);
-                        record.setInitialized(true);
-                        symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
-                    } else {
-                        record.setKind(Kind.VARIABLE);
-                        symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
-                    }
-                }
-
-            } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
-                int line = 0;
-                String type = "";
-                String struct_name = "";
-                short typeCategory;
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    line = decl_tail.getLine();
-                    typeCategory = findType(type);
-                } else {
-                    typeCategory = findType(type);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
-                }
-
-                Record record = new Record(typeCategory, type, line, false);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                if (structVariable) {
-                    record.setKind(Kind.STRUCT_PARAMETER);
-                    symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
-                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
-                    System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
-                } else {
-                    if (parameter) {
-                        record.setKind(Kind.PARAMETER);
-                        record.setInitialized(true);
-                        symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
-                    } else {
-                        record.setKind(Kind.VARIABLE);
-                        symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
-                    }
-                }
-
-            } else if (declarator1.getDeclarator() instanceof ArrayDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                String name = "";
-                int line = 0;
-                Node constant = ((ArrayDeclaration) declarator1.getDeclarator()).getDimension();
-                String type = "";
-                boolean pointer = false;
-                int size = -1;
-                String struct_name = "";
-                short typeCategory;
-
-                if (constant instanceof Constant) {
-                    try {
-                        size = Integer.parseInt(((Constant) constant).getValue());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Chyba veľkosti poľa!");
-                    }
-                }
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail instanceof PointerDeclaration) {
-                        pointer = true;
-                    }
-                    if (decl_tail instanceof TypeDeclaration) {
-                        name = ((TypeDeclaration) decl_tail).getDeclname();
-                    }
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (pointer) {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        line = decl_tail.getLine();
-                        typeCategory = findType(type);
-                    } else {
-                        type += "* ";
-                        typeCategory = findType(type);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
-                    }
-                } else {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        line = decl_tail.getLine();
-                        typeCategory = findType(type);
-                    } else {
-                        typeCategory = findType(type);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
-                    }
-                }
-
-                Record record = new Record(typeCategory, type, line, false);
-                record.setInitialized(true);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                if (size < 0) {
-                    if (structVariable) {
-                        record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
-                        symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER");
-                    } else {
-                        if (parameter) {
-                            record.setKind(Kind.ARRAY_PARAMETER);
-                            symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER");
-                        } else {
-                            record.setKind(Kind.ARRAY);
-                            symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, errorDatabase);
-                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY");
-                        }
-                    }
-                } else {
-                    if (structVariable) {
-                        record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
-                        record.setSize(size);
-                        symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
-                        System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER, " + size);
-                    } else {
-                        if (parameter) {
-                            record.setKind(Kind.ARRAY_PARAMETER);
-                            record.setSize(size);
-                            symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, size, errorDatabase);
-                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER, " + size);
-                        } else {
-                            record.setSize(Kind.ARRAY);
-                            record.setSize(size);
-                            symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, size, errorDatabase);
-                            System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY, " + size);
-                        }
-                    }
-                }
-
-            } else if (declarator1.getDeclarator() instanceof FunctionDeclaration) {
-                Node decl_tail = declarator1.getDeclarator().getType();
-                String name = "";
-                int line = 0;
-                ParameterList parameters = (ParameterList) ((FunctionDeclaration) declarator1.getDeclarator()).getArguments();
-                boolean pointer = false;
-                String type = "";
-                String struct_name = "";
-                short typeCategory;
-
-                while (!(decl_tail instanceof IdentifierType)) {
-                    if (decl_tail instanceof PointerDeclaration) {
-                        pointer = true;
-                    }
-                    if (decl_tail instanceof TypeDeclaration) {
-                        name = ((TypeDeclaration) decl_tail).getDeclname();
-                    }
-                    if (decl_tail.isEnumStructUnion()) {
-                        if (decl_tail instanceof Enum) {
-                            struct_name = ((Enum) decl_tail).getName();
-                            type = "enum ";
-                            line = decl_tail.getLine();
-                        } else if (decl_tail instanceof Struct) {
-                            struct_name = ((Struct) decl_tail).getName();
-                            type = "struct ";
-                            line = decl_tail.getLine();
-                        } else {
-                            struct_name = ((Union) decl_tail).getName();
-                            type = "union ";
-                            line = decl_tail.getLine();
-                        }
-                        break;
-                    }
-                    decl_tail = decl_tail.getType();
-                }
-
-                if (pointer) {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        line = decl_tail.getLine();
-                        typeCategory = findType(type);
-                    } else {
-                        type += "* ";
-                        typeCategory = findType(type);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
-                    }
-                } else {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        line = decl_tail.getLine();
-                        typeCategory = findType(type);
-                    } else {
-                        typeCategory = findType(type);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
-                    }
-                }
-
-                Record record = new Record(typeCategory, type, line, false, Kind.FUNCTION);
-                record.setInitialized(true);
-                if (declarator1.getInitializer() != null) {
-                    record.setInitialized(true);
-                    record.addInitializationLine(line);
-                }
-
-                //symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
-                //System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
-
-                //Record record1 = symbolTable.lookup(name);
-
-                if (parameters != null) {
-                    for (Node param : parameters.getParameters()) {
-                        if (param instanceof EllipsisParam) {
-                            record.getParameters().add("...");
-                            symbolTable.setValue(name, record);
-                            System.out.println("Update: " + name);
-                            break;
-                        }
-                        String param_name = ((DeclarationNode) param).getName();
-
-                        //pridanie parametra pre funkciu
-                        record.getParameters().add(param_name);
-                        //symbolTable.setValue(name, record);
-                        System.out.println("Update: " + name);
-                    }
-                }
-
-                symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
-                System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
-            }
         }
     }
 
@@ -5152,8 +4697,8 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
             //tail je IdentifierType
-            short type1 = findType(type);
-            short type2 = getInitializer(initializer);
+            short type1 = TypeChecker.findType(type);
+            short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
                 return true;
@@ -5212,8 +4757,8 @@ public class Parser {
                 }
             }
 
-            short type1 = findType(type);
-            short type2 = getInitializer(initializer);
+            short type1 = TypeChecker.findType(type);
+            short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
                 return true;
@@ -5251,8 +4796,8 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
             }
 
-            short type1 = findType(type);
-            short type2 = getInitializer(initializer);
+            short type1 = TypeChecker.findType(type);
+            short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
                 return true;
@@ -5278,207 +4823,6 @@ public class Parser {
             return false;
         }
 
-    }
-
-    private short getInitializer(Node initializer) {
-        if (initializer instanceof InitializationList) {
-            return -1;
-        } else if (initializer instanceof BinaryOperator) {
-            return ((BinaryOperator) initializer).getTypeCategory();
-        } else if (initializer instanceof Assignment) {
-            return ((Assignment) initializer).getLeftType(symbolTable);
-        } else if (initializer instanceof TernaryOperator) {
-            return ((TernaryOperator) initializer).getTypeCategory();
-        } else if (initializer instanceof Cast) {
-            Node tail = initializer.getType();
-            String type = "";
-            boolean pointer = false;
-
-            while (!(tail instanceof IdentifierType)) {
-                if (tail.isEnumStructUnion()) {
-                    if (tail instanceof Enum) {
-                        type = "enum ";
-                    } else if (tail instanceof Struct) {
-                        type = "struct ";
-                    } else {
-                        type = "union ";
-                    }
-                    break;
-                }
-                if (tail instanceof PointerDeclaration) {
-                    pointer = true;
-                }
-                tail = tail.getType();
-            }
-
-            if (pointer) {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
-                } else {
-                    type += "* ";
-                }
-            } else {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
-                }
-            }
-
-            //spojí všetky typy do stringu a konvertuje ich na byte
-            return findType(type);
-        } else if (initializer instanceof UnaryOperator) {
-            return ((UnaryOperator) initializer).getTypeCategory();
-        } else if (initializer instanceof Identifier) {
-            //nájsť v symbolickej tabuľke
-            Record record = symbolTable.lookup(((Identifier) initializer).getName());
-            if (record == null) {
-                return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
-            } else {
-                return record.getType();
-            }
-        } else if (initializer instanceof Constant) {
-            return findType(((Constant) initializer).getTypeSpecifier() + " ");
-        } else if (initializer instanceof FunctionCall) {
-            Node id = initializer.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
-            } else {
-                return record.getType();
-            }
-        } else if (initializer instanceof ArrayReference) {
-            Node id = initializer.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -128;
-            } else {
-                return record.getType();
-            }
-        } else if (initializer instanceof  StructReference) {
-            Node id = initializer.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -128;
-            } else {
-                return record.getType();
-            }
-        } else {
-            return -128;
-        }
-    }
-
-    /**
-     * Funkcia na zistenie typu.
-     * @param type typ (String)
-     * @return typ (byte)
-     */
-    private short findType(String type) {
-        short pointer = 0;
-        for (int i = 0; i < type.length(); i++){
-            if (type.charAt(i) == '*') {
-                pointer += 50;
-            }
-        }
-        type = type.replace("* ", "");
-
-        if (type.equals("")) {
-            return -1;
-        }
-
-        //riešenie typov
-        switch (type) {
-            case "char ": return (short) (Type.CHAR + pointer);                                              // char
-            case "signed char ": return (short) (Type.SIGNEDCHAR + pointer);                                 // signed char
-            case "unsigned char ": return (short) (Type.UNSIGNEDCHAR + pointer);                             // unsigned char
-            case "short ": return (short) (Type.SHORT + pointer);                                            // short
-            case "signed short ": return (short) (Type.SIGNEDSHORT + pointer);                               // signed short
-            case "unsigned short ": return (short) (Type.UNSIGNEDSHORT + pointer);                           // unsigned short
-            case "int ": return (short) (Type.INT + pointer);                                                // int
-            case "signed ": return (short) (Type.SIGNED + pointer);                                          // signed
-            case "signed int ": return (short) (Type.SIGNEDINT + pointer);                                   // signed int
-            case "unsigned ": return (short) (Type.UNSIGNED + pointer);                                      // unsigned
-            case "unsigned int ": return (short) (Type.UNSIGNEDINT + pointer);                               // unsigned int
-            case "short int ": return (short) (Type.SHORTINT + pointer);                                     // short int
-            case "signed short int ": return (short) (Type.SIGNEDSHORTINT + pointer);                        // signed short int
-            case "unsigned short int ": return (short) (Type.UNSIGNEDSHORTINT + pointer);                    // unsigned short int
-            case "long ": return (short) (Type.LONG + pointer);                                              // long
-            case "signed long ": return (short) (Type.SIGNEDLONG + pointer);                                 // signed long
-            case "unsigned long ": return (short) (Type.UNSIGNEDLONG + pointer);                             // unsigned long
-            case "long int ": return (short) (Type.LONGINT + pointer);                                       // long int
-            case "signed long int ": return (short) (Type.SIGNEDLONGINT + pointer);                          // signed long int
-            case "unsigned long int ": return (short) (Type.UNSIGNEDLONGINT + pointer);                      // unsigned long int
-            case "long long ": return (short) (Type.LONGLONG + pointer);                                     // long long
-            case "long long int ": return (short) (Type.LONGLONGINT + pointer);                              // long long int
-            case "signed long long ": return (short) (Type.SIGNEDLONGLONG + pointer);                        // signed long long
-            case "signed long long int ": return (short) (Type.SIGNEDLONGLONGINT + pointer);                 // signed long long int
-            case "unsigned long long ": return (short) (Type.UNSIGNEDLONGLONG + pointer);                    // unsigned long long
-            case "unsigned long long int ": return (short) (Type.UNSIGNEDLONGLONGINT + pointer);             // unsigned long long int
-            case "float ": return (short) (Type.FLOAT + pointer);                                            // float
-            case "double ": return (short) (Type.DOUBLE + pointer);                                          // double
-            case "long double ": return (short) (Type.LONGDOUBLE + pointer);                                 // long double
-            case "union ": return (short) (Type.UNION + pointer);                                            // union
-            case "struct ": return (short) (Type.STRUCT + pointer);                                          // struct
-            case "enum ": return (short) (Type.ENUM + pointer);                                              // enum
-            case "void ": return (short) (Type.VOID + pointer);                                              // void
-            case "size_t ": return (short) (Type.UNSIGNEDINT + pointer);                                     // size_t
-            case "FILE ": return (short) (Type.FILE + pointer);                                              // FILE
-            case "string ": return Type.STRING;
-            default: return Type.TYPEDEF_TYPE;                                                              // vlastný typ
-        }
-    }
-
-    private void resolveUsage(Node node, SymbolTable table) {
-        if (node instanceof Identifier) {
-            Record record = table.lookup(((Identifier) node).getName());
-            if (record != null) {
-                if (!record.getInitialized()) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
-                }
-                record.addUsageLine(node.getLine());
-                table.setValue(((Identifier) node).getName(), record);
-            }
-        } else if (node instanceof StructReference) {
-            Node id = node.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record != null) {
-                if (!record.getInitialized()) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
-                }
-                record.addUsageLine(id.getLine());
-                table.setValue(((Identifier) id).getName(), record);
-            }
-        } else if (node instanceof ArrayReference) {
-            Node id = node.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record != null) {
-                record.addUsageLine(id.getLine());
-                table.setValue(((Identifier) id).getName(), record);
-            }
-        }
     }
 
 }

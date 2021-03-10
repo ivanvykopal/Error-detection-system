@@ -1,8 +1,10 @@
 package Compiler.AbstractSyntaxTree;
 
 import Compiler.Errors.ErrorDatabase;
+import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
 public class Assignment extends Node {
@@ -16,51 +18,15 @@ public class Assignment extends Node {
         this.right = right;
         setLine(line);
 
-        resolveInitialization(table);
+        SymbolTableFiller.resolveInitialization(left, table);
         if(!operator.equals("=")) {
-            resolveUsage(left, table, errorDatabase);
+            SymbolTableFiller.resolveUsage(left, table, errorDatabase);
         }
-        resolveUsage(right, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(right, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
             System.out.println("Sémantická chyba na riadku " + line + "!");
-        }
-    }
-
-    private void resolveInitialization(SymbolTable table) {
-        if (left instanceof Identifier) {
-            Record record = table.lookup(((Identifier) left).getName());
-            if (record != null) {
-                record.setInitialized(true);
-                record.addInitializationLine(line);
-                table.setValue(((Identifier) left).getName(), record);
-            }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record != null) {
-                record.setInitialized(true);
-                record.addInitializationLine(line);
-                table.setValue(((Identifier) id).getName(), record);
-            }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record != null) {
-                record.addInitializationLine(line);
-                table.setValue(((Identifier) id).getName(), record);
-            }
         }
     }
 
@@ -110,7 +76,6 @@ public class Assignment extends Node {
     }
 
     private short findTypeCategory(Node left, SymbolTable table) {
-        //TODO: zistiť či nie je potreba spraviť aj enum, struct, union
         if (left instanceof BinaryOperator) {
             return ((BinaryOperator) left).getTypeCategory();
         } else if (left instanceof Identifier) {
@@ -122,7 +87,7 @@ public class Assignment extends Node {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return findType(((Constant) left).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -199,7 +164,7 @@ public class Assignment extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return findType(type);
+            return TypeChecker.findType(type);
         } else if (left instanceof TernaryOperator) {
             return ((TernaryOperator) left).getTypeCategory();
         } else {
@@ -219,38 +184,4 @@ public class Assignment extends Node {
         if (right != null) right.traverse(indent + "    ");
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return null;
-    }
-
-    @Override
-    public void addType(Node type) {
-
-    }
-
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 }

@@ -1,8 +1,10 @@
 package Compiler.AbstractSyntaxTree;
 
 import Compiler.Errors.ErrorDatabase;
+import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
 public class TernaryOperator extends Node {
@@ -17,9 +19,9 @@ public class TernaryOperator extends Node {
         this.falsePart = falsePart;
         setLine(line);
 
-        resolveUsage(condition, table, errorDatabase);
-        resolveUsage(truePart, table, errorDatabase);
-        resolveUsage(falsePart, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
@@ -83,7 +85,7 @@ public class TernaryOperator extends Node {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return findType(((Constant) left).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -160,7 +162,7 @@ public class TernaryOperator extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return findType(type);
+            return TypeChecker.findType(type);
         } else if (left instanceof TernaryOperator) {
             return ((TernaryOperator) left).getTypeCategory();
         } else if (left instanceof Assignment) {
@@ -174,38 +176,4 @@ public class TernaryOperator extends Node {
         return typeCategory;
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return null;
-    }
-
-    @Override
-    public void addType(Node type) {
-
-    }
-
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 }

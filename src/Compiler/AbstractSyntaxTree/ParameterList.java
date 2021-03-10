@@ -1,8 +1,8 @@
 package Compiler.AbstractSyntaxTree;
 
 import Compiler.Errors.ErrorDatabase;
-import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.SymbolTableFiller;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class ParameterList extends Node {
         setLine(line);
 
         for (Node node: parameters) {
-            resolveUsage(node, table, errorDatabase);
+            SymbolTableFiller.resolveUsage(node, table, errorDatabase);
         }
     }
 
@@ -28,47 +28,12 @@ public class ParameterList extends Node {
         }
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return null;
-    }
-
-    @Override
-    public void addType(Node type) {
-
-    }
-
     public void addParameter(Node param) {
         parameters.add(param);
     }
 
     public ArrayList<Node> getParameters() {
         return parameters;
-    }
-
-    @Override
-    public boolean isIdentifierType() {
-        return false;
     }
 
 }

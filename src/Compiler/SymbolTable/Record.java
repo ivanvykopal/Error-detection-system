@@ -19,7 +19,7 @@ public class Record implements Serializable {
 
     // atribúty pre pole
     private ArrayList<String> parameters = new ArrayList<>();
-    private int size;
+    private int size = 0;
 
     /**
      * Konštruktor, v ktorom nastavujeme základné hodnoty.

@@ -1,8 +1,10 @@
 package Compiler.AbstractSyntaxTree;
 
 import Compiler.Errors.ErrorDatabase;
+import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
+import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
 public class BinaryOperator extends Node {
@@ -17,8 +19,8 @@ public class BinaryOperator extends Node {
         this.right = right;
         setLine(line);
 
-        resolveUsage(left, table, errorDatabase);
-        resolveUsage(right, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(left, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(right, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
@@ -95,7 +97,7 @@ public class BinaryOperator extends Node {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return findType(((Constant) left).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -172,7 +174,7 @@ public class BinaryOperator extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return findType(type);
+            return TypeChecker.findType(type);
         } else  {
             return -1;
         }
@@ -190,39 +192,5 @@ public class BinaryOperator extends Node {
         if (right != null) right.traverse(indent + "    ");
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
-
-    @Override
-    public Node getType() {
-        return null;
-    }
-
-    @Override
-    public void addType(Node type) {
-
-    }
-
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 
 }

@@ -26,25 +26,6 @@ public class ArrayDeclaration extends Node {
         return dimension;
     }
 
-    @Override
-    public boolean isNone() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnumStructUnion() {
-        return false;
-    }
-
-    @Override
-    public boolean isTypeDeclaration() {
-        return false;
-    }
 
     @Override
     public Node getType() {
@@ -56,8 +37,4 @@ public class ArrayDeclaration extends Node {
         this.type = type;
     }
 
-    @Override
-    public boolean isIdentifierType() {
-        return false;
-    }
 }

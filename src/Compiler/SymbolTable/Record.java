@@ -1,5 +1,6 @@
 package Compiler.SymbolTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,12 +8,11 @@ import java.util.ArrayList;
  * - dátový typ, riadok deklarovania, hodnota pri deklarácii, prvé využitie a typ (premenná, pole, ...)
  * Pre pole sa pridáva zoznam parametrov a veľkosť poľa.
  */
-public class Record {
-    private byte type;
+public class Record implements Serializable {
+    private short type;
     private String typeString;
     private int declarationLine;
-    private boolean declarated;
-    private int firstUsage;
+    private boolean initialized = false;
     private ArrayList<Integer> usageLines;
     private ArrayList<Integer> initializationLines;
     private byte kind;
@@ -26,14 +26,14 @@ public class Record {
      * @param type - dátovy typ premennej, resp. návratová hodnota
      * @param typeString - dátový typ premennej (String)
      * @param line - riadok deklarácie
-     * @param declarated - hodnota pri deklarácii
+     * @param initialized - hodnota pri deklarácii
      * @param kind - typ (premenná, pole, funkcia, parameter)
      */
-    public Record(byte type, String typeString, int line, boolean declarated, byte kind) {
+    public Record(short type, String typeString, int line, boolean initialized, byte kind) {
         this.type = type;
         this.typeString = typeString;
         this.declarationLine = line;
-        this.declarated = declarated;
+        this.initialized = initialized;
         this.kind = kind;
         usageLines = new ArrayList<>();
         initializationLines = new ArrayList<>();
@@ -46,18 +46,29 @@ public class Record {
      * @param line - riadok deklarácie
      * @param kind  - typ (premenná, pole, funkcia, parameter)
      */
-    public Record(byte type, String typeString, int line, byte kind) {
+    public Record(short type, String typeString, int line, byte kind) {
         this.type = type;
         this.typeString = typeString;
         this.declarationLine = line;
         this.kind = kind;
+        usageLines = new ArrayList<>();
+        initializationLines = new ArrayList<>();
+    }
+
+    public Record(short type, String typeString, int line, boolean initialized) {
+        this.type = type;
+        this.typeString = typeString;
+        this.declarationLine = line;
+        this.initialized = initialized;
+        usageLines = new ArrayList<>();
+        initializationLines = new ArrayList<>();
     }
 
     /**
      * Funkcia na zistenie hodnoty dátového typu.
      * @return dátový typ
      */
-    public byte getType() {
+    public short getType() {
         return type;
     }
 
@@ -65,7 +76,7 @@ public class Record {
      * Funkcia na nastavenie dátového typu.
      * @param type - dátový typ premennej, resp. návratová hodnota funkcie
      */
-    public void setType(byte type) {
+    public void setType(short type) {
         this.type = type;
     }
 
@@ -89,22 +100,22 @@ public class Record {
      * Funkcia na zistenie hodnoty deklarácie
      * @return hodnota deklarácie
      */
-    public boolean getDeclarated() {
-        return declarated;
+    public boolean getInitialized() {
+        return initialized;
     }
 
     /**
      * Funkcia na nastavenie hodnoty deklarácie.
-     * @param declarated - hodnota deklarácie
+     * @param initialized - hodnota deklarácie
      */
-    public void setDeclarated(boolean declarated) {
-        this.declarated = declarated;
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
-    /**
+    /*/**
      * Funkcia na zistenie riadku prvého využitia premennej alebo funkcie.
      * @return riadok prvého využitia
-     */
+     /
     public int getFirstUsage() {
         return firstUsage;
     }
@@ -112,11 +123,11 @@ public class Record {
     /**
      * Funkcia na nastavenie riadku prvého využitia premennej alebo funkcie.
      * @param firstUsage - riadok prvého využitia
-     */
+     *
     public void setFirstUsage(int firstUsage) {
         this.firstUsage = firstUsage;
     }
-
+    */
     /**
      * Funkcia na zistenie typu.
      * @return typ (premenná, pole, funkcia, parameter)
@@ -227,5 +238,30 @@ public class Record {
      */
     public void addInitializationLine(int line) {
         initializationLines.add(line);
+    }
+
+
+    public String toString() {
+        StringBuilder usageLinesString = new StringBuilder();
+        for (int i : usageLines) {
+            usageLinesString.append(i);
+            usageLinesString.append(", ");
+        }
+        StringBuilder initializationLinesString = new StringBuilder();
+        for (int i: initializationLines) {
+            initializationLinesString.append(i);
+            initializationLinesString.append(", ");
+        }
+
+        return "Typ (short): " + type +
+                "\nTyp (String): " + typeString +
+                "\nRiadok deklarácie: " + declarationLine +
+                "\nInicializovaná: " + initialized +
+                "\nRiadky využití: " + usageLinesString.toString() +
+                "\nRiadky inicializácií: " + initializationLinesString.toString() +
+                "\nKind: " + kind +
+                "\nParametre: " + String.join(", ", parameters) +
+                "\nVeľkosť poľa: " + size
+                + "\n----";
     }
 }

@@ -12,7 +12,7 @@ public class StructReference extends Node {
         setLine(line);
     }
 
-    public Node getName() {
+    public Node getNameNode() {
         return field;
     }
 

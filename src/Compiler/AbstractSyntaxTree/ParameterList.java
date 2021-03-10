@@ -1,13 +1,21 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 import java.util.ArrayList;
 
 public class ParameterList extends Node {
     ArrayList<Node> parameters;
 
-    public ParameterList(ArrayList<Node> params, int line) {
+    public ParameterList(ArrayList<Node> params, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.parameters = params;
         setLine(line);
+
+        for (Node node: parameters) {
+            resolveUsage(node, table, errorDatabase);
+        }
     }
 
     @Override

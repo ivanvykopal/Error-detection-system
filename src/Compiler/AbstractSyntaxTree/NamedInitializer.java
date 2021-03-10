@@ -1,14 +1,20 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 import java.util.ArrayList;
 
 public class NamedInitializer extends Node {
     ArrayList<Node> names;
     Node expression;
 
-    public NamedInitializer(ArrayList<Node> names, Node expr) {
+    public NamedInitializer(ArrayList<Node> names, Node expr, SymbolTable table, ErrorDatabase errorDatabase) {
         this.names = names;
         this.expression = expr;
+
+        resolveUsage(expression, table, errorDatabase);
     }
 
     @Override

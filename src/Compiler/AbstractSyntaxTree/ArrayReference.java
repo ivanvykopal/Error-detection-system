@@ -1,16 +1,25 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class ArrayReference extends Node {
     Node name;
     Node index;
 
-    public ArrayReference(Node name, Node index, int line) {
+    public ArrayReference(Node name, Node index, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.name = name;
         this.index = index;
         setLine(line);
+
+        resolveUsage(index, table, errorDatabase);
     }
 
-    public Node getName() {
+    //TODO: typechaking
+
+    @Override
+    public Node getNameNode() {
         return name;
     }
 

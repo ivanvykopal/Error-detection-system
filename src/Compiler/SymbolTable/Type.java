@@ -6,52 +6,52 @@ package Compiler.SymbolTable;
 public class Type {
 
     // Character 1B
-    public static byte CHAR = 0;
-    public static byte SIGNEDCHAR = 1;
-    public static byte UNSIGNEDCHAR = 2;
+    public static short CHAR = 0;
+    public static short SIGNEDCHAR = 1;
+    public static short UNSIGNEDCHAR = 2;
 
     // Integer types 2B
-    public static byte SHORT = 3;
-    public static byte SIGNEDSHORT = 4;
-    public static byte UNSIGNEDSHORT = 5;
-    public static byte SHORTINT = 6;
-    public static byte SIGNEDSHORTINT = 7;
-    public static byte UNSIGNEDSHORTINT = 8;
+    public static short SHORT = 3;
+    public static short SIGNEDSHORT = 4;
+    public static short UNSIGNEDSHORT = 5;
+    public static short SHORTINT = 6;
+    public static short SIGNEDSHORTINT = 7;
+    public static short UNSIGNEDSHORTINT = 8;
 
     //Integer types 4B
-    public static byte INT = 9;
-    public static byte SIGNED = 10;
-    public static byte SIGNEDINT = 11;
-    public static byte UNSIGNED = 12;
-    public static byte UNSIGNEDINT = 13;
-    public static byte LONG = 14;
-    public static byte SIGNEDLONG = 15;
-    public static byte UNSIGNEDLONG = 16;
-    public static byte LONGINT = 17;
-    public static byte SIGNEDLONGINT = 18;
-    public static byte UNSIGNEDLONGINT = 19;
+    public static short INT = 9;
+    public static short SIGNED = 10;
+    public static short SIGNEDINT = 11;
+    public static short UNSIGNED = 12;
+    public static short UNSIGNEDINT = 13;
+    public static short LONG = 14;
+    public static short SIGNEDLONG = 15;
+    public static short UNSIGNEDLONG = 16;
+    public static short LONGINT = 17;
+    public static short SIGNEDLONGINT = 18;
+    public static short UNSIGNEDLONGINT = 19;
 
     //Integer types 8B
-    public static byte LONGLONG = 20;
-    public static byte LONGLONGINT = 21;
-    public static byte SIGNEDLONGLONG = 22;
-    public static byte SIGNEDLONGLONGINT = 23;
-    public static byte UNSIGNEDLONGLONG = 24;
-    public static byte UNSIGNEDLONGLONGINT = 25;
+    public static short LONGLONG = 20;
+    public static short LONGLONGINT = 21;
+    public static short SIGNEDLONGLONG = 22;
+    public static short SIGNEDLONGLONGINT = 23;
+    public static short UNSIGNEDLONGLONG = 24;
+    public static short UNSIGNEDLONGLONGINT = 25;
 
     // Real numbers
-    public static byte FLOAT = 26;
-    public static byte DOUBLE = 27;
-    public static byte LONGDOUBLE = 28;
+    public static short FLOAT = 26;
+    public static short DOUBLE = 27;
+    public static short LONGDOUBLE = 28;
 
-    public static byte UNION = 29;
-    public static byte STRUCT = 30;
-    public static byte ENUM = 31;
+    public static short UNION = 29;
+    public static short STRUCT = 30;
+    public static short ENUM = 31;
 
-    public static byte VOID = 32;
-    public static byte TYPEDEF_TYPE = 33;
+    public static short VOID = 32;
+    public static short TYPEDEF_TYPE = 33;
 
-    public static byte BOOL = 34;
-    public static byte STRING = 35;
-    public static byte FILE = 36;
+    public static short BOOL = 34;
+    public static short STRING = 35;
+    public static short FILE = 36;
 }

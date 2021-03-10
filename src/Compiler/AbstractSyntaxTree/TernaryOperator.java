@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
@@ -8,13 +9,17 @@ public class TernaryOperator extends Node {
     Node condition;
     Node truePart;
     Node falsePart;
-    byte typeCategory;
+    short typeCategory;
 
-    public TernaryOperator(Node cond, Node truePart, Node falsePart, SymbolTable table, int line) {
+    public TernaryOperator(Node cond, Node truePart, Node falsePart, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.condition = cond;
         this.truePart = truePart;
         this.falsePart = falsePart;
         setLine(line);
+
+        resolveUsage(condition, table, errorDatabase);
+        resolveUsage(truePart, table, errorDatabase);
+        resolveUsage(falsePart, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
@@ -31,8 +36,8 @@ public class TernaryOperator extends Node {
     }
 
     private boolean typeCheck(SymbolTable table) {
-        byte var1 = findTypeCategory(truePart, table);
-        byte var2 = findTypeCategory(falsePart, table);
+        short var1 = findTypeCategory(truePart, table);
+        short var2 = findTypeCategory(falsePart, table);
 
         if (var1 == -2 && var2 >= 0) {
             typeCategory = var2;
@@ -66,7 +71,7 @@ public class TernaryOperator extends Node {
         return false;
     }
 
-    private byte findTypeCategory(Node left, SymbolTable table) {
+    private short findTypeCategory(Node left, SymbolTable table) {
         if (left instanceof BinaryOperator) {
             return ((BinaryOperator) left).getTypeCategory();
         } else if (left instanceof Identifier) {
@@ -80,24 +85,39 @@ public class TernaryOperator extends Node {
         } else if (left instanceof Constant) {
             return findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
-            Identifier id = (Identifier) ((FunctionCall) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
         } else if (left instanceof ArrayReference) {
-            Identifier id = (Identifier) ((ArrayReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
                 return record.getType();
             }
         } else if (left instanceof StructReference) {
-            Identifier id = (Identifier) ((StructReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
@@ -150,7 +170,7 @@ public class TernaryOperator extends Node {
         }
     }
 
-    public byte getTypeCategory() {
+    public short getTypeCategory() {
         return typeCategory;
     }
 

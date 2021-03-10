@@ -1,13 +1,19 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class Case extends Node {
     Node constant;
     Node statement;
 
-    public Case(Node cont, Node stmt, int line) {
+    public Case(Node cont, Node stmt, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.constant = cont;
         this.statement = stmt;
         setLine(line);
+
+        resolveUsage(constant, table, errorDatabase);
     }
 
     @Override

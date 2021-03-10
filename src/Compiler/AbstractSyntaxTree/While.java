@@ -1,13 +1,19 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class While extends Node {
     Node condition;
     Node statement;
 
-    public While(Node cond, Node stmt, int line) {
+    public While(Node cond, Node stmt, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.condition = cond;
         this.statement = stmt;
         setLine(line);
+
+        resolveUsage(condition, table, errorDatabase);
     }
 
     @Override

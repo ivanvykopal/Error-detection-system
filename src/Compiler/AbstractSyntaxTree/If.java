@@ -1,15 +1,21 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class If extends Node {
     Node condition;
     Node truePart;
     Node falsePart;
 
-    public If(Node cond, Node truePart, Node falsePart, int line) {
+    public If(Node cond, Node truePart, Node falsePart, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.condition = cond;
         this.truePart = truePart;
         this.falsePart = falsePart;
         setLine(line);
+
+        resolveUsage(condition, table, errorDatabase);
     }
 
     @Override

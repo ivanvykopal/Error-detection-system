@@ -1,13 +1,21 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 import java.util.ArrayList;
 
 public class InitializationList extends Node {
     ArrayList<Node> expressions;
 
-    public InitializationList(ArrayList<Node> exprs, int line) {
+    public InitializationList(ArrayList<Node> exprs, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.expressions = exprs;
         setLine(line);
+
+        for (Node node : expressions) {
+            resolveUsage(node, table, errorDatabase);
+        }
     }
 
     @Override

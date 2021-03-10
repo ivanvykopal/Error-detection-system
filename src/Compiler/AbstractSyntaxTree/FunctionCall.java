@@ -10,7 +10,8 @@ public class FunctionCall extends Node {
         setLine(line);
     }
 
-    public Node getName() {
+    @Override
+    public Node getNameNode() {
         return name;
     }
 

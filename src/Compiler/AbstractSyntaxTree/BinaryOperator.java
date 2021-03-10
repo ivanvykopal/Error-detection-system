@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
@@ -8,13 +9,16 @@ public class BinaryOperator extends Node {
     Node left;
     Node right;
     String operator;
-    byte typeCategory;
+    short typeCategory;
 
-    public BinaryOperator(Node left, String op, Node right, SymbolTable table, int line) {
+    public BinaryOperator(Node left, String op, Node right, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.left = left;
         this.operator = op;
         this.right = right;
         setLine(line);
+
+        resolveUsage(left, table, errorDatabase);
+        resolveUsage(right, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
@@ -23,15 +27,15 @@ public class BinaryOperator extends Node {
     }
 
     private boolean typeCheck(SymbolTable table) {
-        byte var1 = findTypeCategory(left, table);
-        byte var2 = findTypeCategory(right, table);
+        short var1 = findTypeCategory(left, table);
+        short var2 = findTypeCategory(right, table);
 
         if (var1 == -1 || var2 == -1) {
             typeCategory = -1;
             return false;
         }
 
-        byte type = maxType(var1, var2);
+        short type = maxType(var1, var2);
         if (type == -1) {
             typeCategory = -1;
             return false;
@@ -60,7 +64,7 @@ public class BinaryOperator extends Node {
         }
     }
 
-    private byte maxType(byte var1, byte var2) {
+    private short maxType(short var1, short var2) {
         if (var1 == var2) {
             return var1;
         }
@@ -79,7 +83,7 @@ public class BinaryOperator extends Node {
         return -1;
     }
 
-    private byte findTypeCategory(Node left, SymbolTable table) {
+    private short findTypeCategory(Node left, SymbolTable table) {
         if (left instanceof BinaryOperator) {
             return ((BinaryOperator) left).getTypeCategory();
         } else if (left instanceof Identifier) {
@@ -93,24 +97,39 @@ public class BinaryOperator extends Node {
         } else if (left instanceof Constant) {
             return findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
-            Identifier id = (Identifier) ((FunctionCall) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
                 return record.getType();
             }
         } else if (left instanceof ArrayReference) {
-            Identifier id = (Identifier) ((ArrayReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
                 return record.getType();
             }
         } else if (left instanceof StructReference) {
-            Identifier id = (Identifier) ((StructReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
@@ -159,7 +178,7 @@ public class BinaryOperator extends Node {
         }
     }
 
-    public byte getTypeCategory() {
+    public short getTypeCategory() {
         return typeCategory;
     }
 

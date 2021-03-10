@@ -1,17 +1,25 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class For extends Node {
     Node initializer;
     Node condition;
     Node next;
     Node statement;
 
-    public For(Node init, Node cond, Node next, Node stmt, int line) {
+    public For(Node init, Node cond, Node next, Node stmt, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.initializer = init;
         this.condition = cond;
         this.next = next;
         this.statement = stmt;
         setLine(line);
+
+        resolveUsage(initializer, table, errorDatabase);
+        resolveUsage(condition, table, errorDatabase);
+        resolveUsage(next, table, errorDatabase);
     }
 
     @Override

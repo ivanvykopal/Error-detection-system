@@ -6,8 +6,8 @@ import java.util.Map;
 /**
  * Trieda obsahujúca chyby.
  */
-public class Error {
-    Map<String, String> errors = new HashMap<String, String>() {{
+public final class Error {
+    static Map<String, String> errors = new HashMap<String, String>() {{
         // symbol table errors
         put("E-ST-01", "neinicializovaná premenná");
         put("E-ST-02", "inicializácia mimo rozsah");
@@ -47,7 +47,9 @@ public class Error {
         put("E-RP-08", "priradenie dynamického smerníka do statického");
     }};
 
-    public String getError(String key) {
+    private Error() {}
+
+    public static String getError(String key) {
         return errors.get(key);
     }
 

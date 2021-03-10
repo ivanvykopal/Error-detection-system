@@ -15,7 +15,6 @@ import Compiler.AbstractSyntaxTree.*;
 import Compiler.SymbolTable.Type;
 
 public class Parser {
-    private Error err = new Error();
     private int position = 0;
     public ArrayList<Token> tokenStream = new ArrayList<>();
     private Node parseTree;
@@ -33,7 +32,7 @@ public class Parser {
                 if (tok.tag == Tag.EOF) {
                     break;
                 } else {
-                    System.out.println(tok.line + ": " + tok.value);
+                    //System.out.println(tok.line + ": " + tok.value);
                     tokenStream.add(tok);
                 }
             } catch (IOException e) {
@@ -50,6 +49,7 @@ public class Parser {
         } else {
             parseTree = new AST(child);
             parseTree.traverse("");
+            symbolTable.printSymbolTable(0);
         }
     }
 
@@ -105,11 +105,11 @@ public class Parser {
             case Tag.LEFT_BRACES:
             case Tag.RIGHT_BRACES:
                 System.out.println("Chybajúca zátvorka na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-01"), "E-SxA-01");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-01"), "E-SxA-01");
                 break;
             case Tag.SEMICOLON:
                 System.out.println("Chybajúca ; na riadku " + getTokenLine() + "!" + getTokenValue());
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-03"), "E-SxA-03");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-03"), "E-SxA-03");
                 break;
             case Tag.PLUS:
             case Tag.MINUS:
@@ -117,15 +117,15 @@ public class Parser {
             case Tag.DIV:
             case Tag.MOD:
                 System.out.println("Chybajúci operátor na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-05"), "E-SxA-05");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-05"), "E-SxA-05");
                 break;
             case Tag.IDENTIFIER:
                 if (getTokenTag() < 32) {
                     System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("L-SxA-09"), "L-SxA-09");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
                 } else {
                     System.out.println("Chybajúci argument na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-06"), "E-SxA-06");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-06"), "E-SxA-06");
                 }
                 break;
             default:
@@ -137,15 +137,15 @@ public class Parser {
                     case Tag.LEFT_PARENTHESES:
                     case Tag.RIGHT_PARENTHESES:
                         System.out.println("Zátvorka naviac na riadku " + getTokenLine() + "!");
-                        errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-02"), "E-SxA-02");
+                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-02"), "E-SxA-02");
                         break;
                     default:
                         if (tag < 32 && getTokenTag() == Tag.IDENTIFIER) {
                             System.out.println("Chybné kľúčové slovo na riadku " + getTokenLine() + "!");
-                            errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-04"), "E-SxA-04");
+                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-04"), "E-SxA-04");
                         } else {
                             System.out.println("Chyba na riadku " + getTokenLine() + "!");
-                            errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                         }
                 }
                 break;
@@ -167,7 +167,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -296,7 +296,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -390,7 +390,7 @@ public class Parser {
                     child2 = expect(Tag.RIGHT_BRACKETS);
                 }
                 if (child2 != null) {
-                    ref = new ArrayReference(child, child1, child.getLine());
+                    ref = new ArrayReference(child, child1, child.getLine(), symbolTable, errorDatabase);
                     child3 = rest1(ref);
                 }
                 if (child3 != null && !child3.isEmpty()) {
@@ -401,7 +401,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DOT:
@@ -425,7 +425,7 @@ public class Parser {
             case Tag.DEC:
                 terminal = getTokenValue();
                 nextToken();
-                ref = new UnaryOperator(child, terminal, symbolTable, child.getLine());
+                ref = new UnaryOperator(child, terminal, child.getLine(), symbolTable, errorDatabase);
                 child1 = rest1(ref);
                 if (child1 != null && !child1.isEmpty()) {
                     return child1;
@@ -464,7 +464,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -496,15 +496,15 @@ public class Parser {
                     arr.add(child1);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
-            return new ExpressionList(arr, line);
+            return new ExpressionList(arr, line, symbolTable, errorDatabase);
         }
         if (child1 != null && child1.isNone()) {
             System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-            errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
         }
         return null;
     }
@@ -532,11 +532,11 @@ public class Parser {
                 nextToken();
                 child1 = unary_expression();
                 if (child1 != null && !child1.isNone()) {
-                    return new UnaryOperator(child1, terminal, symbolTable, child1.getLine());
+                    return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.SIZEOF:
@@ -550,18 +550,18 @@ public class Parser {
                         child2 = expect(Tag.RIGHT_PARENTHESES);
                     }
                     if (child2 != null) {
-                        return new UnaryOperator(child1, terminal, symbolTable, child1.getLine());
+                        return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                     }
                     child1 = unary_expression();
                     if (child1 != null && !child1.isNone()) {
                         child2 = expect(Tag.RIGHT_PARENTHESES);
                     }
                     if (child2 != null) {
-                        return new UnaryOperator(child1, terminal, symbolTable, child1.getLine());
+                        return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                     }
                     if (child1 != null && child1.isNone()) {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                        errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     }
                     return null;
                 } else {
@@ -570,10 +570,10 @@ public class Parser {
                         return null;
                     }
                     if (!child1.isNone()) {
-                        return new UnaryOperator(child1, terminal, symbolTable, child1.getLine());
+                        return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                     } else {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                        errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                         return null;
                     }
                 }
@@ -583,10 +583,10 @@ public class Parser {
             child1 = cast_expression();
             if (child1.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
-                return new UnaryOperator(child1, operator, symbolTable, child1.getLine());
+                return new UnaryOperator(child1, operator, child1.getLine(), symbolTable, errorDatabase);
             }
         }
         child1 = postfix_expression();
@@ -630,7 +630,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -647,7 +647,7 @@ public class Parser {
                 child3 = cast_expression();
             }
             if (child3 != null && !child3.isNone()) {
-                return new Cast(child1, child3, line);
+                return new Cast(child1, child3, line, symbolTable, errorDatabase);
             }
             position = pos;
             symbolTable = copySymbolTable;
@@ -679,10 +679,10 @@ public class Parser {
                 binOperator = child1;
                 child1 = cast_expression();
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -715,10 +715,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -751,10 +751,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -789,10 +789,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -825,10 +825,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -860,10 +860,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -895,10 +895,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -930,10 +930,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -965,10 +965,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1000,10 +1000,10 @@ public class Parser {
                     return null;
                 }
                 if (!child1.isNone()) {
-                    child1 = new BinaryOperator(binOperator, terminal, child1, symbolTable, binOperator.getLine());
+                    child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1036,11 +1036,11 @@ public class Parser {
                     child4 = conditional_expression();
                 }
                 if (child4 != null && !child4.isNone()) {
-                    return new TernaryOperator(child1, child2, child4, symbolTable, child1.getLine());
+                    return new TernaryOperator(child1, child2, child4, child1.getLine(), symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -1062,7 +1062,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -1081,10 +1081,10 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
-                return new Assignment(child1, operator, child2, symbolTable, child1.getLine());
+                return new Assignment(child1, operator, child2, child1.getLine(), symbolTable, errorDatabase);
             }
         }
         position = pos;
@@ -1143,11 +1143,11 @@ public class Parser {
                     arr.add(child1);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
-            return new ExpressionList(arr, line);
+            return new ExpressionList(arr, line, symbolTable, errorDatabase);
         }
         return new None();
     }
@@ -1245,7 +1245,7 @@ public class Parser {
                 return arr;
             } else {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             }
         }
@@ -1338,7 +1338,7 @@ public class Parser {
                     arr.add(child1);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1369,13 +1369,13 @@ public class Parser {
                 }
                 if (child2 != null && child2.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
                 if (getTokenValue().equals("==")) {
                     System.out.println("Využitie '==' namiesto '=' na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 return new InitDeclarator(child1, null);
@@ -1573,7 +1573,7 @@ public class Parser {
             }
             if (getTokenTag() < 32) {
                 System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("L-SxA-09"), "L-SxA-09");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
                 return null;
             }
         }
@@ -1762,7 +1762,7 @@ public class Parser {
                     arr.add(child1);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1790,7 +1790,7 @@ public class Parser {
             }
             if (child1 != null && child1.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
             }
             return null;
         }
@@ -1807,7 +1807,7 @@ public class Parser {
                 }
                 if (child2 != null && child2.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -1833,7 +1833,7 @@ public class Parser {
             }
             if (child1 != null && child1.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
             }
             return null;
         }
@@ -1915,7 +1915,7 @@ public class Parser {
         }
         if (getTokenTag() < 32) {
             System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
-            errorDatabase.addErrorMessage(getTokenLine(), err.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -1948,7 +1948,7 @@ public class Parser {
                     arr.add(child1);
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1977,7 +1977,7 @@ public class Parser {
                 }
                 if (child2 != null && child2.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -2044,7 +2044,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -2087,7 +2087,7 @@ public class Parser {
         //TODO: nie som si istý
         if (getTokenTag() < 32) {
             System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
-            errorDatabase.addErrorMessage(getTokenLine(), err.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -2112,7 +2112,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.LEFT_PARENTHESES:
@@ -2123,7 +2123,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -2146,8 +2146,8 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
-            copyErrorDatabase = (ErrorDatabase) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
+            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -2187,7 +2187,7 @@ public class Parser {
                     return child1;
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             case Tag.RIGHT_BRACKETS:
@@ -2235,7 +2235,7 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -2330,7 +2330,7 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_BRACKETS);
@@ -2396,7 +2396,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -2432,7 +2432,7 @@ public class Parser {
                 child1 = assignment_expression();
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
@@ -2616,12 +2616,12 @@ public class Parser {
                     arr.add(child1);
                 } else {
                    position--;
-                   return new ParameterList(arr, line);
+                   return new ParameterList(arr, line, symbolTable, errorDatabase);
                 }
             }
-            return new ParameterList(arr, line);
+            return new ParameterList(arr, line, symbolTable, errorDatabase);
         }
-        return new ParameterList(arr, 0);
+        return new ParameterList(arr, 0, symbolTable, errorDatabase);
     }
 
     /**
@@ -2646,7 +2646,7 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -2674,7 +2674,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -2740,15 +2740,15 @@ public class Parser {
                     nextToken();
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
-            return new ParameterList(arr, line);
+            return new ParameterList(arr, line, symbolTable, errorDatabase);
         }
         if (getTokenTag() < 32) {
             System.out.println("Využitie kľúčového slova namiesto premennej na riadku " + getTokenLine() + "!");
-            errorDatabase.addErrorMessage(getTokenLine(), err.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -2831,7 +2831,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -2856,7 +2856,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -2947,7 +2947,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -3009,7 +3009,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3049,7 +3049,7 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -3076,7 +3076,7 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_BRACKETS);
@@ -3155,7 +3155,7 @@ public class Parser {
                 child1 = assignment_expression();
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
@@ -3248,7 +3248,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.LEFT_PARENTHESES:
@@ -3259,7 +3259,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -3385,12 +3385,12 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 ArrayList<Node> arr = new ArrayList<>();
-                arr.add(new NamedInitializer(child1, child2));
-                InitializationList init = new InitializationList(arr, child2.getLine());
+                arr.add(new NamedInitializer(child1, child2, symbolTable, errorDatabase));
+                InitializationList init = new InitializationList(arr, child2.getLine(), symbolTable, errorDatabase);
                 child3 = rest23(init);
                 if (child3 == null) {
                     return null;
@@ -3406,7 +3406,7 @@ public class Parser {
         if (!child2.isNone()) {
             ArrayList<Node> arr = new ArrayList<>();
             arr.add(child2);
-            InitializationList init = new InitializationList(arr, child2.getLine());
+            InitializationList init = new InitializationList(arr, child2.getLine(), symbolTable, errorDatabase);
             child3 = rest23(init);
             if (child3 == null) {
                 return null;
@@ -3440,10 +3440,10 @@ public class Parser {
                 }
                 if (child2.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 } else {
-                    init.addExpression(new NamedInitializer(child1, child2));
+                    init.addExpression(new NamedInitializer(child1, child2, symbolTable, errorDatabase));
                     child3 = rest23(init);
                     if (child3 == null) {
                         return null;
@@ -3466,7 +3466,7 @@ public class Parser {
                 }
             }
             System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-            errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
             return null;
         }
         return new EmptyStatement();
@@ -3490,7 +3490,7 @@ public class Parser {
                 return child1;
             } else {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             }
         }
@@ -3551,7 +3551,7 @@ public class Parser {
                 }
                 if (child1 != null && child1.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DOT:
@@ -3580,7 +3580,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -3647,7 +3647,7 @@ public class Parser {
         SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySymbolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -3683,7 +3683,7 @@ public class Parser {
                 }
                 if (child2 != null && child2.isNone()) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.CASE:
@@ -3697,11 +3697,11 @@ public class Parser {
                     child3 = statement(true);
                 }
                 if (child3 != null && !child3.isNone()) {
-                    return new Case(child1, child3, line);
+                    return new Case(child1, child3, line, symbolTable, errorDatabase);
                 }
                 if ((child1 != null && child1.isNone()) || (child3 != null && child3.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3725,13 +3725,17 @@ public class Parser {
                 return new Compound(null, line);
             }
 
-            SymbolTable parent = symbolTable;
+            //SymbolTable parent = symbolTable;
             if (createSymbolTable) {
                 //vytvorenie vnorenej tabuľky
                 symbolTable = new SymbolTable(symbolTable);
-                if (parent != null) {
-                    parent.addChild(symbolTable);
+                if (symbolTable.getParent() != null) {
+                    symbolTable.getParent().addChild(symbolTable);
                 }
+
+                /*if (parent != null) {
+                    parent.addChild(symbolTable);
+                }*/
             }
 
             ArrayList<Node> child1 = block_item_list();
@@ -3763,7 +3767,8 @@ public class Parser {
                     return new Err();
                 } else {
                     if (createSymbolTable) {
-                        symbolTable = parent;
+                        //symbolTable = parent;
+                        symbolTable = symbolTable.getParent();
                     }
                     return new Compound(child1, line);
                 }
@@ -3914,16 +3919,16 @@ public class Parser {
                         nextToken();
                         child5 = statement(true);
                         if (child5 != null && !child5.isNone()) {
-                            return new If(child2, child4, child5, line);
+                            return new If(child2, child4, child5, line, symbolTable, errorDatabase);
                         }
                     } else {
-                        return new If(child2, child4, null, line);
+                        return new If(child2, child4, null, line, symbolTable, errorDatabase);
                     }
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())
                         || (child5 != null && child5.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.SWITCH:
@@ -3940,11 +3945,11 @@ public class Parser {
                     child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
-                    return new Switch(child2, child4, line);
+                    return new Switch(child2, child4, line, symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3979,11 +3984,11 @@ public class Parser {
                     child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
-                    return new While(child2, child4, line);
+                    return new While(child2, child4, line, symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DO:
@@ -4018,7 +4023,7 @@ public class Parser {
                     return new Err();
                 }
                 if (child6 != null) {
-                    return new DoWhile(child4, child1, line);
+                    return new DoWhile(child4, child1, line, symbolTable, errorDatabase);
                 } else {
                     //error recovery
                     while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
@@ -4049,7 +4054,7 @@ public class Parser {
                     return child2;
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -4067,12 +4072,15 @@ public class Parser {
      */
     //DONE
     private Node left33(int line) {
-        SymbolTable parent = symbolTable;
+        //SymbolTable parent = symbolTable;
         //vytvorenie vnorenej tabuľky
         symbolTable = new SymbolTable(symbolTable);
-        if (parent != null) {
-            parent.addChild(symbolTable);
+        if (symbolTable.getParent() != null) {
+            symbolTable.getParent().addChild(symbolTable);
         }
+        /*if (parent != null) {
+            parent.addChild(symbolTable);
+        }*/
 
         Node child1 = expression_statement();
         Node child2, child3;
@@ -4086,13 +4094,14 @@ public class Parser {
             }
              if (child2.isNone()) {
                  System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                 errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                 errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                  if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                      nextToken();
                      child3 = statement(false);
-                     symbolTable = parent;
+                     symbolTable = symbolTable.getParent();
+                     //symbolTable = parent;
                      if (child3 != null && !child3.isNone()) {
                          if (child1.isEmpty()) {
                              child1 = null;
@@ -4100,11 +4109,11 @@ public class Parser {
                          if (child2.isEmpty()) {
                              child2 = null;
                          }
-                         return new For(child1, child2, null, child3, line);
+                         return new For(child1, child2, null, child3, line, symbolTable, errorDatabase);
                      }
                      if (child3 != null && child3.isNone()) {
                          System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                         errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                         errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                      }
                      return null;
                  }
@@ -4119,13 +4128,14 @@ public class Parser {
                          return null;
                      } else {
                          child5 = statement(false);
-                         symbolTable = parent;
+                         symbolTable = symbolTable.getParent();
+                         //symbolTable = parent;
                          if (child5 == null) {
                              return null;
                          }
                          if (child5.isNone()) {
                              System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                             errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                             errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                              return null;
                          } else {
                              if (child1.isEmpty()) {
@@ -4134,12 +4144,12 @@ public class Parser {
                              if (child2.isEmpty()) {
                                  child2 = null;
                              }
-                             return new For(child1, child2, child3, child5, line);
+                             return new For(child1, child2, child3, child5, line, symbolTable, errorDatabase);
                          }
                      }
                  } else {
                      System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                     errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                     errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                      return null;
                  }
             }
@@ -4155,22 +4165,23 @@ public class Parser {
             }
             if (child2.isNone()) {
                 System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                     nextToken();
                     child3 = statement(false);
-                    symbolTable = parent;
+                    symbolTable = symbolTable.getParent();
+                    //symbolTable = parent;
                     if (child3 != null && !child3.isNone()) {
                         if (child2.isEmpty()) {
                             child2 = null;
                         }
-                        return new For(new DeclarationList(child, line), child2, null, child3, line);
+                        return new For(new DeclarationList(child, line), child2, null, child3, line, symbolTable, errorDatabase);
                     }
                     if (child3 != null && child3.isNone()) {
                         System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                        errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     }
                     return null;
                 }
@@ -4185,24 +4196,25 @@ public class Parser {
                         return null;
                     } else {
                         child5 = statement(false);
-                        symbolTable = parent;
+                        symbolTable = symbolTable.getParent();
+                        //symbolTable = parent;
                         if (child5 == null) {
                             return null;
                         }
                         if (child5.isNone()) {
                             System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                            errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                             return null;
                         } else {
                             if (child2.isEmpty()) {
                                 child2 = null;
                             }
-                            return new For(new DeclarationList(child, line), child2, child3, child5, line);
+                            return new For(new DeclarationList(child, line), child2, child3, child5, line, symbolTable, errorDatabase);
                         }
                     }
                 } else {
                     System.out.println("Syntaktická chyba na riadku " + getTokenLine() + "!");
-                    errorDatabase.addErrorMessage(getTokenLine(), err.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -4312,7 +4324,7 @@ public class Parser {
                 nextToken();
                 if (getTokenTag() == Tag.SEMICOLON) {
                     nextToken();
-                    return new Return(null, line);
+                    return new Return(null, line, symbolTable, errorDatabase);
                 }
                 child1 = expression();
                 if (child1 == null) {
@@ -4345,7 +4357,7 @@ public class Parser {
                             return null;
                         }
                     } else {
-                        return new Return(child1, line);
+                        return new Return(child1, line, symbolTable, errorDatabase);
                     }
                 }
                 //TODO: odchytiť chybu??
@@ -4390,10 +4402,10 @@ public class Parser {
      */
     //DONE
     private ArrayList<Node> external_declaration() {
-        SymbolTable copySmybolTable = null;
+        SymbolTable copySymbolTable = null;
         ErrorDatabase copyErrorDatabase = null;
         try {
-            copySmybolTable = (SymbolTable) symbolTable.clone();
+            copySymbolTable = symbolTable.createCopy();
             copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -4406,7 +4418,7 @@ public class Parser {
             return arr;
         }
         position = pos;
-        symbolTable = copySmybolTable;
+        symbolTable = copySymbolTable;
         errorDatabase = copyErrorDatabase;
         ArrayList<Node> child2 = declaration();
         if (child2 == null) {
@@ -4560,6 +4572,10 @@ public class Parser {
 
                 addRecordToSymbolTable(declarator1, typedef, parameter, structVariable);
 
+                if (declarator1.getInitializer() != null) {
+                    resolveUsage(declarator1.getInitializer(), symbolTable);
+                }
+
                 decls.add(declaration);
             }
         }
@@ -4590,7 +4606,7 @@ public class Parser {
             if (!t_name.isIdentifierType()) {
                 if (typename.size() > 1) {
                     System.out.println("Chybný typ!");
-                    errorDatabase.addErrorMessage(111, err.getError("E-SmA-01"), "E-SmA-01");
+                    errorDatabase.addErrorMessage(111, Error.getError("E-SmA-01"), "E-SmA-01");
                     return null;
                 } else {
                     type.addType(t_name);
@@ -4602,7 +4618,7 @@ public class Parser {
         if (typename.isEmpty()) {
             if (!(decl.getType() instanceof FunctionDeclaration)) {
                 System.out.println("Chýbajúci typ!");
-                errorDatabase.addErrorMessage(111, err.getError("E-SmA-01"), "E-SmA-01");
+                errorDatabase.addErrorMessage(111, Error.getError("E-SmA-01"), "E-SmA-01");
                 return null;
             }
             ArrayList<String> arr = new ArrayList<>();
@@ -4667,7 +4683,7 @@ public class Parser {
                 String name = "";
                 String type = "";
                 String struct_name = "";
-                byte typeCategory;
+                short typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
@@ -4701,7 +4717,14 @@ public class Parser {
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
-                symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
+                Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
+
+                symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
+                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
 
             } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
@@ -4709,7 +4732,7 @@ public class Parser {
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
                 int line = 0;
                 String type = "";
-                byte typeCategory;
+                short typeCategory;
                 String struct_name = "";
 
                 while (!(decl_tail instanceof IdentifierType)) {
@@ -4741,7 +4764,15 @@ public class Parser {
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
-                symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
+                Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
+
+                symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
+
+                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
             }
         } else {
@@ -4751,7 +4782,7 @@ public class Parser {
                 String name = "";
                 String type = "";
                 String struct_name = "";
-                byte typeCategory;
+                short typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
@@ -4785,15 +4816,29 @@ public class Parser {
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
+                Record record = new Record(typeCategory, type, line, false);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
+
                 if (structVariable) {
-                    symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
+                    record.setKind(Kind.STRUCT_PARAMETER);
+                    symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
+
+                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
                     if (parameter) {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
+                        record.setKind(Kind.PARAMETER);
+                        record.setInitialized(true);
+                        symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
                     } else {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
+                        record.setKind(Kind.VARIABLE);
+                        symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
                     }
                 }
@@ -4804,7 +4849,7 @@ public class Parser {
                 int line = 0;
                 String type = "";
                 String struct_name = "";
-                byte typeCategory;
+                short typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail.isEnumStructUnion()) {
@@ -4835,15 +4880,28 @@ public class Parser {
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
+                Record record = new Record(typeCategory, type, line, false);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
+
                 if (structVariable) {
-                    symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
+                    record.setKind(Kind.STRUCT_PARAMETER);
+                    symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
+                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
                     if (parameter) {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
+                        record.setKind(Kind.PARAMETER);
+                        record.setInitialized(true);
+                        symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
                     } else {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
+                        record.setKind(Kind.VARIABLE);
+                        symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
                     }
                 }
@@ -4857,7 +4915,7 @@ public class Parser {
                 boolean pointer = false;
                 int size = -1;
                 String struct_name = "";
-                byte typeCategory;
+                short typeCategory;
 
                 if (constant instanceof Constant) {
                     try {
@@ -4914,29 +4972,51 @@ public class Parser {
                     }
                 }
 
+                Record record = new Record(typeCategory, type, line, false);
+                record.setInitialized(true);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
+
                 if (size < 0) {
                     if (structVariable) {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
+                        record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
+                        symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER");
                     } else {
                         if (parameter) {
-                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, errorDatabase);
+                            record.setKind(Kind.ARRAY_PARAMETER);
+                            symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
+                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER");
                         } else {
-                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, errorDatabase);
+                            record.setKind(Kind.ARRAY);
+                            symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
+                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY");
                         }
                     }
                 } else {
                     if (structVariable) {
-                        symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
+                        record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
+                        record.setSize(size);
+                        symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
+                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER, " + size);
                     } else {
                         if (parameter) {
-                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, size, errorDatabase);
+                            record.setKind(Kind.ARRAY_PARAMETER);
+                            record.setSize(size);
+                            symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
+                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, size, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER, " + size);
                         } else {
-                            symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, size, errorDatabase);
+                            record.setSize(Kind.ARRAY);
+                            record.setSize(size);
+                            symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
+                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, size, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY, " + size);
                         }
                     }
@@ -4950,7 +5030,7 @@ public class Parser {
                 boolean pointer = false;
                 String type = "";
                 String struct_name = "";
-                byte typeCategory;
+                short typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail instanceof PointerDeclaration) {
@@ -4999,10 +5079,18 @@ public class Parser {
                     }
                 }
 
-                symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
-                System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
+                Record record = new Record(typeCategory, type, line, false, Kind.FUNCTION);
+                record.setInitialized(true);
+                if (declarator1.getInitializer() != null) {
+                    record.setInitialized(true);
+                    record.addInitializationLine(line);
+                }
 
-                Record record = symbolTable.lookup(name);
+                //symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
+                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
+                //System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
+
+                //Record record1 = symbolTable.lookup(name);
 
                 if (parameters != null) {
                     for (Node param : parameters.getParameters()) {
@@ -5016,10 +5104,14 @@ public class Parser {
 
                         //pridanie parametra pre funkciu
                         record.getParameters().add(param_name);
-                        symbolTable.setValue(name, record);
+                        //symbolTable.setValue(name, record);
                         System.out.println("Update: " + name);
                     }
                 }
+
+                symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
+                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
+                System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
             }
         }
     }
@@ -5060,8 +5152,8 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
             //tail je IdentifierType
-            byte type1 = findType(type);
-            byte type2 = getInitializer(initializer);
+            short type1 = findType(type);
+            short type2 = getInitializer(initializer);
 
             if (type2 == -2) {
                 return true;
@@ -5120,8 +5212,8 @@ public class Parser {
                 }
             }
 
-            byte type1 = findType(type);
-            byte type2 = getInitializer(initializer);
+            short type1 = findType(type);
+            short type2 = getInitializer(initializer);
 
             if (type2 == -2) {
                 return true;
@@ -5159,8 +5251,8 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
             }
 
-            byte type1 = findType(type);
-            byte type2 = getInitializer(initializer);
+            short type1 = findType(type);
+            short type2 = getInitializer(initializer);
 
             if (type2 == -2) {
                 return true;
@@ -5188,7 +5280,7 @@ public class Parser {
 
     }
 
-    private byte getInitializer(Node initializer) {
+    private short getInitializer(Node initializer) {
         if (initializer instanceof InitializationList) {
             return -1;
         } else if (initializer instanceof BinaryOperator) {
@@ -5246,24 +5338,39 @@ public class Parser {
         } else if (initializer instanceof Constant) {
             return findType(((Constant) initializer).getTypeSpecifier() + " ");
         } else if (initializer instanceof FunctionCall) {
-            Identifier id = (Identifier) ((FunctionCall) initializer).getName();
-            Record record = symbolTable.lookup(id.getName());
+            Node id = initializer.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
         } else if (initializer instanceof ArrayReference) {
-            Identifier id = (Identifier) ((ArrayReference) initializer).getName();
-            Record record = symbolTable.lookup(id.getName());
+            Node id = initializer.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -128;
             } else {
                 return record.getType();
             }
         } else if (initializer instanceof  StructReference) {
-            Identifier id = (Identifier) ((StructReference) initializer).getName();
-            Record record = symbolTable.lookup(id.getName());
+            Node id = initializer.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -128;
             } else {
@@ -5279,14 +5386,14 @@ public class Parser {
      * @param type typ (String)
      * @return typ (byte)
      */
-    private byte findType(String type) {
-        //vymazanie poslednej medzery
-        byte pointer = 0;
-        //riešenie smerníkov
-        if (type.contains("*")) {
-            pointer = 50;
-            type = type.replace("* ", "");
+    private short findType(String type) {
+        short pointer = 0;
+        for (int i = 0; i < type.length(); i++){
+            if (type.charAt(i) == '*') {
+                pointer += 50;
+            }
         }
+        type = type.replace("* ", "");
 
         if (type.equals("")) {
             return -1;
@@ -5294,45 +5401,84 @@ public class Parser {
 
         //riešenie typov
         switch (type) {
-            case "char ": return (byte) (Type.CHAR + pointer);                                              // char
-            case "signed char ": return (byte) (Type.SIGNEDCHAR + pointer);                                 // signed char
-            case "unsigned char ": return (byte) (Type.UNSIGNEDCHAR + pointer);                             // unsigned char
-            case "short ": return (byte) (Type.SHORT + pointer);                                            // short
-            case "signed short ": return (byte) (Type.SIGNEDSHORT + pointer);                               // signed short
-            case "unsigned short ": return (byte) (Type.UNSIGNEDSHORT + pointer);                           // unsigned short
-            case "int ": return (byte) (Type.INT + pointer);                                                // int
-            case "signed ": return (byte) (Type.SIGNED + pointer);                                          // signed
-            case "signed int ": return (byte) (Type.SIGNEDINT + pointer);                                   // signed int
-            case "unsigned ": return (byte) (Type.UNSIGNED + pointer);                                      // unsigned
-            case "unsigned int ": return (byte) (Type.UNSIGNEDINT + pointer);                               // unsigned int
-            case "short int ": return (byte) (Type.SHORTINT + pointer);                                     // short int
-            case "signed short int ": return (byte) (Type.SIGNEDSHORTINT + pointer);                        // signed short int
-            case "unsigned short int ": return (byte) (Type.UNSIGNEDSHORTINT + pointer);                    // unsigned short int
-            case "long ": return (byte) (Type.LONG + pointer);                                              // long
-            case "signed long ": return (byte) (Type.SIGNEDLONG + pointer);                                 // signed long
-            case "unsigned long ": return (byte) (Type.UNSIGNEDLONG + pointer);                             // unsigned long
-            case "long int ": return (byte) (Type.LONGINT + pointer);                                       // long int
-            case "signed long int ": return (byte) (Type.SIGNEDLONGINT + pointer);                          // signed long int
-            case "unsigned long int ": return (byte) (Type.UNSIGNEDLONGINT + pointer);                      // unsigned long int
-            case "long long ": return (byte) (Type.LONGLONG + pointer);                                     // long long
-            case "long long int ": return (byte) (Type.LONGLONGINT + pointer);                              // long long int
-            case "signed long long ": return (byte) (Type.SIGNEDLONGLONG + pointer);                        // signed long long
-            case "signed long long int ": return (byte) (Type.SIGNEDLONGLONGINT + pointer);                 // signed long long int
-            case "unsigned long long ": return (byte) (Type.UNSIGNEDLONGLONG + pointer);                    // unsigned long long
-            case "unsigned long long int ": return (byte) (Type.UNSIGNEDLONGLONGINT + pointer);             // unsigned long long int
-            case "float ": return (byte) (Type.FLOAT + pointer);                                            // float
-            case "double ": return (byte) (Type.DOUBLE + pointer);                                          // double
-            case "long double ": return (byte) (Type.LONGDOUBLE + pointer);                                 // long double
-            case "union ": return (byte) (Type.UNION + pointer);                                            // union
-            case "struct ": return (byte) (Type.STRUCT + pointer);                                          // struct
-            case "enum ": return (byte) (Type.ENUM + pointer);                                              // enum
-            case "void ": return (byte) (Type.VOID + pointer);                                              // void
-            case "size_t ": return (byte) (Type.UNSIGNEDINT + pointer);                                     // size_t
-            case "FILE ": return (byte) (Type.FILE + pointer);                                              // FILE
+            case "char ": return (short) (Type.CHAR + pointer);                                              // char
+            case "signed char ": return (short) (Type.SIGNEDCHAR + pointer);                                 // signed char
+            case "unsigned char ": return (short) (Type.UNSIGNEDCHAR + pointer);                             // unsigned char
+            case "short ": return (short) (Type.SHORT + pointer);                                            // short
+            case "signed short ": return (short) (Type.SIGNEDSHORT + pointer);                               // signed short
+            case "unsigned short ": return (short) (Type.UNSIGNEDSHORT + pointer);                           // unsigned short
+            case "int ": return (short) (Type.INT + pointer);                                                // int
+            case "signed ": return (short) (Type.SIGNED + pointer);                                          // signed
+            case "signed int ": return (short) (Type.SIGNEDINT + pointer);                                   // signed int
+            case "unsigned ": return (short) (Type.UNSIGNED + pointer);                                      // unsigned
+            case "unsigned int ": return (short) (Type.UNSIGNEDINT + pointer);                               // unsigned int
+            case "short int ": return (short) (Type.SHORTINT + pointer);                                     // short int
+            case "signed short int ": return (short) (Type.SIGNEDSHORTINT + pointer);                        // signed short int
+            case "unsigned short int ": return (short) (Type.UNSIGNEDSHORTINT + pointer);                    // unsigned short int
+            case "long ": return (short) (Type.LONG + pointer);                                              // long
+            case "signed long ": return (short) (Type.SIGNEDLONG + pointer);                                 // signed long
+            case "unsigned long ": return (short) (Type.UNSIGNEDLONG + pointer);                             // unsigned long
+            case "long int ": return (short) (Type.LONGINT + pointer);                                       // long int
+            case "signed long int ": return (short) (Type.SIGNEDLONGINT + pointer);                          // signed long int
+            case "unsigned long int ": return (short) (Type.UNSIGNEDLONGINT + pointer);                      // unsigned long int
+            case "long long ": return (short) (Type.LONGLONG + pointer);                                     // long long
+            case "long long int ": return (short) (Type.LONGLONGINT + pointer);                              // long long int
+            case "signed long long ": return (short) (Type.SIGNEDLONGLONG + pointer);                        // signed long long
+            case "signed long long int ": return (short) (Type.SIGNEDLONGLONGINT + pointer);                 // signed long long int
+            case "unsigned long long ": return (short) (Type.UNSIGNEDLONGLONG + pointer);                    // unsigned long long
+            case "unsigned long long int ": return (short) (Type.UNSIGNEDLONGLONGINT + pointer);             // unsigned long long int
+            case "float ": return (short) (Type.FLOAT + pointer);                                            // float
+            case "double ": return (short) (Type.DOUBLE + pointer);                                          // double
+            case "long double ": return (short) (Type.LONGDOUBLE + pointer);                                 // long double
+            case "union ": return (short) (Type.UNION + pointer);                                            // union
+            case "struct ": return (short) (Type.STRUCT + pointer);                                          // struct
+            case "enum ": return (short) (Type.ENUM + pointer);                                              // enum
+            case "void ": return (short) (Type.VOID + pointer);                                              // void
+            case "size_t ": return (short) (Type.UNSIGNEDINT + pointer);                                     // size_t
+            case "FILE ": return (short) (Type.FILE + pointer);                                              // FILE
             case "string ": return Type.STRING;
             default: return Type.TYPEDEF_TYPE;                                                              // vlastný typ
         }
     }
 
+    private void resolveUsage(Node node, SymbolTable table) {
+        if (node instanceof Identifier) {
+            Record record = table.lookup(((Identifier) node).getName());
+            if (record != null) {
+                if (!record.getInitialized()) {
+                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                }
+                record.addUsageLine(node.getLine());
+                table.setValue(((Identifier) node).getName(), record);
+            }
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                if (!record.getInitialized()) {
+                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                }
+                record.addUsageLine(id.getLine());
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.addUsageLine(id.getLine());
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        }
+    }
 
 }

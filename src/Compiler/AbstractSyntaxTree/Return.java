@@ -1,14 +1,18 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class Return extends Node {
     Node expression;
 
-    public Return(Node expr, int line) {
+    public Return(Node expr, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.expression = expr;
         setLine(line);
-    }
 
-    //TODO: type checking, či vracia vhodný typ pre funkciu ak má expression
+        resolveUsage(expression, table, errorDatabase);
+    }
 
     @Override
     public void traverse(String indent) {

@@ -1,13 +1,19 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
+import Compiler.SymbolTable.Record;
+import Compiler.SymbolTable.SymbolTable;
+
 public class Cast extends Node {
     Node type;
     Node expression;
 
-    public Cast(Node type, Node expr, int line) {
+    public Cast(Node type, Node expr, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.type = type;
         this.expression = expr;
         setLine(line);
+
+        resolveUsage(expression, table, errorDatabase);
     }
 
     @Override

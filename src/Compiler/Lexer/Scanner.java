@@ -15,7 +15,6 @@ public class Scanner {
     private HashMap<String, Byte> keywords;
     private char peek = ' ';
     private int position = 0;
-    private Error err = new Error();
     private ErrorDatabase errorDatabase;
 
     public static int line = 1;
@@ -47,8 +46,8 @@ public class Scanner {
             // ignorovanie prázdnych znakov a komentárov
             ignoreWhiteSpaces();
             if (ignoreComments()) {
-                System.out.println("Chyba: E-LA-03 " + err.getError("E-LA-03"));
-                errorDatabase.addErrorMessage(line, err.getError("E-LA-03"), "E-LA-03");
+                System.out.println("Chyba: E-LA-03 " + Error.getError("E-LA-03"));
+                errorDatabase.addErrorMessage(line, Error.getError("E-LA-03"), "E-LA-03");
                 return new Token((byte) -1, "", line);
             }
             if (peek == '\n') {
@@ -227,8 +226,8 @@ public class Scanner {
                     if (peek == '.') {
                         return new Token(Tag.ELLIPSIS, "...", line);
                     } else {
-                        System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
-                        errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
+                        System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
+                        errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
                         return new Token((byte) -1, "", line);
                     }
                 } else {
@@ -257,8 +256,8 @@ public class Scanner {
             }
             if (flag) {
                 if (word.toString().length() > 31) {
-                    System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                    errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
+                    System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
+                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                     return new Token((byte) -1, "", line);
                 } else {
                     return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -272,8 +271,8 @@ public class Scanner {
                 } else {
                     //identifier
                     if (word.toString().length() > 31) {
-                        System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                        errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
+                        System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
+                        errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                         return new Token((byte) -1, "", line);
                     } else {
                         return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -295,8 +294,8 @@ public class Scanner {
                 break;
             }
             if (word.toString().length() > 31) {
-                System.out.println("Chyba: E-LA-02 " + err.getError("E-LA-02"));
-                errorDatabase.addErrorMessage(line, err.getError("E-LA-02"), "E-LA-02");
+                System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
+                errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                 return new Token((byte) -1, "", line);
             } else {
                 return new Token(Tag.IDENTIFIER, word.toString(), line);
@@ -316,8 +315,8 @@ public class Scanner {
                     word.append(peek);
                     break;
                 } else if (peek == '\n'){
-                    System.out.println("Chyba: E-LA-04 " + err.getError("E-LA-04"));
-                    errorDatabase.addErrorMessage(line, err.getError("E-LA-04"), "E-LA-04");
+                    System.out.println("Chyba: E-LA-04 " + Error.getError("E-LA-04"));
+                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-04"), "E-LA-04");
                     return new Token((byte) -1, "", line);
                 } else {
                     word.append(peek);
@@ -409,8 +408,8 @@ public class Scanner {
                     while (peek != ' ') {
                         readNextCharacter();
                     }
-                    System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
-                    errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
+                    System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
+                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
                     return new Token((byte) -1, "", line);
                 }
                 flag = false;
@@ -459,8 +458,8 @@ public class Scanner {
         if (peek == '§') {
             return new Token(Tag.EOF,"", line);
         }
-        System.out.println("Chyba: E-LA-01 " + err.getError("E-LA-01"));
-        errorDatabase.addErrorMessage(line, err.getError("E-LA-01"), "E-LA-01");
+        System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
+        errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
         return new Token((byte) -1, "", line);
     }
 

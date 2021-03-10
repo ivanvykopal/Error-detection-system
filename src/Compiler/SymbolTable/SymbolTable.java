@@ -2,19 +2,17 @@ package Compiler.SymbolTable;
 
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Trieda, ktorá obsahuje informácie o premenných, funkciách a parametroch.
  */
-public class SymbolTable implements Cloneable {
+public class SymbolTable implements Serializable {
     SymbolTable parent = null;
     HashMap<String, Record> table;
     ArrayList<SymbolTable> childs = new ArrayList<>();
-    Error err = new Error();
-
 
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.
@@ -75,7 +73,7 @@ public class SymbolTable implements Cloneable {
             table.put(key, value);
         } else {
             System.out.println("Chyba na riadku " + line + ": Viacnásobná deklarácia premennej!");
-            database.addErrorMessage(line, err.getError("E-SmA-02"), "E-SmA-02");
+            database.addErrorMessage(line, Error.getError("E-SmA-02"), "E-SmA-02");
         }
     }
 
@@ -85,7 +83,7 @@ public class SymbolTable implements Cloneable {
      * @param type typ
      * @param line riadok deklarácie
      */
-    public void insert(String key, byte typeCategory, String type, int line, ErrorDatabase database) {
+    public void insert(String key, short typeCategory, String type, int line, ErrorDatabase database) {
         Record record;
         type = extractAttribute(type);
         if (type.contains("typedef")) {
@@ -105,7 +103,7 @@ public class SymbolTable implements Cloneable {
      * @param line riadok deklarácie
      * @param kind typ identifikátora
      */
-    public void insert(String key, byte typeCategory, String type, int line, byte kind, ErrorDatabase database) {
+    public void insert(String key, short typeCategory, String type, int line, byte kind, ErrorDatabase database) {
         Record record;
         type = extractAttribute(type);
         if (type.contains("typedef")) {
@@ -125,7 +123,7 @@ public class SymbolTable implements Cloneable {
      * @param kind typ identifikátora
      * @param size veľkosť poľa
      */
-    public void insert(String key, byte typeCategory, String type, int line, byte kind, int size, ErrorDatabase database) {
+    public void insert(String key, short typeCategory, String type, int line, byte kind, int size, ErrorDatabase database) {
         type = extractAttribute(type);
         Record record = new Record(typeCategory, type, line, kind);
         record.setSize(size);
@@ -153,6 +151,10 @@ public class SymbolTable implements Cloneable {
                 break;
             }
         }
+    }
+
+    public SymbolTable getParent() {
+        return parent;
     }
 
     /**
@@ -191,8 +193,31 @@ public class SymbolTable implements Cloneable {
         return type;
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        return super.clone();
+    public SymbolTable createCopy() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(this);
+            out.close();
+
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(bis);
+            return (SymbolTable) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void printSymbolTable(int depth) {
+        System.out.println("--------Symbolická tabuľka v hĺbke " + depth + " --------");
+        for (String key: table.keySet()) {
+            Record record = table.get(key);
+            System.out.println("----\n"  + "Názov: " + key);
+            System.out.println(record.toString());
+        }
+        for (SymbolTable child: childs) {
+            child.printSymbolTable(depth + 1);
+        }
     }
 }

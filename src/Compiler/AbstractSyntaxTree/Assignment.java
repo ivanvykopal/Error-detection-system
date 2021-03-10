@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
@@ -9,11 +10,17 @@ public class Assignment extends Node {
     Node right;
     String operator;
 
-    public Assignment(Node left, String op, Node right, SymbolTable table, int line) {
+    public Assignment(Node left, String op, Node right, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.left = left;
         this.operator = op;
         this.right = right;
         setLine(line);
+
+        resolveInitialization(table);
+        if(!operator.equals("=")) {
+            resolveUsage(left, table, errorDatabase);
+        }
+        resolveUsage(right, table, errorDatabase);
 
         if (!typeCheck(table)) {
             //TODO: Sémantická chyba
@@ -21,9 +28,45 @@ public class Assignment extends Node {
         }
     }
 
+    private void resolveInitialization(SymbolTable table) {
+        if (left instanceof Identifier) {
+            Record record = table.lookup(((Identifier) left).getName());
+            if (record != null) {
+                record.setInitialized(true);
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) left).getName(), record);
+            }
+        } else if (left instanceof StructReference) {
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.setInitialized(true);
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        } else if (left instanceof ArrayReference) {
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        }
+    }
+
     private boolean typeCheck(SymbolTable table) {
-        byte var1 = findTypeCategory(left, table);
-        byte var2 = findTypeCategory(right, table);
+        short var1 = findTypeCategory(left, table);
+        short var2 = findTypeCategory(right, table);
         if (var2 == -2) {
             return true;
         }
@@ -37,6 +80,24 @@ public class Assignment extends Node {
             return false;
         }
         if (var1 == var2) {
+            if (left instanceof Struct) {
+                Record leftType = table.lookup(((Struct) left).getName());
+                Record rightType = table.lookup(((Struct) right).getName());
+                if (leftType != null && rightType != null && leftType.getTypeString().equals(rightType.getTypeString())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            if (left instanceof Union) {
+                Record leftType = table.lookup(((Union) left).getName());
+                Record rightType = table.lookup(((Union) right).getName());
+                if (leftType != null && rightType != null && leftType.getTypeString().equals(rightType.getTypeString())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
             return true;
         }
         if (var1 < 50 && var2 < 50 && var1 >= 29 && var2 >= 29) {
@@ -48,7 +109,8 @@ public class Assignment extends Node {
         return false;
     }
 
-    private byte findTypeCategory(Node left, SymbolTable table) {
+    private short findTypeCategory(Node left, SymbolTable table) {
+        //TODO: zistiť či nie je potreba spraviť aj enum, struct, union
         if (left instanceof BinaryOperator) {
             return ((BinaryOperator) left).getTypeCategory();
         } else if (left instanceof Identifier) {
@@ -62,24 +124,39 @@ public class Assignment extends Node {
         } else if (left instanceof Constant) {
             return findType(((Constant) left).getTypeSpecifier() + " ");
         } else if (left instanceof FunctionCall) {
-            Identifier id = (Identifier) ((FunctionCall) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
         } else if (left instanceof ArrayReference) {
-            Identifier id = (Identifier) ((ArrayReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
                 return record.getType();
             }
         } else if (left instanceof StructReference) {
-            Identifier id = (Identifier) ((StructReference) left).getName();
-            Record record = table.lookup(id.getName());
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
                 return -1;
             } else {
@@ -130,7 +207,7 @@ public class Assignment extends Node {
         }
     }
 
-    public byte getLeftType(SymbolTable table) {
+    public short getLeftType(SymbolTable table) {
         return findTypeCategory(left, table);
     }
 

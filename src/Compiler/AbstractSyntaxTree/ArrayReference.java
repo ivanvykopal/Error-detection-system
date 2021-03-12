@@ -23,7 +23,7 @@ public class ArrayReference extends Node {
             findAccessError(name, index, table, errorDatabase);
         }
 
-        SymbolTableFiller.resolveUsage(index, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(index, table, errorDatabase, true);
     }
 
     private void findAccessError(Node nodeName, Node nodeIndex, SymbolTable table, ErrorDatabase errorDatabase) {
@@ -46,7 +46,7 @@ public class ArrayReference extends Node {
 
         Record record = table.lookup(((Identifier) id).getName());
         if (record != null) {
-            if (arrayIndex >= record.getSize()) {
+            if (record.getSize() != 0 && arrayIndex >= record.getSize()) {
                 System.out.println("Prístup mimo pamäť na riadku " + line + "!");
                 errorDatabase.addErrorMessage(nodeName.getLine(), Error.getError("E-RP-06"), "E-RP-06");
             }
@@ -154,6 +154,11 @@ public class ArrayReference extends Node {
         } else {
             return -1;
         }
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(index, table, line);
+        index.resolveUsage(table, line);
     }
 
     @Override

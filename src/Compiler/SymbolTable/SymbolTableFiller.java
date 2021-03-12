@@ -15,16 +15,25 @@ public final class SymbolTableFiller {
      *
      * @param node
      * @param table
+     * @param errorDatabase
      */
-    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase) {
+    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitializatiaon) {
         if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record != null) {
-                if (!record.getInitialized()) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                if (checkInitializatiaon && !record.getInitialized()) {
+                    if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
+                            (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
+                            (record.getType() % 50) != Type.ENUM) {
+                        errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                    }
                 }
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) node).getName(), record);
+            } else {
+                if (!isFromLibrary(((Identifier) node).getName())) {
+                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                }
             }
         } else if (node instanceof StructReference) {
             Node id = node.getNameNode();
@@ -36,10 +45,16 @@ public final class SymbolTableFiller {
             Record record = table.lookup(((Identifier) id).getName());
             if (record != null) {
                 if (!record.getInitialized()) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                    if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
+                            (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
+                            (record.getType() % 50) != Type.ENUM) {
+                        errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                    }
                 }
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
+            } else {
+                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
             }
         } else if (node instanceof ArrayReference) {
             Node id = node.getNameNode();
@@ -51,6 +66,48 @@ public final class SymbolTableFiller {
             Record record = table.lookup(((Identifier) id).getName());
             if (record != null) {
                 record.addUsageLine(node.getLine());
+                table.setValue(((Identifier) id).getName(), record);
+            } else {
+                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param node
+     * @param table
+     * @param line
+     */
+    public static void resolveUsage(Node node, SymbolTable table, int line) {
+        if (node instanceof Identifier) {
+            Record record = table.lookup(((Identifier) node).getName());
+            if (record != null) {
+                record.addUsageLine(line);
+                table.setValue(((Identifier) node).getName(), record);
+            }
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.addUsageLine(line);
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.addUsageLine(line);
                 table.setValue(((Identifier) id).getName(), record);
             }
         }
@@ -114,7 +171,6 @@ public final class SymbolTableFiller {
                 }
 
                 symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
 
             } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
@@ -162,7 +218,6 @@ public final class SymbolTableFiller {
 
                 symbolTable.insert(name, record, line, Kind.TYPEDEF_NAME, errorDatabase);
 
-                //symbolTable.insert(name, typeCategory, type, line, Kind.TYPEDEF_NAME, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.TYPEDEF_NAME");
             }
         } else {
@@ -215,20 +270,17 @@ public final class SymbolTableFiller {
                 if (structVariable) {
                     record.setKind(Kind.STRUCT_PARAMETER);
                     symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
-
-                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
                     if (parameter) {
                         record.setKind(Kind.PARAMETER);
                         record.setInitialized(true);
+                        record.addInitializationLine(line);
                         symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
                     } else {
                         record.setKind(Kind.VARIABLE);
                         symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
                     }
                 }
@@ -279,19 +331,17 @@ public final class SymbolTableFiller {
                 if (structVariable) {
                     record.setKind(Kind.STRUCT_PARAMETER);
                     symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
-                    //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_PARAMETER, errorDatabase);
                     System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_PARAMETER");
                 } else {
                     if (parameter) {
                         record.setKind(Kind.PARAMETER);
                         record.setInitialized(true);
+                        record.addInitializationLine(line);
                         symbolTable.insert(name, record, line, Kind.PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.PARAMETER");
                     } else {
                         record.setKind(Kind.VARIABLE);
                         symbolTable.insert(name, record, line, Kind.VARIABLE, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.VARIABLE, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.VARIABLE");
                     }
                 }
@@ -373,18 +423,16 @@ public final class SymbolTableFiller {
                     if (structVariable) {
                         record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
                         symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER");
                     } else {
                         if (parameter) {
                             record.setKind(Kind.ARRAY_PARAMETER);
+                            record.addInitializationLine(line);
                             symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER");
                         } else {
                             record.setKind(Kind.ARRAY);
                             symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY");
                         }
                     }
@@ -393,20 +441,18 @@ public final class SymbolTableFiller {
                         record.setKind(Kind.STRUCT_ARRAY_PARAMETER);
                         record.setSize(size);
                         symbolTable.insert(name, record, line, Kind.STRUCT_ARRAY_PARAMETER, errorDatabase);
-                        //symbolTable.insert(name, typeCategory, type, line, Kind.STRUCT_ARRAY_PARAMETER, size, errorDatabase);
                         System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.STRUCT_ARRAY_PARAMETER, " + size);
                     } else {
                         if (parameter) {
                             record.setKind(Kind.ARRAY_PARAMETER);
                             record.setSize(size);
+                            record.addInitializationLine(line);
                             symbolTable.insert(name, record, line, Kind.ARRAY_PARAMETER, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY_PARAMETER, size, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY_PARAMETER, " + size);
                         } else {
-                            record.setSize(Kind.ARRAY);
+                            record.setKind(Kind.ARRAY);
                             record.setSize(size);
                             symbolTable.insert(name, record, line, Kind.ARRAY, errorDatabase);
-                            //symbolTable.insert(name, typeCategory, type, line, Kind.ARRAY, size, errorDatabase);
                             System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.ARRAY, " + size);
                         }
                     }
@@ -476,12 +522,6 @@ public final class SymbolTableFiller {
                     record.addInitializationLine(line);
                 }
 
-                //symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
-                //System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
-
-                //Record record1 = symbolTable.lookup(name);
-
                 if (parameters != null) {
                     for (Node param : parameters.getParameters()) {
                         if (param instanceof EllipsisParam) {
@@ -494,13 +534,11 @@ public final class SymbolTableFiller {
 
                         //pridanie parametra pre funkciu
                         record.getParameters().add(param_name);
-                        //symbolTable.setValue(name, record);
                         System.out.println("Update: " + name);
                     }
                 }
 
                 symbolTable.insert(name, record, line, Kind.FUNCTION, errorDatabase);
-                //symbolTable.insert(name, typeCategory, type, line, Kind.FUNCTION, errorDatabase);
                 System.out.println("Insert: " + name + ", " + type + ", " + line + ", Kind.FUNCTION");
             }
         }
@@ -508,15 +546,21 @@ public final class SymbolTableFiller {
 
     /**
      *
+     * @param node
      * @param table
+     * @param errorDatabase
      */
-    public static void resolveInitialization(Node node, SymbolTable table) {
+    public static void resolveInitialization(Node node, SymbolTable table, ErrorDatabase errorDatabase) {
         if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record != null) {
                 record.setInitialized(true);
                 record.addInitializationLine(node.getLine());
                 table.setValue(((Identifier) node).getName(), record);
+            } else {
+                if (!isFromLibrary(((Identifier) node).getName())) {
+                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                }
             }
         } else if (node instanceof StructReference) {
             Node id = node.getNameNode();
@@ -530,6 +574,8 @@ public final class SymbolTableFiller {
                 record.setInitialized(true);
                 record.addInitializationLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
+            } else {
+                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
             }
         } else if (node instanceof ArrayReference) {
             Node id = node.getNameNode();
@@ -542,7 +588,149 @@ public final class SymbolTableFiller {
             if (record != null) {
                 record.addInitializationLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
+            } else {
+                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
             }
+        }
+    }
+
+    /**
+     *
+     * @param node
+     * @param table
+     * @param line
+     */
+    public static void resolveInitialization(Node node, SymbolTable table, int line) {
+        if (node instanceof Identifier) {
+            Record record = table.lookup(((Identifier) node).getName());
+            if (record != null) {
+                record.setInitialized(true);
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) node).getName(), record);
+            }
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.setInitialized(true);
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = table.lookup(((Identifier) id).getName());
+            if (record != null) {
+                record.addInitializationLine(line);
+                table.setValue(((Identifier) id).getName(), record);
+            }
+        }
+    }
+
+
+    private static boolean isFromLibrary(String identifier) {
+        switch (identifier) {
+            case "FLT_ROUNDS":
+            case "FLT_RADIX":
+            case "FLT_MANT_DIG":
+            case "DBL_MANT_DIG":
+            case "LDBL_MANT_DIG":
+            case "FLT_DIG":
+            case "DBL_DIG":
+            case "LDBL_DIG":
+            case "FLT_MIN_EXP":
+            case "DBL_MIN_EXP":
+            case "LDBL_MIN_EXP":
+            case "FLT_MIN_10_EXP":
+            case "DBL_MIN_10_EXP":
+            case "LDBL_MIN_10_EXP":
+            case "FLT_MAX_EXP":
+            case "DBL_MAX_EXP":
+            case "LDBL_MAX_EXP":
+            case "FLT_MAX_10_EXP":
+            case "DBL_MAX_10_EXP":
+            case "LDBL_MAX_10_EXP":
+            case "FLT_MAX":
+            case "DBL_MAX":
+            case "LDBL_MAX":
+            case "FLT_EPSILON":
+            case "DBL_EPSILON":
+            case "LDBL_EPSILON":
+            case "FLT_MIN":
+            case "DBL_MIN":
+            case "LDBL_MIN":
+            case "CHAR_BIT":
+            case "SCHAR_MIN":
+            case "SCHAR_MAX":
+            case "UCHAR_MAX":
+            case "CHAR_MIN":
+            case "CHAR_MAX":
+            case "MB_LEN_MAX":
+            case "SHRT_MIN":
+            case "SHRT_MAX":
+            case "USHRT_MAX":
+            case "INT_MIN":
+            case "INT_MAX":
+            case "UINT_MAX":
+            case "LONG_MIN":
+            case "LONG_MAX":
+            case "ULONG_MAX":
+            case "LC_ALL":
+            case "LC_COLLATE":
+            case "LC_CTYPE":
+            case "LC_MONETARY":
+            case "LC_NUMERIC":
+            case "LC_TIME":
+            case "HUGE_VAL":
+            case "jmp_buf":
+            case "sig_atomic_t":
+            case "SIG_DFL":
+            case "SIG_ERR":
+            case "SIG_IGN":
+            case "SIGABRT":
+            case "SIGFPE":
+            case "SIGILL":
+            case "SIGINT":
+            case "SIGSEGV":
+            case "SIGTERM":
+            case "NULL":
+            case "_IOFBF":
+            case "_IOLBF":
+            case "_IONBF":
+            case "BUFSIZ":
+            case "EOF":
+            case "FOPEN_MAX":
+            case "FILENAME_MAX":
+            case "L_tmpnam":
+            case "SEEK_CUR":
+            case "SEEK_END":
+            case "SEEK_SET":
+            case "TMP_MAX":
+            case "stderr":
+            case "stdin":
+            case "stdout":
+            case "EXIT_FAILURE":
+            case "EXIT_SUCCESS":
+            case "RAND_MAX":
+            case "MB_CUR_MAX":
+            case "CLOCKS_PER_SEC":
+            case "__FILE__":
+            case "__DATE__":
+            case "__TIME__":
+            case "__LINE__":
+            case "__STDC__":
+                return true;
+            default:
+                return false;
         }
     }
 }

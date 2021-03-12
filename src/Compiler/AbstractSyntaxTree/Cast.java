@@ -13,7 +13,12 @@ public class Cast extends Node {
         this.expression = expr;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(expression, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(expression, table, line);
+        expression.resolveUsage(table, line);
     }
 
     @Override

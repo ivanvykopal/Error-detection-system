@@ -18,7 +18,6 @@ public class IdentifierType extends Node {
         return names;
     }
 
-
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Identifier Type");

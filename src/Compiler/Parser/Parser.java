@@ -7,7 +7,6 @@ import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
 import Compiler.SymbolTable.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import Compiler.AbstractSyntaxTree.*;
@@ -17,6 +16,7 @@ public class Parser {
     public ArrayList<Token> tokenStream = new ArrayList<>();
     private Node parseTree;
     private ErrorDatabase errorDatabase;
+    private int lastStatementLine = -1;
 
     public SymbolTable symbolTable = new SymbolTable(null);
 
@@ -46,8 +46,8 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            parseTree.traverse("");
-            symbolTable.printSymbolTable(0);
+            //parseTree.traverse("");
+            //symbolTable.printSymbolTable(0);
         }
     }
 
@@ -3594,7 +3594,7 @@ public class Parser {
         position = pos;
         symbolTable = copySymbolTable;
         errorDatabase = copyErrorDatabase;
-        child1 = compound_statement(createSymbolTable);
+        child1 = compound_statement(createSymbolTable, false);
         if (child1 == null) {
             return null;
         }
@@ -3714,26 +3714,22 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node compound_statement(boolean createSymbolTable) {
+    private Node compound_statement(boolean createSymbolTable, boolean functionDefinition) {
         if (getTokenTag() == Tag.LEFT_BRACES) {
             int line = getTokenLine();
             nextToken();
             if (getTokenTag() == Tag.RIGHT_BRACES) {
+                lastStatementLine = getTokenLine();
                 nextToken();
                 return new Compound(null, line);
             }
 
-            //SymbolTable parent = symbolTable;
-            if (createSymbolTable) {
+            if (createSymbolTable && !functionDefinition) {
                 //vytvorenie vnorenej tabuľky
                 symbolTable = new SymbolTable(symbolTable);
                 if (symbolTable.getParent() != null) {
                     symbolTable.getParent().addChild(symbolTable);
                 }
-
-                /*if (parent != null) {
-                    parent.addChild(symbolTable);
-                }*/
             }
 
             ArrayList<Node> child1 = block_item_list();
@@ -3764,8 +3760,8 @@ public class Parser {
                     nextToken();
                     return new Err();
                 } else {
+                    lastStatementLine = getTokenLine(position - 1);
                     if (createSymbolTable) {
-                        //symbolTable = parent;
                         symbolTable = symbolTable.getParent();
                     }
                     return new Compound(child1, line);
@@ -3845,6 +3841,7 @@ public class Parser {
     //DONE
     private Node expression_statement() {
         if (getTokenTag() == Tag.SEMICOLON) {
+            lastStatementLine = getTokenLine();
             nextToken();
             return new EmptyStatement();
         }
@@ -3880,6 +3877,7 @@ public class Parser {
                     return null;
                 }
             } else {
+                lastStatementLine = getTokenLine(position - 1);
                 return child1;
             }
         }
@@ -4021,6 +4019,7 @@ public class Parser {
                     return new Err();
                 }
                 if (child6 != null) {
+                    lastStatementLine = getTokenLine(position - 1);
                     return new DoWhile(child4, child1, line, symbolTable, errorDatabase);
                 } else {
                     //error recovery
@@ -4070,15 +4069,11 @@ public class Parser {
      */
     //DONE
     private Node left33(int line) {
-        //SymbolTable parent = symbolTable;
         //vytvorenie vnorenej tabuľky
         symbolTable = new SymbolTable(symbolTable);
         if (symbolTable.getParent() != null) {
             symbolTable.getParent().addChild(symbolTable);
         }
-        /*if (parent != null) {
-            parent.addChild(symbolTable);
-        }*/
 
         Node child1 = expression_statement();
         Node child2, child3;
@@ -4099,7 +4094,6 @@ public class Parser {
                      nextToken();
                      child3 = statement(false);
                      symbolTable = symbolTable.getParent();
-                     //symbolTable = parent;
                      if (child3 != null && !child3.isNone()) {
                          if (child1.isEmpty()) {
                              child1 = null;
@@ -4127,7 +4121,6 @@ public class Parser {
                      } else {
                          child5 = statement(false);
                          symbolTable = symbolTable.getParent();
-                         //symbolTable = parent;
                          if (child5 == null) {
                              return null;
                          }
@@ -4142,6 +4135,7 @@ public class Parser {
                              if (child2.isEmpty()) {
                                  child2 = null;
                              }
+                             child3.resolveUsage(symbolTable, lastStatementLine);
                              return new For(child1, child2, child3, child5, line, symbolTable, errorDatabase);
                          }
                      }
@@ -4170,7 +4164,6 @@ public class Parser {
                     nextToken();
                     child3 = statement(false);
                     symbolTable = symbolTable.getParent();
-                    //symbolTable = parent;
                     if (child3 != null && !child3.isNone()) {
                         if (child2.isEmpty()) {
                             child2 = null;
@@ -4195,7 +4188,6 @@ public class Parser {
                     } else {
                         child5 = statement(false);
                         symbolTable = symbolTable.getParent();
-                        //symbolTable = parent;
                         if (child5 == null) {
                             return null;
                         }
@@ -4207,6 +4199,7 @@ public class Parser {
                             if (child2.isEmpty()) {
                                 child2 = null;
                             }
+                            child3.resolveUsage(symbolTable, lastStatementLine);
                             return new For(new DeclarationList(child, line), child2, child3, child5, line, symbolTable, errorDatabase);
                         }
                     }
@@ -4439,6 +4432,12 @@ public class Parser {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(typeNode);
         Node child2 = null, child3;
+
+        symbolTable = new SymbolTable(symbolTable);
+        if (symbolTable.getParent() != null) {
+            symbolTable.getParent().addChild(symbolTable);
+        }
+
         if (child1 != null && !child1.isNone()) {
             child2 = declarator();
         }
@@ -4447,12 +4446,12 @@ public class Parser {
             ArrayList<Node> child = declaration_list();
             Node child4 = null;
             if (child != null && !child.isEmpty()) {
-                child4 = compound_statement(true);
+                child4 = compound_statement(true, true);
             }
             if (child4 != null && !child4.isNone()) {
                 return createFunction(typeNode, child2, child, child4);
             }
-            child3 = compound_statement(true);
+            child3 = compound_statement(true, true);
             if (child3 != null && !child3.isNone()) {
                 return createFunction(typeNode, child2, null, child3);
             }
@@ -4535,7 +4534,7 @@ public class Parser {
         } else if (!declarator.getDeclarator().isEnumStructUnion() && !(declarator.getDeclarator() instanceof IdentifierType)) {
             Node tail = declarator.getDeclarator();
 
-            while(!(tail instanceof TypeDeclaration)) {
+            while (!(tail instanceof TypeDeclaration)) {
                 tail = tail.getType();
             }
 
@@ -4544,36 +4543,43 @@ public class Parser {
                 ((TypeDeclaration) tail).addDeclname(name);
                 typeNode.removeLastType();
             }
+        }
 
-            Node declaration;
-            for (Node decl : declarations) {
-                Declarator declarator1 = (Declarator) decl;
-                if (declarator1.getDeclarator() == null) return null;
-                if (typedef) {
-                    declaration = new Typedef(null, typeNode.getQualifiers(), typeNode.getStorage(),
-                            declarator1.getDeclarator(), declarator1.getDeclarator().getLine());
-                } else {
-
-                    //TODO: pozrieť sa na bitsize
-                    declaration = new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(),
-                            declarator1.getDeclarator(), declarator1.getInitializer(),null, declarator1.getDeclarator().getLine());
-                }
-                if (!declaration.getType().isEnumStructUnion() && !(declaration.getType() instanceof IdentifierType)) {
-                    declaration = fixTypes(declaration, typeNode.getTypes());
-                }
-
-                if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
-                    System.out.println("Sémantická chyba na riadku " + declarator1.getInitializer().getLine() + "!");
-                }
-
-                SymbolTableFiller.addRecordToSymbolTable(declarator1, typedef, parameter, structVariable, symbolTable, errorDatabase);
-
-                if (declarator1.getInitializer() != null) {
-                    SymbolTableFiller.resolveUsage(declarator1.getInitializer(), symbolTable, errorDatabase);
-                }
-
-                decls.add(declaration);
+        Node declaration;
+        for (Node decl : declarations) {
+            Declarator declarator1 = (Declarator) decl;
+            if (declarator1.getDeclarator() == null) return null;
+            if (typedef) {
+                declaration = new Typedef(null, typeNode.getQualifiers(), typeNode.getStorage(),
+                        declarator1.getDeclarator(), declarator1.getDeclarator().getLine());
+            } else {
+                declaration = new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(),
+                        declarator1.getDeclarator(), declarator1.getInitializer(), declarator1.getBitsize(),
+                        declarator1.getDeclarator().getLine());
             }
+            if (!declaration.getType().isEnumStructUnion() && !(declaration.getType() instanceof IdentifierType)) {
+                declaration = fixTypes(declaration, typeNode.getTypes());
+            }
+
+            if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
+                System.out.println("Sémantická chyba na riadku " + declarator1.getInitializer().getLine() + "!");
+            } else if (((Declarator) decl).getDeclarator() instanceof Identifier) {
+                Declarator declarator2 = (Declarator) decl;
+                Record record = symbolTable.lookup(((Identifier) declarator2.getDeclarator()).getName());
+                if (record != null && (record.getKind() == Kind.ARRAY || record.getKind() == Kind.ARRAY_PARAMETER ||
+                        record.getKind() == Kind.STRUCT_ARRAY_PARAMETER) && findTypeCategory(declarator2.getInitializer()) > 50) {
+                    System.out.println("Sémantická chyba na riadku " + declarator2.getLine() + "!");
+                    errorDatabase.addErrorMessage(declarator2.getLine(), Error.getError("E-RP-08"), "E-RP-08");
+                }
+            }
+
+            SymbolTableFiller.addRecordToSymbolTable(declarator1, typedef, parameter, structVariable, symbolTable, errorDatabase);
+
+            if (declarator1.getInitializer() != null) {
+                SymbolTableFiller.resolveUsage(declarator1.getInitializer(), symbolTable, errorDatabase, true);
+            }
+
+            decls.add(declaration);
         }
 
         return decls;
@@ -4696,7 +4702,7 @@ public class Parser {
             if (type.equals("")) {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
-            //tail je IdentifierType
+
             short type1 = TypeChecker.findType(type);
             short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
@@ -4708,8 +4714,7 @@ public class Parser {
                 return false;
             }
 
-            if (type1 == Type.BOOL || type2 == Type.BOOL ||
-                    type1 == Type.VOID || type2 == Type.VOID) {
+            if (type1 == Type.VOID || type2 == Type.VOID) {
                 return false;
             }
 
@@ -4717,7 +4722,8 @@ public class Parser {
                 return true;
             }
 
-            if (type1 > 28 || type2 > 28) {
+            //TODO: treba vyriešiť pointre
+            if (type1 >= Type.UNION || type2 >= Type.UNION) {
                 return false;
             }
 
@@ -4823,6 +4829,102 @@ public class Parser {
             return false;
         }
 
+    }
+
+    private short findTypeCategory(Node left) {
+        if (left instanceof BinaryOperator) {
+            return ((BinaryOperator) left).getTypeCategory();
+        } else if (left instanceof Identifier) {
+            //nájsť v symbolickej tabuľke
+            Record record = symbolTable.lookup(((Identifier) left).getName());
+            if (record == null) {
+                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+            } else {
+                return record.getType();
+            }
+        } else if (left instanceof Constant) {
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
+        } else if (left instanceof FunctionCall) {
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
+            if (record == null) {
+                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+            } else {
+                return record.getType();
+            }
+        } else if (left instanceof ArrayReference) {
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
+            if (record == null) {
+                return -1;
+            } else {
+                return record.getType();
+            }
+        } else if (left instanceof StructReference) {
+            Node id = left.getNameNode();
+
+            while (!(id instanceof Identifier)) {
+                id = id.getNameNode();
+            }
+
+            Record record = symbolTable.lookup(((Identifier) id).getName());
+            if (record == null) {
+                return -1;
+            } else {
+                return record.getType();
+            }
+        } else if (left instanceof UnaryOperator) {
+            return ((UnaryOperator) left).getTypeCategory();
+        } else if (left instanceof Cast) {
+            Node tail = left.getType();
+            String type = "";
+            boolean pointer = false;
+
+            while (!(tail instanceof IdentifierType)) {
+                if (tail.isEnumStructUnion()) {
+                    if (tail instanceof Enum) {
+                        type = "enum ";
+                    } else if (tail instanceof Struct) {
+                        type = "struct ";
+                    } else {
+                        type = "union ";
+                    }
+                    break;
+                }
+                if (tail instanceof PointerDeclaration) {
+                    pointer = true;
+                }
+                tail = tail.getType();
+            }
+
+            if (pointer) {
+                if (type.equals("")) {
+                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
+                } else {
+                    type += "* ";
+                }
+            } else {
+                if (type.equals("")) {
+                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
+                }
+            }
+
+            return TypeChecker.findType(type);
+        } else if (left instanceof TernaryOperator) {
+            return ((TernaryOperator) left).getTypeCategory();
+        } else {
+            return -1;
+        }
     }
 
 }

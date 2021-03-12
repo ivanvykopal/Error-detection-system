@@ -17,9 +17,18 @@ public class For extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(initializer, table, errorDatabase);
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase);
-        SymbolTableFiller.resolveUsage(next, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(initializer, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(next, table, errorDatabase, true);
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(initializer, table, line);
+        initializer.resolveUsage(table, line);
+        SymbolTableFiller.resolveUsage(condition, table, line);
+        condition.resolveUsage(table, line);
+        SymbolTableFiller.resolveUsage(next, table, line);
+        next.resolveUsage(table, line);
     }
 
     @Override

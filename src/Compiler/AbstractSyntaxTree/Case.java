@@ -13,7 +13,12 @@ public class Case extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(constant, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(constant, table, errorDatabase, true);
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(constant, table, line);
+        constant.resolveUsage(table, line);
     }
 
     @Override

@@ -14,7 +14,14 @@ public class ParameterList extends Node {
         setLine(line);
 
         for (Node node: parameters) {
-            SymbolTableFiller.resolveUsage(node, table, errorDatabase);
+            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true);
+        }
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        for (Node node : parameters) {
+            SymbolTableFiller.resolveUsage(node, table, line);
+            node.resolveUsage(table, line);
         }
     }
 

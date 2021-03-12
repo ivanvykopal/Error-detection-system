@@ -112,22 +112,6 @@ public class Record implements Serializable {
         this.initialized = initialized;
     }
 
-    /*/**
-     * Funkcia na zistenie riadku prvého využitia premennej alebo funkcie.
-     * @return riadok prvého využitia
-     /
-    public int getFirstUsage() {
-        return firstUsage;
-    }
-
-    /**
-     * Funkcia na nastavenie riadku prvého využitia premennej alebo funkcie.
-     * @param firstUsage - riadok prvého využitia
-     *
-    public void setFirstUsage(int firstUsage) {
-        this.firstUsage = firstUsage;
-    }
-    */
     /**
      * Funkcia na zistenie typu.
      * @return typ (premenná, pole, funkcia, parameter)
@@ -229,7 +213,11 @@ public class Record implements Serializable {
      * @param line
      */
     public void addUsageLine(int line) {
-        usageLines.add(line);
+        int length = usageLines.size();
+        if (length == 0 || usageLines.get(length - 1) != line) {
+            usageLines.add(line);
+        }
+
     }
 
     /**
@@ -237,7 +225,10 @@ public class Record implements Serializable {
      * @param line
      */
     public void addInitializationLine(int line) {
-        initializationLines.add(line);
+        int length = initializationLines.size();
+        if (length == 0 || initializationLines.get(length - 1) != line) {
+            initializationLines.add(line);
+        }
     }
 
 

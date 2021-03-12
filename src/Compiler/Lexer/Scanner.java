@@ -260,7 +260,7 @@ public class Scanner {
                     errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                     return new Token((byte) -1, "", line);
                 } else {
-                    return new Token(Tag.IDENTIFIER, word.toString(), line);
+                    return resolveIdentifier(word.toString());
                 }
             } else {
                 // vyhľadanie kľúčového slova a jeho hodnoty v HashMape keywords
@@ -275,7 +275,7 @@ public class Scanner {
                         errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                         return new Token((byte) -1, "", line);
                     } else {
-                        return new Token(Tag.IDENTIFIER, word.toString(), line);
+                        return resolveIdentifier(word.toString());
                     }
                 }
             }
@@ -298,7 +298,7 @@ public class Scanner {
                 errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                 return new Token((byte) -1, "", line);
             } else {
-                return new Token(Tag.IDENTIFIER, word.toString(), line);
+                return resolveIdentifier(word.toString());
             }
         }
 
@@ -541,6 +541,9 @@ public class Scanner {
                             readNextCharacter();
                             break;
                         }
+                        if (peek == '\n') {
+                            line++;
+                        }
                         if (peek == '§') {
                             // koniec súboru
                             return true;
@@ -552,7 +555,7 @@ public class Scanner {
                     while (true) {
                         readNextCharacter();
                         if (peek == '\n') {
-                            line++;
+                            //line++;
                             break;
                         }
                     }
@@ -564,6 +567,20 @@ public class Scanner {
             }
         }
         return false;
+    }
+
+    /**
+     *
+     * @param identifier
+     * @return
+     */
+    private Token resolveIdentifier(String identifier) {
+        switch(identifier) {
+            case "bool": return new Token(Tag.INT, "int", line);
+            case "true": return new Token(Tag.NUMBER, "1", line);
+            case "false": return new Token(Tag.NUMBER, "0", line);
+            default: return new Token(Tag.IDENTIFIER, identifier, line);
+        }
     }
 
     /**

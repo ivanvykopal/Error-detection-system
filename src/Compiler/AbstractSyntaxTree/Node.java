@@ -39,6 +39,10 @@ public abstract class Node {
 
     }
 
+    public void resolveUsage(SymbolTable table, int line) {
+
+    }
+
     public void setLine(int line) {
         this.line = line;
     }

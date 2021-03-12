@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class ArrayDeclaration extends Node {
     Node type;
     Node dimension;
+    //todo pozrieť dimensionqualifier, či sú
     ArrayList<String> dimensionQualifiers;
 
     public ArrayDeclaration(Node type, Node dim, ArrayList<String> dims, int line) {
@@ -19,7 +20,6 @@ public class ArrayDeclaration extends Node {
         System.out.println(indent + "ArrayDeclaration: ");
         if (type != null) type.traverse(indent + "    ");
         if (dimension != null) dimension.traverse(indent + "    ");
-        // dimensionQualifiers -> sout
     }
 
     public Node getDimension() {

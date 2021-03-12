@@ -51,7 +51,6 @@ public class Type {
     public static short VOID = 32;
     public static short TYPEDEF_TYPE = 33;
 
-    public static short BOOL = 34;
-    public static short STRING = 35;
-    public static short FILE = 36;
+    public static short STRING = 34;
+    public static short FILE = 35;
 }

@@ -15,7 +15,14 @@ public class If extends Node {
         this.falsePart = falsePart;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase, true);
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(condition, table, line);
+        condition.resolveUsage(table, line);
     }
 
     @Override

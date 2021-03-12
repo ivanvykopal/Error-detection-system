@@ -8,4 +8,9 @@ public class StructDeclarator extends Declarator {
         this.bitsize = bitsize;
     }
 
+    @Override
+    public Node getBitsize() {
+        return bitsize;
+    }
+
 }

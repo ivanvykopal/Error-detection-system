@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
@@ -17,24 +18,30 @@ public class UnaryOperator extends Node {
         this.operator = op;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(expression, table, errorDatabase);
+        if (operator.equals("&")) {
+            SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false);
+        } else {
+            SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+        }
 
         if (!typeCheck(table)) {
-            //TODO: Sémantická chyba
-            System.out.println("Sémantická chyba na riadku " + line + "!");
+            if (expression instanceof FunctionCall) {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
+            } else {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+            }
         }
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(expression, table, line);
+        expression.resolveUsage(table, line);
     }
 
     private boolean typeCheck(SymbolTable table) {
         short type = findTypeCategory(expression, table);
-        if (type == -1) {
-            typeCategory = -1;
-            return false;
-        }
-        if (type == -2) {
-            typeCategory = -2;                                                              //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
-            return true;
-        }
         switch (operator) {
             case "&":
                 if (expression instanceof Constant && type != Type.STRING) {
@@ -52,10 +59,18 @@ public class UnaryOperator extends Node {
                 typeCategory = Type.UNSIGNEDINT;
                 return true;
         }
-        if (type < 29) {
+        if (type == -1) {
+            typeCategory = -1;
+            return false;
+        }
+        if (type == -2) {
+            typeCategory = -2;                                                              //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+            return true;
+        }
+        if (type < Type.UNION) {
             typeCategory = type;
             return true;
-        } else if ((type % 50) < 29) {
+        } else if (type > 50 && (type % 50) < Type.UNION) {
             typeCategory = type;
             return true;
         } else {
@@ -155,6 +170,10 @@ public class UnaryOperator extends Node {
         } else {
             return -1;
         }
+    }
+
+    public Node getExpression() {
+        return expression;
     }
 
     public short getTypeCategory() {

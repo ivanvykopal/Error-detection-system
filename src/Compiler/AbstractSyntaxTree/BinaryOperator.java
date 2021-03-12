@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
@@ -19,18 +20,28 @@ public class BinaryOperator extends Node {
         this.right = right;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(left, table, errorDatabase);
-        SymbolTableFiller.resolveUsage(right, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(left, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(right, table, errorDatabase, true);
 
         if (!typeCheck(table)) {
-            //TODO: Sémantická chyba
-            System.out.println("Sémantická chyba na riadku " + line + "!");
+            if (left instanceof FunctionCall || right instanceof FunctionCall) {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
+            } else {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+            }
         }
     }
 
     private boolean typeCheck(SymbolTable table) {
         short var1 = findTypeCategory(left, table);
         short var2 = findTypeCategory(right, table);
+
+        if (var1 == -2 || var2 == -2) {
+            typeCategory = Type.CHAR;
+            return true;
+        }
 
         if (var1 == -1 || var2 == -1) {
             typeCategory = -1;
@@ -49,11 +60,11 @@ public class BinaryOperator extends Node {
             case ">=":
             case "==":
             case "!=":
-                typeCategory = Type.BOOL;
+                typeCategory = Type.INT;
                 return true;
             case "&&":
             case "||":
-                if (type == Type.BOOL) {
+                if (type < Type.UNSIGNEDLONGLONGINT) {
                     typeCategory = type;
                     return true;
                 } else {
@@ -70,17 +81,17 @@ public class BinaryOperator extends Node {
         if (var1 == var2) {
             return var1;
         }
-        if (var1 == Type.BOOL || var2 == Type.BOOL) {
-            return -1;
-        }
         if (var1 == Type.VOID || var2 == Type.VOID) {
             return -1;
         }
-        if (var1 < 50 && var2 < 50 && var1 >= 29 && var2 >= 29) {
+        if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
             return -1;
         }
-        if ((var1 % 50) < 29 && (var2 % 50) < 29) {
-            return (byte) Math.max(var1, var2);
+        if (var1 < 50 && var2 < 50 && var1 < Type.UNION && var2 < Type.UNION) {
+            return (short) Math.max(var1, var2);
+        }
+        if (var1 > 50 && var2 > 50 && (var1 % 50) < Type.UNION && (var2 % 50) < Type.UNION) {
+            return (short) Math.max(var1, var2);
         }
         return -1;
     }
@@ -92,7 +103,7 @@ public class BinaryOperator extends Node {
             //nájsť v symbolickej tabuľke
             Record record = table.lookup(((Identifier) left).getName());
             if (record == null) {
-                return -1;
+                return -2;
             } else {
                 return record.getType();
             }
@@ -107,7 +118,7 @@ public class BinaryOperator extends Node {
 
             Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
-                return -1;
+                return -2;
             } else {
                 return record.getType();
             }
@@ -182,6 +193,13 @@ public class BinaryOperator extends Node {
 
     public short getTypeCategory() {
         return typeCategory;
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(left, table, line);
+        SymbolTableFiller.resolveUsage(right, table, line);
+        left.resolveUsage(table, line);
+        right.resolveUsage(table, line);
     }
 
     @Override

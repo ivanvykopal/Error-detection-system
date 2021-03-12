@@ -13,7 +13,12 @@ public class Switch extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(condition, table, line);
+        condition.resolveUsage(table, line);
     }
 
     @Override

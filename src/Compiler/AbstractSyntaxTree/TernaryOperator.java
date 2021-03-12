@@ -1,5 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
+import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
@@ -19,14 +20,28 @@ public class TernaryOperator extends Node {
         this.falsePart = falsePart;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase);
-        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase);
-        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase, true);
 
         if (!typeCheck(table)) {
-            //TODO: Sémantická chyba
-            System.out.println("Sémantická chyba na riadku " + line + "!");
+            if (truePart instanceof FunctionCall || falsePart instanceof FunctionCall) {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
+            } else {
+                System.out.println("Sémantická chyba na riadku " + line + "!");
+                errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+            }
         }
+    }
+
+    public void resolveUsage(SymbolTable table, int line) {
+        SymbolTableFiller.resolveUsage(condition, table, line);
+        condition.resolveUsage(table, line);
+        SymbolTableFiller.resolveUsage(truePart, table, line);
+        truePart.resolveUsage(table, line);
+        SymbolTableFiller.resolveUsage(falsePart, table, line);
+        falsePart.resolveUsage(table, line);
     }
 
     @Override
@@ -54,7 +69,7 @@ public class TernaryOperator extends Node {
             return true;
         }
 
-        if (var2 == Type.BOOL || var2 == Type.VOID) {
+        if (var2 == Type.VOID) {
             typeCategory = -1;
             return false;
         }
@@ -62,11 +77,11 @@ public class TernaryOperator extends Node {
             typeCategory = var1;
             return true;
         }
-        if (var1 < 50 && var2 < 50 && var1 >= 29 && var2 >= 29) {
+        if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
             typeCategory = -1;
             return false;
         }
-        if ((var1 % 50) < 29 && (var2 % 50) < 29) {
+        if (var1 > 50 && var2 > 50 && (var1 % 50) < Type.UNION && (var2 % 50) < Type.UNION) {
             typeCategory = (byte) Math.max(var1, var2);
             return true;
         }

@@ -163,14 +163,8 @@ public class Parser {
      */
     //DONE
     private Node primary_expression() {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1;
         switch (getTokenTag()) {
@@ -292,14 +286,8 @@ public class Parser {
      */
     //DONE
     private Node postfix_expression() {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1, child2 = null;
         if (getTokenTag() == Tag.LEFT_PARENTHESES) {
@@ -626,14 +614,8 @@ public class Parser {
     //DONE
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         if (getTokenTag() == Tag.LEFT_PARENTHESES) {
             int line = getTokenLine();
@@ -1058,14 +1040,8 @@ public class Parser {
      */
     //DONE
     private Node assignment_expression() {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1 = unary_expression();
         String operator = "";
@@ -2040,14 +2016,8 @@ public class Parser {
     //DONE
     private Node direct_declarator() {
         Node child1, child2 = null, child3 = null;
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
@@ -2142,14 +2112,8 @@ public class Parser {
      */
     //DONE
     private Node left16(Node declarator) {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1, child2;
         Node decl;
@@ -2392,14 +2356,8 @@ public class Parser {
      */
     //DONE
     private Node left19(ArrayList<String> qualifiers, Node declarator) {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1, child2 = null, child3 = null;
         Node decl, child = null;
@@ -2670,14 +2628,8 @@ public class Parser {
             typeNode.addType(new IdentifierType(arr, 0));
         }
 
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1 = declarator();
         if (child1 == null) {
@@ -2827,14 +2779,8 @@ public class Parser {
     //DONE
     private Node direct_abstract_declarator() {
         Node child1;
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
@@ -2943,14 +2889,8 @@ public class Parser {
      */
     //DONE
     private Node left26(Node declarator) {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1, child2;
         Node decl, child;
@@ -3576,14 +3516,8 @@ public class Parser {
      */
     //DONE
     private Node statement(boolean createSymbolTable) {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1 = labeled_statement();
         if (child1 == null) {
@@ -3643,14 +3577,8 @@ public class Parser {
      */
     //DONE
     private Node labeled_statement() {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1, child2 = null, child3 = null;
         int line;
@@ -4394,14 +4322,8 @@ public class Parser {
      */
     //DONE
     private ArrayList<Node> external_declaration() {
-        SymbolTable copySymbolTable = null;
-        ErrorDatabase copyErrorDatabase = null;
-        try {
-            copySymbolTable = symbolTable.createCopy();
-            copyErrorDatabase = (ErrorDatabase) errorDatabase.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SymbolTable copySymbolTable = symbolTable.createCopy();
+        ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
         Node child1 = function_definition();
         if (!child1.isNone()) {

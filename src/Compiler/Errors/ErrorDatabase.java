@@ -27,9 +27,13 @@ public class ErrorDatabase implements Cloneable {
         }
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        return super.clone();
+    public ErrorDatabase createCopy() {
+        try {
+            return (ErrorDatabase) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

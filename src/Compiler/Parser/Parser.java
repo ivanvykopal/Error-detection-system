@@ -47,7 +47,8 @@ public class Parser {
         } else {
             parseTree = new AST(child);
             //parseTree.traverse("");
-            //symbolTable.printSymbolTable(0);
+            symbolTable.printSymbolTable(0);
+            symbolTable.findGlobalVariable(errorDatabase);
         }
     }
 

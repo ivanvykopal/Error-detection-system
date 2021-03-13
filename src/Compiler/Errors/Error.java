@@ -45,6 +45,9 @@ public final class Error {
         put("E-RP-06", "prístup mimo pamäť");
         put("E-RP-07", "neoptimálne využívanie premenných");
         put("E-RP-08", "priradenie dynamického smerníka do statického");
+
+        // warnings
+        put("W-01", "využívanie globálnej premennej");
     }};
 
     private Error() {}

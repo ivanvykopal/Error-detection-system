@@ -40,9 +40,12 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vloženie záznamu do symbolickej tabuľky.
-     * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
-     * @param value - hodnota, ktorá je viazaná na kľúč
+     * Metóda na vloženie záznamu do symbolickej tabuľky.
+     * @param key kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
+     * @param value hodnota, ktorá je viazaná na kľúč
+     * @param line riadok, na ktorom sa identifikátor používa
+     * @param kind typ
+     * @param database databáza chýb
      */
     public void insert(String key, Record value, int line, byte kind, ErrorDatabase database) {
         Record record = null;
@@ -78,14 +81,15 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * Metóda na vloženie záznamu do symbolickej tabuľky.
      * @param key identifikátor
+     * @param typeCategory číselné vyjadrenie typu
      * @param type typ
      * @param line riadok deklarácie
+     * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, ErrorDatabase database) {
         Record record;
-        type = extractAttribute(type);
         if (type.contains("typedef")) {
             type = type.replace("typedef ", "");
             record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
@@ -97,15 +101,16 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * Metóda na vloženie záznamu do symbolickej tabuľky.
      * @param key identifikátor
+     * @param typeCategory číselné vyjadrenie typu
      * @param type typ
      * @param line riadok deklarácie
      * @param kind typ identifikátora
+     * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, byte kind, ErrorDatabase database) {
         Record record;
-        type = extractAttribute(type);
         if (type.contains("typedef")) {
             type = type.replace("typedef ", "");
             record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
@@ -116,29 +121,30 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vloženie záznamu do symbolickej tabuľky.
+     * Metóda na vloženie záznamu do symbolickej tabuľky.
      * @param key identifikátor
+     * @param typeCategory číselné vyjadrenie typu
      * @param type typ
      * @param line riadok deklarácie
      * @param kind typ identifikátora
      * @param size veľkosť poľa
+     * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, byte kind, int size, ErrorDatabase database) {
-        type = extractAttribute(type);
         Record record = new Record(typeCategory, type, line, kind);
         record.setSize(size);
         insert(key, record, line, kind, database);
     }
 
     /**
-     * Funkcia na vyprázdnenie symbolickej tabuľky.
+     * Metóda na vyprázdnenie symbolickej tabuľky.
      */
     public void free() {
         table.clear();
     }
 
     /**
-     * Funkcia na zmenu hodnoty v zázname.
+     * Metóda na zmenu hodnoty v zázname.
      * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
      * @param newValue - nová hodnota, ktorá sa zapíše pre daný kľúč
      */
@@ -153,12 +159,16 @@ public class SymbolTable implements Serializable {
         }
     }
 
+    /**
+     * Metóda na zistenie predchodcu.
+     * @return predchádzajúcu tabuľku
+     */
     public SymbolTable getParent() {
         return parent;
     }
 
     /**
-     * Funkcia na pridanie vnorenej tabuľky.
+     * Metóda na pridanie vnorenej tabuľky.
      * @param newSymbolTable vnorená tabuľka
      */
     public void addChild(SymbolTable newSymbolTable) {
@@ -166,7 +176,7 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vrátenie symbolickej tabuľky
+     * Metóda na vrátenie symbolickej tabuľky
      * @param index pozícia v ArrayListe
      * @return symbolická tabuľka
      */
@@ -174,25 +184,10 @@ public class SymbolTable implements Serializable {
         return childs.get(index);
     }
 
-    private String extractAttribute(String type) {
-        //TODO: nájsť efektívnejšie riešenie
-        //riešenie EXTERN, STATIC, AUTO, REGISTER, CONST, VOLATILE
-        if (type.contains("extern")) {
-            type = type.replace("extern ", "");
-        } else if (type.contains("static")) {
-            type = type.replace("static ", "");
-        } else if (type.contains("auto ")) {
-            type = type.replace("auto ", "");
-        } else if (type.contains("register")) {
-            type = type.replace("register ", "");
-        } else if (type.contains("const")) {
-            type = type.replace("const ", "");
-        } else if (type.contains("volatile")) {
-            type = type.replace("volatile ", "");
-        }
-        return type;
-    }
-
+    /**
+     * Metóda pre vytvorenie kópie symbolickej tabuľky.
+     * @return
+     */
     public SymbolTable createCopy() {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -209,6 +204,10 @@ public class SymbolTable implements Serializable {
         }
     }
 
+    /**
+     * Metóda na vypísanie symbolickej tabuľky.
+     * @param depth hĺbka symbolickej v tabuľke v strome
+     */
     public void printSymbolTable(int depth) {
         System.out.println("--------Symbolická tabuľka v hĺbke " + depth + " --------");
         for (String key: table.keySet()) {
@@ -218,6 +217,21 @@ public class SymbolTable implements Serializable {
         }
         for (SymbolTable child: childs) {
             child.printSymbolTable(depth + 1);
+        }
+    }
+
+    /**
+     * Metóda na zistenie, či sa v programe nachádza globálna premenná.
+     * @param database
+     */
+    public void findGlobalVariable(ErrorDatabase database) {
+        if (parent == null) {
+            for (String key: table.keySet()) {
+                Record record = table.get(key);
+                if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
+                    database.addErrorMessage(record.getDeclarationLine(), Error.getError("W-01"), "W-01");
+                }
+            }
         }
     }
 }

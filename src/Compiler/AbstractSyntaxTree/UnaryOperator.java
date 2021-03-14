@@ -21,6 +21,9 @@ public class UnaryOperator extends Node {
         if (operator.equals("&")) {
             SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false);
         } else {
+            if (operator.equals("++") || operator.equals("--")) {
+                SymbolTableFiller.resolveInitialization(expression, table, errorDatabase);
+            }
             SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
         }
 
@@ -36,6 +39,9 @@ public class UnaryOperator extends Node {
     }
 
     public void resolveUsage(SymbolTable table, int line) {
+        if (operator.equals("++") || operator.equals("--")) {
+            SymbolTableFiller.resolveInitialization(expression, table, line);
+        }
         SymbolTableFiller.resolveUsage(expression, table, line);
         expression.resolveUsage(table, line);
     }

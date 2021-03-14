@@ -3,6 +3,7 @@ package Compiler.Parser;
 import Compiler.AbstractSyntaxTree.Enum;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
+import Compiler.GraphColoring.MatrixBuilder;
 import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
@@ -46,9 +47,11 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            //parseTree.traverse("");
+            parseTree.traverse("");
             symbolTable.printSymbolTable(0);
+            //TODO: kontrola, či sú chyby v errorDatabase
             symbolTable.findGlobalVariable(errorDatabase);
+            //MatrixBuilder matrix = new MatrixBuilder(symbolTable);
         }
     }
 

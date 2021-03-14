@@ -168,6 +168,22 @@ public class SymbolTable implements Serializable {
     }
 
     /**
+     * Metóda na nastavenie predchodcu
+     * @param parent predchodca
+     */
+    public void setParent(SymbolTable parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Metóda na získanie HashTabuľky.
+     * @return hash tabuľka
+     */
+    public HashMap<String, Record> getTable() {
+        return table;
+    }
+
+    /**
      * Metóda na pridanie vnorenej tabuľky.
      * @param newSymbolTable vnorená tabuľka
      */
@@ -182,6 +198,14 @@ public class SymbolTable implements Serializable {
      */
     public SymbolTable getChilds(int index) {
         return childs.get(index);
+    }
+
+    /**
+     * Metóda na zistenie nasledovníkov danej tabuľky.
+     * @return nasledovníci tabuľky
+     */
+    public ArrayList<SymbolTable> getChilds() {
+        return childs;
     }
 
     /**
@@ -222,16 +246,38 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zistenie, či sa v programe nachádza globálna premenná.
-     * @param database
+     * @param errorDatabase databáza chýb
      */
-    public void findGlobalVariable(ErrorDatabase database) {
+    public void findGlobalVariable(ErrorDatabase errorDatabase) {
         if (parent == null) {
             for (String key: table.keySet()) {
                 Record record = table.get(key);
                 if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                    database.addErrorMessage(record.getDeclarationLine(), Error.getError("W-01"), "W-01");
+                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("W-01"), "W-01");
                 }
             }
+        }
+    }
+
+    /**
+     * Metóda na zistenie, či sa v programe nachádza dlho aktávna premenná.
+     * @param errorDatabase databáza chýb
+     */
+    public void findLongActiveVariable(ErrorDatabase errorDatabase) {
+        for (String key : table.keySet()) {
+            Record record = table.get(key);
+            if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
+                //TODO: aktávna premenná ak je viac ako 10 riadkov, viem meniť
+                if (record.getInitializationLines().get(0) - record.getDeclarationLine() > 10) {
+                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                }
+                if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > 10) {
+                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                }
+            }
+        }
+        for (SymbolTable tab : childs) {
+            tab.findGlobalVariable(errorDatabase);
         }
     }
 }

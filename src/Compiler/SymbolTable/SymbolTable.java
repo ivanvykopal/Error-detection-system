@@ -57,16 +57,6 @@ public class SymbolTable implements Serializable {
                         record.getKind() != Kind.STRUCT_PARAMETER && record.getKind() != Kind.ARRAY_PARAMETER
                         && record.getKind() != Kind.PARAMETER;
             }
-            if (record != null && (kind == Kind.PARAMETER || kind == Kind.ARRAY_PARAMETER)) {
-                SymbolTable current = this;
-
-                while (current.parent != null) {
-                    current = current.parent;
-                }
-
-                current.table.put(key, value);
-                return;
-            }
         }
         if (kind == Kind.FUNCTION && record != null && record.getKind() == Kind.FUNCTION) {
             return;

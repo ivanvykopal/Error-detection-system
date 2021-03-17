@@ -36,4 +36,8 @@ public class ErrorDatabase implements Cloneable {
         return null;
     }
 
+    public boolean isEmpty() {
+        return errorTable.isEmpty();
+    }
+
 }

@@ -95,7 +95,7 @@ public class UnaryOperator extends Node {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier());
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -172,7 +172,7 @@ public class UnaryOperator extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return TypeChecker.findType(type);
+            return TypeChecker.findType(type, tail, table);
         } else {
             return -1;
         }
@@ -180,6 +180,10 @@ public class UnaryOperator extends Node {
 
     public Node getExpression() {
         return expression;
+    }
+
+    public String getOperator() {
+        return operator;
     }
 
     public short getTypeCategory() {

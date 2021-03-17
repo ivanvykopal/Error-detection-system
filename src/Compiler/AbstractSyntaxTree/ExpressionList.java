@@ -25,6 +25,10 @@ public class ExpressionList extends Node {
         }
     }
 
+    public ArrayList<Node> getExpressions() {
+        return expressions;
+    }
+
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "ExpressionList: ");

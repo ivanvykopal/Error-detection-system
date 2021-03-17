@@ -17,11 +17,11 @@ public final class SymbolTableFiller {
      * @param table
      * @param errorDatabase
      */
-    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitializatiaon) {
+    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitialization) {
         if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record != null) {
-                if (checkInitializatiaon && !record.getInitialized()) {
+                if (checkInitialization && !record.getInitialized()) {
                     if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
                             (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
                             (record.getType() % 50) != Type.ENUM) {
@@ -120,6 +120,8 @@ public final class SymbolTableFiller {
      * @param typedef
      * @param parameter
      * @param structVariable
+     * @param symbolTable
+     * @param errorDatabase
      */
     public static void addRecordToSymbolTable(Declarator declarator1, boolean typedef, boolean parameter,
                                         boolean structVariable, SymbolTable symbolTable, ErrorDatabase errorDatabase) {
@@ -159,9 +161,9 @@ public final class SymbolTableFiller {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                     line = decl_tail.getLine();
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
@@ -204,9 +206,9 @@ public final class SymbolTableFiller {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                     line = decl_tail.getLine();
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
@@ -253,9 +255,9 @@ public final class SymbolTableFiller {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                     line = decl_tail.getLine();
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
@@ -311,9 +313,9 @@ public final class SymbolTableFiller {
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                     line = decl_tail.getLine();
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    typeCategory = TypeChecker.findType(type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     type = type.replaceFirst(" ", " " + struct_name + " ");
                 }
 
@@ -387,19 +389,19 @@ public final class SymbolTableFiller {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                         line = decl_tail.getLine();
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                         type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                         line = decl_tail.getLine();
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                         type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }
@@ -484,19 +486,19 @@ public final class SymbolTableFiller {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
                         line = decl_tail.getLine();
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                         type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
                         line = decl_tail.getLine();
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
-                        typeCategory = TypeChecker.findType(type);
+                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                         type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }

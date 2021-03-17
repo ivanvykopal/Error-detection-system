@@ -71,7 +71,7 @@ public class ArrayReference extends Node {
                 return record.getType();
             }
         } else if (node instanceof Constant) {
-            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
         } else if (node instanceof FunctionCall) {
             Node id = node.getNameNode();
 
@@ -148,7 +148,7 @@ public class ArrayReference extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return TypeChecker.findType(type);
+            return TypeChecker.findType(type, tail, table);
         } else if (node instanceof TernaryOperator) {
             return ((TernaryOperator) node).getTypeCategory();
         } else {

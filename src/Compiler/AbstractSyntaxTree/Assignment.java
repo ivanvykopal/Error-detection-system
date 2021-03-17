@@ -97,7 +97,7 @@ public class Assignment extends Node {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -174,7 +174,7 @@ public class Assignment extends Node {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return TypeChecker.findType(type);
+            return TypeChecker.findType(type, tail, table);
         } else if (left instanceof TernaryOperator) {
             return ((TernaryOperator) left).getTypeCategory();
         } else {
@@ -188,6 +188,9 @@ public class Assignment extends Node {
 
     public void resolveUsage(SymbolTable table, int line) {
         SymbolTableFiller.resolveInitialization(left, table, line);
+        if (!operator.equals("=")) {
+            SymbolTableFiller.resolveUsage(left, table, line);
+        }
         SymbolTableFiller.resolveUsage(right, table, line);
         right.resolveUsage(table, line);
     }

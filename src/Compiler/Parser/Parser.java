@@ -50,8 +50,12 @@ public class Parser {
             parseTree.traverse("");
             symbolTable.printSymbolTable(0);
             //TODO: kontrola, či sú chyby v errorDatabase
-            symbolTable.findGlobalVariable(errorDatabase);
-            //MatrixBuilder matrix = new MatrixBuilder(symbolTable);
+            if (errorDatabase.isEmpty()) {
+                symbolTable.findGlobalVariable(errorDatabase);
+                //MatrixBuilder matrix = new MatrixBuilder(symbolTable);
+            } else {
+                symbolTable.findGlobalVariable(errorDatabase);
+            }
         }
     }
 
@@ -217,7 +221,12 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 nextToken();
-                return new Constant("enumeration_constant", getTokenValue(position - 1), getTokenLine( position - 1));
+                Record record = symbolTable.lookup(getTokenValue(position - 1));
+                if (record != null) {
+                    return new Constant("enum", getTokenValue(position - 1), getTokenLine(position - 1));
+                } else {
+                    return new Constant("", getTokenValue(position - 1), getTokenLine(position - 1));
+                }
             case Tag.NUMBER:
                 int u = 0;
                 int l = 0;
@@ -269,10 +278,11 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      */
     //DONE
-    private String enumeration_constant() {
+    private String enumeration_constant(String name) {
         if (getTokenTag() == Tag.IDENTIFIER) {
             //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
-            //symbolTable.insert(getTokenValue(), "", getTokenLine(), Kind.ENUMERATION_CONSTANT, errorDatabase);
+            Record record = new Record(Type.ENUM, "enum " + name, getTokenLine(), true, Kind.ENUMERATION_CONSTANT);
+            symbolTable.insert(getTokenValue(), record, getTokenLine(), Kind.ENUMERATION_CONSTANT, errorDatabase);
 
             nextToken();
             return getTokenValue(position - 1);
@@ -428,7 +438,7 @@ public class Parser {
                 nextToken();
                 if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
                     nextToken();
-                    ref = new FunctionCall(child, null, child.getLine());
+                    ref = new FunctionCall(child, null, child.getLine(), symbolTable);
                     child1 = rest1(ref);
                     if (child1 != null && !child1.isEmpty()) {
                         return child1;
@@ -443,7 +453,7 @@ public class Parser {
                     child2 = expect(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    ref = new FunctionCall(child, child1, child.getLine());
+                    ref = new FunctionCall(child, child1, child.getLine(), symbolTable);
                     child3 = rest1(ref);
                 }
                 if (child3 != null && !child3.isEmpty()) {
@@ -1834,7 +1844,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
                 nextToken();
-                child1 = enumerator_list();
+                child1 = enumerator_list("");
                 if (child1 != null && !child1.isNone()) {
                     switch (getTokenTag()) {
                         case Tag.RIGHT_BRACES:
@@ -1863,7 +1873,7 @@ public class Parser {
                 nextToken();
                 if (getTokenTag() == Tag.LEFT_BRACES) {
                     nextToken();
-                    child1 = enumerator_list();
+                    child1 = enumerator_list(terminal);
                     if (child1 != null && !child1.isNone()) {
                         switch (getTokenTag()) {
                             case Tag.RIGHT_BRACES:
@@ -1907,8 +1917,8 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node enumerator_list() {
-        Node child1 = enumerator();
+    private Node enumerator_list(String name) {
+        Node child1 = enumerator(name);
         if (child1 == null) {
             return null;
         }
@@ -1918,7 +1928,7 @@ public class Parser {
             arr.add(child1);
             while (getTokenTag() == Tag.COMMA) {
                 nextToken();
-                child1 = enumerator();
+                child1 = enumerator(name);
                 if (child1 == null) {
                     return null;
                 }
@@ -1943,8 +1953,8 @@ public class Parser {
      *         -1 ak sa vyskytla chyba
      */
     //DONE
-    private Node enumerator() {
-        String child1 = enumeration_constant();
+    private Node enumerator(String name) {
+        String child1 = enumeration_constant(name);
         int line = getTokenLine(position - 1);
         if (!child1.equals("")) {
             if (getTokenValue().equals("=")) {
@@ -4629,7 +4639,7 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
 
-            short type1 = TypeChecker.findType(type);
+            short type1 = TypeChecker.findType(type, tail, symbolTable);
             short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
@@ -4689,7 +4699,7 @@ public class Parser {
                 }
             }
 
-            short type1 = TypeChecker.findType(type);
+            short type1 = TypeChecker.findType(type, tail, symbolTable);
             short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
@@ -4728,7 +4738,7 @@ public class Parser {
                 type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
             }
 
-            short type1 = TypeChecker.findType(type);
+            short type1 = TypeChecker.findType(type, tail, symbolTable);
             short type2 = TypeChecker.getInitializer(initializer, symbolTable);
 
             if (type2 == -2) {
@@ -4769,7 +4779,7 @@ public class Parser {
                 return record.getType();
             }
         } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ");
+            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, symbolTable);
         } else if (left instanceof FunctionCall) {
             Node id = left.getNameNode();
 
@@ -4845,7 +4855,7 @@ public class Parser {
                 }
             }
 
-            return TypeChecker.findType(type);
+            return TypeChecker.findType(type, tail, symbolTable);
         } else if (left instanceof TernaryOperator) {
             return ((TernaryOperator) left).getTypeCategory();
         } else {

@@ -2,6 +2,7 @@ package Compiler.Parser;
 
 import Compiler.AbstractSyntaxTree.*;
 import Compiler.AbstractSyntaxTree.Enum;
+import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
@@ -16,7 +17,7 @@ public final class TypeChecker {
      * @param type typ (String)
      * @return typ (byte)
      */
-    public static short findType(String type) {
+    public static short findType(String type, Node node, SymbolTable symbolTable) {
         //vymazanie poslednej medzery
         short pointer = 0;
         for (int i = 0; i < type.length(); i++){
@@ -66,7 +67,28 @@ public final class TypeChecker {
             case "enum ": return (short) (Type.ENUM + pointer);                                              // enum
             case "void ": return (short) (Type.VOID + pointer);                                              // void
             case "string ": return Type.STRING;
-            default: return Type.TYPEDEF_TYPE;                                                              // vlastný typ
+            default:                                                                                        // vlastný typ
+                if (node == null) {
+                    return Type.TYPEDEF_TYPE;
+                }
+                Node id;
+                if (node instanceof IdentifierType) {
+                    id = node;
+                } else {
+                    id = node.getType();
+
+                    while (!(id instanceof IdentifierType)) {
+                        id = id.getType();
+                    }
+                }
+
+                String name = String.join(" ", ((IdentifierType) id).getNames());
+                Record record = symbolTable.lookup(name);
+                if (record != null && record.getKind() == Kind.TYPEDEF_NAME) {
+                    return record.getType();
+                } else {
+                    return Type.TYPEDEF_TYPE;
+                }
         }
     }
 
@@ -120,7 +142,7 @@ public final class TypeChecker {
             }
 
             //spojí všetky typy do stringu a konvertuje ich na byte
-            return findType(type);
+            return findType(type, tail, symbolTable);
         } else if (initializer instanceof UnaryOperator) {
             return ((UnaryOperator) initializer).getTypeCategory();
         } else if (initializer instanceof Identifier) {
@@ -132,7 +154,7 @@ public final class TypeChecker {
                 return record.getType();
             }
         } else if (initializer instanceof Constant) {
-            return findType(((Constant) initializer).getTypeSpecifier() + " ");
+            return findType(((Constant) initializer).getTypeSpecifier() + " ", null, symbolTable);
         } else if (initializer instanceof FunctionCall) {
             Node id = initializer.getNameNode();
 

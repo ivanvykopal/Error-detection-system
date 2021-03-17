@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="776.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="776.0" xmlns="http://javafx.com/javafx/8.0.241" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.Controller.ErrorController">
    <children>
       <Label layoutX="296.0" layoutY="22.0" text="Zistené chyby">
          <font>
@@ -22,7 +21,6 @@
             <TableColumn prefWidth="100.0" text="Riadok chyby" />
         </columns>
       </TableView>
-      <ChoiceBox layoutX="388.0" layoutY="97.0" prefHeight="25.0" prefWidth="207.0" />
       <Label layoutX="199.0" layoutY="94.0" text="Výber možnosti:">
          <font>
             <Font size="15.0" />
@@ -38,5 +36,6 @@
             <Font size="20.0" />
          </font>
       </Label>
+      <ComboBox fx:id="comboBox" layoutX="360.0" layoutY="92.0" prefHeight="25.0" prefWidth="240.0" onAction="#getSelectedItem"/>
    </children>
 </Pane>

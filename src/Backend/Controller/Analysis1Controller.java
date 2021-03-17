@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Analysis1Controller {
+    String absolutePath;
     String file;
 
     @FXML
@@ -31,17 +32,19 @@ public class Analysis1Controller {
         if (selectedFile != null) {
             warning.setTextFill(Color.web("#000000"));
             warning.setText("Súbor: " + selectedFile.getAbsolutePath());
-            file = selectedFile.getAbsolutePath();
+            absolutePath = selectedFile.getAbsolutePath();
+            file = selectedFile.getName();
         } else {
             warning.setTextFill(Color.web("#FF0000"));
             warning.setText("Chybný súbor!");
-            file = null;
+            absolutePath = null;
         }
     }
 
     public void analyzeCode(ActionEvent event) {
+        deleteFiles();
         Alert warning = new Alert(Alert.AlertType.WARNING);
-        if (file == null) {
+        if (absolutePath == null) {
             warning.setContentText("Nie je vybraný súbor alebo vybraný súbor je chybný!");
             warning.setHeaderText("Nesprávny súbor!");
             warning.setTitle("Upozornenie");
@@ -51,15 +54,15 @@ public class Analysis1Controller {
             System.out.println("Analyzujem kód!");
             try {
                 //načíta súbor do reťazca
-                String text = new String(Files.readAllBytes(Paths.get(file)));
+                String text = new String(Files.readAllBytes(Paths.get(absolutePath)));
                 IncludePreprocessor prep = new IncludePreprocessor(text);
                 if (!prep.process()) {
-                    System.out.println("Súbor " + file + " obsahuje aj študentom definované knižnice!");
+                    System.out.println("Súbor " + absolutePath + " obsahuje aj študentom definované knižnice!");
                     return;
                 }
                 ErrorDatabase errorDatabase = new ErrorDatabase();
                 Parser parser = new Parser(text, errorDatabase);
-                parser.parse();
+                parser.parse(file);
                 System.out.println("Koniec!");
                 errorDatabase.getErrorMessages();
             } catch (IOException er) {
@@ -68,5 +71,12 @@ public class Analysis1Controller {
             }
 
         }
+    }
+
+    private void deleteFiles() {
+        File fileError = new File("errors.csv");
+        fileError.delete();
+        File fileVariables = new File("variables.csv");
+        fileVariables.delete();
     }
 }

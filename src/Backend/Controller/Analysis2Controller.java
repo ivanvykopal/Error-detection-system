@@ -40,6 +40,7 @@ public class Analysis2Controller {
     }
 
     public void analyzeCodes(ActionEvent event) {
+        deleteFiles();
         Alert warning = new Alert(Alert.AlertType.WARNING);
         if (folder == null) {
             warning.setContentText("Nie je vybraný priečinok alebo vybraný priečinok je chybný!");
@@ -78,11 +79,19 @@ public class Analysis2Controller {
                     System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
                     ErrorDatabase errorDatabase = new ErrorDatabase();
                     Parser parser = new Parser(text, errorDatabase);
-                    parser.parse();
+                    parser.parse(file.getName());
                     System.out.print("\n");
                     errorDatabase.getErrorMessages();
+                    errorDatabase.createFile(file.getName());
                 }
             }
         }
+    }
+
+    private void deleteFiles() {
+        File fileError = new File("errors.csv");
+        fileError.delete();
+        File fileVariables = new File("variables.csv");
+        fileVariables.delete();
     }
 }

@@ -2,15 +2,22 @@ package Compiler.GraphColoring;
 
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
+import Compiler.Errors.ErrorRecord;
 import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class MatrixBuilder {
+    private String file;
 
-    public MatrixBuilder(SymbolTable symbolTable, ErrorDatabase errorDatabase) {
+    public MatrixBuilder(SymbolTable symbolTable, ErrorDatabase errorDatabase, String file) {
+        this.file = file;
 
         for (SymbolTable tab : symbolTable.getChilds()) {
             ArrayList<Index> indexes = findGlobal(symbolTable);
@@ -71,6 +78,8 @@ public class MatrixBuilder {
             }
             System.out.print("\n");
         }
+
+        createVariables(maxColor, variables);
 
     }
 
@@ -245,4 +254,18 @@ public class MatrixBuilder {
         return !set1.isEmpty();
     }
 
+    private void createVariables(int size, ArrayList<String>[] variables) {
+        try {
+            File fileVariables = new File("variables.csv");
+            fileVariables.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(fileVariables, true);
+            for (int i = 0; i <= size; i++) {
+                fileWriter.write(file + ", " + String.join("; ", variables[i]) + "\n");
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Chyba");
+        }
+    }
 }

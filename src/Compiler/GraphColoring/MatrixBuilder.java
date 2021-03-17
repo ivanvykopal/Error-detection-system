@@ -1,5 +1,7 @@
 package Compiler.GraphColoring;
 
+import Compiler.Errors.Error;
+import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
@@ -8,17 +10,17 @@ import java.util.*;
 
 public class MatrixBuilder {
 
-    public MatrixBuilder(SymbolTable symbolTable) {
+    public MatrixBuilder(SymbolTable symbolTable, ErrorDatabase errorDatabase) {
 
         for (SymbolTable tab : symbolTable.getChilds()) {
             ArrayList<Index> indexes = findGlobal(symbolTable);
             ArrayList<Integer> list = new ArrayList<>();
             createIndexes(tab, list, indexes);
-            createMatrix(tab, indexes);
+            createMatrix(tab, indexes, errorDatabase);
         }
     }
 
-    private void createMatrix(SymbolTable symbolTable, ArrayList<Index> indexes) {
+    private void createMatrix(SymbolTable symbolTable, ArrayList<Index> indexes, ErrorDatabase errorDatabase) {
         symbolTable.setParent(null);
         int rows = indexes.size();
         byte[][] matrix = new byte[rows][rows];
@@ -38,6 +40,38 @@ public class MatrixBuilder {
             }
             System.out.print("\n");
         }
+
+        int[] colors = WelshPowellAlgorithm.graphColoring(rows, matrix);
+
+        for (int i = 0; i < rows; i++) {
+            System.out.println("Vrchol " + i + " má farbu " + colors[i] + "!");
+        }
+
+        ArrayList<String>[] variables = new ArrayList[rows];
+        for (int i = 0; i < rows; i++) {
+            variables[i] = new ArrayList<>();
+        }
+
+        int maxColor = 0;
+        for (int i = 0; i < rows; i++) {
+            if ((colors[i] - 1) > maxColor) {
+                maxColor = colors[i] - 1;
+            }
+            variables[colors[i] - 1].add(indexes.get(i).getKey());
+        }
+
+        if (maxColor != rows - 1) {
+            errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
+        }
+
+        for (int i = 0; i <= maxColor; i++) {
+            System.out.print(i + "\t");
+            for (String str : variables[i]) {
+                System.out.print(str + ", ");
+            }
+            System.out.print("\n");
+        }
+
     }
 
     private void createIndexes(SymbolTable symbolTable, ArrayList<Integer> list, ArrayList<Index> indexes) {

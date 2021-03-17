@@ -22,6 +22,8 @@ public class FunctionCall extends Node {
                 for(Node node : ((ExpressionList) arguments).getExpressions()) {
                     if (node instanceof UnaryOperator && ((UnaryOperator) node).getOperator().equals("&")) {
                         SymbolTableFiller.resolveInitialization(((UnaryOperator) node).getExpression(), symbolTable, node.getLine());
+                    } else if (node instanceof Identifier) {
+                        SymbolTableFiller.resolveInitialization(node, symbolTable, node.getLine());
                     }
                 }
             }

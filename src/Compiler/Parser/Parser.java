@@ -47,12 +47,12 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            parseTree.traverse("");
-            symbolTable.printSymbolTable(0);
+            //parseTree.traverse("");
+            //symbolTable.printSymbolTable(0);
             //TODO: kontrola, či sú chyby v errorDatabase
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
-                //MatrixBuilder matrix = new MatrixBuilder(symbolTable);
+                MatrixBuilder matrix = new MatrixBuilder(symbolTable, errorDatabase);
             } else {
                 symbolTable.findGlobalVariable(errorDatabase);
             }

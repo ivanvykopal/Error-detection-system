@@ -70,6 +70,15 @@ public class SymbolTable implements Serializable {
         }
     }
 
+    public boolean isGlobal(String identifier) {
+        SymbolTable curr = this;
+        while (curr.parent != null) {
+            curr = curr.parent;
+        }
+        Record record = curr.getTable().get(identifier);
+        return record != null;
+    }
+
     /**
      * Metóda na vloženie záznamu do symbolickej tabuľky.
      * @param key identifikátor

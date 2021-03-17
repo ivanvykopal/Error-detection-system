@@ -7,7 +7,6 @@ import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,6 +22,7 @@ public class MatrixBuilder {
             ArrayList<Index> indexes = findGlobal(symbolTable);
             ArrayList<Integer> list = new ArrayList<>();
             createIndexes(tab, list, indexes);
+            System.out.println("\n");
             createMatrix(tab, indexes, errorDatabase);
         }
     }
@@ -41,18 +41,14 @@ public class MatrixBuilder {
             }
         }
 
-        for (int i = 0; i < rows; i++) {
+        /*for (int i = 0; i < rows; i++) {
             for (int j = 0; j < rows; j++) {
                 System.out.print(matrix[i][j] + "\t");
             }
             System.out.print("\n");
-        }
+        }*/
 
         int[] colors = WelshPowellAlgorithm.graphColoring(rows, matrix);
-
-        for (int i = 0; i < rows; i++) {
-            System.out.println("Vrchol " + i + " má farbu " + colors[i] + "!");
-        }
 
         ArrayList<String>[] variables = new ArrayList[rows];
         for (int i = 0; i < rows; i++) {
@@ -69,14 +65,6 @@ public class MatrixBuilder {
 
         if (maxColor != rows - 1) {
             errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
-        }
-
-        for (int i = 0; i <= maxColor; i++) {
-            System.out.print(i + "\t");
-            for (String str : variables[i]) {
-                System.out.print(str + ", ");
-            }
-            System.out.print("\n");
         }
 
         createVariables(maxColor, variables);
@@ -102,6 +90,12 @@ public class MatrixBuilder {
         Index index = new Index(key);
         index.setAccess(list);
         index.setActiveLines(findActiveLines(record));
+        StringBuilder strBuilder = new StringBuilder();
+        for (int line: index.getActiveLines()) {
+            strBuilder.append(line);
+            strBuilder.append(", ");
+        }
+        System.out.println(key + " -> " + strBuilder.toString());
         indexes.add(index);
     }
 
@@ -261,7 +255,9 @@ public class MatrixBuilder {
 
             FileWriter fileWriter = new FileWriter(fileVariables, true);
             for (int i = 0; i <= size; i++) {
-                fileWriter.write(file + ", " + String.join("; ", variables[i]) + "\n");
+                if (variables[i].size() > 1) {
+                    fileWriter.write(file + ", " + String.join("; ", variables[i]) + "\n");
+                }
             }
             fileWriter.close();
         } catch (IOException e) {

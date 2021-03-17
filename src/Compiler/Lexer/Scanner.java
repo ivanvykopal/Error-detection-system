@@ -478,28 +478,6 @@ public class Scanner {
     }
 
     /**
-     * Funkcia, ktorá načíta nasledujúci znak a porovnáho s parametrom.
-     * @param c znak, ktorý má byť nasledujúci
-     * @throws IOException
-     */
-    private boolean readNextCharacter(char c) throws IOException {
-        readNextCharacter();
-
-        // kontrola, či je koniec súboru
-        if (peek == '§') {
-            return false;
-        }
-
-        // kontrola, či nasledujúci znak je rovný c
-        if (peek == c) {
-            return true;
-        } else {
-            peek = ' ';
-            return false;
-        }
-    }
-
-    /**
      * Funkcia, ktorá vyráta predchádzajúcu pozíciu.
      */
     private void getPreviousPosition() {
@@ -535,18 +513,23 @@ public class Scanner {
             switch (peek) {
                 case '*':
                     // komentár typu /* */
+                    readNextCharacter();
                     while(true) {
-                        readNextCharacter();
-                        if (peek == '*' && readNextCharacter('/')) {
-                            readNextCharacter();
-                            break;
-                        }
                         if (peek == '\n') {
                             line++;
                         }
                         if (peek == '§') {
                             // koniec súboru
                             return true;
+                        }
+                        if (peek == '*') {
+                            readNextCharacter();
+                            if (peek == '/') {
+                                readNextCharacter();
+                                break;
+                            }
+                        } else {
+                            readNextCharacter();
                         }
                     }
                     break;
@@ -579,6 +562,7 @@ public class Scanner {
             case "bool": return new Token(Tag.INT, "int", line);
             case "true": return new Token(Tag.NUMBER, "1", line);
             case "false": return new Token(Tag.NUMBER, "0", line);
+            case "_Bool": return new Token(Tag.INT, "int", line);
             default: return new Token(Tag.IDENTIFIER, identifier, line);
         }
     }

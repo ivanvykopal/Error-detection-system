@@ -1,19 +1,25 @@
 package Backend.Controller;
 
+import Backend.Main;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
+import Frontend.Analysis1Window;
+import Frontend.Analysis2Window;
+import Frontend.ErrorWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class Analysis2Controller {
     File folder;
@@ -39,7 +45,8 @@ public class Analysis2Controller {
         }
     }
 
-    public void analyzeCodes(ActionEvent event) {
+    public void analyzeCodes(ActionEvent event) throws IOException {
+        ArrayList<String> fileNames = new ArrayList<>();
         deleteFiles();
         Alert warning = new Alert(Alert.AlertType.WARNING);
         if (folder == null) {
@@ -77,6 +84,7 @@ public class Analysis2Controller {
                         continue;
                     }
                     System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
+                    fileNames.add(file.getName());
                     ErrorDatabase errorDatabase = new ErrorDatabase();
                     Parser parser = new Parser(text, errorDatabase);
                     parser.parse(file.getName());
@@ -85,6 +93,9 @@ public class Analysis2Controller {
                     errorDatabase.createFile(file.getName());
                 }
             }
+            Stage stage = new Stage();
+            Analysis2Window.closeStage();
+            new ErrorWindow(stage, fileNames);
         }
     }
 

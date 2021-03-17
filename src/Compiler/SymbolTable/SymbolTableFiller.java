@@ -24,7 +24,7 @@ public final class SymbolTableFiller {
                 if (checkInitialization && !record.getInitialized()) {
                     if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
                             (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
-                            (record.getType() % 50) != Type.ENUM) {
+                            (record.getType() % 50) != Type.ENUM && !table.isGlobal(((Identifier) node).getName())) {
                         errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
                     }
                 }

@@ -86,7 +86,9 @@ public class UnaryOperator extends Node {
     }
 
     private short findTypeCategory(Node left, SymbolTable table) {
-        if (left instanceof  Identifier) {
+        if (left instanceof BinaryOperator) {
+            return ((BinaryOperator) left).getTypeCategory();
+        } else if (left instanceof  Identifier) {
             //nájsť v symbolickej tabuľke
             Record record = table.lookup(((Identifier) left).getName());
             if (record == null) {

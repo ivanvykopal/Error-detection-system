@@ -3,16 +3,23 @@ package Backend.Controller;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
+import Frontend.Analysis1Window;
+import Frontend.ErrorWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Analysis1Controller {
     String absolutePath;
@@ -65,6 +72,10 @@ public class Analysis1Controller {
                 parser.parse(file);
                 System.out.println("Koniec!");
                 errorDatabase.getErrorMessages();
+                errorDatabase.createFile(file);
+                Stage stage = new Stage();
+                Analysis1Window.closeStage();
+                new ErrorWindow(stage, new ArrayList<>(Collections.singletonList(file)));
             } catch (IOException er) {
                 er.printStackTrace();
                 System.out.println("Chyba!");

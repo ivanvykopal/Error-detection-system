@@ -11,20 +11,23 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 
-public class ErrorController {
-    private HashMap<String, ArrayList<ErrorRecord>> table = new HashMap<>();
+public class ErrorController extends Controller {
+    private int fileCount = 1;
+    ArrayList<String> files;
+    private HashMap<String, ArrayList<TableRecord>> table = new HashMap<>();
     private HashMap<String, ArrayList<String>> table2 = new HashMap<>();
 
     @FXML
     ComboBox<String> comboBox;
 
     @FXML
-    TableView<ErrorRecord> errorTable;
+    TableView<TableRecord> errorTable;
 
     @FXML
     TableView<String> variableTable;
@@ -59,6 +62,16 @@ public class ErrorController {
         }
     }
 
+    @FXML
+    public void goToMenu(ActionEvent event) throws IOException {
+        showMainWindow();
+    }
+
+    @FXML
+    public void viewStatistics(ActionEvent event) throws IOException {
+        showStatisticsWindow(table, fileCount, files);
+    }
+
     private void readErrorFile() {
         try {
             File errorFile = new File("errors.csv");
@@ -69,12 +82,12 @@ public class ErrorController {
                 if (line.length < 4) {
                     continue;
                 }
-                ArrayList<ErrorRecord> errorRecord = table.get(line[0]);
-                if (errorRecord == null) {
-                    errorRecord = new ArrayList<>();
+                ArrayList<TableRecord> tableRecord = table.get(line[0]);
+                if (tableRecord == null) {
+                    tableRecord = new ArrayList<>();
                 }
-                errorRecord.add(new ErrorRecord(Integer.parseInt(line[3].trim()), line[2].trim(), line[1].trim()));
-                table.put(line[0], errorRecord);
+                tableRecord.add(new TableRecord(Integer.parseInt(line[3].trim()), line[2].trim(), line[1].trim()));
+                table.put(line[0], tableRecord);
             }
         } catch (FileNotFoundException | NumberFormatException e) {
             e.printStackTrace();
@@ -98,15 +111,15 @@ public class ErrorController {
                 rows.add(line[1].trim());
                 table2.put(line[0], rows);
             }
-        } catch (FileNotFoundException | NumberFormatException e) {
-            System.out.println("Chyba!");
+        } catch (FileNotFoundException e) {
+            System.out.println("Chyba v ErrorController!");
         }
     }
 
     private void setErrorTable() {
         if (!table.isEmpty()) {
-            ArrayList<ErrorRecord> records = table.get(comboBox.getSelectionModel().getSelectedItem());
-            ObservableList<ErrorRecord> data = FXCollections.observableArrayList(records);
+            ArrayList<TableRecord> records = table.get(comboBox.getSelectionModel().getSelectedItem());
+            ObservableList<TableRecord> data = FXCollections.observableArrayList(records);
             errorTable.setItems(data);
         }
     }
@@ -114,9 +127,24 @@ public class ErrorController {
     private void setVariableTable() {
         if (!table2.isEmpty()) {
             ArrayList<String> records = table2.get(comboBox.getSelectionModel().getSelectedItem());
-            ObservableList<String> data = FXCollections.observableArrayList(records);
+            ObservableList<String> data;
+            if (records == null) {
+                data = FXCollections.observableArrayList(new ArrayList<>());
+            } else {
+                data = FXCollections.observableArrayList(records);
+            }
             variableColumn.setCellValueFactory(e -> new SimpleStringProperty((e.getValue())));
             variableTable.setItems(data);
         }
+    }
+
+    public void fillComboBox(ArrayList<String> files) {
+        this.files = files;
+        comboBox.setItems(FXCollections.observableArrayList(files));
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    public void setFileCount(int count) {
+        this.fileCount = count;
     }
 }

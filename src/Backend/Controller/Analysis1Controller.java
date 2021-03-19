@@ -3,25 +3,20 @@ package Backend.Controller;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
-import Frontend.Analysis1Window;
-import Frontend.ErrorWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
-public class Analysis1Controller {
+public class Analysis1Controller extends Controller {
     String absolutePath;
     String file;
 
@@ -70,15 +65,17 @@ public class Analysis1Controller {
                 ErrorDatabase errorDatabase = new ErrorDatabase();
                 Parser parser = new Parser(text, errorDatabase);
                 parser.parse(file);
-                System.out.println("Koniec!");
-                errorDatabase.getErrorMessages();
+                //System.out.println("Koniec!");
+                //errorDatabase.getErrorMessages();
                 errorDatabase.createFile(file);
-                Stage stage = new Stage();
-                Analysis1Window.closeStage();
-                new ErrorWindow(stage, new ArrayList<>(Collections.singletonList(file)));
+                if (errorDatabase.isEmpty()) {
+                    showErrorWindow(new ArrayList<>());
+                } else {
+                    showErrorWindow(new ArrayList<>(Collections.singletonList(file)));
+                }
             } catch (IOException er) {
                 er.printStackTrace();
-                System.out.println("Chyba!");
+                System.out.println("Chyba v Analysis1Controller!");
             }
 
         }
@@ -90,4 +87,5 @@ public class Analysis1Controller {
         File fileVariables = new File("variables.csv");
         fileVariables.delete();
     }
+
 }

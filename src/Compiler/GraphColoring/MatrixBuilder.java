@@ -2,7 +2,6 @@ package Compiler.GraphColoring;
 
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.Errors.ErrorRecord;
 import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
@@ -22,7 +21,6 @@ public class MatrixBuilder {
             ArrayList<Index> indexes = findGlobal(symbolTable);
             ArrayList<Integer> list = new ArrayList<>();
             createIndexes(tab, list, indexes);
-            System.out.println("\n");
             createMatrix(tab, indexes, errorDatabase);
         }
     }
@@ -63,7 +61,7 @@ public class MatrixBuilder {
             variables[colors[i] - 1].add(indexes.get(i).getKey());
         }
 
-        if (maxColor != rows - 1) {
+        if (maxColor != rows - 1 && maxColor != 0) {
             errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
         }
 
@@ -87,15 +85,15 @@ public class MatrixBuilder {
 
     private void addItem(String key, ArrayList<Integer> list, ArrayList<Index> indexes, SymbolTable symbolTable) {
         Record record = symbolTable.getTable().get(key);
-        Index index = new Index(key);
+        Index index = new Index(key, record.getDeclarationLine());
         index.setAccess(list);
         index.setActiveLines(findActiveLines(record));
-        StringBuilder strBuilder = new StringBuilder();
+        /*StringBuilder strBuilder = new StringBuilder();
         for (int line: index.getActiveLines()) {
             strBuilder.append(line);
             strBuilder.append(", ");
         }
-        System.out.println(key + " -> " + strBuilder.toString());
+        System.out.println(key + " -> " + strBuilder.toString());*/
         indexes.add(index);
     }
 
@@ -151,7 +149,7 @@ public class MatrixBuilder {
         for (String key: table.keySet()) {
             Record record = table.get(key);
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                Index index = new Index(key);
+                Index index = new Index(key, record.getDeclarationLine());
                 index.setAccess(new ArrayList<>());
                 index.setGlobal(true);
                 indexes.add(index);
@@ -167,7 +165,7 @@ public class MatrixBuilder {
             return false;
         }
         if ((record2.getKind() == Kind.ARRAY || record2.getKind() == Kind.ARRAY_PARAMETER) &&
-                record1.getKind() != Kind.ARRAY && record1.getKind() == Kind.ARRAY_PARAMETER) {
+                record1.getKind() != Kind.ARRAY && record1.getKind() != Kind.ARRAY_PARAMETER) {
             return false;
         }
         // musia mať rovnaký počet *
@@ -195,7 +193,12 @@ public class MatrixBuilder {
         int usageLength = record.getUsageLines().size();
         int i = 0, j = 0;
         int init, usage;
-        if (record.getUsageLines().size() == 0) {
+        if (usageLength == 0) {
+            return activeLines;
+        }
+        //TODO: neviem, treba skontrolovať
+        if (initializationLength == 0) {
+            addActiveLines(record.getDeclarationLine(), record.getUsageLines().get(usageLength - 1), activeLines);
             return activeLines;
         }
         while (true) {
@@ -250,6 +253,9 @@ public class MatrixBuilder {
 
     private void createVariables(int size, ArrayList<String>[] variables) {
         try {
+            if (size == 0) {
+                return;
+            }
             File fileVariables = new File("variables.csv");
             fileVariables.createNewFile();
 

@@ -117,7 +117,7 @@ public class Preprocessor {
                 //prvý výskyt je makro
                 index = oldFile.indexOf(name);
                 while (true) {
-                    index = oldFile.indexOf(name, index + 1);
+                    index = oldFile.indexOf(name +"(", index + 1);
                     if (index == -1) {
                         break;
                     }
@@ -134,7 +134,7 @@ public class Preprocessor {
 
                     String newString = "";
                     newString = temp.substring(temp.indexOf(")") + 1);
-                    for (int i = 0; i < length; i++) {
+                    for (int i = 0; i < arr1.length; i++) {
                         newString = newString.replaceAll("\\b" + arr2[i] + "\\b", arr1[i]);
                     }
 

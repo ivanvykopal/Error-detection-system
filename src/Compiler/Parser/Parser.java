@@ -51,6 +51,7 @@ public class Parser {
             //symbolTable.printSymbolTable(0);
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
+                symbolTable.findLongActiveVariable(errorDatabase);
                 new MatrixBuilder(symbolTable, errorDatabase, file);
             } else {
                 symbolTable.findGlobalVariable(errorDatabase);
@@ -1994,7 +1995,7 @@ public class Parser {
             case Tag.IDENTIFIER:
                 String terminal = getTokenValue();
                 nextToken();
-                Node declarator = new TypeDeclaration(terminal, null, null);
+                Node declarator = new TypeDeclaration(terminal, null, null, getTokenLine(position - 1));
                 child1 = rest18(declarator);
                 if (child1 == null) {
                     return null;
@@ -3854,6 +3855,7 @@ public class Parser {
                     child4 = statement(true);
                 }
                 if (child4 != null && !child4.isNone()) {
+                    child2.resolveUsage(symbolTable, lastStatementLine);
                     return new While(child2, child4, line, symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
@@ -3972,6 +3974,7 @@ public class Parser {
                          if (child2.isEmpty()) {
                              child2 = null;
                          }
+                         child2.resolveUsage(symbolTable, lastStatementLine);
                          return new For(child1, child2, null, child3, line, symbolTable, errorDatabase);
                      }
                      if (child3 != null && child3.isNone()) {
@@ -4004,6 +4007,7 @@ public class Parser {
                              if (child2.isEmpty()) {
                                  child2 = null;
                              }
+                             child2.resolveUsage(symbolTable, lastStatementLine);
                              child3.resolveUsage(symbolTable, lastStatementLine);
                              return new For(child1, child2, child3, child5, line, symbolTable, errorDatabase);
                          }
@@ -4035,6 +4039,7 @@ public class Parser {
                         if (child2.isEmpty()) {
                             child2 = null;
                         }
+                        child2.resolveUsage(symbolTable, lastStatementLine);
                         return new For(new DeclarationList(child, line), child2, null, child3, line, symbolTable, errorDatabase);
                     }
                     if (child3 != null && child3.isNone()) {
@@ -4064,6 +4069,7 @@ public class Parser {
                             if (child2.isEmpty()) {
                                 child2 = null;
                             }
+                            child2.resolveUsage(symbolTable, lastStatementLine);
                             child3.resolveUsage(symbolTable, lastStatementLine);
                             return new For(new DeclarationList(child, line), child2, child3, child5, line, symbolTable, errorDatabase);
                         }
@@ -4387,7 +4393,7 @@ public class Parser {
 
         if (declarator.getDeclarator() == null) {
             declarator.addDeclarator(new TypeDeclaration(((IdentifierType) typeNode.getLastType()).getName(0),
-                    null, null));
+                    null, null, typeNode.getLine()));
             typeNode.removeLastType();
         } else if (!declarator.getDeclarator().isEnumStructUnion() && !(declarator.getDeclarator() instanceof IdentifierType)) {
             Node tail = declarator.getDeclarator();

@@ -13,6 +13,11 @@ public class TypeDeclaration extends Node {
         this.type = type;
     }
 
+    public TypeDeclaration(String declname, ArrayList<String> quals, Node type, int line) {
+        this(declname, quals, type);
+        setLine(line);
+    }
+
     public String getDeclname() {
         return declname;
     }

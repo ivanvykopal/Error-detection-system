@@ -1,8 +1,13 @@
 package Backend;
 
-import Frontend.MainWindow;
+import Backend.Controller.MainController;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -11,14 +16,21 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        new MainWindow(this.stage);
+        showMainWindow();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static void closeStage() {
-        stage.close();
+    private void showMainWindow() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../Frontend/MainWindow.fxml"));
+        Parent root = loader.load();
+        stage.setTitle("Systém na detekciu chýb");
+        MainController controller = loader.getController();
+        controller.setMainStage(stage);
+
+        stage.setScene(new Scene(root, 500, 500));
+        stage.show();
     }
 }

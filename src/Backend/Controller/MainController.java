@@ -1,26 +1,18 @@
 package Backend.Controller;
 
-import Backend.Main;
-import Frontend.Analysis1Window;
-import Frontend.Analysis2Window;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 
-public class MainController {
+public class MainController extends Controller {
+
     @FXML
     public void analysis1(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Main.closeStage();
-        new Analysis1Window(stage);
+        showAnalysis1Window();
     }
     @FXML
     public void analysis2(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Main.closeStage();
-        new Analysis2Window(stage);
+        showAnalysis2Window();
     }
 
 }

@@ -186,6 +186,8 @@ public class BinaryOperator extends Node {
 
             //spojí všetky typy do stringu a konvertuje ich na byte
             return TypeChecker.findType(type, tail, table);
+        } else if (left instanceof TernaryOperator) {
+            return ((TernaryOperator) left).getTypeCategory();
         } else  {
             return -1;
         }

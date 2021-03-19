@@ -140,31 +140,34 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
+                        line = decl_tail.getLine();
                     }
                     decl_tail = decl_tail.getType();
                 }
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                    line = decl_tail.getLine();
+                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                    }
                 }
 
                 Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
@@ -178,7 +181,7 @@ public final class SymbolTableFiller {
             } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
-                int line = 0;
+                int line = declarator1.getDeclarator().getLine();
                 String type = "";
                 short typeCategory;
                 String struct_name = "";
@@ -188,15 +191,15 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -205,11 +208,13 @@ public final class SymbolTableFiller {
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    line = decl_tail.getLine();
+                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                    }
                 }
 
                 Record record = new Record(typeCategory, type, line, Kind.TYPEDEF_NAME);
@@ -234,20 +239,21 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
+                        line = decl_tail.getLine();
                     }
                     decl_tail = decl_tail.getType();
                 }
@@ -258,7 +264,9 @@ public final class SymbolTableFiller {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                    }
                 }
 
                 Record record = new Record(typeCategory, type, line, false);
@@ -285,7 +293,7 @@ public final class SymbolTableFiller {
             } else if (declarator1.getDeclarator() instanceof TypeDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
-                int line = 0;
+                int line = declarator1.getDeclarator().getLine();
                 String type = "";
                 String struct_name = "";
                 short typeCategory;
@@ -295,15 +303,15 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -312,11 +320,13 @@ public final class SymbolTableFiller {
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    line = decl_tail.getLine();
+                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    type = type.replaceFirst(" ", " " + struct_name + " ");
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                    }
                 }
 
                 Record record = new Record(typeCategory, type, line, false);
@@ -365,20 +375,21 @@ public final class SymbolTableFiller {
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
+                        line = decl_tail.getLine();
                     }
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -388,21 +399,25 @@ public final class SymbolTableFiller {
                 if (pointer) {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        line = decl_tail.getLine();
+                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                        if (struct_name != null) {
+                            type = type.replaceFirst(" ", " " + struct_name + " ");
+                        }
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        line = decl_tail.getLine();
+                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                        if (struct_name != null) {
+                            type = type.replaceFirst(" ", " " + struct_name + " ");
+                        }
                     }
                 }
 
@@ -462,20 +477,21 @@ public final class SymbolTableFiller {
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
+                        line = decl_tail.getLine();
                     }
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            line = decl_tail.getLine();
+                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -485,21 +501,25 @@ public final class SymbolTableFiller {
                 if (pointer) {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        line = decl_tail.getLine();
+                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                        if (struct_name != null) {
+                            type = type.replaceFirst(" ", " " + struct_name + " ");
+                        }
                     }
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        line = decl_tail.getLine();
+                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        type = type.replaceFirst(" ", " " + struct_name + " ");
+                        if (struct_name != null) {
+                            type = type.replaceFirst(" ", " " + struct_name + " ");
+                        }
                     }
                 }
 

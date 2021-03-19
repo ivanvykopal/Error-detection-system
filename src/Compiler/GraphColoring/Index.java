@@ -5,13 +5,15 @@ import java.util.ArrayList;
 public class Index {
     private String key;
     private int declarationLine;
+    private String type;
     private boolean global = false;
     private ArrayList<Integer> access;
     private ArrayList<Integer> activeLines;
 
-    public Index(String key, int line) {
+    public Index(String key, int line, String type) {
         this.key = key;
         this.declarationLine = line;
+        this.type = type;
         access = new ArrayList<>();
         activeLines = new ArrayList<>();
     }
@@ -58,5 +60,13 @@ public class Index {
 
     public void setDeclarationLine(int declarationLine) {
         this.declarationLine = declarationLine;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

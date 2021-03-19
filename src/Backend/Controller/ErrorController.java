@@ -100,7 +100,7 @@ public class ErrorController extends Controller {
             Scanner reader = new Scanner(variableFile);
             while (reader.hasNextLine()) {
                 String data = reader.nextLine();
-                String[] line = data.split(",");
+                String[] line = data.split(";");
                 if (line.length < 2) {
                     continue;
                 }

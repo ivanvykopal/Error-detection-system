@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,28 +37,19 @@ public class StatisticsController extends Controller {
     TableColumn<TableRecord, String> countOne;
 
     @FXML
-    TableView<TableRecord> tableForAll;
+    TableView<SummaryTableRecord> errorTablePercent;
 
     @FXML
-    TableColumn<TableRecord, String> codeColumnAll;
+    TableColumn<SummaryTableRecord, String> codeColumnPercent;
 
     @FXML
-    TableColumn<TableRecord, String> messageColumnAll;
+    TableColumn<SummaryTableRecord, String> messageColumnPercent;
 
     @FXML
-    TableColumn<TableRecord, String> countColumnAll;
+    TableColumn<SummaryTableRecord, String> percentColumn;
 
     @FXML
-    TableView<TableRecord> errorTablePercent;
-
-    @FXML
-    TableColumn<TableRecord, String> codeColumnPercent;
-
-    @FXML
-    TableColumn<TableRecord, String> messageColumnPercent;
-
-    @FXML
-    TableColumn<TableRecord, String> percentColumn;
+    TableColumn<SummaryTableRecord, String> countColumn;
 
     @FXML
     Label meanErrorCount;
@@ -85,7 +78,7 @@ public class StatisticsController extends Controller {
             if (oneCodeRecord == null) {
                 oneCodeTable.put(tbRecord.getCode(), new TableRecord(1, tbRecord.getMessage(), tbRecord.getCode()));
             } else {
-                oneCodeRecord.setNumber((int) oneCodeRecord.getNumber() + 1);
+                oneCodeRecord.setNumber(oneCodeRecord.getNumber() + 1);
                 oneCodeTable.put(tbRecord.getCode(), oneCodeRecord);
             }
         }
@@ -112,33 +105,36 @@ public class StatisticsController extends Controller {
                 if (oneCodeRecord == null) {
                     allCodesTable.put(tbRecord.getCode(), new TableRecord(1, tbRecord.getMessage(), tbRecord.getCode()));
                 } else {
-                    oneCodeRecord.setNumber((int) oneCodeRecord.getNumber() + 1);
+                    oneCodeRecord.setNumber(oneCodeRecord.getNumber() + 1);
                     allCodesTable.put(tbRecord.getCode(), oneCodeRecord);
                 }
             }
         }
 
-        ArrayList<TableRecord> records = new ArrayList<>();
-        for (String key : allCodesTable.keySet()) {
-            records.add(allCodesTable.get(key));
-        }
-
-        ObservableList<TableRecord> data = FXCollections.observableArrayList(records);
-        tableForAll.setItems(data);
-
         fillTErrorTablePercent(allCodesTable);
     }
 
     private void fillTErrorTablePercent(HashMap<String, TableRecord> errorTable) {
-        ArrayList<TableRecord> records = new ArrayList<>();
-        for (String key: errorTable.keySet()) {
-            TableRecord record = errorTable.get(key);
-            double percent = (double) (Integer) record.getNumber() / allErrorCount;
-            records.add(new TableRecord(new BigDecimal(percent * 100).setScale(2, RoundingMode.HALF_UP),
-                    record.getMessage(), record.getCode()));
+        ArrayList<SummaryTableRecord> records = new ArrayList<>();
+        try {
+            File fileVariables = new File("error-total.csv");
+            fileVariables.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(fileVariables, true);
+            for (String key: errorTable.keySet()) {
+                TableRecord record = errorTable.get(key);
+                BigDecimal percent = new BigDecimal((double) (Integer) record.getNumber() / allErrorCount * 100)
+                        .setScale(2, RoundingMode.HALF_UP);
+                records.add(new SummaryTableRecord(record.getNumber(),
+                        record.getMessage(), record.getCode(), percent ));
+                fileWriter.write(record.getCode() + ", " + record.getNumber() + ", " + percent + "\n");
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        ObservableList<TableRecord> data = FXCollections.observableArrayList(records);
-        errorTablePercent.setItems(data);
+        ObservableList<SummaryTableRecord> data2 = FXCollections.observableArrayList(records);
+        errorTablePercent.setItems(data2);
     }
 
     public void fillTables() {

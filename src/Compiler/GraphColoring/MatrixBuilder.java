@@ -48,7 +48,7 @@ public class MatrixBuilder {
 
         int[] colors = WelshPowellAlgorithm.graphColoring(rows, matrix);
 
-        ArrayList<String>[] variables = new ArrayList[rows];
+        ArrayList<Integer>[] variables = new ArrayList[rows];
         for (int i = 0; i < rows; i++) {
             variables[i] = new ArrayList<>();
         }
@@ -58,14 +58,14 @@ public class MatrixBuilder {
             if ((colors[i] - 1) > maxColor) {
                 maxColor = colors[i] - 1;
             }
-            variables[colors[i] - 1].add(indexes.get(i).getKey());
+            variables[colors[i] - 1].add(i);
         }
 
         if (maxColor != rows - 1 && maxColor != 0) {
             errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
         }
 
-        createVariables(maxColor, variables);
+        createVariables(maxColor, variables, indexes);
 
     }
 
@@ -85,7 +85,7 @@ public class MatrixBuilder {
 
     private void addItem(String key, ArrayList<Integer> list, ArrayList<Index> indexes, SymbolTable symbolTable) {
         Record record = symbolTable.getTable().get(key);
-        Index index = new Index(key, record.getDeclarationLine());
+        Index index = new Index(key, record.getDeclarationLine(), record.getTypeString());
         index.setAccess(list);
         index.setActiveLines(findActiveLines(record));
         /*StringBuilder strBuilder = new StringBuilder();
@@ -149,7 +149,7 @@ public class MatrixBuilder {
         for (String key: table.keySet()) {
             Record record = table.get(key);
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                Index index = new Index(key, record.getDeclarationLine());
+                Index index = new Index(key, record.getDeclarationLine(), record.getTypeString());
                 index.setAccess(new ArrayList<>());
                 index.setGlobal(true);
                 indexes.add(index);
@@ -251,7 +251,7 @@ public class MatrixBuilder {
         return !set1.isEmpty();
     }
 
-    private void createVariables(int size, ArrayList<String>[] variables) {
+    private void createVariables(int size, ArrayList<Integer>[] variables, ArrayList<Index> indexes) {
         try {
             if (size == 0) {
                 return;
@@ -262,7 +262,19 @@ public class MatrixBuilder {
             FileWriter fileWriter = new FileWriter(fileVariables, true);
             for (int i = 0; i <= size; i++) {
                 if (variables[i].size() > 1) {
-                    fileWriter.write(file + ", " + String.join("; ", variables[i]) + "\n");
+                    StringBuilder strBuilder = new StringBuilder();
+                    String prefix = "";
+                    for (int index : variables[i]) {
+                        strBuilder.append(prefix);
+                        prefix = ", ";
+                        strBuilder.append(indexes.get(index).getKey());
+                        strBuilder.append(" (").append(indexes.get(index).getType());
+                        strBuilder.append(", ").append(indexes.get(index).getDeclarationLine());
+                        int length = indexes.get(index).getActiveLines().size();
+                        strBuilder.append(" - ").append(indexes.get(index).getActiveLines().get(length - 1));
+                        strBuilder.append(")");
+                    }
+                    fileWriter.write(file + ";" + strBuilder.toString() + "\n");
                 }
             }
             fileWriter.close();

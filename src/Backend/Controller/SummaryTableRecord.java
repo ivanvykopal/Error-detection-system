@@ -1,13 +1,16 @@
 package Backend.Controller;
 
+import java.math.BigDecimal;
+
 /**
  *
  */
-public class TableRecord {
+public class SummaryTableRecord {
 
     private int number;
     private String message;
     private String code;
+    private BigDecimal percent;
 
     /**
      *
@@ -15,10 +18,11 @@ public class TableRecord {
      * @param message
      * @param code
      */
-    public TableRecord(int count, String message, String code) {
+    public SummaryTableRecord(int count, String message, String code, BigDecimal percent) {
         this.number = count;
         this.message = message;
         this.code = code;
+        this.percent = percent;
     }
 
     /**
@@ -69,4 +73,12 @@ public class TableRecord {
         this.code = code;
     }
 
+
+    public BigDecimal getPercent() {
+        return percent;
+    }
+
+    public void setPercent(BigDecimal percent) {
+        this.percent = percent;
+    }
 }

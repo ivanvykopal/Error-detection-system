@@ -22,6 +22,11 @@ public class Analysis2Controller extends Controller {
     private Label warning;
 
     @FXML
+    public void goToMenu(ActionEvent event) throws IOException {
+        showMainWindow();
+    }
+
+    @FXML
     public void getFolder(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Vyberte priečinok");

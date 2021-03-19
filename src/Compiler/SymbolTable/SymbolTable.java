@@ -268,12 +268,16 @@ public class SymbolTable implements Serializable {
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
                 //TODO: aktávna premenná ak je viac ako 10 riadkov, viem meniť
                 // -malý počet riadkov ak nie je hneď inicializovaná
-                if (record.getInitializationLines().get(0) - record.getDeclarationLine() > 3) {
-                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                if (record.getInitializationLines().size() > 0) {
+                    if (record.getInitializationLines().get(0) - record.getDeclarationLine() > 3) {
+                        errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                    }
                 }
                 // - nechať tak
-                if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > 10) {
-                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                if (record.getInitializationLines().size() > 0 && record.getUsageLines().size() > 0) {
+                    if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > 10) {
+                        errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                    }
                 }
             }
         }

@@ -3973,8 +3973,9 @@ public class Parser {
                          }
                          if (child2.isEmpty()) {
                              child2 = null;
+                         } else {
+                             child2.resolveUsage(symbolTable, lastStatementLine);
                          }
-                         child2.resolveUsage(symbolTable, lastStatementLine);
                          return new For(child1, child2, null, child3, line, symbolTable, errorDatabase);
                      }
                      if (child3 != null && child3.isNone()) {
@@ -4006,8 +4007,9 @@ public class Parser {
                              }
                              if (child2.isEmpty()) {
                                  child2 = null;
+                             } else{
+                                 child2.resolveUsage(symbolTable, lastStatementLine);
                              }
-                             child2.resolveUsage(symbolTable, lastStatementLine);
                              child3.resolveUsage(symbolTable, lastStatementLine);
                              return new For(child1, child2, child3, child5, line, symbolTable, errorDatabase);
                          }
@@ -4038,8 +4040,9 @@ public class Parser {
                     if (child3 != null && !child3.isNone()) {
                         if (child2.isEmpty()) {
                             child2 = null;
+                        } else {
+                            child2.resolveUsage(symbolTable, lastStatementLine);
                         }
-                        child2.resolveUsage(symbolTable, lastStatementLine);
                         return new For(new DeclarationList(child, line), child2, null, child3, line, symbolTable, errorDatabase);
                     }
                     if (child3 != null && child3.isNone()) {
@@ -4068,8 +4071,9 @@ public class Parser {
                         } else {
                             if (child2.isEmpty()) {
                                 child2 = null;
+                            } else {
+                                child2.resolveUsage(symbolTable, lastStatementLine);
                             }
-                            child2.resolveUsage(symbolTable, lastStatementLine);
                             child3.resolveUsage(symbolTable, lastStatementLine);
                             return new For(new DeclarationList(child, line), child2, child3, child5, line, symbolTable, errorDatabase);
                         }

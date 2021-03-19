@@ -17,11 +17,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Analysis1Controller extends Controller {
-    String absolutePath;
-    String file;
+    private String absolutePath;
+    private String file;
 
     @FXML
     private Label warning;
+
+    @FXML
+    public void goToMenu(ActionEvent event) throws IOException {
+        showMainWindow();
+    }
 
     @FXML
     public void getFile(ActionEvent event) {

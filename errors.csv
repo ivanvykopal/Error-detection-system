@@ -1,4 +1,17 @@
-source9.c, E-RP-07, neoptimálne využívanie premenných, 0
-source9.c, W-01, využívanie globálnej premennej, 4
-source9.c, W-01, využívanie globálnej premennej, 5
-source9.c, W-01, využívanie globálnej premennej, 6
+test10.c, E-RP-07, neoptimálne využívanie premenných, 0
+test22.c, W-01, využívanie globálnej premennej, 8
+test22.c, W-01, využívanie globálnej premennej, 14
+test23.c, W-01, využívanie globálnej premennej, 6
+test32_e.c, E-ST-03, nedeklarovaná premenná, 19
+test32_e.c, E-SxA-03, chýbajúca bodkočiarka, 6
+test32_e.c, E-ST-03, nedeklarovaná premenná, 11
+test32_e.c, E-SxA-07, nesprávna syntax, 15
+test34_e.c, W-01, využívanie globálnej premennej, 5
+test3_e.c, W-01, využívanie globálnej premennej, 4
+test3_e.c, W-01, využívanie globálnej premennej, 5
+test3_e.c, W-01, využívanie globálnej premennej, 6
+test3_e.c, E-SmA-02, viacnásobná deklarácia premennej, 11
+test3_e.c, E-SmA-02, viacnásobná deklarácia premennej, 12
+test3_e.c, E-SmA-02, viacnásobná deklarácia premennej, 13
+test6.c, W-01, využívanie globálnej premennej, 6
+test8.c, E-RP-07, neoptimálne využívanie premenných, 0

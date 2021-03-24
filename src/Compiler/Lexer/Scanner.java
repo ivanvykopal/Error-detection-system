@@ -3,26 +3,42 @@ package Compiler.Lexer;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Preprocessing.Preprocessor;
-
 import java.io.IOException;
 import java.util.HashMap;
 
 /**
  * Trieda, ktorá spracováva vstup a mení ho na tokeny.
+ *
+ * @author Ivan Vykopal
  */
-public class Scanner {
+public final class Scanner {
+    /** Atribút file predstavuje analyzovaný súbor v textovej podobe. **/
     private String file;
+
+    /**
+     * Atribút keywords predstavuje hash tabuľku kľúčových slov, kde kľúč je názov kľúčoveho slova a hodnotou
+     * je číselná reprezentácia kľúčoveho slova.
+     **/
     private HashMap<String, Byte> keywords;
+
+    /** Atribút peek predtsavuje práve spracovávaný znak. **/
     private char peek = ' ';
+
+    /** Atribút position predstavuje pozíciu aktuálne spracovávaného znaku vo file. **/
     private int position = 0;
+
+    /** Atribút errorDatabase predstavuje databázu chýb. **/
     private ErrorDatabase errorDatabase;
 
+    /** Atribút line predstavuje aktuálny riadok v súbore. **/
     public static int line = 1;
 
     /**
      * Konštruktor, ktorý načíta vstupný súbor a zároveň naplní HashMap kľúčovými slovami,
      * pre ľahšiu kontrolu.
-     * @param file - cesta k súboru
+     *
+     * @param file cesta k súboru
+     * @param errorDatabase databáza chýb
      */
     public Scanner(String file, ErrorDatabase errorDatabase) {
         this.errorDatabase = errorDatabase;
@@ -37,8 +53,10 @@ public class Scanner {
     }
 
     /**
-     * Funkcia, ktorá spracováva vstup mení ho na tokeny.
+     * Metóda, ktorá spracováva vstup a mení ho na tokeny.
+     *
      * @return - vracia token
+     *
      * @throws IOException
      */
     public Token scan() throws IOException {
@@ -464,7 +482,8 @@ public class Scanner {
     }
 
     /**
-     * Funkcia na načítanie ďalšieho znaku.
+     * Metóda na načítanie ďalšieho znaku.
+     *
      * @throws IOException
      */
     private void readNextCharacter() throws IOException {
@@ -478,14 +497,15 @@ public class Scanner {
     }
 
     /**
-     * Funkcia, ktorá vyráta predchádzajúcu pozíciu.
+     * Metóda, ktorá vyráta predchádzajúcu pozíciu.
      */
     private void getPreviousPosition() {
         position--;
     }
 
     /**
-     * Funkcia, ktorá ignoruje prechádza cez prázdne znaky.
+     * Metóda, ktorá ignoruje a prechádza cez prázdne znaky (biele znaky).
+     *
      * @throws IOException
      */
     private void ignoreWhiteSpaces() throws IOException {
@@ -504,7 +524,8 @@ public class Scanner {
     }
 
     /**
-     * Funkcia, ktorá ignoruje komentáre.
+     * Metóda, ktorá ignoruje komentáre.
+     *
      * @throws IOException
      */
     private boolean ignoreComments() throws IOException {
@@ -553,9 +574,11 @@ public class Scanner {
     }
 
     /**
+     * Metóda, ktorá spracováva identifikátory. Určité identifikátory konvertuje na iné.
      *
-     * @param identifier
-     * @return
+     * @param identifier identifikátor
+     *
+     * @return token
      */
     private Token resolveIdentifier(String identifier) {
         switch(identifier) {
@@ -568,7 +591,7 @@ public class Scanner {
     }
 
     /**
-     * Funkcia, ktorá pridá klúčové slová do HashMap.
+     * Metóda, ktorá pridá klúčové slová do HashMap-y.
      */
     private void addKeywords() {
         keywords.put("auto", Tag.AUTO);

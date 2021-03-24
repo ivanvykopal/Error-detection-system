@@ -2,8 +2,15 @@ package Compiler.SymbolTable;
 
 /**
  * Trieda, ktorá určuje dátový typ premennej alebo návratovú hodnotu funkcie
+ *
+ * @author Ivan Vykopal
  */
 public class Type {
+
+    /**
+     * Privátny konštruktor.
+     */
+    private Type() {}
 
     // Character 1B
     public static short CHAR = 0;

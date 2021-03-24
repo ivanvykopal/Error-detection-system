@@ -2,11 +2,41 @@ package Compiler.AbstractSyntaxTree;
 
 import java.util.ArrayList;
 
-public class Declaration extends DeclarationNode {
+/**
+ * Trieda predstavujúca vrchol pre deklaráciu v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see DeclarationNode
+ * @see Node
+ */
+public final class Declaration extends DeclarationNode {
+    /** Atribút storage obsahuje zoznam storage špecifikátorov (extern, register, auto, ...)**/
     ArrayList<String> storage;
+
+    /** Atribút initValues obsahuje vrhol pre inicializačnú hodnotu. **/
     Node initValues;
+
+    //TODO: odstrániť bitsize
     Node bitsize;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code Declaration} a inicilizuje jej atribúty.
+     *
+     * @param name názov deklarovanej premennej
+     *
+     * @param quals zoznam kvalifikátorov (volatile, const, ...)
+     *
+     * @param storage zoznam storage špecifikátorov (extern, register, auto, ...)
+     *
+     * @param type  vrchol pre typ deklarácie
+     *
+     * @param init  vrchol pre inicializačnú hodnotu
+     *
+     * @param bitsize
+     *
+     * @param line riadok využitia
+     */
     public Declaration(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, Node init, Node bitsize, int line) {
         super(name, quals, type, line);
         this.storage = storage;
@@ -15,6 +45,11 @@ public class Declaration extends DeclarationNode {
         setLine(line);
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Declaration: ");

@@ -6,16 +6,29 @@ import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 
+/**
+ * Trieda pre pridávanie záznamov do symbolickej tabuľky
+ *
+ * @author Ivan Vykopal
+ */
 public final class SymbolTableFiller {
 
+    /**
+     * Privátny konštruktor.
+     */
     private SymbolTableFiller() {
     }
 
     /**
+     * Metóda na vyriešenie riadku využitia pre zadaný vrchol.
      *
-     * @param node
-     * @param table
-     * @param errorDatabase
+     * @param node vrchol, pre ktorý zadávame využitie
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     *
+     * @param checkInitialization true, ak sa má kontrolovať, či už premenná je inicializovaní, inak false
      */
     public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitialization) {
         if (node instanceof Identifier) {
@@ -74,10 +87,13 @@ public final class SymbolTableFiller {
     }
 
     /**
+     * Metóda na vyriešenie riadku využitia pre zadaný vrchol a zadaný riadok.
      *
-     * @param node
-     * @param table
-     * @param line
+     * @param node vrchol, pre ktorý zadávame využitie
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, pre ktorý pridávame  využitie
      */
     public static void resolveUsage(Node node, SymbolTable table, int line) {
         if (node instanceof Identifier) {
@@ -115,13 +131,19 @@ public final class SymbolTableFiller {
     }
 
     /**
+     * Metóda pre pridávanie záznamov do symbolickej tabuľky.
      *
-     * @param declarator1
-     * @param typedef
-     * @param parameter
-     * @param structVariable
-     * @param symbolTable
-     * @param errorDatabase
+     * @param declarator1 vrchol, ktorý pridávame do symbolickej tabuľky
+     *
+     * @param typedef true, ak ide o typedef (definovaný typ), inak false
+     *
+     * @param parameter true, ak ide o parameter funkcie, inak false
+     *
+     * @param structVariable true, ak ide o parameter štruktúry, inak false
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
      */
     public static void addRecordToSymbolTable(Declarator declarator1, boolean typedef, boolean parameter,
                                         boolean structVariable, SymbolTable symbolTable, ErrorDatabase errorDatabase) {
@@ -550,10 +572,13 @@ public final class SymbolTableFiller {
     }
 
     /**
+     * Metóda na vyriešenie riadku inicializácie pre zadaný vrchol.
      *
-     * @param node
-     * @param table
-     * @param errorDatabase
+     * @param node vrchol, pre ktorý pridávame riadok inicializácie
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
      */
     public static void resolveInitialization(Node node, SymbolTable table, ErrorDatabase errorDatabase) {
         if (node instanceof Identifier) {
@@ -600,10 +625,13 @@ public final class SymbolTableFiller {
     }
 
     /**
+     * Metóda na vyriešenie riadku inicializácie pre zadaný vrchol a zadaný riadok.
      *
-     * @param node
-     * @param table
-     * @param line
+     * @param node vrchol, pre ktorý pridávame riadok inicializácie
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok inicializácie, ktorý pridávame do symbolickej tabuľky
      */
     public static void resolveInitialization(Node node, SymbolTable table, int line) {
         if (node instanceof Identifier) {
@@ -641,7 +669,13 @@ public final class SymbolTableFiller {
         }
     }
 
-
+    /**
+     * Metóda pre zistenie, či zadaný identifikátor pochádza zo štandardných knižníc.
+     *
+     * @param identifier identifikátor
+     *
+     * @return true, ak pochádza zo štandardnej knižnice, inak false
+     */
     private static boolean isFromLibrary(String identifier) {
         switch (identifier) {
             case "FLT_ROUNDS":

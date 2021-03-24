@@ -8,11 +8,41 @@ import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
-public class UnaryOperator extends Node {
+/**
+ * Trieda predstavujúca vrchol pre unárny operátor v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see Node
+ */
+public final class UnaryOperator extends Node {
+    /** Atribút expression predstavuje výraz v unárnom operátori. **/
     Node expression;
+
+    /** Atribút operator predstavuje unárny operátor. **/
     String operator;
+
+    /** Atribút typeCategory predstavuje typ unárneho operátora. **/
     short typeCategory;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code UnaryOperator} a inicilizuje jej atribúty.
+     *
+     * <p> V rámci konštruktora sa zároveň pridáva využitie a inicializácie premenných pri priradení do symbolickej tabuľky.
+     *
+     * <p> Následne sa vykonáva typová kontrola výrazu. V prípade chyby sa zisťuje, či výraz nie je volanie funkcie,
+     * pre ktorú je špeciálny typ chyby.
+     *
+     * @param expr výraz
+     *
+     * @param op operátor
+     *
+     * @param line riadok využitia
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     */
     public UnaryOperator(Node expr, String op, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.expression = expr;
         this.operator = op;
@@ -38,6 +68,14 @@ public class UnaryOperator extends Node {
         }
     }
 
+    /**
+     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, na ktorom sa premenné využívajú
+     */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         if (operator.equals("++") || operator.equals("--")) {
             SymbolTableFiller.resolveInitialization(expression, table, line);
@@ -46,6 +84,14 @@ public class UnaryOperator extends Node {
         expression.resolveUsage(table, line);
     }
 
+    /**
+     * Metóda pre typovú kontrolu priradenia.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean typeCheck(SymbolTable table) {
         short type = findTypeCategory(expression, table);
         switch (operator) {
@@ -85,21 +131,30 @@ public class UnaryOperator extends Node {
         }
     }
 
-    private short findTypeCategory(Node left, SymbolTable table) {
-        if (left instanceof BinaryOperator) {
-            return ((BinaryOperator) left).getTypeCategory();
-        } else if (left instanceof  Identifier) {
+    /**
+     * Metóda pre nájdenie kategórie typu pre zadaný vrchol.
+     *
+     * @param node vrchol, ktorého typ zisťujeme
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return typ daného vrcholu
+     */
+    private short findTypeCategory(Node node, SymbolTable table) {
+        if (node instanceof BinaryOperator) {
+            return ((BinaryOperator) node).getTypeCategory();
+        } else if (node instanceof  Identifier) {
             //nájsť v symbolickej tabuľke
-            Record record = table.lookup(((Identifier) left).getName());
+            Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
                 return -2;                                                                  //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
-        } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
-        } else if (left instanceof FunctionCall) {
-            Node id = left.getNameNode();
+        } else if (node instanceof Constant) {
+            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
+        } else if (node instanceof FunctionCall) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -111,8 +166,8 @@ public class UnaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -124,8 +179,8 @@ public class UnaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -137,10 +192,10 @@ public class UnaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof UnaryOperator) {
-            return ((UnaryOperator) left).getTypeCategory();
-        } else if (left instanceof Cast) {
-            Node tail = left.getType();
+        } else if (node instanceof UnaryOperator) {
+            return ((UnaryOperator) node).getTypeCategory();
+        } else if (node instanceof Cast) {
+            Node tail = node.getType();
             String type = "";
             boolean pointer = false;
 
@@ -180,18 +235,38 @@ public class UnaryOperator extends Node {
         }
     }
 
+    /**
+     * Metóda na zistenie vrcholu výrazu.
+     *
+     * @return vrchol výrazu
+     */
     public Node getExpression() {
         return expression;
     }
 
+    /**
+     * Metóda na zistenie unárneho operátora.
+     *
+     * @return operátor
+     */
     public String getOperator() {
         return operator;
     }
 
+    /**
+     * Metóda pre zistenie typu unárneho operátora.
+     *
+     * @return typ unárneho operátora
+     */
     public short getTypeCategory() {
         return typeCategory;
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "UnaryOperator");

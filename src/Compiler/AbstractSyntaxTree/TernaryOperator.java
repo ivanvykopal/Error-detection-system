@@ -8,12 +8,48 @@ import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
-public class TernaryOperator extends Node {
+/**
+ * Trieda predstavujúca vrchol pre ternárny operátor v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see Node
+ */
+public final class TernaryOperator extends Node {
+    /** Atribút condition predstavuje podmienku ternárneho operátora. **/
     Node condition;
+
+    /** Atribút truePart predstavuje vetvu za splnenia podmienky. **/
     Node truePart;
+
+    /** Atribút falsePart predstavuje vetvu za nesplnenia podmienky. **/
     Node falsePart;
+
+    /** Atribút typeCategory predstavuje spoločný typ truePart a falsePart.
+     * Potrebný v prípade priraďaovania.
+     * **/
     short typeCategory;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code TernaryOperator} a inicilizuje jej atribúty.
+     *
+     * <p> V rámci konštruktora sa zároveň pridáva využitie premenných do symbolickej tabuľky.
+     *
+     * <p> Následne sa vykonáva typová kontrola truePart a falsePart vetiev. V prípade typovej nezhody sa zisťuje, či sa
+     * v truePart alebo falsePart vetve nachádza volanie funkcie, pre ktorú je špeciálny typ chyby.
+     *
+     * @param cond podmienka ternárneho operátora.
+     *
+     * @param truePart vetva pre splnenú podmienku
+     *
+     * @param falsePart vetva pre nesplnenú podmienku
+     *
+     * @param line riadok využitia
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     */
     public TernaryOperator(Node cond, Node truePart, Node falsePart, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.condition = cond;
         this.truePart = truePart;
@@ -35,6 +71,14 @@ public class TernaryOperator extends Node {
         }
     }
 
+    /**
+     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, na ktorom sa premenné využívajú
+     */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         SymbolTableFiller.resolveUsage(condition, table, line);
         condition.resolveUsage(table, line);
@@ -44,6 +88,11 @@ public class TernaryOperator extends Node {
         falsePart.resolveUsage(table, line);
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "TernaryOperator:");
@@ -52,6 +101,14 @@ public class TernaryOperator extends Node {
         if (falsePart != null) falsePart.traverse(indent + "    ");
     }
 
+    /**
+     * Metóda pre typovú kontrolu ternárneho operátora.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean typeCheck(SymbolTable table) {
         short var1 = findTypeCategory(truePart, table);
         short var2 = findTypeCategory(falsePart, table);
@@ -88,21 +145,30 @@ public class TernaryOperator extends Node {
         return false;
     }
 
-    private short findTypeCategory(Node left, SymbolTable table) {
-        if (left instanceof BinaryOperator) {
-            return ((BinaryOperator) left).getTypeCategory();
-        } else if (left instanceof Identifier) {
+    /**
+     * Metóda pre nájdenie kategórie typu pre zadaný vrchol.
+     *
+     * @param node vrchol, ktorého typ zisťujeme
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return typ daného vrcholu
+     */
+    private short findTypeCategory(Node node, SymbolTable table) {
+        if (node instanceof BinaryOperator) {
+            return ((BinaryOperator) node).getTypeCategory();
+        } else if (node instanceof Identifier) {
             //nájsť v symbolickej tabuľke
-            Record record = table.lookup(((Identifier) left).getName());
+            Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
                 return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
-        } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
-        } else if (left instanceof FunctionCall) {
-            Node id = left.getNameNode();
+        } else if (node instanceof Constant) {
+            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
+        } else if (node instanceof FunctionCall) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -114,8 +180,8 @@ public class TernaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -127,8 +193,8 @@ public class TernaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -140,10 +206,10 @@ public class TernaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof UnaryOperator) {
-            return ((UnaryOperator) left).getTypeCategory();
-        } else if (left instanceof Cast) {
-            Node tail = left.getType();
+        } else if (node instanceof UnaryOperator) {
+            return ((UnaryOperator) node).getTypeCategory();
+        } else if (node instanceof Cast) {
+            Node tail = node.getType();
             String type = "";
             boolean pointer = false;
 
@@ -178,15 +244,20 @@ public class TernaryOperator extends Node {
 
             //spojí všetky typy do stringu a konvertuje ich na byte
             return TypeChecker.findType(type, tail, table);
-        } else if (left instanceof TernaryOperator) {
-            return ((TernaryOperator) left).getTypeCategory();
-        } else if (left instanceof Assignment) {
-            return ((Assignment) left).getLeftType(table);
+        } else if (node instanceof TernaryOperator) {
+            return ((TernaryOperator) node).getTypeCategory();
+        } else if (node instanceof Assignment) {
+            return ((Assignment) node).getLeftType(table);
         } else {
             return -1;
         }
     }
 
+    /**
+     * Metóda pre zistenie celkového typu ternárneho operátora.
+     *
+     * @return celkový typ ternárneho operátora
+     */
     public short getTypeCategory() {
         return typeCategory;
     }

@@ -7,14 +7,24 @@ import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.Type;
 
+/**
+ * Trieda obsahujúca metódy potrebné pre zisťovanie typov jednotlivých premenných, respektíve identifikátorov.
+ *
+ * @author Ivan Vykopal
+ */
 public final class TypeChecker {
 
+    /**
+     * Privátny konštruktor.
+     */
     private TypeChecker() {
     }
 
     /**
-     * Funkcia na zistenie typu.
+     * Metóda na zistenie typu.
+     *
      * @param type typ (String)
+     *
      * @return typ (byte)
      */
     public static short findType(String type, Node node, SymbolTable symbolTable) {
@@ -93,10 +103,13 @@ public final class TypeChecker {
     }
 
     /**
+     * Metóda na zistienie typu inicializačnej hodnoty.
      *
-     * @param initializer
-     * @param symbolTable
-     * @return
+     * @param initializer vrchol pre inicializačnú hodnotu
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @return typ inicializačnej hodnoty (numerická hodnota)
      */
     public static short getInitializer(Node initializer, SymbolTable symbolTable) {
         if (initializer instanceof InitializationList) {

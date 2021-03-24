@@ -1,21 +1,3 @@
 source.c, W-01, využívanie globálnej premennej, 3
 source.c, E-RP-06, prístup mimo pamäť, 27
 source.c, E-ST-03, nedeklarovaná premenná, 30
-source2.c, E-LA-04, chýbajúce úvodzovky pre reťazec, 19
-source2.c, E-SxA-03, chýbajúca bodkočiarka, 5
-source2.c, E-SxA-03, chýbajúca bodkočiarka, 12
-source3.c, E-ST-03, nedeklarovaná premenná, 17
-source3.c, E-SxA-03, chýbajúca bodkočiarka, 20
-source4.c, E-SxA-03, chýbajúca bodkočiarka, 5
-source4.c, L-SxA-09, využitie kľúčového slova ako premennej, 7
-source5.c, E-ST-03, nedeklarovaná premenná, 20
-source6.c, W-01, využívanie globálnej premennej, 3
-source6.c, E-ST-03, nedeklarovaná premenná, 30
-source7.c, E-ST-01, neinicializovaná premenná, 17
-source8.c, E-ST-03, nedeklarovaná premenná, 32
-source8.c, W-01, využívanie globálnej premennej, 3
-source8.c, E-RP-06, prístup mimo pamäť, 29
-source9.c, E-RP-07, neoptimálne využívanie premenných, 0
-source9.c, W-01, využívanie globálnej premennej, 4
-source9.c, W-01, využívanie globálnej premennej, 5
-source9.c, W-01, využívanie globálnej premennej, 6

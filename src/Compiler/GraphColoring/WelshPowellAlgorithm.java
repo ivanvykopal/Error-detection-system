@@ -1,33 +1,42 @@
 package Compiler.GraphColoring;
 
-import Compiler.Errors.Error;
-import Compiler.Errors.ErrorDatabase;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Trieda pre farbenie grafov pomocou Welsh-Powell algoritmu.
+ *
+ * @author Ivan Vykopal
+ */
 public final class WelshPowellAlgorithm {
+    /** Atribút ratings obsahuje informácie o jednotlivých vrcholoch grafu. **/
     static ArrayList<Rating> ratings = new ArrayList<>();
+
+    /** Atribút colors obsahuje informácie o farbách jednotlivých vrcholoch. **/
     static int[] colors;
 
+    /**
+     * Privátny konštruktor.
+     */
     private WelshPowellAlgorithm() {
-
     }
 
-    private int max() {
-        int max = 0;
-        for (int i : colors) {
-            if (i > max) {
-                max = i;
-            }
-        }
-        return max;
-    }
-
+    /**
+     * Metóda pre vyprázdnenie informácií o jednotlivých vrcholoch grafu.
+     */
     private static void clear() {
         ratings = new ArrayList<>();
     }
 
+    /**
+     * Metóda pre vrcholové farbenie grafu.
+     *
+     * @param size počet premenných
+     *
+     * @param matrix matica susednosti
+     *
+     * @return zoznam farieb jednotlivých vrcholov
+     */
     public static int[] graphColoring(int size, byte[][] matrix) {
         clear();
         colors = new int[size];

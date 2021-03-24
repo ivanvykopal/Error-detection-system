@@ -7,27 +7,49 @@ import java.util.ArrayList;
  * Trieda obsahujúca informácie o identifikátore.
  * - dátový typ, riadok deklarovania, hodnota pri deklarácii, prvé využitie a typ (premenná, pole, ...)
  * Pre pole sa pridáva zoznam parametrov a veľkosť poľa.
+ *
+ * @author Ivan Vykopal
  */
 public class Record implements Serializable {
+    /** Atribút type predstavuje typ (numerická hodnota). **/
     private short type;
+
+    /** Atribút typeString predstavuje typ v textovej podobe (int, char, ...). **/
     private String typeString;
+
+    /** Atribút declarationLine predstavuje riadok deklarácie. **/
     private int declarationLine;
+
+    /** Atribút initialized predstavuje informáciu o tom, či premenná je inicializovaná **/
     private boolean initialized = false;
+
+    /** Atribút usageLines predstavuje zoznam riadkov, na ktorých sa premenná využíva. **/
     private ArrayList<Integer> usageLines;
+
+    /** Atribút initializationLines predstavuje zoznam riadkov, na ktorých sa premenná inicializuje. **/
     private ArrayList<Integer> initializationLines;
+
+    /** Atribút kind predstavuje druh (premenná, pole, parameter, ...) **/
     private byte kind;
 
-    // atribúty pre pole
+    /** Atribút parameters predstavuje zoznam parametrov funkcie. **/
     private ArrayList<String> parameters = new ArrayList<>();
+
+    /** Atribút size predstavuje veľkosť zadeklarovaného poľa. **/
     private int size = 0;
 
     /**
      * Konštruktor, v ktorom nastavujeme základné hodnoty.
-     * @param type - dátovy typ premennej, resp. návratová hodnota
-     * @param typeString - dátový typ premennej (String)
-     * @param line - riadok deklarácie
-     * @param initialized - hodnota pri deklarácii
-     * @param kind - typ (premenná, pole, funkcia, parameter)
+     *
+     * @param type dátovy typ premennej, resp. návratová hodnota
+     *
+     * @param typeString dátový typ premennej (String)
+     *
+     * @param line riadok deklarácie
+     *
+     * @param initialized hodnota pri deklarácii
+     *
+     * @param kind typ (premenná, pole, funkcia, parameter)
      */
     public Record(short type, String typeString, int line, boolean initialized, byte kind) {
         this.type = type;
@@ -41,10 +63,14 @@ public class Record implements Serializable {
 
     /**
      * Konštruktor, v ktorom nastavujeme základné hodnoty
-     * @param type - dátovy typ premennej, resp. návratová hodnota
-     * @param typeString - dátový typ premennej (String)
-     * @param line - riadok deklarácie
-     * @param kind  - typ (premenná, pole, funkcia, parameter)
+     *
+     * @param type dátovy typ premennej, resp. návratová hodnota
+     *
+     * @param typeString dátový typ premennej (String)
+     *
+     * @param line riadok deklarácie
+     *
+     * @param kind typ (premenná, pole, funkcia, parameter)
      */
     public Record(short type, String typeString, int line, byte kind) {
         this.type = type;
@@ -55,6 +81,17 @@ public class Record implements Serializable {
         initializationLines = new ArrayList<>();
     }
 
+    /**
+     * Konštruktor, v ktorom nastavujeme základné hodnoty
+     *
+     * @param type dátovy typ premennej, resp. návratová hodnota
+     *
+     * @param typeString dátový typ premennej (String)
+     *
+     * @param line riadok deklarácie
+     *
+     * @param initialized informácie, či premenná je inicializovaná
+     */
     public Record(short type, String typeString, int line, boolean initialized) {
         this.type = type;
         this.typeString = typeString;
@@ -65,7 +102,8 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na zistenie hodnoty dátového typu.
+     * Metóda na zistenie hodnoty dátového typu.
+     *
      * @return dátový typ
      */
     public short getType() {
@@ -73,15 +111,17 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na nastavenie dátového typu.
-     * @param type - dátový typ premennej, resp. návratová hodnota funkcie
+     * Metóda na nastavenie dátového typu.
+     *
+     * @param type dátový typ premennej, resp. návratová hodnota funkcie
      */
     public void setType(short type) {
         this.type = type;
     }
 
     /**
-     * Funkcia na zistenie riadku deklarácie.
+     * Metóda na zistenie riadku deklarácie.
+     *
      * @return riadok deklarácie
      */
     public int getDeclarationLine() {
@@ -89,47 +129,51 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na nastavenie riadku deklarácie
-     * @param declarationLine - riadok deklarácie
+     * Metóda na nastavenie riadku deklarácie
+     *
+     * @param declarationLine riadok deklarácie
      */
     public void setDeclarationLine(int declarationLine) {
         this.declarationLine = declarationLine;
     }
 
     /**
-     * Funkcia na zistenie hodnoty deklarácie
-     * @return hodnota deklarácie
+     * Metóda na zistenie toho, či premenná je inicializovaná
+     *
+     * @return true, ak premenná je inicializovaná, inak false
      */
     public boolean getInitialized() {
         return initialized;
     }
 
     /**
-     * Funkcia na nastavenie hodnoty deklarácie.
-     * @param initialized - hodnota deklarácie
+     * Metóda na nastavenie informácie o tom, či premenná je inicializovaná.
+     *
+     * @param initialized true, ak premenná je inicializovaná, inak false
      */
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
 
     /**
-     * Funkcia na zistenie typu.
-     * @return typ (premenná, pole, funkcia, parameter)
+     * Metóda na zistenie druhu.
+     * @return druh (premenná, pole, funkcia, parameter, ...)
      */
     public byte getKind() {
         return kind;
     }
 
     /**
-     * Funkcia na zistenie typu.
-     * @param kind - typ (premenná, pole, funkcia, parameter)
+     * Metóda na zistenie druhu.
+     * @param kind druh (premenná, pole, funkcia, parameter, ...)
      */
     public void setKind(byte kind) {
         this.kind = kind;
     }
 
     /**
-     * Funkcia na zistenie všetkých paramterov funkcie.
+     * Metóda na zistenie všetkých paramterov funkcie.
+     *
      * @return pole všetkých parametrov funkcie, inak null
      */
     public ArrayList<String> getParameters() {
@@ -137,15 +181,17 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na nastavenie paramterov funkcie
-     * @param parameters - pole paramterov funkcie, ak nie sú žiadne, tak null
+     * Metóda na nastavenie paramterov funkcie
+     *
+     * @param parameters pole paramterov funkcie, ak nie sú žiadne, tak null
      */
     public void setParameters(ArrayList<String> parameters) {
         this.parameters = parameters;
     }
 
     /**
-     * Funkcia na zistenie veľkosti poľa.
+     * Metóda na zistenie veľkosti poľa.
+     *
      * @return veľkosť poľa
      */
     public int getSize() {
@@ -153,15 +199,17 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na nastavenie veľkosti poľa.
-     * @param size - veľkosť poľa
+     * Metóda na nastavenie veľkosti poľa.
+     *
+     * @param size veľkosť poľa
      */
     public void setSize(int size) {
         this.size = size;
     }
 
     /**
-     * Funkcia na zistenie dátového typu (String).
+     * Metóda na zistenie dátového typu (String).
+     *
      * @return dátový typ (String)
      */
     public String getTypeString() {
@@ -169,7 +217,8 @@ public class Record implements Serializable {
     }
 
     /**
-     * Funkcia na nastavenie dátového typu (String).
+     * Metóda na nastavenie dátového typu (String).
+     *
      * @param typeString dátový typ (String)
      */
     public void setTypeString(String typeString) {
@@ -177,40 +226,45 @@ public class Record implements Serializable {
     }
 
     /**
+     * Metóda na zistenie zoznamu riadkov využitia premennej.
      *
-     * @return
+     * @return zoznam riadkov využitia premennej
      */
     public ArrayList<Integer> getUsageLines() {
         return usageLines;
     }
 
     /**
+     * Metóda na nastavenie riadkov využitia premennej.
      *
-     * @param usageLines
+     * @param usageLines zoznam riadkov využitia premennej.
      */
     public void setUsageLines(ArrayList<Integer> usageLines) {
         this.usageLines = usageLines;
     }
 
     /**
+     * Metóda na zistenie zoznamu riadkov inicializácie premennej.
      *
-     * @return
+     * @return zoznam riadkov inicializácie premennej.
      */
     public ArrayList<Integer> getInitializationLines() {
         return initializationLines;
     }
 
     /**
+     * Metóda na nastavenie zoznamu riadkov inicializácie premennej.
      *
-     * @param initializationLines
+     * @param initializationLines zoznam riadkov inicializácie premennej
      */
     public void setInitializationLines(ArrayList<Integer> initializationLines) {
         this.initializationLines = initializationLines;
     }
 
     /**
+     * Metóda na pridanie riadku do zoznamu riadkov využitia premennej.
      *
-     * @param line
+     * @param line riadok využitia
      */
     public void addUsageLine(int line) {
         int length = usageLines.size();
@@ -221,8 +275,9 @@ public class Record implements Serializable {
     }
 
     /**
+     * Metóda na pridanie riadku inicializácie premennej
      *
-     * @param line
+     * @param line riadok inicializácie
      */
     public void addInitializationLine(int line) {
         int length = initializationLines.size();
@@ -231,7 +286,12 @@ public class Record implements Serializable {
         }
     }
 
-
+    /**
+     * Metóda pre konvertovanie informácií na reťazec.
+     *
+     * @return informácie konvertnované na reťazec.
+     */
+    @Override
     public String toString() {
         StringBuilder usageLinesString = new StringBuilder();
         for (int i : usageLines) {

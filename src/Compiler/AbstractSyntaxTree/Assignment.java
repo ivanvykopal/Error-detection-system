@@ -5,11 +5,45 @@ import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.*;
 
-public class Assignment extends Node {
+/**
+ * Trieda predstavujúca vrchol pre priradenie v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see Node
+ */
+public final class Assignment extends Node {
+    /** Atribút left obsahuje vrchol, ktorý sa nachádza v ľavej časti priradenia. **/
     Node left;
+
+    /** Atribút right obsahuje vrchol, ktorý sa nachádza v pravej časti priradenia. **/
     Node right;
+
+    /** Atribút operator obsahuje informáciu o využitom operátori. **/
     String operator;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code Assignment} a inicilizuje jej atribúty.
+     *
+     * <p> V rámci konštruktora sa zároveň pridáva využitie a inicializácie premenných pri priradení do symbolickej
+     * tabuľky.
+     *
+     * <p> Následne sa vykonáva typová kontrola pravej a ľavej časti priradenia. V prípade chyby sa zisťuje, či
+     * na pravej strane sa nachádza volanie funkcie, pre ktorú je špeciálny typ chyby. V prípade, ak sa nenašla typová
+     * nezhoda kontroluje sa priradenie dynamického smerníka do statického.
+     *
+     * @param left vrchol, ktorý sa nachádza v ľavej časti priradenia
+     *
+     * @param op operátor
+     *
+     * @param right vrchol, ktorý sa nachádza v pravej časti priradenia
+     *
+     * @param line riadok využitia
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     */
     public Assignment(Node left, String op, Node right, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.left = left;
         this.operator = op;
@@ -40,6 +74,14 @@ public class Assignment extends Node {
         }
     }
 
+    /**
+     * Metóda pre typovú kontrolu priradenia.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean typeCheck(SymbolTable table) {
         short var1 = findTypeCategory(left, table);
         short var2 = findTypeCategory(right, table);
@@ -85,21 +127,30 @@ public class Assignment extends Node {
         return true;
     }
 
-    private short findTypeCategory(Node left, SymbolTable table) {
-        if (left instanceof BinaryOperator) {
-            return ((BinaryOperator) left).getTypeCategory();
-        } else if (left instanceof Identifier) {
+    /**
+     * Metóda pre nájdenie kategórie typu pre zadaný vrchol.
+     *
+     * @param node vrchol, ktorého typ zisťujeme
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return typ daného vrcholu
+     */
+    private short findTypeCategory(Node node, SymbolTable table) {
+        if (node instanceof BinaryOperator) {
+            return ((BinaryOperator) node).getTypeCategory();
+        } else if (node instanceof Identifier) {
             //nájsť v symbolickej tabuľke
-            Record record = table.lookup(((Identifier) left).getName());
+            Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
                 return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
-        } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
-        } else if (left instanceof FunctionCall) {
-            Node id = left.getNameNode();
+        } else if (node instanceof Constant) {
+            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
+        } else if (node instanceof FunctionCall) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -111,8 +162,8 @@ public class Assignment extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -124,8 +175,8 @@ public class Assignment extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -137,10 +188,10 @@ public class Assignment extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof UnaryOperator) {
-            return ((UnaryOperator) left).getTypeCategory();
-        } else if (left instanceof Cast) {
-            Node tail = left.getType();
+        } else if (node instanceof UnaryOperator) {
+            return ((UnaryOperator) node).getTypeCategory();
+        } else if (node instanceof Cast) {
+            Node tail = node.getType();
             String type = "";
             boolean pointer = false;
 
@@ -175,17 +226,32 @@ public class Assignment extends Node {
 
             //spojí všetky typy do stringu a konvertuje ich na byte
             return TypeChecker.findType(type, tail, table);
-        } else if (left instanceof TernaryOperator) {
-            return ((TernaryOperator) left).getTypeCategory();
+        } else if (node instanceof TernaryOperator) {
+            return ((TernaryOperator) node).getTypeCategory();
         } else {
             return -1;
         }
     }
 
+    /**
+     * Metóda pre zistenie typu ľavej časti priradenia.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return typ ľavej časti priradenia
+     */
     public short getLeftType(SymbolTable table) {
         return findTypeCategory(left, table);
     }
 
+    /**
+     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, na ktorom sa premenné využívajú
+     */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         SymbolTableFiller.resolveInitialization(left, table, line);
         if (!operator.equals("=")) {
@@ -195,6 +261,11 @@ public class Assignment extends Node {
         right.resolveUsage(table, line);
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "Assignmnent: ");

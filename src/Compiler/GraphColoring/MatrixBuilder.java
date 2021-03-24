@@ -11,9 +11,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Trieda pre vytvorenie matice susednosti premenných a následné spustenie farbenia grafov.
+ *
+ * @author Ivan Vykopal
+ */
 public class MatrixBuilder {
+    /** Atribút file predstavuje názov analyzovaného súboru. **/
     private String file;
 
+    /**
+     * Konštruktor, pre nastavenie názvu súboru.
+     *
+     * <p> V rámci konštruktora sa zároveň pre každú funkciu vytvorí zoznam premenných a matica susednosti.
+     * Následne sa spustí farbenie grafov pre zistenie neoptimálnych premenných.
+     *
+     * @param symbolTable symbolická tabuľla
+     *
+     * @param errorDatabase databáza chýb
+     *
+     * @param file názov analyzovaného súboru
+     */
     public MatrixBuilder(SymbolTable symbolTable, ErrorDatabase errorDatabase, String file) {
         this.file = file;
 
@@ -25,6 +43,15 @@ public class MatrixBuilder {
         }
     }
 
+    /**
+     * Metóda pre vytvorenie matice susednosti premenných.
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @param indexes zoznam premenných
+     *
+     * @param errorDatabase databáza chýb
+     */
     private void createMatrix(SymbolTable symbolTable, ArrayList<Index> indexes, ErrorDatabase errorDatabase) {
         symbolTable.setParent(null);
         int rows = indexes.size();
@@ -69,6 +96,15 @@ public class MatrixBuilder {
 
     }
 
+    /**
+     * Metóda na vytvorenie zoznamu premenných, v takom poradí v akom budú v matici susednosti.
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @param list informácie pre prístup do správnej symbolickej tabuľky
+     *
+     * @param indexes zoznam premenných
+     */
     private void createIndexes(SymbolTable symbolTable, ArrayList<Integer> list, ArrayList<Index> indexes) {
         for (String key : symbolTable.getTable().keySet()) {
             addItem(key, new ArrayList<>(list), indexes, symbolTable);
@@ -80,9 +116,19 @@ public class MatrixBuilder {
             list.remove(list.size() - 1);
             i++;
         }
-
     }
 
+    /**
+     * Metóda pre pridanie premennej do zoznamu premenných.
+     *
+     * @param key názov premennej
+     *
+     * @param list informácie pre prístup do správnej symbolickej tabuľky
+     *
+     * @param indexes zoznam premenných
+     *
+     * @param symbolTable symbolická tabuľka
+     */
     private void addItem(String key, ArrayList<Integer> list, ArrayList<Index> indexes, SymbolTable symbolTable) {
         Record record = symbolTable.getTable().get(key);
         Index index = new Index(key, record.getDeclarationLine(), record.getTypeString());
@@ -97,6 +143,25 @@ public class MatrixBuilder {
         indexes.add(index);
     }
 
+    /**
+     * Metóda, ktorá pridá pre dané miesto v matici susednosti na základe súradníc i a j 1 v prípade, ak medzi premennými
+     * vznikla kolízia a 0 v prípade, ak medzi premennými nevzniká kolízia.
+     *
+     * <p> Kolízia môže vzniknúť vtedy ak jedna z premenných je globálna, v prípade ak sú obe premenné parametre funkcie,
+     * majú nezhodu v type alebo majú prienik pri množnie aktívnych riadkov daných premenných.
+     *
+     * @param matrix pôvodná matica susednosti
+     *
+     * @param i index riadku
+     *
+     * @param j index stĺpca
+     *
+     * @param indexes zoznam premenných
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @return nová matica susednosti
+     */
     private byte[][] findEdge(byte[][] matrix, int i, int j, ArrayList<Index> indexes, SymbolTable symbolTable) {
         //ak je jedna z premenných global
         if (indexes.get(i).getGlobal() || indexes.get(j).getGlobal()) {
@@ -134,6 +199,16 @@ public class MatrixBuilder {
         return matrix;
     }
 
+    /**
+     * Metóda, ktorá vráti záznam zo symbolickej tabuľky danej premennej na základe informácií o prístupe do správnej
+     * symbolickej tabľky.
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @param index záznam premennej
+     *
+     * @return záznam zo symbolickej tabuľky
+     */
     private Record iterateTable(SymbolTable symbolTable, Index index) {
         int i = 0;
         while (i != index.getAccess().size()) {
@@ -143,6 +218,13 @@ public class MatrixBuilder {
         return symbolTable.getTable().get(index.getKey());
     }
 
+    /**
+     * Metóda na vyhľadanie globálnych premenných v programe.
+     *
+     * @param symbolTable symbolická tabuľka
+     *
+     * @return zoznam globálnych premenných
+     */
     private ArrayList<Index> findGlobal(SymbolTable symbolTable) {
         ArrayList<Index> indexes = new ArrayList<>();
         HashMap<String, Record> table = symbolTable.getTable();
@@ -158,6 +240,16 @@ public class MatrixBuilder {
         return indexes;
     }
 
+    /**
+     * Metóda pre zistenie typovej nezhody medzi dvomi premennými.
+     *
+     * @param record1 záznam zo symbolickej tabuľky prvej premennej
+     *
+     * @param record2 záznam zo symbolickej tabuľky druhej premennej
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean checkTypes(Record record1, Record record2) {
         //kontrola, či nejaký z nich je pole
         if ((record1.getKind() == Kind.ARRAY || record1.getKind() == Kind.ARRAY_PARAMETER) &&
@@ -187,6 +279,14 @@ public class MatrixBuilder {
         return false;
     }
 
+    /**
+     * Metóda na vyhľadanie aktívnych riadkov pre zadanú premennú. Aktívne riadky sa zisťujú na základe riadkov
+     * inicializácií a využití.
+     *
+     * @param record zoznam zo symbolickej tabuľky pre premennú
+     *
+     * @return zoznam aktívnych riadkov pre premennú
+     */
     private ArrayList<Integer> findActiveLines(Record record) {
         ArrayList<Integer> activeLines = new ArrayList<>();
         int initializationLength = record.getInitializationLines().size();
@@ -233,6 +333,15 @@ public class MatrixBuilder {
         return activeLines;
     }
 
+    /**
+     * Metóda, ktorá pridá do zoznamu aktívnych riadkov, riadoky od hodnoty start po hodnotu end.
+     *
+     * @param start počiatočný riadok
+     *
+     * @param end koncový riadok
+     *
+     * @param activeLines zoznam aktívnych riadkov
+     */
     private void addActiveLines(int start, int end, ArrayList<Integer> activeLines) {
         int length = activeLines.size();
         if (length != 0 && activeLines.get(length - 1) == start) {
@@ -243,6 +352,15 @@ public class MatrixBuilder {
         }
     }
 
+    /**
+     * Metóda na zistenie, či medzi zoznamami aktívnych riadkov je prienik.
+     *
+     * @param list1 zoznam aktívnych riadkov prvej premennej
+     *
+     * @param list2 zoznam aktívnych riadkov druhej premennej
+     *
+     * @return true, v prípade, ak je prienik medzi množinami riadkov, inak false
+     */
     private boolean isIntersect(ArrayList<Integer> list1, ArrayList<Integer> list2) {
         Set<Integer> set1 = new HashSet<>(list1);
         Set<Integer> set2 = new HashSet<>(list2);
@@ -251,6 +369,15 @@ public class MatrixBuilder {
         return !set1.isEmpty();
     }
 
+    /**
+     * Metóda na vytvorenie csv súboru s informáciami o možnosti zdieľania premenných.
+     *
+     * @param size maximálny možný počet premenných
+     *
+     * @param variables zoznam možnosti nahradenia premenných
+     *
+     * @param indexes zoznam premenných
+     */
     private void createVariables(int size, ArrayList<Integer>[] variables, ArrayList<Index> indexes) {
         try {
             if (size == 0) {

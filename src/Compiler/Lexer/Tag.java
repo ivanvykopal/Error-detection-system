@@ -2,8 +2,13 @@ package Compiler.Lexer;
 
 /**
  * Trieda obsahujúca všetky potrebné druhy tried pre tokeny.
+ *
+ * @author Ivan Vykopal
  */
-public class Tag {
+public final class Tag {
+
+    private Tag() {}
+
     //keywords
     public static final byte AUTO = 0;                // auto
     public static final byte BREAK = 1;               // break

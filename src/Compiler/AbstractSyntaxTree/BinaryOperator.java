@@ -8,12 +8,46 @@ import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.SymbolTableFiller;
 import Compiler.SymbolTable.Type;
 
-public class BinaryOperator extends Node {
+/**
+ * Trieda predstavujúca vrchol pre binárny operátor v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see Node
+ */
+public final class BinaryOperator extends Node {
+    /** Atribút left predstavuje ľavú časť binárneho operátora. **/
     Node left;
+
+    /** Atribút ritgh predstavuje pravú časť binárneho operátora. **/
     Node right;
+
+    /** Atribút operator obsahuje informáciu o operátore. **/
     String operator;
+
+    /** Atribút typeCatageory obsahuje informáciu o celkovom type binárneho operátora. **/
     short typeCategory;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code BinaryOperator} a inicilizuje jej atribúty.
+     *
+     * <p> V rámci konštruktora sa zároveň pridáva využitie premenných do symbolickej tabuľky..
+     *
+     * <p> Následne sa vykonáva typová kontrola pravej a ľavej časti binárneho operátora. V prípade chyby sa zisťuje, či
+     * na ľavej alebo pravej strane sa nachádza volanie funkcie, pre ktorú je špeciálny typ chyby.
+     *
+     * @param left vrchol, ktorý sa nachádza v ľavej časti priradenia
+     *
+     * @param op operátor
+     *
+     * @param right vrchol, ktorý sa nachádza v pravej časti priradenia
+     *
+     * @param line riadok využitia
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     */
     public BinaryOperator(Node left, String op, Node right, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.left = left;
         this.operator = op;
@@ -34,6 +68,14 @@ public class BinaryOperator extends Node {
         }
     }
 
+    /**
+     * Metóda pre typovú kontrolu priradenia.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean typeCheck(SymbolTable table) {
         short var1 = findTypeCategory(left, table);
         short var2 = findTypeCategory(right, table);
@@ -77,6 +119,15 @@ public class BinaryOperator extends Node {
         }
     }
 
+    /**
+     * Metóda pre zistenie maximálneho typu.
+     *
+     * @param var1 typ ľavej časti binárneho operátora
+     *
+     * @param var2 typ pravej časti binárneho operátora
+     *
+     * @return maximálny typ binárneho operátora
+     */
     private short maxType(short var1, short var2) {
         if (var1 == var2) {
             return var1;
@@ -96,21 +147,30 @@ public class BinaryOperator extends Node {
         return -1;
     }
 
-    private short findTypeCategory(Node left, SymbolTable table) {
-        if (left instanceof BinaryOperator) {
-            return ((BinaryOperator) left).getTypeCategory();
-        } else if (left instanceof Identifier) {
+    /**
+     * Metóda pre nájdenie kategórie typu pre zadaný vrchol.
+     *
+     * @param node vrchol, ktorého typ zisťujeme
+     *
+     * @param table symbolická tabuľka
+     *
+     * @return typ daného vrcholu
+     */
+    private short findTypeCategory(Node node, SymbolTable table) {
+        if (node instanceof BinaryOperator) {
+            return ((BinaryOperator) node).getTypeCategory();
+        } else if (node instanceof Identifier) {
             //nájsť v symbolickej tabuľke
-            Record record = table.lookup(((Identifier) left).getName());
+            Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
                 return -2;
             } else {
                 return record.getType();
             }
-        } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, table);
-        } else if (left instanceof FunctionCall) {
-            Node id = left.getNameNode();
+        } else if (node instanceof Constant) {
+            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
+        } else if (node instanceof FunctionCall) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -122,8 +182,8 @@ public class BinaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof ArrayReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -135,8 +195,8 @@ public class BinaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
+        } else if (node instanceof StructReference) {
+            Node id = node.getNameNode();
 
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
@@ -148,10 +208,10 @@ public class BinaryOperator extends Node {
             } else {
                 return record.getType();
             }
-        } else if (left instanceof UnaryOperator) {
-            return ((UnaryOperator) left).getTypeCategory();
-        } else if (left instanceof Cast) {
-            Node tail = left.getType();
+        } else if (node instanceof UnaryOperator) {
+            return ((UnaryOperator) node).getTypeCategory();
+        } else if (node instanceof Cast) {
+            Node tail = node.getType();
             String type = "";
             boolean pointer = false;
 
@@ -186,17 +246,30 @@ public class BinaryOperator extends Node {
 
             //spojí všetky typy do stringu a konvertuje ich na byte
             return TypeChecker.findType(type, tail, table);
-        } else if (left instanceof TernaryOperator) {
-            return ((TernaryOperator) left).getTypeCategory();
+        } else if (node instanceof TernaryOperator) {
+            return ((TernaryOperator) node).getTypeCategory();
         } else  {
             return -1;
         }
     }
 
+    /**
+     * Metóda pre zistenie celkového typu binárneho operátora.
+     *
+     * @return celkový typ binárneho operátora
+     */
     public short getTypeCategory() {
         return typeCategory;
     }
 
+    /**
+     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, na ktorom sa premenné využívajú
+     */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         SymbolTableFiller.resolveUsage(left, table, line);
         SymbolTableFiller.resolveUsage(right, table, line);
@@ -204,6 +277,11 @@ public class BinaryOperator extends Node {
         right.resolveUsage(table, line);
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "BinaryOperator: ");

@@ -3,8 +3,13 @@ package Compiler.SymbolTable;
 /**
  * Trieda, ktorá určuje o aký typ identifikátora ide.
  * Typy: premenná, pole, funkcia, parameter
+ *
+ * @author Ivan Vykopal
  */
-public class Kind {
+public final class Kind {
+
+    private Kind() {}
+
     public static byte VARIABLE = 0;
     public static byte ARRAY = 1;
     public static byte FUNCTION = 2;

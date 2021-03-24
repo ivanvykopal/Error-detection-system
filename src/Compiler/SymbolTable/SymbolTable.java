@@ -8,14 +8,22 @@ import java.util.HashMap;
 
 /**
  * Trieda, ktorá obsahuje informácie o premenných, funkciách a parametroch.
+ *
+ * @author Ivan Vykopal
  */
 public class SymbolTable implements Serializable {
+    /** Atribút parent obsahuje referenciu na rodičovskú symbolickú tabuľku **/
     SymbolTable parent = null;
+
+    /** Atribút table obsahuje zoznam premenných, funkcií,... **/
     HashMap<String, Record> table;
+
+    /** Atribút childs predstavuje zoznam potomkov (symbolických tabuliek). **/
     ArrayList<SymbolTable> childs = new ArrayList<>();
 
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.
+     *
      * @param parent - rodičovská tabuľka
      */
     public SymbolTable(SymbolTable parent) {
@@ -24,8 +32,10 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Funkcia na vyhľadanie hodnoty v symbolickej tabuľke.
-     * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
+     * Metóda na vyhľadanie hodnoty v symbolickej tabuľke.
+
+     * @param key kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
+     *
      * @return záznam zo symbolickej tabuľky
      */
     public Record lookup(String key) {
@@ -41,10 +51,17 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vloženie záznamu do symbolickej tabuľky.
+     *
+     * Zároveň sa kontroluje, či už zadaná premenná nie je v symbolickej tabuľke.
+     *
      * @param key kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
+     *
      * @param value hodnota, ktorá je viazaná na kľúč
+     *
      * @param line riadok, na ktorom sa identifikátor používa
-     * @param kind typ
+     *
+     * @param kind druh (premenná, paramter, funckia, ...)
+     *
      * @param database databáza chýb
      */
     public void insert(String key, Record value, int line, byte kind, ErrorDatabase database) {
@@ -70,6 +87,13 @@ public class SymbolTable implements Serializable {
         }
     }
 
+    /**
+     * Metóda na zistenie, či sa v symbolickej tabuľke nachádzajú globálne premenné.
+     *
+     * @param identifier názov identifikátoru
+     *
+     * @return true, ak identifikátor je globálna premenná, inak false
+     */
     public boolean isGlobal(String identifier) {
         SymbolTable curr = this;
         while (curr.parent != null) {
@@ -81,10 +105,15 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vloženie záznamu do symbolickej tabuľky.
+     *
      * @param key identifikátor
+     *
      * @param typeCategory číselné vyjadrenie typu
+     *
      * @param type typ
+     *
      * @param line riadok deklarácie
+     *
      * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, ErrorDatabase database) {
@@ -101,11 +130,17 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vloženie záznamu do symbolickej tabuľky.
+     *
      * @param key identifikátor
+     *
      * @param typeCategory číselné vyjadrenie typu
+     *
      * @param type typ
+     *
      * @param line riadok deklarácie
+     *
      * @param kind typ identifikátora
+     *
      * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, byte kind, ErrorDatabase database) {
@@ -121,12 +156,19 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vloženie záznamu do symbolickej tabuľky.
+     *
      * @param key identifikátor
+     *
      * @param typeCategory číselné vyjadrenie typu
+     *
      * @param type typ
+     *
      * @param line riadok deklarácie
+     *
      * @param kind typ identifikátora
+     *
      * @param size veľkosť poľa
+     *
      * @param database databáza chýb
      */
     public void insert(String key, short typeCategory, String type, int line, byte kind, int size, ErrorDatabase database) {
@@ -144,8 +186,10 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zmenu hodnoty v zázname.
-     * @param key - kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
-     * @param newValue - nová hodnota, ktorá sa zapíše pre daný kľúč
+     *
+     * @param key kľúč, podľa ktorého sa vyhľadáva záznam v symbolickej tabuľke
+     *
+     * @param newValue nová hodnota, ktorá sa zapíše pre daný kľúč
      */
     public void setValue(String key, Record newValue) {
         Record record;
@@ -160,6 +204,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zistenie predchodcu.
+     *
      * @return predchádzajúcu tabuľku
      */
     public SymbolTable getParent() {
@@ -167,7 +212,8 @@ public class SymbolTable implements Serializable {
     }
 
     /**
-     * Metóda na nastavenie predchodcu
+     * Metóda na nastavenie predchodcu.
+     *
      * @param parent predchodca
      */
     public void setParent(SymbolTable parent) {
@@ -176,6 +222,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na získanie HashTabuľky.
+     *
      * @return hash tabuľka
      */
     public HashMap<String, Record> getTable() {
@@ -184,6 +231,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na pridanie vnorenej tabuľky.
+     *
      * @param newSymbolTable vnorená tabuľka
      */
     public void addChild(SymbolTable newSymbolTable) {
@@ -192,7 +240,9 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vrátenie symbolickej tabuľky
+     *
      * @param index pozícia v ArrayListe
+     *
      * @return symbolická tabuľka
      */
     public SymbolTable getChilds(int index) {
@@ -201,6 +251,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zistenie nasledovníkov danej tabuľky.
+     *
      * @return nasledovníci tabuľky
      */
     public ArrayList<SymbolTable> getChilds() {
@@ -209,7 +260,8 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda pre vytvorenie kópie symbolickej tabuľky.
-     * @return
+     *
+     * @return kópia symbolickej tabuľky
      */
     public SymbolTable createCopy() {
         try {
@@ -229,6 +281,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na vypísanie symbolickej tabuľky.
+     *
      * @param depth hĺbka symbolickej v tabuľke v strome
      */
     public void printSymbolTable(int depth) {
@@ -245,6 +298,7 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zistenie, či sa v programe nachádza globálna premenná.
+     *
      * @param errorDatabase databáza chýb
      */
     public void findGlobalVariable(ErrorDatabase errorDatabase) {
@@ -260,20 +314,18 @@ public class SymbolTable implements Serializable {
 
     /**
      * Metóda na zistenie, či sa v programe nachádza dlho aktávna premenná.
+     *
      * @param errorDatabase databáza chýb
      */
     public void findLongActiveVariable(ErrorDatabase errorDatabase) {
         for (String key : table.keySet()) {
             Record record = table.get(key);
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                //TODO: aktávna premenná ak je viac ako 10 riadkov, viem meniť
-                // -malý počet riadkov ak nie je hneď inicializovaná
                 if (record.getInitializationLines().size() > 0) {
                     if (record.getInitializationLines().get(0) - record.getDeclarationLine() > 3) {
                         errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
                     }
                 }
-                // - nechať tak
                 if (record.getInitializationLines().size() > 0 && record.getUsageLines().size() > 0) {
                     if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > 10) {
                         errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");

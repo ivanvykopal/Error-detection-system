@@ -1,22 +1,45 @@
 package Compiler.Preprocessing;
 
 /**
+ * Trieda pre predspracovanie zdrojového kódu.
+ * V rámci predspracovania ide o spracovanie #define, #include a zvyšných direktív.
  *
+ * @author Ivan Vykopal
  */
 public class Preprocessor {
+    /** Atribút position predstavuje pozíciu aktuálne spracovávanéh znaku v rámci pôvodného súboru. **/
     private int position = 0;
+
+    /** Atribút oldFile predstavuje textovú podobu pôvodného súboru. **/
     private String oldFile;
+
+    /** Atribút newFile predstavuje novú podobu súboru, už predspracovnú. **/
     private StringBuilder newFile = new StringBuilder();
+
+    /** Atribút lines predstavuje rozdelenie súboru do riadkov. **/
     String[] lines;
 
+    /**
+     * Konštruktor, ktorý inicaliuje atribút oldFile.
+     *
+     * @param file textová spodoba analyzovaného súboru
+     */
     public Preprocessor(String file) {
         this.oldFile = file;
     }
 
+    /**
+     * Metóda na posunutie pozície na nasledujúci znak.
+     */
     private void nextLine() {
         position++;
     }
 
+    /**
+     * Metóda pre predspracovanie zdrojovéjo kódu a vyriešenie direktív.
+     *
+     * @return predspracovaný súbor
+     */
     public String preprocess() {
         lines = oldFile.split("\n");
 
@@ -50,6 +73,13 @@ public class Preprocessor {
         return newFile.toString();
     }
 
+    /**
+     * Metóda pre predspracovanie #define direktívy v zdrojovom kóde.
+     *
+     * <p> Všetky definované makrá sú nahradené makrom nachádzajúcom pri direktíve #define.
+     *
+     * @param words riadok s direktívou define rozdelený na slová.
+     */
     private void preprocessDefine(String[] words) {
         if (words[0].length() == 1) {
             // typ: # define ...
@@ -153,6 +183,9 @@ public class Preprocessor {
         }
     }
 
+    /**
+     * Metóda pre predspracovanie podmienkových direktív v zdrojovom kóde.
+     */
     private void preprocessConditions() {
         newFile.append("\n");
         nextLine();

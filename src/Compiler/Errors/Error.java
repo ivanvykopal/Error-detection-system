@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Trieda obsahujúca chyby.
+ * Trieda obsahujúca zoznam chýb.
+ *
+ * @author Ivan Vykopal
  */
 public final class Error {
+    /** Hash tabuľka so zoznamom chýb. **/
     static Map<String, String> errors = new HashMap<String, String>() {{
         // symbol table errors
         put("E-ST-01", "neinicializovaná premenná");
@@ -50,8 +53,18 @@ public final class Error {
         put("W-01", "využívanie globálnej premennej");
     }};
 
+    /**
+     * Privátny konštruktor pre triedu {@code Error}.
+     */
     private Error() {}
 
+    /**
+     * Metóda na zistenie chybovej správy na základe kódu.
+     *
+     * @param key kód chyby
+     *
+     * @return chybová správa
+     */
     public static String getError(String key) {
         return errors.get(key);
     }

@@ -1,21 +1,26 @@
 package Compiler.Preprocessing;
 
 /**
+ * Trieda pre sprcovanie include v zdrojových kódoch.
  *
+ * @author Ivan Vykopal
  */
 public class IncludePreprocessor {
-    String file;
+    /** Atribút file predstavuje analyzovaný súbor v textovej podobe. **/
+    private String file;
 
     /**
      * Konštruktor na nastavenie obsahu súboru.
-     * @param file obsah súboru
+     *
+     * @param file obsah súboru v textovej podobe
      */
     public IncludePreprocessor(String file) {
         this.file = file;
     }
 
     /**
-     * Funkcia na zistenie, či súbor obsahuje aj inú knižnicu ako sú štandardné.
+     * Metóda na zistenie, či súbor obsahuje aj inú knižnicu ako sú štandardné knižnice.
+     *
      * @return true, ak obsahuje len štandardné knižnice
      *         false, ak obsahuje aj študentom vytvorené knižnice.
      */
@@ -33,9 +38,11 @@ public class IncludePreprocessor {
     }
 
     /**
-     * Funkcia na zistenie, či ide o štandardnú knižnicu.
+     * Metóda na zistenie, či ide o štandardnú knižnicu.
+     *
      * @param line riadok s #include a s knižnicou
-     * @return true, ak ide o štandardnú knižnicu inak false
+     *
+     * @return true, ak ide o štandardnú knižnicu, inak false
      */
     private boolean preprocessInclude(String line) {
         //zmaže medzery

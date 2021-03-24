@@ -6,9 +6,30 @@ import Compiler.SymbolTable.SymbolTableFiller;
 
 import java.util.ArrayList;
 
-public class ParameterList extends Node {
+/**
+ * Trieda predstavujúca vrchol pre zoznam parametrov funkcie v jazyku C.
+ *
+ * @author Ivan Vykopal
+ *
+ * @see Node
+ */
+public final class ParameterList extends Node {
+    /** Atribút parameters predstavuje zoznam parametrov funkcie. **/
     ArrayList<Node> parameters;
 
+    /**
+     * Konštruktor, ktorý vytvára triedu {@code ParameterList} a inicilizuje jej atribúty.
+     *
+     * <p> V rámci konštruktora sa zároveň pridáva využitie premenných jednotlivých parametrov do symbolickej tabuľky.
+     *
+     * @param params zoznam parametrov
+     *
+     * @param line riadok využitia
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param errorDatabase databáza chýb
+     */
     public ParameterList(ArrayList<Node> params, int line, SymbolTable table, ErrorDatabase errorDatabase) {
         this.parameters = params;
         setLine(line);
@@ -18,6 +39,14 @@ public class ParameterList extends Node {
         }
     }
 
+    /**
+     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     *
+     * @param table symbolická tabuľka
+     *
+     * @param line riadok, na ktorom sa premenné využívajú
+     */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         for (Node node : parameters) {
             SymbolTableFiller.resolveUsage(node, table, line);
@@ -25,6 +54,11 @@ public class ParameterList extends Node {
         }
     }
 
+    /**
+     * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).
+     *
+     * @param indent odriadkovanie pre správne formátovanie
+     */
     @Override
     public void traverse(String indent) {
         System.out.println(indent + "ParameterList: ");
@@ -35,10 +69,20 @@ public class ParameterList extends Node {
         }
     }
 
+    /**
+     * Metóda na pridanie parametra do zoznamu parametrov funkcie.
+     *
+     * @param param parameter funckie
+     */
     public void addParameter(Node param) {
         parameters.add(param);
     }
 
+    /**
+     * Metóda na zistenie zoznamu parametrov funkcie.
+     *
+     * @return zoznam paramtrov funkcie.
+     */
     public ArrayList<Node> getParameters() {
         return parameters;
     }

@@ -48,6 +48,7 @@ public final class Cast extends Node {
      *
      * @param line riadok, na ktorom sa premenné využívajú
      */
+    @Override
     public void resolveUsage(SymbolTable table, int line) {
         SymbolTableFiller.resolveUsage(expression, table, line);
         expression.resolveUsage(table, line);

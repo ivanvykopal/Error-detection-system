@@ -3,7 +3,7 @@ package Compiler.Parser;
 import Compiler.AbstractSyntaxTree.Enum;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.GraphColoring.MatrixBuilder;
+import Compiler.GraphColoring.VariableUsageChecker;
 import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
@@ -52,7 +52,7 @@ public class Parser {
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
                 symbolTable.findLongActiveVariable(errorDatabase);
-                new MatrixBuilder(symbolTable, errorDatabase, file);
+                new VariableUsageChecker(symbolTable, errorDatabase, file);
             } else {
                 symbolTable.findGlobalVariable(errorDatabase);
             }
@@ -160,7 +160,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node primary_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -231,7 +230,7 @@ public class Parser {
                     }
                 }
                 if (u > 1 || l > 2) {
-                    System.out.println("Error");
+                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SmA-01"), "E-SmA-01");
                 }
                 StringBuilder type = new StringBuilder();
                 if (u > 0) {
@@ -269,7 +268,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private String enumeration_constant(String name) {
         if (getTokenTag() == Tag.IDENTIFIER) {
             //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
@@ -289,7 +287,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node postfix_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -369,7 +366,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node rest1(Node child) {
         Node child1, child2 = null, child3 = null;
         Node ref = null;
@@ -469,7 +465,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node argument_expression_list() {
         ArrayList<Node> arr = new ArrayList<>();
         Node child1 = assignment_expression();
@@ -509,7 +504,6 @@ public class Parser {
      *         0 ak sa zhoda nenašlarest
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node unary_expression() {
         Node child1, child2;
         String terminal;
@@ -586,7 +580,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private String unary_operator() {
         switch (getTokenTag()) {
             case Tag.AND:
@@ -608,7 +601,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -646,7 +638,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node multiplicative_expression() {
         Node child1 = cast_expression();
         Node binOperator;
@@ -675,7 +666,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node additive_expression() {
         Node child1 = multiplicative_expression();
         Node binOperator;
@@ -710,7 +700,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node shift_expression() {
         Node child1 = additive_expression();
         Node binOperator;
@@ -747,7 +736,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node relational_expression() {
         Node child1 = shift_expression();
         Node binOperator;
@@ -782,7 +770,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node equality_expression() {
         Node child1 = relational_expression();
         Node binOperator;
@@ -816,7 +803,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node and_expression() {
         Node child1 = equality_expression();
         Node binOperator;
@@ -850,7 +836,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node exclusive_or_expression() {
         Node child1 = and_expression();
         Node binOperator;
@@ -884,7 +869,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node inclusive_or_expression() {
         Node child1 = exclusive_or_expression();
         Node binOperator;
@@ -918,7 +902,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node logical_and_expression() {
         Node child1 = inclusive_or_expression();
         Node binOperator;
@@ -952,7 +935,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node logical_or_expression() {
         Node child1 = logical_and_expression();
         Node binOperator;
@@ -986,7 +968,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node conditional_expression() {
         Node child1 = logical_or_expression();
         if (child1 == null) {
@@ -1024,7 +1005,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node assignment_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -1065,7 +1045,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private String assignment_operator() {
         Node child1 = accept(Tag.ASSIGNMENT);
         if (child1 != null) {
@@ -1080,7 +1059,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node expression() {
         Node child1 = assignment_expression();
         if (child1 == null) {
@@ -1116,7 +1094,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node constant_expression() {
         Node child1 = conditional_expression();
         if (child1 == null) {
@@ -1140,17 +1117,14 @@ public class Parser {
         Node child1 = declaration_specifiers(typeNode);
         if (child1 == null) {
             //error recovery
-            while (getTokenTag() != Tag.SEMICOLON) {
-                nextToken();
-                //ak je koniec súboru
-                if (position == tokenStream.size() - 1) {
-                    return null;
-                }
-            }
-            nextToken();
             ArrayList<Node> arr = new ArrayList<>();
-            arr.add(new Err());
-            return arr;
+            Node err = errorRecoveryS();
+            if (err == null) {
+                return null;
+            } else {
+                arr.add(err);
+                return arr;
+            }
         }
         if (!child1.isNone()) {
             typeNode = (TypeNode) child1;
@@ -1171,17 +1145,14 @@ public class Parser {
             Node child3 = null;
             if (child2 == null) {
                 //error recovery
-                while (getTokenTag() != Tag.SEMICOLON) {
-                    nextToken();
-                    //ak je koniec súboru
-                    if (position == tokenStream.size() - 1) {
-                        return null;
-                    }
-                }
-                nextToken();
                 ArrayList<Node> arr = new ArrayList<>();
-                arr.add(new Err());
-                return arr;
+                Node err = errorRecoveryS();
+                if (err == null) {
+                    return null;
+                } else {
+                    arr.add(err);
+                    return arr;
+                }
             }
             if (!child2.isEmpty()) {
                 child3 = expect(Tag.SEMICOLON);
@@ -1190,21 +1161,13 @@ public class Parser {
                 return createDeclaration(typeNode, child2);
             }
             //error recovery
-            while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                nextToken();
-                //ak je koniec súboru
-                if (position == tokenStream.size() - 1) {
-                    return null;
-                }
-            }
-            if (getTokenTag() == Tag.SEMICOLON) {
-                nextToken();
-                ArrayList<Node> arr = new ArrayList<>();
-                arr.add(new Err());
-                return arr;
-            } else {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+            Node err = errorRecoverySB(true, Tag.SEMICOLON);
+            if (err == null) {
                 return null;
+            } else {
+                ArrayList<Node> arr = new ArrayList<>();
+                arr.add(err);
+                return arr;
             }
         }
         return new ArrayList<>();
@@ -1221,7 +1184,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node declaration_specifiers(TypeNode typeNode) {
         String child1 = storage_class_specifier();
         Node child2;
@@ -1277,7 +1239,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> init_declarator_list() {
         ArrayList<Node> arr = new ArrayList<>();
         Node child1 = init_declarator();
@@ -1311,7 +1272,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node init_declarator() {
         Node child1 = declarator();
         if (child1 == null) {
@@ -1344,7 +1304,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private String storage_class_specifier() {
         switch (getTokenTag()) {
             case Tag.TYPEDEF:
@@ -1368,7 +1327,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node type_specifier() {
         ArrayList<String> arr = new ArrayList<>();
         switch (getTokenTag()) {
@@ -1425,7 +1383,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node struct_or_union_specifier() {
         String child1 = struct_or_union();
         ArrayList<Node> child2;
@@ -1439,15 +1396,7 @@ public class Parser {
                     child2 = struct_declaration_list();
                     if (child2 == null) {
                         //error recovery
-                        while (getTokenTag() != Tag.RIGHT_BRACES) {
-                            nextToken();
-                            //ak je koniec súboru
-                            if (position == tokenStream.size() - 1) {
-                                return null;
-                            }
-                        }
-                        nextToken();
-                        return new Err();
+                        return errorRecoveryB();
                     }
                     if (!child2.isEmpty()) {
                         child3 = expect(Tag.RIGHT_BRACES);
@@ -1460,19 +1409,7 @@ public class Parser {
                         }
                     } else {
                         //error recovery
-                        while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                            nextToken();
-                            //ak je koniec súboru
-                            if (position == tokenStream.size() - 1) {
-                                return null;
-                            }
-                        }
-                        if (getTokenTag() == Tag.RIGHT_BRACES) {
-                            nextToken();
-                            return new Err();
-                        } else {
-                            return null;
-                        }
+                        return errorRecoverySB(false, Tag.RIGHT_BRACES);
                     }
                 case Tag.IDENTIFIER:
                     String terminal = getTokenValue();
@@ -1483,15 +1420,7 @@ public class Parser {
                         child2 = struct_declaration_list();
                         if (child2 == null) {
                             //error recovery
-                            while (getTokenTag() != Tag.RIGHT_BRACES) {
-                                nextToken();
-                                //ak je koniec súboru
-                                if (position == tokenStream.size() - 1) {
-                                    return null;
-                                }
-                            }
-                            nextToken();
-                            return new Err();
+                            return errorRecoveryB();
                         }
                         if (!child2.isEmpty()) {
                             child3 = expect(Tag.RIGHT_BRACES);
@@ -1504,19 +1433,7 @@ public class Parser {
                             }
                         } else {
                             //error recovery
-                            while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                                nextToken();
-                                //ak je koniec súboru
-                                if (position == tokenStream.size() - 1) {
-                                    return null;
-                                }
-                            }
-                            if (getTokenTag() == Tag.RIGHT_BRACES) {
-                                nextToken();
-                                return new Err();
-                            } else {
-                                return null;
-                            }
+                            return errorRecoverySB(false, Tag.RIGHT_BRACES);
                         }
                     } else {
                         if (child1.equals("struct")) {
@@ -1539,7 +1456,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private String struct_or_union() {
         switch (getTokenTag()) {
             case Tag.STRUCT:
@@ -1558,7 +1474,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> struct_declaration_list() {
         ArrayList<Node> child1 = struct_declaration();
         if (child1 == null) {
@@ -1611,32 +1526,26 @@ public class Parser {
             Node child3;
             if (child2 == null) {
                 //error recovery
-                while (getTokenTag() != Tag.SEMICOLON) {
-                    nextToken();
-                    //ak je koniec súboru
-                    if (position == tokenStream.size() - 1) {
-                        return null;
-                    }
-                }
-                nextToken();
                 ArrayList<Node> arr = new ArrayList<>();
-                arr.add(new Err());
-                return arr;
+                Node err = errorRecoveryS();
+                if (err == null) {
+                    return null;
+                } else {
+                    arr.add(err);
+                    return arr;
+                }
             }
             if (!child2.isEmpty()) {
                 child3 = expect(Tag.SEMICOLON);
                 if (child3 == null) {
                     // error recovery
-                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                    }
-                    if (getTokenTag() == Tag.SEMICOLON) {
-                        nextToken();
-                        ArrayList<Node> arr = new ArrayList<>();
-                        arr.add(new Err());
-                        return arr;
-                    } else {
+                    Node err = errorRecoverySB(false, Tag.SEMICOLON);
+                    if (err == null) {
                         return null;
+                    } else {
+                        ArrayList<Node> arr = new ArrayList<>();
+                        arr.add(err);
+                        return arr;
                     }
                 } else {
                     return createDeclaration(typeNode, child2, true);
@@ -1655,7 +1564,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node specifier_qualifier_list(TypeNode typeNode) {
         Node child1 = type_specifier();
         Node child2;
@@ -1697,7 +1605,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> struct_declarator_list() {
         ArrayList<Node> arr = new ArrayList<>();
         Node child1 = struct_declarator();
@@ -1732,7 +1639,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node struct_declarator() {
         Node child1;
         if (getTokenTag() == Tag.COLON) {
@@ -1774,7 +1680,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node enum_specifier() {
         if (getTokenTag() == Tag.ENUM) {
             nextToken();
@@ -1800,7 +1705,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left13(int line) {
         Node child1, child2, child3;
         switch (getTokenTag()) {
@@ -1821,15 +1725,7 @@ public class Parser {
                     }
                 }
                 //error recovery
-                while (getTokenTag() != Tag.RIGHT_BRACES) {
-                    nextToken();
-                    //ak je koniec súboru
-                    if (position == tokenStream.size() - 1) {
-                        return null;
-                    }
-                }
-                nextToken();
-                return new Err();
+                return errorRecoveryB();
             case Tag.IDENTIFIER:
                 String terminal = getTokenValue();
                 nextToken();
@@ -1850,15 +1746,7 @@ public class Parser {
                         }
                     }
                     //error recovery
-                    while (getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    nextToken();
-                    return new Err();
+                    return errorRecoveryB();
                 } else {
                     return new Enum(terminal, null, line);
                 }
@@ -1877,7 +1765,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node enumerator_list(String name) {
         Node child1 = enumerator(name);
         if (child1 == null) {
@@ -1912,7 +1799,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node enumerator(String name) {
         String child1 = enumeration_constant(name);
         int line = getTokenLine(position - 1);
@@ -1939,7 +1825,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private String type_qualifier() {
         switch (getTokenTag()) {
             case Tag.CONST:
@@ -1958,7 +1843,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node declarator() {
         Node child1 = pointer();
         Node child2;
@@ -1985,7 +1869,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node direct_declarator() {
         Node child1, child2 = null, child3 = null;
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -2040,7 +1923,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node rest18(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
@@ -2079,7 +1961,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left16(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -2182,7 +2063,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left17(Node declarator) {
         Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
@@ -2249,8 +2129,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
-    private Node left18(Node declarator) {
+      private Node left18(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
         Node decl, child2, child3, child4;
         if (!child1.isEmpty()) {
@@ -2320,7 +2199,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left19(ArrayList<String> qualifiers, Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -2422,7 +2300,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node pointer() {
         if (getTokenTag() == Tag.MULT) {
             int line = getTokenLine();
@@ -2466,8 +2343,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
-    private ArrayList<String> type_qualifier_list() {
+     private ArrayList<String> type_qualifier_list() {
         String child1 = type_qualifier();
         ArrayList<String> arr = new ArrayList<>();
         if (!child1.equals("")) {
@@ -2489,7 +2365,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node parameter_type_list() {
         ParameterList child1 = parameter_list();
         if (child1 == null) {
@@ -2518,7 +2393,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ParameterList parameter_list() {
         Node child1 = parameter_declaration();
         if (child1 == null) {
@@ -2552,7 +2426,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node parameter_declaration() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(typeNode);
@@ -2584,8 +2457,7 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
-    private Node left22(TypeNode typeNode) {
+      private Node left22(TypeNode typeNode) {
         if (typeNode.getTypes().isEmpty()) {
             ArrayList<String> arr = new ArrayList<>();
             arr.add("int");
@@ -2641,7 +2513,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node identifier_list() {
         ArrayList<Node> arr = new ArrayList<>();
         if (getTokenTag() == Tag.IDENTIFIER) {
@@ -2674,7 +2545,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node type_name() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = specifier_qualifier_list(typeNode);
@@ -2706,7 +2576,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node abstract_declarator() {
         Node child1 = pointer();
         Node child2;
@@ -2738,7 +2607,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node direct_abstract_declarator() {
         Node child1;
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -2777,7 +2645,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left25() {
         Node child1, decl;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
@@ -2848,7 +2715,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left26(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -2963,7 +2829,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left27(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
         Node child2, child3, child4, decl, child;
@@ -3043,7 +2908,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left28(ArrayList<String> qualifiers, Node declarator) {
         Node child1, child2 = null, child3 = null, decl, child = null;
         switch (getTokenTag()) {
@@ -3132,7 +2996,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node rest22(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
@@ -3168,7 +3031,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left29(Node declarator) {
         Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
@@ -3219,7 +3081,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node initializer() {
         Node child1, child2;
         if (getTokenTag() == Tag.LEFT_BRACES) {
@@ -3239,14 +3100,7 @@ public class Parser {
                 }
             }
             //error recovery
-            while (getTokenTag() != Tag.RIGHT_BRACES) {
-                if (position == tokenStream.size() - 1) {
-                    return null;
-                }
-                nextToken();
-            }
-            nextToken();
-            return new Err();
+            return errorRecoveryB();
         }
         child1 = assignment_expression();
         if (child1 == null) {
@@ -3265,7 +3119,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node initializer_list() {
         ArrayList<Node> child1 = designation();
         Node child2, child3;
@@ -3317,7 +3170,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node rest23(InitializationList init) {
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
@@ -3369,7 +3221,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> designation() {
         ArrayList<Node> child1 = designator_list();
         if (child1 == null) {
@@ -3394,7 +3245,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> designator_list() {
         Node child1 = designator();
         if (child1 == null) {
@@ -3426,7 +3276,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node designator() {
         Node child1, child2 = null;
         switch (getTokenTag()) {
@@ -3464,7 +3313,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node statement(boolean createSymbolTable) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -3525,7 +3373,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node labeled_statement() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -3590,7 +3437,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node compound_statement(boolean createSymbolTable, boolean functionDefinition) {
         if (getTokenTag() == Tag.LEFT_BRACES) {
             int line = getTokenLine();
@@ -3613,29 +3459,13 @@ public class Parser {
             Node child2;
             if (child1 == null) {
                 //error recovery
-                while (getTokenTag() != Tag.RIGHT_BRACES) {
-                    nextToken();
-                    //ak je koniec súboru
-                    if (position == tokenStream.size() - 1) {
-                        return null;
-                    }
-                }
-                nextToken();
-                return new Err();
+                return errorRecoveryB();
             }
             if (!child1.isEmpty()) {
                 child2 = expect(Tag.RIGHT_BRACES);
                 if (child2 == null) {
                     //error recovery
-                    while (getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    nextToken();
-                    return new Err();
+                    return errorRecoveryB();
                 } else {
                     lastStatementLine = getTokenLine(position - 1);
                     if (createSymbolTable) {
@@ -3655,7 +3485,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> block_item_list() {
         ArrayList<Node> arr = new ArrayList<>();
         ArrayList<Node> child1 = block_item();
@@ -3687,7 +3516,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> block_item() {
         ArrayList<Node> child1 = declaration();
         if (child1 == null) {
@@ -3715,7 +3543,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node expression_statement() {
         if (getTokenTag() == Tag.SEMICOLON) {
             lastStatementLine = getTokenLine();
@@ -3726,33 +3553,13 @@ public class Parser {
         Node child2;
         if (child1 == null) {
             //error recovery
-            while (getTokenTag() != Tag.SEMICOLON) {
-                nextToken();
-                //ak je koniec súboru
-                if (position == tokenStream.size() - 1) {
-                    return null;
-                }
-            }
-            nextToken();
-            return new Err();
+            return errorRecoveryS();
         }
         if (!child1.isNone()) {
             child2 = expect(Tag.SEMICOLON);
             if (child2 == null) {
                 //error recovery
-                while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                    nextToken();
-                    //ak je koniec súboru
-                    if (position == tokenStream.size() - 1) {
-                        return null;
-                    }
-                }
-                if (getTokenTag() == Tag.SEMICOLON) {
-                    nextToken();
-                    return new Err();
-                } else {
-                    return null;
-                }
+                return errorRecoverySB(false, Tag.SEMICOLON);
             } else {
                 lastStatementLine = getTokenLine(position - 1);
                 return child1;
@@ -3769,7 +3576,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node selection_statement() {
         Node child1, child2 = null, child3 = null, child4 = null, child5 = null;
         int line;
@@ -3835,7 +3641,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node iteration_statement() {
         Node child1, child2 = null, child3 = null, child4 = null;
         Node child5 = null, child6 = null;
@@ -3883,34 +3688,14 @@ public class Parser {
                 }
                 if (child1 == null || child2 == null || child3 == null || child4 == null || child5 == null) {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    nextToken();
-                    return new Err();
+                    return errorRecoveryS();
                 }
                 if (child6 != null) {
                     lastStatementLine = getTokenLine(position - 1);
                     return new DoWhile(child4, child1, line, symbolTable, errorDatabase);
                 } else {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    if (getTokenTag() == Tag.SEMICOLON) {
-                        nextToken();
-                        return new Err();
-                    } else {
-                        return null;
-                    }
+                    return errorRecoverySB(false, Tag.SEMICOLON);
                 }
             case Tag.FOR:
                 line = getTokenLine();
@@ -3941,7 +3726,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node left33(int line) {
         //vytvorenie vnorenej tabuľky
         symbolTable = new SymbolTable(symbolTable);
@@ -4097,7 +3881,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private Node jump_statement() {
         Node child1, child2;
         int line;
@@ -4109,15 +3892,7 @@ public class Parser {
                 child1 = expect(Tag.IDENTIFIER);
                 if (child1 == null) {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    nextToken();
-                    return new Err();
+                    return errorRecoveryS();
                 } else {
                     terminal = getTokenValue(position - 1);
                     child2 = expect(Tag.SEMICOLON);
@@ -4126,19 +3901,7 @@ public class Parser {
                     return new Goto(terminal, line);
                 } else {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    if (getTokenTag() == Tag.SEMICOLON) {
-                        nextToken();
-                        return new Err();
-                    } else {
-                        return null;
-                    }
+                    return errorRecoverySB(false, Tag.SEMICOLON);
                 }
             case Tag.CONTINUE:
                 line = getTokenLine();
@@ -4148,19 +3911,7 @@ public class Parser {
                     return new Continue(line);
                 } else {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    if (getTokenTag() == Tag.SEMICOLON) {
-                        nextToken();
-                        return new Err();
-                    } else {
-                        return null;
-                    }
+                    return errorRecoverySB(false, Tag.SEMICOLON);
                 }
             case Tag.BREAK:
                 line = getTokenLine();
@@ -4170,19 +3921,7 @@ public class Parser {
                     return new Break(line);
                 } else {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    if (getTokenTag() == Tag.SEMICOLON) {
-                        nextToken();
-                        return new Err();
-                    } else {
-                        return null;
-                    }
+                    return errorRecoverySB(false, Tag.SEMICOLON);
                 }
             case Tag.RETURN:
                 line = getTokenLine();
@@ -4194,33 +3933,13 @@ public class Parser {
                 child1 = expression();
                 if (child1 == null) {
                     //error recovery
-                    while (getTokenTag() != Tag.SEMICOLON) {
-                        nextToken();
-                        //ak je koniec súboru
-                        if (position == tokenStream.size() - 1) {
-                            return null;
-                        }
-                    }
-                    nextToken();
-                    return new Err();
+                    return errorRecoveryS();
                 }
                 if (!child1.isNone()) {
                     child2 = expect(Tag.SEMICOLON);
                     if (child2 == null) {
                         //error recovery
-                        while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
-                            nextToken();
-                            //ak je koniec súboru
-                            if (position == tokenStream.size() - 1) {
-                                return null;
-                            }
-                        }
-                        if (getTokenTag() == Tag.SEMICOLON) {
-                            nextToken();
-                            return new Err();
-                        } else {
-                            return null;
-                        }
+                        return errorRecoverySB(false, Tag.SEMICOLON);
                     } else {
                         return new Return(child1, line, symbolTable, errorDatabase);
                     }
@@ -4238,7 +3957,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> translation_unit() {
         ArrayList<Node> child1 = external_declaration();
         if (child1 != null && !child1.isEmpty()) {
@@ -4265,7 +3983,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private ArrayList<Node> external_declaration() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
@@ -4295,7 +4012,6 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    //DONE
     private Node function_definition() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Node child1 = declaration_specifiers(typeNode);
@@ -4334,7 +4050,6 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    //DONE
     private ArrayList<Node> declaration_list() {
         ArrayList<Node> child1 = declaration();
         if (child1 == null) {
@@ -4435,7 +4150,8 @@ public class Parser {
                 Declarator declarator2 = (Declarator) decl;
                 Record record = symbolTable.lookup(((Identifier) declarator2.getDeclarator()).getName());
                 if (record != null && (record.getKind() == Kind.ARRAY || record.getKind() == Kind.ARRAY_PARAMETER ||
-                        record.getKind() == Kind.STRUCT_ARRAY_PARAMETER) && findTypeCategory(declarator2.getInitializer()) > 50) {
+                        record.getKind() == Kind.STRUCT_ARRAY_PARAMETER) &&
+                        TypeChecker.findTypeCategory(declarator2.getInitializer(), symbolTable) > 50) {
                     errorDatabase.addErrorMessage(declarator2.getLine(), Error.getError("E-RP-08"), "E-RP-08");
                 }
             }
@@ -4473,7 +4189,6 @@ public class Parser {
         for (Node t_name : typename) {
             if (!(t_name instanceof IdentifierType)) {
                 if (typename.size() > 1) {
-                    System.out.println("Chybný typ!");
                     errorDatabase.addErrorMessage(decl.getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
                     return null;
                 } else {
@@ -4485,7 +4200,6 @@ public class Parser {
 
         if (typename.isEmpty()) {
             if (!(decl.getType() instanceof FunctionDeclaration)) {
-                System.out.println("Chýbajúci typ!");
                 errorDatabase.addErrorMessage(decl.getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
                 return null;
             }
@@ -4535,7 +4249,6 @@ public class Parser {
     }
 
     private Node createFunction(TypeNode typeNode, Node declaration, ArrayList<Node> parameters, Node body) {
-
         ArrayList<Node> arr = new ArrayList<>();
         arr.add(new Declarator(declaration, null));
         Node decl = createDeclaration(typeNode, arr).get(0);
@@ -4698,100 +4411,47 @@ public class Parser {
 
     }
 
-    private short findTypeCategory(Node left) {
-        if (left instanceof BinaryOperator) {
-            return ((BinaryOperator) left).getTypeCategory();
-        } else if (left instanceof Identifier) {
-            //nájsť v symbolickej tabuľke
-            Record record = symbolTable.lookup(((Identifier) left).getName());
-            if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
-            } else {
-                return record.getType();
+    private Node errorRecoverySB(boolean checkError, byte tag) {
+        while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
+            nextToken();
+            //ak je koniec súboru
+            if (position == tokenStream.size() - 1) {
+                return null;
             }
-        } else if (left instanceof Constant) {
-            return TypeChecker.findType(((Constant) left).getTypeSpecifier() + " ", null, symbolTable);
-        } else if (left instanceof FunctionCall) {
-            Node id = left.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
-            } else {
-                return record.getType();
-            }
-        } else if (left instanceof ArrayReference) {
-            Node id = left.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -1;
-            } else {
-                return record.getType();
-            }
-        } else if (left instanceof StructReference) {
-            Node id = left.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = symbolTable.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -1;
-            } else {
-                return record.getType();
-            }
-        } else if (left instanceof UnaryOperator) {
-            return ((UnaryOperator) left).getTypeCategory();
-        } else if (left instanceof Cast) {
-            Node tail = left.getType();
-            String type = "";
-            boolean pointer = false;
-
-            while (!(tail instanceof IdentifierType)) {
-                if (tail.isEnumStructUnion()) {
-                    if (tail instanceof Enum) {
-                        type = "enum ";
-                    } else if (tail instanceof Struct) {
-                        type = "struct ";
-                    } else {
-                        type = "union ";
-                    }
-                    break;
-                }
-                if (tail instanceof PointerDeclaration) {
-                    pointer = true;
-                }
-                tail = tail.getType();
-            }
-
-            if (pointer) {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
-                } else {
-                    type += "* ";
-                }
-            } else {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
-                }
-            }
-
-            return TypeChecker.findType(type, tail, symbolTable);
-        } else if (left instanceof TernaryOperator) {
-            return ((TernaryOperator) left).getTypeCategory();
-        } else {
-            return -1;
         }
+        if (getTokenTag() == tag) {
+            nextToken();
+            return new Err();
+        } else {
+            if (checkError) {
+                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+            }
+            return null;
+        }
+    }
+
+    private Node errorRecoveryB() {
+        while (getTokenTag() != Tag.RIGHT_BRACES) {
+            nextToken();
+            //ak je koniec súboru
+            if (position == tokenStream.size() - 1) {
+                return null;
+            }
+        }
+        nextToken();
+        return new Err();
+    }
+
+    private Node errorRecoveryS() {
+        while (getTokenTag() != Tag.SEMICOLON) {
+            nextToken();
+            //ak je koniec súboru
+            if (position == tokenStream.size() - 1) {
+                return null;
+            }
+        }
+        nextToken();
+        return new Err();
     }
 
 }

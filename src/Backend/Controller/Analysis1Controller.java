@@ -70,8 +70,6 @@ public class Analysis1Controller extends Controller {
                 ErrorDatabase errorDatabase = new ErrorDatabase();
                 Parser parser = new Parser(text, errorDatabase);
                 parser.parse(file);
-                //System.out.println("Koniec!");
-                //errorDatabase.getErrorMessages();
                 errorDatabase.createFile(file);
                 if (errorDatabase.isEmpty()) {
                     showErrorWindow(new ArrayList<>());

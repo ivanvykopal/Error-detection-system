@@ -59,10 +59,8 @@ public final class BinaryOperator extends Node {
 
         if (!typeCheck(table)) {
             if (left instanceof FunctionCall || right instanceof FunctionCall) {
-                System.out.println("Sémantická chyba na riadku " + line + "!");
                 errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
             } else {
-                System.out.println("Sémantická chyba na riadku " + line + "!");
                 errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
             }
         }
@@ -77,8 +75,8 @@ public final class BinaryOperator extends Node {
      *         false, ak je typová nezhoda
      */
     private boolean typeCheck(SymbolTable table) {
-        short var1 = findTypeCategory(left, table);
-        short var2 = findTypeCategory(right, table);
+        short var1 = TypeChecker.findTypeCategory(left, table);
+        short var2 = TypeChecker.findTypeCategory(right, table);
 
         if (var1 == -2 || var2 == -2) {
             typeCategory = Type.CHAR;
@@ -145,112 +143,6 @@ public final class BinaryOperator extends Node {
             return (short) Math.max(var1, var2);
         }
         return -1;
-    }
-
-    /**
-     * Metóda pre nájdenie kategórie typu pre zadaný vrchol.
-     *
-     * @param node vrchol, ktorého typ zisťujeme
-     *
-     * @param table symbolická tabuľka
-     *
-     * @return typ daného vrcholu
-     */
-    private short findTypeCategory(Node node, SymbolTable table) {
-        if (node instanceof BinaryOperator) {
-            return ((BinaryOperator) node).getTypeCategory();
-        } else if (node instanceof Identifier) {
-            //nájsť v symbolickej tabuľke
-            Record record = table.lookup(((Identifier) node).getName());
-            if (record == null) {
-                return -2;
-            } else {
-                return record.getType();
-            }
-        } else if (node instanceof Constant) {
-            return TypeChecker.findType(((Constant) node).getTypeSpecifier() + " ", null, table);
-        } else if (node instanceof FunctionCall) {
-            Node id = node.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -2;
-            } else {
-                return record.getType();
-            }
-        } else if (node instanceof ArrayReference) {
-            Node id = node.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -1;
-            } else {
-                return record.getType();
-            }
-        } else if (node instanceof StructReference) {
-            Node id = node.getNameNode();
-
-            while (!(id instanceof Identifier)) {
-                id = id.getNameNode();
-            }
-
-            Record record = table.lookup(((Identifier) id).getName());
-            if (record == null) {
-                return -1;
-            } else {
-                return record.getType();
-            }
-        } else if (node instanceof UnaryOperator) {
-            return ((UnaryOperator) node).getTypeCategory();
-        } else if (node instanceof Cast) {
-            Node tail = node.getType();
-            String type = "";
-            boolean pointer = false;
-
-            while (!(tail instanceof IdentifierType)) {
-                if (tail.isEnumStructUnion()) {
-                    if (tail instanceof Enum) {
-                        type = "enum ";
-                    } else if (tail instanceof Struct) {
-                        type = "struct ";
-                    } else {
-                        type = "union ";
-                    }
-                    break;
-                }
-                if (tail instanceof PointerDeclaration) {
-                    pointer = true;
-                }
-                tail = tail.getType();
-            }
-
-            if (pointer) {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
-                } else {
-                    type += "* ";
-                }
-            } else {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
-                }
-            }
-
-            //spojí všetky typy do stringu a konvertuje ich na byte
-            return TypeChecker.findType(type, tail, table);
-        } else if (node instanceof TernaryOperator) {
-            return ((TernaryOperator) node).getTypeCategory();
-        } else  {
-            return -1;
-        }
     }
 
     /**

@@ -88,8 +88,6 @@ public class Analysis2Controller extends Controller {
                     ErrorDatabase errorDatabase = new ErrorDatabase();
                     Parser parser = new Parser(text, errorDatabase);
                     parser.parse(file.getName());
-                    //System.out.print("\n");
-                    //errorDatabase.getErrorMessages();
                     errorDatabase.createFile(file.getName());
                     if (!errorDatabase.isEmpty()) {
                         fileNames.add(file.getName());

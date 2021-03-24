@@ -3,9 +3,8 @@ package Compiler.AbstractSyntaxTree;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.SymbolTableFiller;
-
 import java.util.ArrayList;
-
+//TODO: pridať komentáre
 public class NamedInitializer extends Node {
     ArrayList<Node> names;
     Node expression;

@@ -32,17 +32,17 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" onAction="#getFolder" prefHeight="31.0" prefWidth="300.0" text="Načítať priečinok">
+            <Button fx:id="btnChooseFolder" mnemonicParsing="false" onAction="#getFolder" prefHeight="31.0" prefWidth="300.0" text="Načítať priečinok">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#analyzeCodes" prefHeight="31.0" prefWidth="300.0" text="Analyzovať zdrojové kódy">
+            <Button fx:id="btnAnalyse" mnemonicParsing="false" onAction="#analyzeCodes" prefHeight="31.0" prefWidth="300.0" text="Analyzovať zdrojové kódy">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#goToMenu" prefHeight="31.0" prefWidth="300.0" text="Menu">
+            <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#goToMenu" prefHeight="31.0" prefWidth="300.0" text="Menu">
                <font>
                   <Font size="15.0" />
                </font>

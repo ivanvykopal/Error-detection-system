@@ -33,7 +33,7 @@ public class Parser {
                 if (tok.tag == Tag.EOF) {
                     break;
                 } else {
-                    //System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
+                    System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
                     tokenStream.add(tok);
                 }
             } catch (IOException e) {
@@ -49,7 +49,7 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            //parseTree.traverse("");
+            parseTree.traverse("");
             //symbolTable.printSymbolTable(0);
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);

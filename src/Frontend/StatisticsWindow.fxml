@@ -126,12 +126,12 @@
                               </TableColumn>
                               <TableColumn fx:id="countColumn" prefWidth="120.0" resizable="true" text="Počet výskytov">
                                  <cellValueFactory>
-                                    <PropertyValueFactory property="number" />
+                                    <PropertyValueFactory property="record1" />
                                  </cellValueFactory>
                               </TableColumn>
                               <TableColumn fx:id="percentColumn" prefWidth="174.39998779296877" text="Percentuálny podiel">
                                  <cellValueFactory>
-                                    <PropertyValueFactory property="percent" />
+                                    <PropertyValueFactory property="record2" />
                                  </cellValueFactory>
                               </TableColumn>
                            </columns>

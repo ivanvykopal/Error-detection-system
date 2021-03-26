@@ -8,8 +8,11 @@ import java.math.BigDecimal;
  * @author Ivan Vykopal
  */
 public class SummaryTableRecord {
-    /** Atribút number predstavuje číselnú hodnotu, počtu chýb. **/
-    private int number;
+    /**
+     * Atribút record1 predstavuje informácie o počte výskytov danej chyby spolu s percentuálnym podielom z celkového
+     * počtu chýb.
+     **/
+    private String record1;
 
     /** Atribút message predstavuje chybovú správu. **/
     private String message;
@@ -17,25 +20,28 @@ public class SummaryTableRecord {
     /** Atribút code predstavuje kód chyby. **/
     private String code;
 
-    /** Atribút percent predstavuje precentuálny podiel chyby. **/
-    private BigDecimal percent;
+    /**
+     * Atribút record2 predstavuje informácie o počte súborov, v ktorých sa chyby nachádza spolu s percentuálnym
+     * podielom počtu súborov s danou chybou.
+     **/
+    private String record2;
 
     /**
      * Konštruktor pre inicializáciu atribútov.
      *
-     * @param count počet výskytov danej chyby
+     * @param record1 počet výskytov danej chyby
      *
      * @param message chybová správa
      *
      * @param code kód chyby
      *
-     * @param percent precentuálny podiel chyby
+     * @param record2 precentuálny podiel chyby
      */
-    public SummaryTableRecord(int count, String message, String code, BigDecimal percent) {
-        this.number = count;
+    public SummaryTableRecord(String record1, String message, String code, String record2) {
+        this.record1 = record1;
         this.message = message;
         this.code = code;
-        this.percent = percent;
+        this.record2 = record2;
     }
 
     /**
@@ -43,17 +49,17 @@ public class SummaryTableRecord {
      *
      * @return počet chýb
      */
-    public int getNumber() {
-        return number;
+    public String getRecord1() {
+        return record1;
     }
 
     /**
      * Metóda na nastavenie početu chýb.
      *
-     * @param number počet chýb
+     * @param record1 počet chýb
      */
-    public void setNumber(int number) {
-        this.number = number;
+    public void setRecord1(String record1) {
+        this.record1 = record1;
     }
 
     /**
@@ -97,16 +103,16 @@ public class SummaryTableRecord {
      *
      * @return percentuálny podiel chyby
      */
-    public BigDecimal getPercent() {
-        return percent;
+    public String getRecord2() {
+        return record2;
     }
 
     /**
      * Metóda na nstavenie percentuálneho podielu chyby.
      *
-     * @param percent percentuálny podiel chyby
+     * @param record2 percentuálny podiel chyby
      */
-    public void setPercent(BigDecimal percent) {
-        this.percent = percent;
+    public void setRecord2(String record2) {
+        this.record2 = record2;
     }
 }

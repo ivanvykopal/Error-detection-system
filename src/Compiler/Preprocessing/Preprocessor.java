@@ -47,7 +47,7 @@ public class Preprocessor {
             //odstránenie zbytočných medzier
             String temp = lines[position].trim().replaceAll(" +", " ");
             if (!temp.equals("") && temp.charAt(0) == '#') {
-                while (lines[position].contains("\\")) {
+                while (lines[position].contains("\\") && !containWhiteSpace(lines[position])) {
                     newFile.append("\n");
                     temp = temp.replace("\\"," ");
                     nextLine();
@@ -69,8 +69,14 @@ public class Preprocessor {
                 newFile.append(lines[position]).append("\n");
             }
         }
-
         return newFile.toString();
+    }
+
+    private boolean containWhiteSpace(String line) {
+        if (line.contains("\r") || line.contains("\n") || line.contains("\t")) {
+            return true;
+        }
+        return false;
     }
 
     /**

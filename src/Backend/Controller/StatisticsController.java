@@ -13,8 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class StatisticsController extends Controller {
     private HashMap<String, ArrayList<TableRecord>> table;
@@ -91,6 +90,28 @@ public class StatisticsController extends Controller {
         tableForOne.setItems(data);
     }
 
+    private HashMap<String, Integer> findFileErrorCount() {
+        HashMap<String, Integer> fileErrorCount = new HashMap<>();
+        for (String key : table.keySet()) {
+            ArrayList<TableRecord> records = table.get(key);
+            Set<String> set = new HashSet<>();
+            for (TableRecord record : records) {
+                set.add(record.getCode());
+            }
+
+            for (String code : set) {
+                Integer count = fileErrorCount.get(code);
+                if (count == null) {
+                    fileErrorCount.put(code, 1);
+                } else {
+                    fileErrorCount.replace(code, count + 1);
+                }
+            }
+        }
+
+        return fileErrorCount;
+    }
+
     private void fillTableForAll() {
         HashMap<String, TableRecord> allCodesTable = new HashMap<>();
 
@@ -114,6 +135,7 @@ public class StatisticsController extends Controller {
     }
 
     private void fillTErrorTablePercent(HashMap<String, TableRecord> errorTable) {
+        HashMap<String, Integer> fileErrorCount = findFileErrorCount();
         ArrayList<SummaryTableRecord> records = new ArrayList<>();
         try {
             File fileVariables = new File("error-total.csv");
@@ -122,11 +144,15 @@ public class StatisticsController extends Controller {
             FileWriter fileWriter = new FileWriter(fileVariables, true);
             for (String key: errorTable.keySet()) {
                 TableRecord record = errorTable.get(key);
-                BigDecimal percent = new BigDecimal((double) (Integer) record.getNumber() / allErrorCount * 100)
+                int count = fileErrorCount.get(key);
+                BigDecimal percent = new BigDecimal((double) record.getNumber() / allErrorCount * 100)
                         .setScale(2, RoundingMode.HALF_UP);
-                records.add(new SummaryTableRecord(record.getNumber(),
-                        record.getMessage(), record.getCode(), percent ));
-                fileWriter.write(record.getCode() + ", " + record.getNumber() + ", " + percent + "\n");
+                BigDecimal percentCount = new BigDecimal((double) count / fileCount * 100).setScale(2,
+                        RoundingMode.HALF_UP);
+                records.add(new SummaryTableRecord(record.getNumber() + " (" + percent + ")",
+                        record.getMessage(), record.getCode(), count + " (" + percentCount + ")" ));
+                fileWriter.write(record.getCode() + ", " + record.getNumber() + ", " + percent +  ", " + count
+                        + ", " + percentCount + "\n");
             }
             fileWriter.close();
         } catch (IOException e) {

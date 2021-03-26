@@ -69,10 +69,11 @@ public class SymbolTable implements Serializable {
         boolean isInSymbolTable = false;
         for (SymbolTable curr = this; curr != null; curr = curr.parent) {
             record = curr.table.get(key);
-            if (record != null && kind != Kind.PARAMETER && kind != Kind.ARRAY_PARAMETER) {
+            if (record != null) {
                 isInSymbolTable = record.getKind() != Kind.ENUMERATION_CONSTANT && record.getKind() != Kind.STRUCT_ARRAY_PARAMETER &&
                         record.getKind() != Kind.STRUCT_PARAMETER && record.getKind() != Kind.ARRAY_PARAMETER
-                        && record.getKind() != Kind.PARAMETER;
+                        && record.getKind() != Kind.PARAMETER && record.getKind() != Kind.FUNCTION;
+                break;
             }
         }
         if (kind == Kind.FUNCTION && record != null && record.getKind() == Kind.FUNCTION) {

@@ -49,6 +49,7 @@ public final class UnaryOperator extends Node {
         setLine(line);
 
         if (operator.equals("&")) {
+            SymbolTableFiller.resolveInitialization(expression, table, errorDatabase);
             SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false);
         } else {
             if (operator.equals("++") || operator.equals("--")) {
@@ -117,16 +118,8 @@ public final class UnaryOperator extends Node {
             typeCategory = -2;                                                              //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             return true;
         }
-        if (type < Type.UNION) {
-            typeCategory = type;
-            return true;
-        } else if (type > 50 && (type % 50) < Type.UNION) {
-            typeCategory = type;
-            return true;
-        } else {
-            typeCategory = -1;
-            return false;
-        }
+        typeCategory = type;
+        return true;
     }
 
     /**
@@ -155,6 +148,15 @@ public final class UnaryOperator extends Node {
     public short getTypeCategory() {
         return typeCategory;
     }
+
+    /**
+     * Metóda na zistenie vrcholu názvu.
+     *
+     * @return vrchol názvu.
+     */
+    public Node getNameNode() {
+        return expression;
+    };
 
     /**
      * Metóda pre prechádzanie jednotlivých vrcholov stromu (Abstract syntax tree).

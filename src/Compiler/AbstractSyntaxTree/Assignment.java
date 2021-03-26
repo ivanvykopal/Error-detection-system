@@ -87,11 +87,6 @@ public final class Assignment extends Node {
             return true;
         }
 
-        if ((left instanceof ArrayDeclaration) && (var1 == Type.CHAR || var1 == Type.SIGNEDCHAR || var1 == Type.UNSIGNEDCHAR)
-                && var2 == Type.STRING) {
-            return true;
-        }
-
         if (var2 == Type.VOID) {
             return false;
         }
@@ -116,8 +111,14 @@ public final class Assignment extends Node {
             }
             return true;
         }
+        boolean pointer = var1 >= 50;
         var1 = (var1 >= 50) ? (short) (var1 % 50) : var1;
         var2 = (var2 >= 50) ? (short) (var2 % 50) : var2;
+
+        if ((left instanceof ArrayDeclaration || pointer) && (var1 == Type.CHAR || var1 == Type.SIGNEDCHAR || var1 == Type.UNSIGNEDCHAR)
+                && var2 == Type.STRING) {
+            return true;
+        }
 
         if (var1 >= Type.UNION && var2 >= Type.UNION) {
             return false;

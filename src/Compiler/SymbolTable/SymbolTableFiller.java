@@ -5,6 +5,9 @@ import Compiler.AbstractSyntaxTree.Enum;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 /**
  * Trieda pre pridávanie záznamov do symbolickej tabuľky
@@ -97,7 +100,9 @@ public final class SymbolTableFiller {
      */
     public static void resolveUsage(Node node, SymbolTable table, int line) {
         if (node instanceof Identifier) {
-            table = table.getChilds(table.getChilds().size() - 1);
+            if (table.getChilds().size() != 0) {
+                table = table.getChilds(table.getChilds().size() - 1);
+            }
             Record record = table.lookup(((Identifier) node).getName());
             if (record != null) {
                 record.addUsageLine(line);
@@ -109,7 +114,9 @@ public final class SymbolTableFiller {
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
             }
-            table = table.getChilds(table.getChilds().size() - 1);
+            if (table.getChilds().size() != 0) {
+                table = table.getChilds(table.getChilds().size() - 1);
+            }
             Record record = table.lookup(((Identifier) id).getName());
             if (record != null) {
                 record.addUsageLine(line);
@@ -121,7 +128,9 @@ public final class SymbolTableFiller {
             while (!(id instanceof Identifier)) {
                 id = id.getNameNode();
             }
-            table = table.getChilds(table.getChilds().size() - 1);
+            if (table.getChilds().size() != 0) {
+                table = table.getChilds(table.getChilds().size() - 1);
+            }
             Record record = table.lookup(((Identifier) id).getName());
             if (record != null) {
                 record.addUsageLine(line);
@@ -162,15 +171,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -183,7 +189,6 @@ public final class SymbolTableFiller {
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
@@ -213,15 +218,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -230,7 +232,6 @@ public final class SymbolTableFiller {
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
@@ -261,15 +262,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum * ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct * ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union * ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -299,6 +297,7 @@ public final class SymbolTableFiller {
 
                 if (structVariable) {
                     record.setKind(Kind.STRUCT_PARAMETER);
+                    record.setInitialized(true);
                     symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
                 } else {
                     if (parameter) {
@@ -325,15 +324,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -342,7 +338,6 @@ public final class SymbolTableFiller {
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                    //line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
@@ -359,6 +354,7 @@ public final class SymbolTableFiller {
 
                 if (structVariable) {
                     record.setKind(Kind.STRUCT_PARAMETER);
+                    record.setInitialized(true);
                     symbolTable.insert(name, record, line, Kind.STRUCT_PARAMETER, errorDatabase);
                 } else {
                     if (parameter) {
@@ -403,15 +399,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -421,7 +414,6 @@ public final class SymbolTableFiller {
                 if (pointer) {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
@@ -433,7 +425,6 @@ public final class SymbolTableFiller {
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
@@ -505,15 +496,12 @@ public final class SymbolTableFiller {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
                             type = "enum ";
-                            //line = decl_tail.getLine();
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
                             type = "struct ";
-                            //line = decl_tail.getLine();
                         } else {
                             struct_name = ((Union) decl_tail).getName();
                             type = "union ";
-                            //line = decl_tail.getLine();
                         }
                         break;
                     }
@@ -523,7 +511,6 @@ public final class SymbolTableFiller {
                 if (pointer) {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         type += "* ";
@@ -535,7 +522,6 @@ public final class SymbolTableFiller {
                 } else {
                     if (type.equals("")) {
                         type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        //line = decl_tail.getLine();
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     } else {
                         typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
@@ -677,99 +663,19 @@ public final class SymbolTableFiller {
      * @return true, ak pochádza zo štandardnej knižnice, inak false
      */
     private static boolean isFromLibrary(String identifier) {
-        switch (identifier) {
-            case "FLT_ROUNDS":
-            case "FLT_RADIX":
-            case "FLT_MANT_DIG":
-            case "DBL_MANT_DIG":
-            case "LDBL_MANT_DIG":
-            case "FLT_DIG":
-            case "DBL_DIG":
-            case "LDBL_DIG":
-            case "FLT_MIN_EXP":
-            case "DBL_MIN_EXP":
-            case "LDBL_MIN_EXP":
-            case "FLT_MIN_10_EXP":
-            case "DBL_MIN_10_EXP":
-            case "LDBL_MIN_10_EXP":
-            case "FLT_MAX_EXP":
-            case "DBL_MAX_EXP":
-            case "LDBL_MAX_EXP":
-            case "FLT_MAX_10_EXP":
-            case "DBL_MAX_10_EXP":
-            case "LDBL_MAX_10_EXP":
-            case "FLT_MAX":
-            case "DBL_MAX":
-            case "LDBL_MAX":
-            case "FLT_EPSILON":
-            case "DBL_EPSILON":
-            case "LDBL_EPSILON":
-            case "FLT_MIN":
-            case "DBL_MIN":
-            case "LDBL_MIN":
-            case "CHAR_BIT":
-            case "SCHAR_MIN":
-            case "SCHAR_MAX":
-            case "UCHAR_MAX":
-            case "CHAR_MIN":
-            case "CHAR_MAX":
-            case "MB_LEN_MAX":
-            case "SHRT_MIN":
-            case "SHRT_MAX":
-            case "USHRT_MAX":
-            case "INT_MIN":
-            case "INT_MAX":
-            case "UINT_MAX":
-            case "LONG_MIN":
-            case "LONG_MAX":
-            case "ULONG_MAX":
-            case "LC_ALL":
-            case "LC_COLLATE":
-            case "LC_CTYPE":
-            case "LC_MONETARY":
-            case "LC_NUMERIC":
-            case "LC_TIME":
-            case "HUGE_VAL":
-            case "jmp_buf":
-            case "sig_atomic_t":
-            case "SIG_DFL":
-            case "SIG_ERR":
-            case "SIG_IGN":
-            case "SIGABRT":
-            case "SIGFPE":
-            case "SIGILL":
-            case "SIGINT":
-            case "SIGSEGV":
-            case "SIGTERM":
-            case "NULL":
-            case "_IOFBF":
-            case "_IOLBF":
-            case "_IONBF":
-            case "BUFSIZ":
-            case "EOF":
-            case "FOPEN_MAX":
-            case "FILENAME_MAX":
-            case "L_tmpnam":
-            case "SEEK_CUR":
-            case "SEEK_END":
-            case "SEEK_SET":
-            case "TMP_MAX":
-            case "stderr":
-            case "stdin":
-            case "stdout":
-            case "EXIT_FAILURE":
-            case "EXIT_SUCCESS":
-            case "RAND_MAX":
-            case "MB_CUR_MAX":
-            case "CLOCKS_PER_SEC":
-            case "__FILE__":
-            case "__DATE__":
-            case "__TIME__":
-            case "__LINE__":
-            case "__STDC__":
-                return true;
-            default:
-                return false;
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new FileInputStream("libraryVariables.config"));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains(identifier)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 }

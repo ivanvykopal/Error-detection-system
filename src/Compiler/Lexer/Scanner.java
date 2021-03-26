@@ -3,6 +3,9 @@ package Compiler.Lexer;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Preprocessing.Preprocessor;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -64,7 +67,6 @@ public final class Scanner {
             // ignorovanie prázdnych znakov a komentárov
             ignoreWhiteSpaces();
             if (ignoreComments()) {
-                System.out.println("Chyba: E-LA-03 " + Error.getError("E-LA-03"));
                 errorDatabase.addErrorMessage(line, Error.getError("E-LA-03"), "E-LA-03");
                 return new Token((byte) -1, "", line);
             }
@@ -76,7 +78,6 @@ public final class Scanner {
             if(peek == ' ' || peek == '\t' || peek == '\r') continue;
             if (peek == '/') {
                 readNextCharacter();
-                //System.out.println("SOM TU");
                 // ak nasleduje komentár opakuje cyklus
                 if (peek == '/' || peek == '*') {
                     position -= 2;
@@ -244,7 +245,6 @@ public final class Scanner {
                     if (peek == '.') {
                         return new Token(Tag.ELLIPSIS, "...", line);
                     } else {
-                        System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
                         errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
                         return new Token((byte) -1, "", line);
                     }
@@ -291,7 +291,6 @@ public final class Scanner {
                 } else {
                     //identifier
                     if (word.toString().length() > 31) {
-                        System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
                         errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                         return new Token((byte) -1, "", line);
                     } else {
@@ -314,7 +313,6 @@ public final class Scanner {
                 break;
             }
             if (word.toString().length() > 31) {
-                System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
                 errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                 return new Token((byte) -1, "", line);
             } else {
@@ -335,7 +333,6 @@ public final class Scanner {
                     word.append(peek);
                     break;
                 } else if (peek == '\n'){
-                    System.out.println("Chyba: E-LA-04 " + Error.getError("E-LA-04"));
                     errorDatabase.addErrorMessage(line, Error.getError("E-LA-04"), "E-LA-04");
                     return new Token((byte) -1, "", line);
                 } else {
@@ -428,7 +425,6 @@ public final class Scanner {
                     while (peek != ' ') {
                         readNextCharacter();
                     }
-                    System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
                     errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
                     return new Token((byte) -1, "", line);
                 }
@@ -478,7 +474,6 @@ public final class Scanner {
         if (peek == '§') {
             return new Token(Tag.EOF,"", line);
         }
-        System.out.println("Chyba: E-LA-01 " + Error.getError("E-LA-01"));
         errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
         return new Token((byte) -1, "", line);
     }
@@ -584,12 +579,31 @@ public final class Scanner {
      */
     private Token resolveIdentifier(String identifier) {
         switch(identifier) {
-            case "bool": return new Token(Tag.INT, "int", line);
-            case "true": return new Token(Tag.NUMBER, "1", line);
-            case "false": return new Token(Tag.NUMBER, "0", line);
-            case "_Bool": return new Token(Tag.INT, "int", line);
-            default: return new Token(Tag.IDENTIFIER, identifier, line);
+            case "true":
+                return new Token(Tag.NUMBER, "1", line);
+            case "false":
+                return new Token(Tag.NUMBER, "0", line);
         }
+        java.util.Scanner scanner;
+        try {
+            scanner = new java.util.Scanner(new FileInputStream("types.config"));
+            while (scanner.hasNextLine()) {
+                String configLine = scanner.nextLine();
+                if (configLine.contains(identifier+",")) {
+                    String[] words = configLine.split(", ");
+                    if (!words[0].equals(identifier)) {
+                        continue;
+                    }
+                    if (words.length == 2) {
+                        return new Token(Tag.INT, words[1], line);
+                    }
+                }
+            }
+            return new Token(Tag.IDENTIFIER, identifier, line);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new Token(Tag.IDENTIFIER, identifier, line);
     }
 
     /**

@@ -85,6 +85,7 @@ public class IncludePreprocessor {
             case "uchar.h":
             case "wchar.h":
             case "wctype.h":
+            case "malloc.h":
                 return true;
             default:
                 return false;

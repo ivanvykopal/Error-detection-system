@@ -46,6 +46,9 @@ public class Preprocessor {
         for (; position < lines.length; nextLine()) {
             //odstránenie zbytočných medzier
             String temp = lines[position].trim().replaceAll(" +", " ");
+            if (temp.contains("//")) {
+                temp = temp.substring(0, temp.indexOf("//"));
+            }
             if (!temp.equals("") && temp.charAt(0) == '#') {
                 while (lines[position].contains("\\") && !containWhiteSpace(lines[position])) {
                     newFile.append("\n");
@@ -69,7 +72,8 @@ public class Preprocessor {
                 newFile.append(lines[position]).append("\n");
             }
         }
-        return newFile.toString();
+        String newFileString = newFile.toString().replaceAll("\\binline\\b", "");
+        return newFileString;
     }
 
     private boolean containWhiteSpace(String line) {

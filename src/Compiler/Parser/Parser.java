@@ -49,7 +49,7 @@ public class Parser {
             parseTree = null;
         } else {
             parseTree = new AST(child);
-            parseTree.traverse("");
+            //parseTree.traverse("");
             //symbolTable.printSymbolTable(0);
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
@@ -4089,7 +4089,7 @@ public class Parser {
         }
 
         child1 = declarator();
-        if (child1 != null && child1.isNone()) {
+        if (child1 != null && !child1.isNone()) {
             ArrayList<Node> child = declaration_list();
             child2 = null;
             if (child != null && !child.isEmpty()) {
@@ -4371,8 +4371,13 @@ public class Parser {
                 return true;
             }
 
+            boolean pointer = type1 >= 50;
             type1 = (type1 >= 50) ? (short) (type1 % 50) : type1;
             type2 = (type2 >= 50) ? (short) (type2 % 50) : type2;
+
+            if (pointer && (type1 == Type.CHAR || type1 == Type.SIGNEDCHAR || type1 == Type.UNSIGNEDCHAR) && type2 == Type.STRING) {
+                return true;
+            }
 
             if (type1 >= Type.UNION && type2 >= Type.UNION) {
                 return false;
@@ -4471,6 +4476,10 @@ public class Parser {
 
             type1 = (type1 >= 50) ? (short) (type1 % 50) : type1;
             type2 = (type2 >= 50) ? (short) (type2 % 50) : type2;
+
+            if ((type1 == Type.CHAR || type1 == Type.SIGNEDCHAR || type1 == Type.UNSIGNEDCHAR) && type2 == Type.STRING) {
+                return true;
+            }
 
             if (type1 >= Type.UNION || type2 > Type.UNION) {
                 return false;

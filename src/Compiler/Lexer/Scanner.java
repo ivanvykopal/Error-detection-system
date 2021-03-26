@@ -272,9 +272,11 @@ public final class Scanner {
                     break;
                 }
             }
+            if (flag && word.toString().equals("size_t")) {
+                flag = false;
+            }
             if (flag) {
                 if (word.toString().length() > 31) {
-                    System.out.println("Chyba: E-LA-02 " + Error.getError("E-LA-02"));
                     errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
                     return new Token((byte) -1, "", line);
                 } else {

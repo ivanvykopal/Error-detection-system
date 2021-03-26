@@ -246,7 +246,12 @@ public class VariableUsageChecker {
                         strBuilder.append(" (").append(indexes.get(index).getType());
                         strBuilder.append(", ").append(indexes.get(index).getDeclarationLine());
                         int length = indexes.get(index).getActiveLines().size();
-                        strBuilder.append(" - ").append(indexes.get(index).getActiveLines().get(length - 1));
+                        strBuilder.append(" - ");
+                         if (length > 0) {
+                             strBuilder.append(indexes.get(index).getActiveLines().get(length - 1));
+                         } else {
+                             strBuilder.append(indexes.get(index).getDeclarationLine());
+                         }
                         strBuilder.append(")");
                     }
                     fileWriter.write(file + ";" + strBuilder.toString() + "\n");

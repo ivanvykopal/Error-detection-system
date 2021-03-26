@@ -131,15 +131,20 @@ public final class TernaryOperator extends Node {
             typeCategory = var1;
             return true;
         }
-        if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
+        var1 = (var1 >= 50) ? (short) (var1 % 50) : var1;
+        var2 = (var2 >= 50) ? (short) (var2 % 50) : var2;
+
+        if (var1 >= Type.UNION && var2 >= Type.UNION) {
             typeCategory = -1;
             return false;
         }
-        if (var1 > 50 && var2 > 50 && (var1 % 50) < Type.UNION && (var2 % 50) < Type.UNION) {
-            typeCategory = (byte) Math.max(var1, var2);
-            return true;
+        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
+            typeCategory = -1;
+            return false;
         }
-        return false;
+
+        typeCategory = (byte) Math.max(var1, var2);
+        return true;
     }
 
     /**

@@ -76,6 +76,7 @@ public final class TypeChecker {
             case "struct ": return (short) (Type.STRUCT + pointer);                                          // struct
             case "enum ": return (short) (Type.ENUM + pointer);                                              // enum
             case "void ": return (short) (Type.VOID + pointer);                                              // void
+            case "size_t " :return (short) (Type.UNSIGNEDLONGLONG + pointer);
             case "string ": return Type.STRING;
             default:                                                                                        // vlastný typ
                 if (node == null) {

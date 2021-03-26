@@ -83,7 +83,7 @@ public class Analysis2Controller extends Controller {
                         System.out.println("Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
                         continue;
                     }
-                    //System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
+                    System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
                     fileCount++;
                     ErrorDatabase errorDatabase = new ErrorDatabase();
                     Parser parser = new Parser(text, errorDatabase);

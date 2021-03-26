@@ -82,6 +82,7 @@ public final class Assignment extends Node {
     private boolean typeCheck(SymbolTable table) {
         short var1 = TypeChecker.findTypeCategory(left, table);
         short var2 = TypeChecker.findTypeCategory(right, table);
+
         if (var2 == -2) {
             return true;
         }
@@ -115,12 +116,16 @@ public final class Assignment extends Node {
             }
             return true;
         }
-        if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
+        var1 = (var1 >= 50) ? (short) (var1 % 50) : var1;
+        var2 = (var2 >= 50) ? (short) (var2 % 50) : var2;
+
+        if (var1 >= Type.UNION && var2 >= Type.UNION) {
             return false;
         }
-        if ( var1 > 50 && var2 > 50 && (var1 % 50) >= Type.UNION && (var2 % 50) >= Type.UNION) {
+        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
             return false;
         }
+
         return true;
     }
 

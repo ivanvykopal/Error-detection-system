@@ -47,7 +47,7 @@ public final class FunctionCall extends Node {
     private void checkFunction(SymbolTable symbolTable) {
         if (name instanceof Identifier) {
             String funcName = ((Identifier) name).getName();
-            if (funcName.equals("scanf") && arguments instanceof ExpressionList) {
+            if ((funcName.equals("scanf") || funcName.equals("scanf_s")) && arguments instanceof ExpressionList) {
                 for(Node node : ((ExpressionList) arguments).getExpressions()) {
                     if (node instanceof UnaryOperator && ((UnaryOperator) node).getOperator().equals("&")) {
                         SymbolTableFiller.resolveInitialization(((UnaryOperator) node).getExpression(), symbolTable, node.getLine());

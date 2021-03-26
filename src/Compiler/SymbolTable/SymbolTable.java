@@ -82,7 +82,6 @@ public class SymbolTable implements Serializable {
         if (!isInSymbolTable) {
             table.put(key, value);
         } else {
-            System.out.println("Chyba na riadku " + line + ": Viacnásobná deklarácia premennej!");
             database.addErrorMessage(line, Error.getError("E-SmA-02"), "E-SmA-02");
         }
     }
@@ -334,7 +333,7 @@ public class SymbolTable implements Serializable {
             }
         }
         for (SymbolTable tab : childs) {
-            tab.findGlobalVariable(errorDatabase);
+            tab.findLongActiveVariable(errorDatabase);
         }
     }
 }

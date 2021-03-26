@@ -89,10 +89,6 @@ public final class BinaryOperator extends Node {
         }
 
         short type = maxType(var1, var2);
-        if (type == -1) {
-            typeCategory = -1;
-            return false;
-        }
         switch (operator) {
             case "<":
             case ">":
@@ -100,18 +96,15 @@ public final class BinaryOperator extends Node {
             case ">=":
             case "==":
             case "!=":
-                typeCategory = Type.INT;
-                return true;
             case "&&":
             case "||":
-                if (type < Type.UNSIGNEDLONGLONGINT) {
-                    typeCategory = type;
-                    return true;
-                } else {
+                typeCategory = Type.INT;
+                return true;
+            default:
+                if (type == -1) {
                     typeCategory = -1;
                     return false;
                 }
-            default:
                 typeCategory = type;
                 return true;
         }
@@ -133,16 +126,27 @@ public final class BinaryOperator extends Node {
         if (var1 == Type.VOID || var2 == Type.VOID) {
             return -1;
         }
+        var1 = (var1 >= 50) ? (short) (var1 % 50) : var1;
+        var2 = (var2 >= 50) ? (short) (var2 % 50) : var2;
+
+        if (var1 >= Type.UNION && var2 >= Type.UNION) {
+            return -1;
+        }
+        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
+            return -1;
+        }
+
+        /*
         if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
             return -1;
         }
         if (var1 < 50 && var2 < 50 && var1 < Type.UNION && var2 < Type.UNION) {
             return (short) Math.max(var1, var2);
         }
-        if (var1 > 50 && var2 > 50 && (var1 % 50) < Type.UNION && (var2 % 50) < Type.UNION) {
-            return (short) Math.max(var1, var2);
-        }
-        return -1;
+        if (var1 > 50 && var2 > 50 && (var1 % 50) >= Type.UNION && (var2 % 50) >= Type.UNION) {
+            return -1;
+        }*/
+        return (short) Math.max(var1, var2);
     }
 
     /**

@@ -10,6 +10,8 @@ import Compiler.Lexer.Tag;
 import Compiler.SymbolTable.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import Compiler.AbstractSyntaxTree.*;
 
 public class Parser {
@@ -31,7 +33,7 @@ public class Parser {
                 if (tok.tag == Tag.EOF) {
                     break;
                 } else {
-                    //System.out.println(tok.line + ": " + tok.value);
+                    //System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
                     tokenStream.add(tok);
                 }
             } catch (IOException e) {
@@ -55,6 +57,7 @@ public class Parser {
                 new VariableUsageChecker(symbolTable, errorDatabase, file);
             } else {
                 symbolTable.findGlobalVariable(errorDatabase);
+                symbolTable.findLongActiveVariable(errorDatabase);
             }
         }
     }
@@ -176,9 +179,6 @@ public class Parser {
             case Tag.CHARACTER:
                 nextToken();
                 return new Constant("char", getTokenValue(position - 1), getTokenLine(position - 1));
-            case Tag.STRING:
-                nextToken();
-                return new Constant("string", getTokenValue(position - 1), getTokenLine(position - 1));
             case Tag.LEFT_PARENTHESES:
                 nextToken();
                 child1 = expression();
@@ -198,6 +198,32 @@ public class Parser {
         if (!child1.isNone()) {
             return child1;
         }
+        child1 = string();
+        if (!child1.isNone()) {
+            return child1;
+        }
+        return new None();
+    }
+
+    /**
+     * string ->  STRING
+     *          | string STRING
+     */
+    private Node string() {
+        StringBuilder str = new StringBuilder();
+        if (getTokenTag() == Tag.STRING) {
+            int line = getTokenLine();
+            str.append(getTokenValue());
+            nextToken();
+            while (getTokenTag() == Tag.STRING) {
+                str.append(getTokenValue());
+                nextToken();
+            }
+            String stringLiteral = str.toString();
+            stringLiteral = stringLiteral.replaceAll("\"", "");
+            stringLiteral = "\"" + stringLiteral + "\"";
+            return new Constant("string", stringLiteral, line);
+        }
         return new None();
     }
 
@@ -214,7 +240,7 @@ public class Parser {
                 nextToken();
                 Record record = symbolTable.lookup(getTokenValue(position - 1));
                 if (record != null) {
-                    return new Constant("enum", getTokenValue(position - 1), getTokenLine(position - 1));
+                    return new Constant("int", getTokenValue(position - 1), getTokenLine(position - 1));
                 } else {
                     return new Constant("", getTokenValue(position - 1), getTokenLine(position - 1));
                 }
@@ -268,10 +294,10 @@ public class Parser {
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
-    private String enumeration_constant(String name) {
+    private String enumeration_constant() {
         if (getTokenTag() == Tag.IDENTIFIER) {
             //vloženie do symbolickej tabuľky ako ENUMERATION_CONSTANT
-            Record record = new Record(Type.ENUM, "enum " + name, getTokenLine(), true, Kind.ENUMERATION_CONSTANT);
+            Record record = new Record(Type.INT, "int ", getTokenLine(), true, Kind.ENUMERATION_CONSTANT);
             symbolTable.insert(getTokenValue(), record, getTokenLine(), Kind.ENUMERATION_CONSTANT, errorDatabase);
 
             nextToken();
@@ -1710,7 +1736,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
                 nextToken();
-                child1 = enumerator_list("");
+                child1 = enumerator_list();
                 if (child1 != null && !child1.isNone()) {
                     switch (getTokenTag()) {
                         case Tag.RIGHT_BRACES:
@@ -1731,7 +1757,7 @@ public class Parser {
                 nextToken();
                 if (getTokenTag() == Tag.LEFT_BRACES) {
                     nextToken();
-                    child1 = enumerator_list(terminal);
+                    child1 = enumerator_list();
                     if (child1 != null && !child1.isNone()) {
                         switch (getTokenTag()) {
                             case Tag.RIGHT_BRACES:
@@ -1765,8 +1791,8 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node enumerator_list(String name) {
-        Node child1 = enumerator(name);
+    private Node enumerator_list() {
+        Node child1 = enumerator();
         if (child1 == null) {
             return null;
         }
@@ -1776,15 +1802,15 @@ public class Parser {
             arr.add(child1);
             while (getTokenTag() == Tag.COMMA) {
                 nextToken();
-                child1 = enumerator(name);
+                child1 = enumerator();
                 if (child1 == null) {
                     return null;
                 }
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
-                    return null;
+                    position--;
+                    return new EnumeratorList(arr, line);
                 }
             }
             return new EnumeratorList(arr, line);
@@ -1799,8 +1825,8 @@ public class Parser {
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
      */
-    private Node enumerator(String name) {
-        String child1 = enumeration_constant(name);
+    private Node enumerator() {
+        String child1 = enumeration_constant();
         int line = getTokenLine(position - 1);
         if (!child1.equals("")) {
             if (getTokenValue().equals("=")) {
@@ -2422,6 +2448,7 @@ public class Parser {
 
     /**
      * parameter_declaration -> declaration_specifiers left22
+     *                         | left22
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      *         -1 ak sa vyskytla chyba
@@ -2445,6 +2472,14 @@ public class Parser {
             } else {
                 return child2;
             }
+        }
+        typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        child1 = left22(typeNode);
+        if (child1 == null) {
+            return null;
+        }
+        if (!child1.isNone()) {
+            return child1;
         }
         return new None();
     }
@@ -2472,6 +2507,9 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
+            if (typeNode.getTypes().size() == 0) {
+                typeNode.addType(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
+            }
             ArrayList<Node> decls = new ArrayList<>();
             decls.add(new Declarator(child1, null));
             return createDeclaration(typeNode, decls, true, false).get(0);
@@ -2484,6 +2522,9 @@ public class Parser {
             return null;
         }
         if (!child1.isNone()) {
+            if (typeNode.getTypes().size() == 0) {
+                typeNode.addType(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
+            }
             if (typeNode.getTypes().size() > 1) {
                 ArrayList<Node> decls = new ArrayList<>();
                 decls.add(new Declarator(child1, null));
@@ -2493,6 +2534,10 @@ public class Parser {
                 decl = fixTypes(decl, typeNode.getTypes());
                 return decl;
             }
+        }
+        //TODO: zistiť prečo
+        if (typeNode.getTypes().size() == 0) {
+            typeNode.addType(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
         }
         if (typeNode.getTypes().size() > 1) {
             ArrayList<Node> decls = new ArrayList<>();
@@ -4009,6 +4054,8 @@ public class Parser {
     /**
      * function_definition ->  declaration_specifiers declarator declaration_list compound_statement
      *                       | declaration_specifiers declarator compound_statement
+     *                       | declarator declaration_list compound_statement
+     *                       | declarator compound_statement
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
      */
@@ -4038,6 +4085,28 @@ public class Parser {
             child3 = compound_statement(true, true);
             if (child3 != null && !child3.isNone()) {
                 return createFunction(typeNode, child2, null, child3);
+            }
+        }
+
+        child1 = declarator();
+        if (child1 != null && child1.isNone()) {
+            ArrayList<Node> child = declaration_list();
+            child2 = null;
+            if (child != null && !child.isEmpty()) {
+                child2 = compound_statement(true, true);
+            }
+            if (child2 != null && !child2.isNone()) {
+                ArrayList<Node> types = new ArrayList<>();
+                types.add(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
+                typeNode = new TypeNode(types, new ArrayList<>(), new ArrayList<>());
+                return createFunction(typeNode, child1, child, child2);
+            }
+            child2 = compound_statement(true, true);
+            if (child2 != null && !child2.isNone()) {
+                ArrayList<Node> types = new ArrayList<>();
+                types.add(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
+                typeNode = new TypeNode(types, new ArrayList<>(), new ArrayList<>());
+                return createFunction(typeNode, child1, null, child2);
             }
         }
         return new None();
@@ -4145,7 +4214,7 @@ public class Parser {
             }
 
             if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
-                errorDatabase.addErrorMessage(declarator1.getInitializer().getLine(), Error.getError("E-RP-08"), "E-RP-08");
+                errorDatabase.addErrorMessage(declarator1.getInitializer().getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
             } else if (((Declarator) decl).getDeclarator() instanceof Identifier) {
                 Declarator declarator2 = (Declarator) decl;
                 Record record = symbolTable.lookup(((Identifier) declarator2.getDeclarator()).getName());
@@ -4302,12 +4371,16 @@ public class Parser {
                 return true;
             }
 
-            //TODO: treba vyriešiť pointre
-            if (type1 >= Type.UNION || type2 >= Type.UNION) {
+            type1 = (type1 >= 50) ? (short) (type1 % 50) : type1;
+            type2 = (type2 >= 50) ? (short) (type2 % 50) : type2;
+
+            if (type1 >= Type.UNION && type2 >= Type.UNION) {
+                return false;
+            }
+            if (type1 >= Type.UNION && type2 < Type.UNION || type2 >= Type.UNION && type1 < Type.UNION) {
                 return false;
             }
 
-            //pozrieť sa na typy ak väčší typ dávam do menšieho, ale aj pointre
             return true;
         } else if (declarator instanceof ArrayDeclaration) {
             Node tail = declarator.getType();
@@ -4396,14 +4469,12 @@ public class Parser {
                 return true;
             }
 
-            if (type2 < 50) {
-                //type2 nemá typ pointra;
+            type1 = (type1 >= 50) ? (short) (type1 % 50) : type1;
+            type2 = (type2 >= 50) ? (short) (type2 % 50) : type2;
+
+            if (type1 >= Type.UNION || type2 > Type.UNION) {
                 return false;
             }
-            if (type1 > 78 || type2 > 78) {
-                return false;
-            }
-            //TODO: neviem
             return true;
         } else {
             return false;

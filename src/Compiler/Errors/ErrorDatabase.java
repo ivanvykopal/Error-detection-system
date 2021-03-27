@@ -49,7 +49,8 @@ public final class ErrorDatabase implements Cloneable {
         try {
             return (ErrorDatabase) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Chyba pri vytváraní kópie databázy chýb!");
         }
         return null;
     }
@@ -81,7 +82,7 @@ public final class ErrorDatabase implements Cloneable {
             }
             fileWriter.close();
         } catch (IOException e) {
-            System.out.println("Chyba");
+            System.out.println("Chyba pri vytváraní súboru errors.csv!");
         }
 
     }

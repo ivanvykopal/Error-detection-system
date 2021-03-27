@@ -50,9 +50,9 @@ public final class For extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(initializer, table, errorDatabase, true);
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
-        SymbolTableFiller.resolveUsage(next, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(initializer, table, errorDatabase, true, true);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true, true);
+        SymbolTableFiller.resolveUsage(next, table, errorDatabase, true, true);
     }
 
     /**

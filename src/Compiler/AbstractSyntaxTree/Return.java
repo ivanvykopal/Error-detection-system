@@ -33,7 +33,7 @@ public final class Return extends Node {
         this.expression = expr;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, true);
     }
 
     /**

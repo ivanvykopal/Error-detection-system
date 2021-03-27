@@ -34,7 +34,7 @@ public final class ParameterList extends Node {
         setLine(line);
 
         for (Node node: parameters) {
-            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true);
+            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true, true);
         }
     }
 

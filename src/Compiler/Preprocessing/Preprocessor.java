@@ -62,9 +62,6 @@ public class Preprocessor {
                     preprocessDefine(temp.split(" "));
                     newFile.append("\n");
                     lines = oldFile.split("\n");
-                } else if (temp.contains("if") || temp.contains("else")) {
-                    //#if, #ifdef, #ifndef, #else, #elif
-                    preprocessConditions();
                 } else {
                     newFile.append("\n");
                 }
@@ -72,12 +69,12 @@ public class Preprocessor {
                 newFile.append(lines[position]).append("\n");
             }
         }
-        String newFileString = newFile.toString().replaceAll("\\binline\\b", "");
-        return newFileString;
+        return newFile.toString().replaceAll("\\binline\\b", "");
     }
 
     private boolean containWhiteSpace(String line) {
-        if (line.contains("\r") || line.contains("\n") || line.contains("\t")) {
+        int index = line.indexOf("\\");
+        if (line.charAt(index + 1) == 'r' || line.charAt(index + 1) == 'n' || line.charAt(index + 1) == 't') {
             return true;
         }
         return false;
@@ -98,7 +95,10 @@ public class Preprocessor {
                 // makro funkcia
                 String temp = "";
                 int length = words.length;
+                String indent = "";
                 for(int i = 2; i < length; i++) {
+                    temp = temp.concat(indent);
+                    indent = " ";
                     temp = temp.concat(words[i]);
                 }
 
@@ -111,7 +111,7 @@ public class Preprocessor {
                     if (index == -1) {
                         break;
                     }
-                    int lastIndex = oldFile.indexOf(")", index);
+                    int lastIndex = getLastIndex(index);
                     //vyriešiť mapovanie
                     String t = oldFile.substring(oldFile.indexOf("(", index) + 1, lastIndex);
                     t = t.replaceAll(" ", "");
@@ -126,7 +126,8 @@ public class Preprocessor {
                     String newString = "";
                     newString = temp.substring(temp.indexOf(")") + 1);
                     for (int i = 0; i < length; i++) {
-                        newString = newString.replaceAll("\\b" + arr2[i] + "\\b", arr1[i]);
+                        //newString = newString.replaceAll("\\b" + arr2[i].trim() + "\\b", arr1[i].trim());
+                        newString = replaceString(newString, arr2[i].trim(), arr1[i].trim());
                     }
 
                     oldFile = oldFile.substring(0, index) + newString + oldFile.substring(lastIndex + 1);
@@ -139,7 +140,8 @@ public class Preprocessor {
                     temp = temp.concat(words[i]);
                 }
                 //nahradiť v texte
-                oldFile = oldFile.replaceAll("\\b"+name+"\\b", temp);
+                //oldFile = oldFile.replaceAll("\\b"+name+"\\b", temp);
+                oldFile = replaceString(new String(oldFile), name, temp);
             }
         } else {
             // typ: #define ...
@@ -148,7 +150,10 @@ public class Preprocessor {
                 // makro funkcia
                 String temp = "";
                 int length = words.length;
+                String indent = "";                                                                  //
                 for(int i = 1; i < length; i++) {
+                    temp = temp.concat(indent);                                                     //
+                    indent = " ";                                                                   //
                     temp = temp.concat(words[i]);
                 }
 
@@ -161,10 +166,10 @@ public class Preprocessor {
                     if (index == -1) {
                         break;
                     }
-                    int lastIndex = oldFile.indexOf(")", index);
+                    int lastIndex = getLastIndex(index);
                     //vyriešiť mapovanie
                     String t = oldFile.substring(oldFile.indexOf("(", index) + 1, lastIndex);
-                    t = t.replaceAll(" ", "");
+                    //t = t.replaceAll(" ", "");
                     String[] arr1 = t.split(",");
                     String[] arr2 = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")")).split(",");
                     //nebol nájdený
@@ -175,7 +180,8 @@ public class Preprocessor {
                     String newString = "";
                     newString = temp.substring(temp.indexOf(")") + 1);
                     for (int i = 0; i < arr1.length; i++) {
-                        newString = newString.replaceAll("\\b" + arr2[i] + "\\b", arr1[i]);
+                        //newString = newString.replaceAll("\\b" + arr2[i].trim() + "\\b", arr1[i].trim());
+                        newString = replaceString(newString, arr2[i].trim(), arr1[i].trim());
                     }
 
                     oldFile = oldFile.substring(0, index) + newString + oldFile.substring(lastIndex + 1);
@@ -188,25 +194,46 @@ public class Preprocessor {
                     temp = temp.concat(words[i]);
                 }
                 //nahradiť v texte
-                oldFile = oldFile.replaceAll("\\b"+name+"\\b", temp);
+                //oldFile = oldFile.replaceAll("\\b"+name+"\\b", temp);
+                oldFile = replaceString(new String(oldFile), name, temp);
             }
         }
     }
 
-    /**
-     * Metóda pre predspracovanie podmienkových direktív v zdrojovom kóde.
-     */
-    private void preprocessConditions() {
-        newFile.append("\n");
-        nextLine();
-        while (true) {
-            String line = lines[position].trim();
-            if (!line.equals("") && line.charAt(0) == '#' && (line.contains("#endif") || line.contains("# endif"))) {
-                newFile.append("\n");
-                break;
+    private int getLastIndex(int index) {
+        int position = oldFile.indexOf("(", index);
+        int count = 1;
+        while (count != 0) {
+            position++;
+            if (oldFile.charAt(position) == '(') {
+                count++;
             }
-            newFile.append("\n");
-            nextLine();
+            if (oldFile.charAt(position) == ')') {
+                count--;
+            }
         }
+        return position;
+    }
+
+    private String replaceString(String newString, String temp1, String temp2) {
+        newString += " ";
+        int index = newString.indexOf(temp1);
+        while (index != -1) {
+            char c1 = newString.charAt(index -1);
+            char c2 = newString.charAt(index + temp1.length());
+            if (c1 == '\'' && c2 == '\'') {
+                index = newString.indexOf(temp1, index + temp1.length());
+                continue;
+            }
+            String temp = newString;
+            newString = newString.substring(0, index - 1) + newString.substring(index - 1, index + temp1.length() + 1).replaceFirst("\\b" + temp1+ "\\b", temp2)
+                    + newString.substring(index + temp1.length() + 1);
+            if (newString.equals(temp)) {
+                index = newString.indexOf(temp1, index + 1);
+            } else {
+                index = newString.indexOf(temp1, index + temp2.length());
+            }
+        }
+        return newString;
     }
 }

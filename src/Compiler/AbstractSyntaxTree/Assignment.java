@@ -52,9 +52,9 @@ public final class Assignment extends Node {
 
         SymbolTableFiller.resolveInitialization(left, table, errorDatabase);
         if(!operator.equals("=")) {
-            SymbolTableFiller.resolveUsage(left, table, errorDatabase, true);
+            SymbolTableFiller.resolveUsage(left, table, errorDatabase, true, true);
         }
-        SymbolTableFiller.resolveUsage(right, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(right, table, errorDatabase, true, true);
 
         if (!typeCheck(table)) {
             if (right instanceof FunctionCall) {

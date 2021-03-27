@@ -11,7 +11,6 @@ import Compiler.SymbolTable.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import Compiler.AbstractSyntaxTree.*;
 
 public class Parser {
@@ -28,16 +27,12 @@ public class Parser {
         Scanner scanner = new Scanner(file, errorDatabase);
         Token tok;
         while (true) {
-            try {
-                tok = scanner.scan();
-                if (tok.tag == Tag.EOF) {
-                    break;
-                } else {
-                    System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
-                    tokenStream.add(tok);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            tok = scanner.scan();
+            if (tok.tag == Tag.EOF) {
+                break;
+            } else {
+                //System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
+                tokenStream.add(tok);
             }
         }
     }
@@ -3121,6 +3116,7 @@ public class Parser {
     /**
      * initializer ->  '{' initializer_list '}'
      *               | '{' initializer_list ',' '}'
+     *               | '{' '}'
      *               | assignment_expression
      * @return 1 ak sa našla zhoda,
      *         0 ak sa zhoda nenašla
@@ -3130,6 +3126,10 @@ public class Parser {
         Node child1, child2;
         if (getTokenTag() == Tag.LEFT_BRACES) {
             nextToken();
+            if (getTokenTag() == Tag.RIGHT_BRACES) {
+                nextToken();
+                return new InitializationList(new ArrayList<>(), getTokenLine(position - 1), symbolTable, errorDatabase);
+            }
             child1 = initializer_list();
             if (child1 != null && !child1.isNone()) {
                 switch (getTokenTag()) {
@@ -4228,7 +4228,7 @@ public class Parser {
             SymbolTableFiller.addRecordToSymbolTable(declarator1, typedef, parameter, structVariable, symbolTable, errorDatabase);
 
             if (declarator1.getInitializer() != null) {
-                SymbolTableFiller.resolveUsage(declarator1.getInitializer(), symbolTable, errorDatabase, true);
+                SymbolTableFiller.resolveUsage(declarator1.getInitializer(), symbolTable, errorDatabase, true, true);
             }
 
             decls.add(declaration);
@@ -4486,7 +4486,7 @@ public class Parser {
             }
             return true;
         } else {
-            return false;
+            return true;
         }
 
     }

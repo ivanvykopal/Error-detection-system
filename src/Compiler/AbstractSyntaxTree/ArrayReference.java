@@ -52,7 +52,7 @@ public final class ArrayReference extends Node {
             findAccessError(name, index, table, errorDatabase);
         }
 
-        SymbolTableFiller.resolveUsage(index, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(index, table, errorDatabase, true, true);
     }
 
     /**
@@ -104,6 +104,7 @@ public final class ArrayReference extends Node {
      */
     private boolean typeCheck(SymbolTable table) {
         short type = TypeChecker.findTypeCategory(index, table);
+        type = type >= 50 ? (short) (type % 50) : type;
         return type <= Type.UNSIGNEDLONGLONGINT;
 
     }

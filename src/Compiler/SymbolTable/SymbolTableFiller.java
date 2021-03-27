@@ -32,8 +32,11 @@ public final class SymbolTableFiller {
      * @param errorDatabase databáza chýb
      *
      * @param checkInitialization true, ak sa má kontrolovať, či už premenná je inicializovaní, inak false
+     *
+     * @param checkDeclaration true, ak sa má kontrolovať, či je premenná deklarovaná, inak false
      */
-    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitialization) {
+    public static void resolveUsage(Node node, SymbolTable table, ErrorDatabase errorDatabase, boolean checkInitialization,
+                                    boolean checkDeclaration) {
         if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record != null) {
@@ -47,7 +50,7 @@ public final class SymbolTableFiller {
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) node).getName(), record);
             } else {
-                if (!isFromLibrary(((Identifier) node).getName())) {
+                if (checkDeclaration && !isFromLibrary(((Identifier) node).getName())) {
                     errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
                 }
             }

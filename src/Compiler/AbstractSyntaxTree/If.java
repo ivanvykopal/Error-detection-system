@@ -44,9 +44,9 @@ public final class If extends Node {
         this.falsePart = falsePart;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
-        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase, true);
-        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true, true);
+        SymbolTableFiller.resolveUsage(truePart, table, errorDatabase, true, true);
+        SymbolTableFiller.resolveUsage(falsePart, table, errorDatabase, true, true);
     }
 
     /**

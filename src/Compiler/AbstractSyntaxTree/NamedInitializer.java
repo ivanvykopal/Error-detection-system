@@ -13,7 +13,7 @@ public class NamedInitializer extends Node {
         this.names = names;
         this.expression = expr;
 
-        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, true);
     }
 
     public void resolveUsage(SymbolTable table, int line) {

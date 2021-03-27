@@ -39,7 +39,7 @@ public final class While extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(condition, table, errorDatabase, true, true);
     }
 
     /**

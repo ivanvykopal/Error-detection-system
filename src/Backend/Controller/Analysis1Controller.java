@@ -77,8 +77,10 @@ public class Analysis1Controller extends Controller {
                     showErrorWindow(new ArrayList<>(Collections.singletonList(file)));
                 }
             } catch (IOException er) {
-                er.printStackTrace();
+                //er.printStackTrace();
                 System.out.println("Chyba v Analysis1Controller!");
+            } catch (Exception e) {
+                System.out.println("Chyba v Analysis1Controller spôsobená parserom!");
             }
 
         }

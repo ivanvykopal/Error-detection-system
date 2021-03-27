@@ -35,7 +35,7 @@ public final class ExpressionList extends Node {
         setLine(line);
 
         for (Node node : expressions) {
-            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true);
+            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true, true);
         }
     }
 

@@ -105,8 +105,8 @@ public class Analysis2Controller extends Controller {
                                     try {
                                         text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                                     } catch (IOException e) {
-                                        e.printStackTrace();
-                                        System.out.println("Chyba!");
+                                        //e.printStackTrace();
+                                        System.out.println("Chyba pri načítaní zdrojového kódu!");
                                     }
 
                                     IncludePreprocessor prep = new IncludePreprocessor(text);
@@ -118,7 +118,11 @@ public class Analysis2Controller extends Controller {
                                     fileCount++;
                                     ErrorDatabase errorDatabase = new ErrorDatabase();
                                     Parser parser = new Parser(text, errorDatabase);
-                                    parser.parse(file.getName());
+                                    try {
+                                        parser.parse(file.getName());
+                                    } catch (Exception e) {
+                                        System.out.println("Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
+                                    }
                                     errorDatabase.createFile(file.getName());
                                     if (!errorDatabase.isEmpty()) {
                                         fileNames.add(file.getName());

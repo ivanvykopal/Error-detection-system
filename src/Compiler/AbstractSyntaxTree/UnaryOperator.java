@@ -50,12 +50,16 @@ public final class UnaryOperator extends Node {
 
         if (operator.equals("&")) {
             SymbolTableFiller.resolveInitialization(expression, table, errorDatabase);
-            SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false);
+            SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false, true);
         } else {
             if (operator.equals("++") || operator.equals("--")) {
                 SymbolTableFiller.resolveInitialization(expression, table, errorDatabase);
             }
-            SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+            if (operator.equals("*") || operator.equals("sizeof")) {
+                SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, false);
+            } else {
+                SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, true);
+            }
         }
 
         if (!typeCheck(table)) {

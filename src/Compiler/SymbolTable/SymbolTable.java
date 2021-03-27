@@ -65,6 +65,9 @@ public class SymbolTable implements Serializable {
      * @param database databáza chýb
      */
     public void insert(String key, Record value, int line, byte kind, ErrorDatabase database) {
+        if (this.parent == null && (kind == Kind.ARRAY_PARAMETER || kind == Kind.PARAMETER)) {
+            return;
+        }
         Record record = null;
         boolean isInSymbolTable = false;
         for (SymbolTable curr = this; curr != null; curr = curr.parent) {

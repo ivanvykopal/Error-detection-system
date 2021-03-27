@@ -38,7 +38,7 @@ public final class Case extends Node {
         this.statement = stmt;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(constant, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(constant, table, errorDatabase, true, true);
     }
 
     /**

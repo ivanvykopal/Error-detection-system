@@ -38,7 +38,7 @@ public final class Cast extends Node {
         this.expression = expr;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, true);
     }
 
     /**

@@ -59,10 +59,8 @@ public final class Scanner {
      * Metóda, ktorá spracováva vstup a mení ho na tokeny.
      *
      * @return - vracia token
-     *
-     * @throws IOException
      */
-    public Token scan() throws IOException {
+    public Token scan(){
         while(true) {
             // ignorovanie prázdnych znakov a komentárov
             ignoreWhiteSpaces();
@@ -480,10 +478,8 @@ public final class Scanner {
 
     /**
      * Metóda na načítanie ďalšieho znaku.
-     *
-     * @throws IOException
      */
-    private void readNextCharacter() throws IOException {
+    private void readNextCharacter() {
         // načítanie ďalšieho znaku
         if (position < file.length()) {
             peek = file.charAt(position++);
@@ -502,10 +498,8 @@ public final class Scanner {
 
     /**
      * Metóda, ktorá ignoruje a prechádza cez prázdne znaky (biele znaky).
-     *
-     * @throws IOException
      */
-    private void ignoreWhiteSpaces() throws IOException {
+    private void ignoreWhiteSpaces() {
         while(true) {
             readNextCharacter();
             // kontrola konca súboru
@@ -522,10 +516,8 @@ public final class Scanner {
 
     /**
      * Metóda, ktorá ignoruje komentáre.
-     *
-     * @throws IOException
      */
-    private boolean ignoreComments() throws IOException {
+    private boolean ignoreComments() {
         if (peek == '/') {
             readNextCharacter();
             switch (peek) {
@@ -601,7 +593,8 @@ public final class Scanner {
             }
             return new Token(Tag.IDENTIFIER, identifier, line);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Nebol nájdený konfiguračný súbor types.config!");
         }
         return new Token(Tag.IDENTIFIER, identifier, line);
     }

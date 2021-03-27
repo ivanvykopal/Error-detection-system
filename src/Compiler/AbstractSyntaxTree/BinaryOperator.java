@@ -54,8 +54,8 @@ public final class BinaryOperator extends Node {
         this.right = right;
         setLine(line);
 
-        SymbolTableFiller.resolveUsage(left, table, errorDatabase, true);
-        SymbolTableFiller.resolveUsage(right, table, errorDatabase, true);
+        SymbolTableFiller.resolveUsage(left, table, errorDatabase, true, true);
+        SymbolTableFiller.resolveUsage(right, table, errorDatabase, true, true);
 
         if (!typeCheck(table)) {
             if (left instanceof FunctionCall || right instanceof FunctionCall) {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Trieda obsahujúca informácie o premennej zo symbolickej tabuľky.
  *
- * @ author Ivan Vykopal
+ * @author Ivan Vykopal
  */
 public class Index {
     /** Atribút key prdstavuje názov premennej. **/

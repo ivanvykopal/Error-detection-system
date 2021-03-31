@@ -7,7 +7,7 @@ import Compiler.SymbolTable.SymbolTableFiller;
 import java.util.ArrayList;
 
 /**
- * Trieda predstavujúca vrchol pre zozn&m inicializácií v jazyku C.
+ * Trieda predstavujúca vrchol pre zoznam inicializácií v jazyku C.
  *
  * @author Ivan Vykopal
  *

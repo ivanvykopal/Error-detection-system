@@ -1,17 +1,23 @@
 package Compiler.GraphColoring;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
+/**
+ * Trieda pre kontrolu optimálneho využívania premenných v programe.
+ *
+ * @author Ivan Vykopal
+ */
 public class VariableUsageChecker {
     /** Atribút file predstavuje názov analyzovaného súboru. **/
     private String file;
@@ -259,7 +265,8 @@ public class VariableUsageChecker {
             }
             fileWriter.close();
         } catch (IOException e) {
-            System.out.println("Chyba");
+            ProgramLogger.createLogger(VariableUsageChecker.class.getName()).log(Level.WARNING,
+                    "Problém pri čítaní variables.csv!");
         }
     }
 }

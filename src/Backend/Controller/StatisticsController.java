@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.ProgramLogger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca controller pre StatisticsWindow.
@@ -70,12 +72,15 @@ public class StatisticsController extends Controller {
      * Metóda pre spracovanie stlačenia tlačidla Menu.
      *
      * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     *
-     * @throws IOException
      */
     @FXML
-    public void goToMenu() throws IOException {
-        showMainWindow();
+    public void goToMenu() {
+        try {
+            showMainWindow();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showMainWindow()!");
+        }
     }
 
     /**
@@ -198,7 +203,8 @@ public class StatisticsController extends Controller {
             }
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+                    "Problém pri čítaní z error-total.csv!");
         }
         ObservableList<SummaryTableRecord> data2 = FXCollections.observableArrayList(records);
         errorTablePercent.setItems(data2);

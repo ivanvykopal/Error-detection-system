@@ -1,5 +1,5 @@
 package Compiler.GraphColoring;
-
+//TODO:dorobiť dokumentáciu
 public class Rating implements Comparable {
 
     private int rate;

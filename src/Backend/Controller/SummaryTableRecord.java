@@ -1,7 +1,5 @@
 package Backend.Controller;
 
-import java.math.BigDecimal;
-
 /**
  * Trieda pre naplnenie celkovej tabuľky v GUI pri štatistikách.
  *

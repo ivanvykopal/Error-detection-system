@@ -1,5 +1,6 @@
 package Compiler.SymbolTable;
 
+import Backend.ProgramLogger;
 import Compiler.AbstractSyntaxTree.*;
 import Compiler.AbstractSyntaxTree.Enum;
 import Compiler.Errors.Error;
@@ -8,6 +9,7 @@ import Compiler.Parser.TypeChecker;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 /**
  * Trieda pre pridávanie záznamov do symbolickej tabuľky
@@ -677,7 +679,8 @@ public final class SymbolTableFiller {
             }
             return false;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(SymbolTableFiller.class.getName()).log(Level.WARNING,
+                    "Nebol nájdený konfiguračný súbor libraryVariables.config!");
         }
         return false;
     }

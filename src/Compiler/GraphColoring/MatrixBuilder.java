@@ -25,6 +25,8 @@ public final class MatrixBuilder {
      * @param symbolTable symbolická tabuľka
      *
      * @param indexes zoznam premenných
+     *
+     * @return matica susednosti
      */
     public static byte[][] createMatrix(SymbolTable symbolTable, ArrayList<Index> indexes) {
         symbolTable.setParent(null);

@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca controller pre Analysis2Window.
@@ -48,12 +50,15 @@ public class Analysis2Controller extends Controller {
      * Metóda pre spracovanie stlačenia tlačidla Menu.
      *
      * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     *
-     * @throws IOException
      */
     @FXML
-    public void goToMenu() throws IOException {
-        showMainWindow();
+    public void goToMenu() {
+        try {
+            showMainWindow();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showMainWindow()!");
+        }
     }
 
     /**
@@ -71,10 +76,14 @@ public class Analysis2Controller extends Controller {
         if (selectedDirectory != null) {
             warning.setTextFill(Color.web("#000000"));
             warning.setText("Adresár: " + selectedDirectory.getAbsolutePath());
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                    "Adresár: " + selectedDirectory.getAbsolutePath() + " bol vybraný.");
             folder = selectedDirectory;
         } else {
             warning.setTextFill(Color.web("#FF0000"));
-            warning.setText("Chybný priečinok!");
+            warning.setText("Chybný adresár!");
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                    "Chybný adresár!");
             folder = null;
         }
     }
@@ -99,6 +108,7 @@ public class Analysis2Controller extends Controller {
             warning.setHeaderText("Nesprávny priečinok!");
             warning.setTitle("Upozornenie");
             warning.show();
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
         }
         else {
             btnAnalyse.setOnAction(null);
@@ -110,7 +120,7 @@ public class Analysis2Controller extends Controller {
             info.setContentText("Prebieha analýza programov, po jej ukončení sa zobrazí obrazovka s chybami.");
             info.show();
 
-            System.out.println("Analyzujem kódy!");
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Analyzujem kódy.");
             File[] files = folder.listFiles();
 
             Service<Void> service = new Service<Void>() {
@@ -124,34 +134,39 @@ public class Analysis2Controller extends Controller {
                                 if (file.isFile()) {
                                     String name = file.toString();
                                     if (!name.contains(".")) {
-                                        System.out.println("Súbor " + name + " nie je korektný!");
+                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                "Súbor " + name + " nie je korektný.");
                                         continue;
                                     }
                                     if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
-                                        System.out.println("Súbor " + name + " nemá príponu .c!");
+                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                "Súbor " + name + " nemá príponu .c!");
                                         continue;
                                     }
                                     String text = null;
                                     try {
                                         text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                                     } catch (IOException e) {
-                                        //e.printStackTrace();
-                                        System.out.println("Chyba pri načítaní zdrojového kódu!");
+                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                                                "Chyba pri načítaní zdrojového kódu!");
                                     }
 
                                     IncludePreprocessor prep = new IncludePreprocessor(text);
                                     if (!prep.process()) {
-                                        System.out.println("Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
+                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                "Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
                                         continue;
                                     }
-                                    System.out.println("Analyzujem súbor: " +  file.getAbsolutePath() + "!");
+                                    ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                            "Analyzujem súbor: " +  file.getAbsolutePath() + "!");
                                     fileCount++;
                                     ErrorDatabase errorDatabase = new ErrorDatabase();
                                     Parser parser = new Parser(text, errorDatabase);
                                     try {
                                         parser.parse(file.getName());
                                     } catch (Exception e) {
-                                        System.out.println("Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
+                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                                                "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
                                     }
                                     errorDatabase.createFile(file.getName());
                                     if (!errorDatabase.isEmpty()) {
@@ -166,7 +181,8 @@ public class Analysis2Controller extends Controller {
                                 try {
                                     showErrorWindow(fileNames, finalFileCount);
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                                            "Problém pri načítaní showErrorWindow()!");
                                 } finally {
                                     latch.countDown();
                                 }
@@ -178,7 +194,6 @@ public class Analysis2Controller extends Controller {
                 }
             };
             service.start();
-
         }
     }
 

@@ -1,10 +1,14 @@
 package Compiler.SymbolTable;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
+import Compiler.Lexer.Scanner;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Trieda, ktorá obsahuje informácie o premenných, funkciách a parametroch.
@@ -277,7 +281,8 @@ public class SymbolTable implements Serializable {
             ObjectInputStream in = new ObjectInputStream(bis);
             return (SymbolTable) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
+                    "Chyba pri vytváraní kópie!");
             return null;
         }
     }

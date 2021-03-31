@@ -1,13 +1,16 @@
 package Compiler.Lexer;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
+import Compiler.GraphColoring.VariableUsageChecker;
 import Compiler.Preprocessing.Preprocessor;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Trieda, ktorá spracováva vstup a mení ho na tokeny.
@@ -518,6 +521,8 @@ public final class Scanner {
 
     /**
      * Metóda, ktorá ignoruje komentáre.
+     *
+     * @return true, ak je koniec súboru, inak false
      */
     private boolean ignoreComments() {
         if (peek == '/') {
@@ -595,8 +600,8 @@ public final class Scanner {
             }
             return new Token(Tag.IDENTIFIER, identifier, line);
         } catch (FileNotFoundException e) {
-            //e.printStackTrace();
-            System.out.println("Nebol nájdený konfiguračný súbor types.config!");
+            ProgramLogger.createLogger(Scanner.class.getName()).log(Level.WARNING,
+                    "Nebol nájdený konfiguračný súbor types.config!");
         }
         return new Token(Tag.IDENTIFIER, identifier, line);
     }

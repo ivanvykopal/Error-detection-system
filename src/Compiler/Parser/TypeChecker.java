@@ -25,6 +25,10 @@ public final class TypeChecker {
      *
      * @param type typ (String)
      *
+     * @param node vrchol, pre ktorý typ zisťujeme
+     *
+     * @param symbolTable symbolická tabuľka
+     *
      * @return typ (byte)
      */
     public static short findType(String type, Node node, SymbolTable symbolTable) {

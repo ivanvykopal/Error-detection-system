@@ -239,7 +239,7 @@ public class Parser {
     }
 
     /**
-     * primary_expression ->  IDENTIFIER
+     * primary_expression:    IDENTIFIER
      *                      | constant
      *                      | STRING
      *                      | CHARACTER
@@ -290,7 +290,7 @@ public class Parser {
     }
 
     /**
-     * string ->  STRING
+     * string:    STRING
      *          | string STRING
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -314,7 +314,7 @@ public class Parser {
     }
 
     /**
-     * constant ->  NUMBER
+     * constant:    NUMBER
      *            | REAL
      *            | ENUMERATION_CONSTANT
      * @return Node, ak sa našla zhoda,
@@ -376,7 +376,7 @@ public class Parser {
     }
 
     /**
-     * enumeration_constant -> IDENTIFIER
+     * enumeration_constant: IDENTIFIER
      * @return identifikátor, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -393,7 +393,7 @@ public class Parser {
     }
 
     /**
-     * postfix_expression ->  primary_expression rest1
+     * postfix_expression:    primary_expression rest1
      *                      | '(' type_name ')' '{' initializer_list '}' rest1
      *                      | '(' type_name ')' '{' initializer_list ',' '}' rest1
      * @return Node, ak sa našla zhoda,
@@ -467,14 +467,17 @@ public class Parser {
     }
 
     /**
-     * rest1 ->  '[' expression ']' rest1
+     * rest1:    '[' expression ']' rest1
      *         | '.' IDENTIFIER rest1
-     *         | '->' IDENTIFIER rest1
+     *         | {@code '->'} IDENTIFIER rest1
      *         | '++' rest1
      *         | '--' rest1
      *         | '(' ')' rest1
      *         | '(' argument_expression_list ')' rest1
      *         | epsilon
+     *
+     * @param child vrchol z {@code postfix_expression}
+     *
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
@@ -571,7 +574,7 @@ public class Parser {
     }
 
     /**
-     * argument_expression_list ->  argument_expression_list ',' assignment_expression
+     * argument_expression_list:    argument_expression_list ',' assignment_expression
      *                            | assignment_expression
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
@@ -604,7 +607,7 @@ public class Parser {
     }
 
     /**
-     * unary_expression ->  postfix_expression
+     * unary_expression:    postfix_expression
      *                    | '++' unary_expression
      *                    | '--' unary_expression
      *                    | unary_operator cast_expression
@@ -686,7 +689,9 @@ public class Parser {
     }
 
     /**
-     * unary_operator -> '&' | '*' | '+' | '-' | '~' | '!'
+     * {@code
+     * unary_operator: '&' | '*' | '+' | '-' | '~' | '!'
+     * }
      * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -706,7 +711,7 @@ public class Parser {
     }
 
     /**
-     * cast_expression ->  unary_expression
+     * cast_expression:    unary_expression
      *                   | '(' type_name ')' cast_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -741,7 +746,7 @@ public class Parser {
     }
 
     /**
-     * multiplicative_expression ->  multiplicative_expression '*' cast_expression
+     * multiplicative_expression:    multiplicative_expression '*' cast_expression
      *                             | multiplicative_expression '/' cast_expression
      *                             | multiplicative_expression '%' cast_expression
      *                             | cast_expression
@@ -771,7 +776,7 @@ public class Parser {
     }
 
     /**
-     * additive_expression ->  additive_expression '+' multiplicative_expression
+     * additive_expression:    additive_expression '+' multiplicative_expression
      *                       | additive_expression '-' multiplicative_expression
      *                       | multiplicative_expression
      * @return Node, ak sa našla zhoda,
@@ -806,9 +811,11 @@ public class Parser {
     }
 
     /**
-     * shift_expression ->  shift_expression '<<' additive_expression
+     * {@code
+     * shift_expression:    shift_expression '<<' additive_expression
      *                    | shift_expression '>>' additive_expression
      *                    | additive_expression
+     *  }
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -841,11 +848,13 @@ public class Parser {
     }
 
     /**
-     * relational_expression ->  relational_expression '<' shift_expression
+     * {@code
+     * relational_expression:    relational_expression '<' shift_expression
      *                         | relational_expression '>' shift_expression
      *                         | relational_expression '<=' shift_expression
      *                         | relational_expression '>=' shift_expression
      *                         | shift_expression
+     * }
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -878,7 +887,7 @@ public class Parser {
     }
 
     /**
-     * equality_expression ->  equality_expression '==' relational_expression
+     * equality_expression:    equality_expression '==' relational_expression
      *                       | equality_expression '!=' relational_expression
      *                       | relational_expression
      * @return Node, ak sa našla zhoda,
@@ -913,8 +922,11 @@ public class Parser {
     }
 
     /**
-     * and_expression ->  and_expression '&' equality_expression
+     * {@code
+     * and_expression:    and_expression '&' equality_expression
      *                  | equality_expression
+     * }
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -947,7 +959,7 @@ public class Parser {
     }
 
     /**
-     * exclusive_or_expression ->  exclusive_or_expression '^' and_expression
+     * exclusive_or_expression:    exclusive_or_expression '^' and_expression
      *                           | and_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -981,7 +993,7 @@ public class Parser {
     }
 
     /**
-     * inclusive_or_expression ->  inclusive_or_expression '|' exclusive_or_expression
+     * inclusive_or_expression:    inclusive_or_expression '|' exclusive_or_expression
      *                           | exclusive_or_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1015,8 +1027,11 @@ public class Parser {
     }
 
     /**
-     * logical_and_expression ->  logical_and_expression '&&' inclusive_or_expression
+     * {@code
+     * logical_and_expression:    logical_and_expression '&&' inclusive_or_expression
      *                          | inclusive_or_expression
+     * }
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1049,7 +1064,7 @@ public class Parser {
     }
 
     /**
-     * logical_or_expression ->  logical_or_expression '||' logical_and_expression
+     * logical_or_expression:    logical_or_expression '||' logical_and_expression
      *                         | logical_and_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1083,7 +1098,7 @@ public class Parser {
     }
 
     /**
-     * conditional_expression ->  logical_or_expression
+     * conditional_expression:    logical_or_expression
      *                          | logical_or_expression '?' expression ':' conditional_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1120,7 +1135,7 @@ public class Parser {
     }
 
     /**
-     * assignment_expression ->  conditional_expression
+     * assignment_expression:    conditional_expression
      *                         | unary_expression assignment_operator assignment_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1162,7 +1177,10 @@ public class Parser {
     }
 
     /**
-     * assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<' | '>>=' | '&=' | '^=' | '|='
+     * {@code
+     * assignment_operator: '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<' | '>>=' | '&=' | '^=' | '|='
+     * }
+     *
      * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -1175,7 +1193,7 @@ public class Parser {
     }
 
     /**
-     * expression ->  expression ',' assignment_expression
+     * expression:    expression ',' assignment_expression
      *              | assignment_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1212,7 +1230,7 @@ public class Parser {
     }
 
     /**
-     * constant_expression -> conditional_expression
+     * constant_expression: conditional_expression
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1229,7 +1247,7 @@ public class Parser {
     }
 
     /**
-     * declaration ->  declaration_specifiers ';'
+     * declaration:    declaration_specifiers ';'
      *               | declaration_specifiers init_declarator_list ';'
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -1256,7 +1274,7 @@ public class Parser {
                 if (typeNode.getTypes().size() == 1 && typeNode.getType(0).isEnumStructUnion()) {
                     ArrayList<Node> decls = new ArrayList<>();
                     decls.add(new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(), typeNode.getType(0),
-                            null, null, 0));
+                            null, 0));
                     return decls;
                 } else {
                     ArrayList<Node> arr = new ArrayList<>();
@@ -1297,12 +1315,15 @@ public class Parser {
     }
 
     /**
-     * declaration_specifiers ->  storage_class_specifier declaration_specifiers
+     * declaration_specifiers:    storage_class_specifier declaration_specifiers
      *                          | storage_class_specifier
      *                          | type_specifier declaration_specifiers
      *                          | type_specifier
      *                          | type_qualifier declaration_specifiers
      *                          | type_qualifier
+     *
+     * @param typeNode vrchol, do ktorého ukladáme informácie spojené s typom
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1356,7 +1377,7 @@ public class Parser {
     }
 
     /**
-     * init_declarator_list -> init_declarator_list ',' init_declarator
+     * init_declarator_list:   init_declarator_list ',' init_declarator
      *                       | init_declarator
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1389,7 +1410,7 @@ public class Parser {
     }
 
     /**
-     * init_declarator ->  declarator '=' initializer
+     * init_declarator:    declarator '=' initializer
      *                   | declarator
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1423,7 +1444,7 @@ public class Parser {
     }
 
     /**
-     * storage_class_specifier -> TYPEDEF | EXTERN | STATIC | AUTO | REGISTER
+     * storage_class_specifier: TYPEDEF | EXTERN | STATIC | AUTO | REGISTER
      * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -1442,7 +1463,7 @@ public class Parser {
     }
 
     /**
-     * type_specifier ->  VOID | CHAR | SHORT | INT | LONG | FLOAT | DOUBLE | SIGNED | UNSIGNED | SIZE_T | FILE
+     * type_specifier:    VOID | CHAR | SHORT | INT | LONG | FLOAT | DOUBLE | SIGNED | UNSIGNED | SIZE_T | FILE
      *                  | struct_or_union_specifier
      *                  | enum_specifier
      *                  | TYPEDEF_NAME
@@ -1499,7 +1520,7 @@ public class Parser {
     }
 
     /**
-     * struct_or_union_specifier ->  struct_or_union '{' struct_declaration_list '}'
+     * struct_or_union_specifier:    struct_or_union '{' struct_declaration_list '}'
      *                             | struct_or_union IDENTIFIER '{' struct_declaration_list '}'
      *                             | struct_or_union IDENTIFIER
      * @return Node, ak sa našla zhoda,
@@ -1575,7 +1596,7 @@ public class Parser {
     }
 
     /**
-     * struct_or_union -> STRUCT | UNION
+     * struct_or_union:  STRUCT | UNION
      * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -1591,7 +1612,7 @@ public class Parser {
     }
 
     /**
-     * struct_declaration_list ->  struct_declaration_list struct_declaration
+     * struct_declaration_list:    struct_declaration_list struct_declaration
      *                           | struct_declaration
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -1621,7 +1642,7 @@ public class Parser {
     }
 
     /**
-     * struct_declaration ->  specifier_qualifier_list ';'
+     * struct_declaration:    specifier_qualifier_list ';'
      *                      | specifier_qualifier_list struct_declarator_list ';'
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -1679,10 +1700,13 @@ public class Parser {
     }
 
     /**
-     * specifier_qualifier_list ->  type_specifier specifier_qualifier_list
+     * specifier_qualifier_list:    type_specifier specifier_qualifier_list
      *                            | type_specifier
      *                            | type_qualifier specifier_qualifier_list
      *                            | type_qualifier
+     *
+     * @param typeNode vrchol, do ktorého ukladáme informácie spojené s typom
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1722,7 +1746,7 @@ public class Parser {
     }
 
     /**
-     * struct_declarator_list ->  struct_declarator_list ',' struct_declarator
+     * struct_declarator_list:    struct_declarator_list ',' struct_declarator
      *                          | struct_declarator
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -1755,7 +1779,7 @@ public class Parser {
     }
 
     /**
-     * struct_declarator ->  ':' constant_expression
+     * struct_declarator:    ':' constant_expression
      *                     | declarator ':' constant_expression
      *                     | declarator
      * @return Node, ak sa našla zhoda,
@@ -1798,7 +1822,8 @@ public class Parser {
     }
 
     /**
-     * enum_specifier -> ENUM left13
+     * enum_specifier: ENUM left13
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1819,11 +1844,14 @@ public class Parser {
     }
 
     /**
-     * left13 ->  '{' enumerator_list '}'
+     * left13:    '{' enumerator_list '}'
      *          | '{' enumerator_list ',' '}'
      *          | IDENTIFIER '{' enumerator_list '}'
      *          | IDENTIFIER '{' enumerator_list ',' '}'
      *          | IDENTIFIER
+     *
+     * @param line riadok využitia pre Enum
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -1882,7 +1910,7 @@ public class Parser {
     }
 
     /**
-     * enumerator_list ->  enumerator_list ',' enumerator
+     * enumerator_list:    enumerator_list ',' enumerator
      *                   | enumerator
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1916,7 +1944,7 @@ public class Parser {
     }
 
     /**
-     * enumerator ->  enumeration_constant '=' constant_expression
+     * enumerator:    enumeration_constant '=' constant_expression
      *              | enumeration_constant
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1944,7 +1972,7 @@ public class Parser {
     }
 
     /**
-     * type_qualifier -> CONST | VOLATILE
+     * type_qualifier: CONST | VOLATILE
      * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
      *         prázdny reťazec, ak sa zhoda nenašla
      */
@@ -1960,7 +1988,7 @@ public class Parser {
     }
 
     /**
-     * declarator ->  pointer direct_declarator
+     * declarator:    pointer direct_declarator
      *              | direct_declarator
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1987,7 +2015,7 @@ public class Parser {
     }
 
     /**
-     * direct_declarator ->  IDENTIFIER rest18
+     * direct_declarator:    IDENTIFIER rest18
      *                     | '(' declarator ')' rest18
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2041,9 +2069,12 @@ public class Parser {
     }
 
     /**
-     * rest18 ->  '[' left16
+     * rest18:    '[' left16
      *          | '(' left17
      *          | epsilon
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
@@ -2076,11 +2107,14 @@ public class Parser {
     }
 
     /**
-     * left16 ->  '*' ']' rest18
+     * left16:    '*' ']' rest18
      *          | STATIC left18
      *          | type_qualifier_list left19
      *          | assignment_expression ']' rest18
      *          | ']' rest18
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2180,9 +2214,12 @@ public class Parser {
     }
 
     /**
-     * left17 ->  parameter_type_list ')' rest18
+     * left17:    parameter_type_list ')' rest18
      *          | ')' rest18
      *          | identifier_list rest18
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2247,8 +2284,11 @@ public class Parser {
     }
 
     /**
-     * left18 ->  type_qualifier_list assignment_expression ']' rest18
+     * left18:    type_qualifier_list assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2315,10 +2355,15 @@ public class Parser {
     }
 
     /**
-     * left19 ->  '*' ']' rest18
+     * left19:    '*' ']' rest18
      *          | STATIC assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
      *          | ']' rest18
+     *
+     * @param qualifiers zoznam kvalifikátorov (static,...)
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2417,7 +2462,7 @@ public class Parser {
     }
 
     /**
-     * pointer ->  '*' type_qualifier_list pointer
+     * pointer:    '*' type_qualifier_list pointer
      *           | '*' type_qualifier_list
      *           | '*' pointer
      *           | '*'
@@ -2461,7 +2506,7 @@ public class Parser {
     }
 
     /**
-     * type_qualifier_list ->  type_qualifier_list type_qualifier
+     * type_qualifier_list:    type_qualifier_list type_qualifier
      *                       | type_qualifier
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -2482,7 +2527,7 @@ public class Parser {
     }
 
     /**
-     * parameter_type_list ->  parameter_list ',' '...'
+     * parameter_type_list:    parameter_list ',' '...'
      *                       | parameter_list
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2510,7 +2555,7 @@ public class Parser {
     }
 
     /**
-     * parameter_list ->  parameter_list ',' parameter_declaration
+     * parameter_list:    parameter_list ',' parameter_declaration
      *                  | parameter_declaration
      * @return ParameterList, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2544,7 +2589,7 @@ public class Parser {
     }
 
     /**
-     * parameter_declaration -> declaration_specifiers left22
+     * parameter_declaration:   declaration_specifiers left22
      *                         | left22
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2582,9 +2627,12 @@ public class Parser {
     }
 
     /**
-     * left22 ->  declarator
+     * left22:    declarator
      *          | abstract_declarator
      *          | epsilon
+     *
+     * @param typeNode vrchol, do ktorého ukladáme informácie spojené s typom
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2649,7 +2697,7 @@ public class Parser {
     }
 
     /**
-     * identifier_list ->  identifier_list ',' IDENTIFIER
+     * identifier_list:    identifier_list ',' IDENTIFIER
      *                   | IDENTIFIER
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2681,7 +2729,7 @@ public class Parser {
     }
 
     /**
-     * type_name ->  specifier_qualifier_list abstract_declarator
+     * type_name:    specifier_qualifier_list abstract_declarator
      *             | specifier_qualifier_list
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2711,7 +2759,7 @@ public class Parser {
     }
 
     /**
-     * abstract_declarator ->  pointer direct_abstract_declarator
+     * abstract_declarator:    pointer direct_abstract_declarator
      *                       | pointer
      *                       | direct_abstract_declarator
      * @return Node, ak sa našla zhoda,
@@ -2743,7 +2791,7 @@ public class Parser {
     }
 
     /**
-     * direct_abstract_declarator ->  '(' left25
+     * direct_abstract_declarator:    '(' left25
      *                              | '[' left26
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -2780,7 +2828,7 @@ public class Parser {
     }
 
     /**
-     * left25 ->  abstract_declarator ')' rest22
+     * left25:    abstract_declarator ')' rest22
      *          | ')' rest22
      *          | parameter_type_list ')' rest22
      * @return Node, ak sa našla zhoda,
@@ -2848,11 +2896,14 @@ public class Parser {
     }
 
     /**
-     * left26 ->  ']' rest22
+     * left26:    ']' rest22
      *          | '*' ']' rest22
      *          | STATIC left27
      *          | type_qualifier_list left28
      *          | assignment_expression ']' rest22
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2965,8 +3016,11 @@ public class Parser {
     }
 
     /**
-     * left27 ->  type_qualifier_list assignment_expression ']' rest22
+     * left27:    type_qualifier_list assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3043,9 +3097,14 @@ public class Parser {
     }
 
     /**
-     * left28 ->  STATIC assignment_expression ']' rest22
+     * left28:    STATIC assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
      *          | ']' rest22
+     *
+     * @param qualifiers zoznam kvalifikátorov (static, ...)
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3132,9 +3191,12 @@ public class Parser {
     }
 
     /**
-     * rest22 ->  '[' left26
+     * rest22:    '[' left26
      *          | '(' left29
      *          | epsilon
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
@@ -3167,8 +3229,11 @@ public class Parser {
     }
 
     /**
-     * left29 ->  ')' rest22
+     * left29:    ')' rest22
      *          | parameter_type_list ')' rest22
+     *
+     * @param declarator vrchol z metódy, z ktorej bol volaný
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3216,7 +3281,7 @@ public class Parser {
     }
 
     /**
-     * initializer ->  '{' initializer_list '}'
+     * initializer:    '{' initializer_list '}'
      *               | '{' initializer_list ',' '}'
      *               | '{' '}'
      *               | assignment_expression
@@ -3260,7 +3325,7 @@ public class Parser {
     }
 
     /**
-     * initializer_list ->  designation initializer rest23
+     * initializer_list:    designation initializer rest23
      *                    | initializer rest23
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -3311,9 +3376,12 @@ public class Parser {
     }
 
     /**
-     * rest23 ->  ',' designation initializer rest23
+     * rest23:    ',' designation initializer rest23
      *          | ',' initializer rest23
      *          | epsilon
+     *
+     * @param init list s inicializovanými hodnotami
+     *
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
@@ -3363,7 +3431,7 @@ public class Parser {
     }
 
     /**
-     * designation -> designator_list '='
+     * designation: designator_list '='
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3386,7 +3454,7 @@ public class Parser {
     }
 
     /**
-     * designator_list ->  designator_list designator
+     * designator_list:    designator_list designator
      *                   | designator
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -3417,7 +3485,7 @@ public class Parser {
     }
 
     /**
-     * designator ->  '[' constant_expression ']'
+     * designator:    '[' constant_expression ']'
      *              | '.' IDENTIFIER
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -3451,12 +3519,15 @@ public class Parser {
     }
 
     /**
-     * statement ->  labeled_statement
+     * statement:    labeled_statement
      *             | compound_statement
      *             | expression_statement
      *             | selection_statement
      *             | iteration_statement
      *             | jump_statement
+     *
+     * @param createSymbolTable informácia o tom, či sa má vytvoriť symbolická tabuľka
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3514,7 +3585,7 @@ public class Parser {
     }
 
     /**
-     * labeled_statement ->  IDENTIFIER ':' statement
+     * labeled_statement:    IDENTIFIER ':' statement
      *                     | CASE constant_expression ':' statement
      *                     | DEFAULT ':' statement
      * @return Node, ak sa našla zhoda,
@@ -3579,8 +3650,13 @@ public class Parser {
     }
 
     /**
-     * compound_statement ->  '{' '}'
+     * compound_statement:    '{' '}'
      *                      | '{' block_item_list '}'
+     *
+     * @param createSymbolTable informácia o tom, či sa má vytvoriť symbolická tabuľka
+     *
+     * @param functionDefinition informácia o tom, či ide o definíciu funkcie
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3627,7 +3703,7 @@ public class Parser {
     }
 
     /**
-     * block_item_list ->  block_item_list block_item
+     * block_item_list:    block_item_list block_item
      *                   | block_item
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -3658,7 +3734,7 @@ public class Parser {
     }
 
     /**
-     * block_item ->  declaration
+     * block_item:    declaration
      *              | statement
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -3685,7 +3761,7 @@ public class Parser {
     }
 
     /**
-     * expression_statement ->  ';'
+     * expression_statement:    ';'
      *                        | expression ';'
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -3717,7 +3793,7 @@ public class Parser {
     }
 
     /**
-     * selection_statement ->  IF '(' expression ')' statement ELSE statement
+     * selection_statement:    IF '(' expression ')' statement ELSE statement
      *                       | IF '(' expression ')' statement
      *                       | SWITCH '(' expression ')' statement
      * @return Node, ak sa našla zhoda,
@@ -3782,7 +3858,7 @@ public class Parser {
     }
 
     /**
-     * iteration_statement ->  WHILE '(' expression ')' statement
+     * iteration_statement:    WHILE '(' expression ')' statement
      *                       | DO statement WHILE '(' expression ')' ';'
      *                       | FOR '(' left33
      * @return Node, ak sa našla zhoda,
@@ -3866,10 +3942,13 @@ public class Parser {
     }
 
     /**
-     * left33 ->  expression_statement expression_statement ')' statement
+     * left33:    expression_statement expression_statement ')' statement
      *          | expression_statement expression_statement expression ')' statement
      *          | declaration expression_statement ')' statement
      *          | declaration expression_statement expression ')' statement
+     *
+     * @param line riadok využitia pre for cyklus
+     *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -4020,7 +4099,7 @@ public class Parser {
     }
 
     /**
-     * jump_statement ->  GOTO IDENTIFIER ';'
+     * jump_statement:    GOTO IDENTIFIER ';'
      *                  | CONTINUE ';'
      *                  | BREAK ';'
      *                  | RETURN ';'
@@ -4099,7 +4178,7 @@ public class Parser {
     }
 
     /**
-     * translation_unit ->  translation_unit external_declaration
+     * translation_unit:    translation_unit external_declaration
      *                    | external_declaration
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázdny zoznam, ak sa zhoda nenašla
@@ -4126,7 +4205,7 @@ public class Parser {
     }
 
     /**
-     * external_declaration ->  function_definition
+     * external_declaration:    function_definition
      *                        | declaration
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázndy zoznam, ak sa zhoda nenašla
@@ -4156,7 +4235,7 @@ public class Parser {
     }
 
     /**
-     * function_definition ->  declaration_specifiers declarator declaration_list compound_statement
+     * function_definition:    declaration_specifiers declarator declaration_list compound_statement
      *                       | declaration_specifiers declarator compound_statement
      *                       | declarator declaration_list compound_statement
      *                       | declarator compound_statement
@@ -4217,7 +4296,7 @@ public class Parser {
     }
 
     /**
-     * declaration_list ->  declaration_list declaration
+     * declaration_list:    declaration_list declaration
      *                    | declaration
      * @return zoznam vrcholov (Node), ak sa našla zhoda,
      *         prázndy zoznam, ak sa zhoda nenašla
@@ -4330,7 +4409,7 @@ public class Parser {
                         declarator1.getDeclarator(), declarator1.getDeclarator().getLine());
             } else {
                 declaration = new Declaration(null, typeNode.getQualifiers(), typeNode.getStorage(),
-                        declarator1.getDeclarator(), declarator1.getInitializer(), declarator1.getBitsize(),
+                        declarator1.getDeclarator(), declarator1.getInitializer(),
                         declarator1.getDeclarator().getLine());
             }
             if (!declaration.getType().isEnumStructUnion() && !(declaration.getType() instanceof IdentifierType)) {

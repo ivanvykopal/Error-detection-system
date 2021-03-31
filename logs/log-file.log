@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-03-31T21:07:32</date>
+  <millis>1617217652684</millis>
+  <sequence>0</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW01\student1_1.c bol vybraný.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-03-31T21:07:33</date>
+  <millis>1617217653343</millis>
+  <sequence>1</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Analyzujem kód.</message>
+</record>
+</log>

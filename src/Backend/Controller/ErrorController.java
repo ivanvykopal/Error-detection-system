@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.ErrorRecord;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca controller pre ErrorController.
@@ -89,24 +91,30 @@ public class ErrorController extends Controller {
      * Metóda pre spracovanie stlačenia tlačidla Menu.
      *
      * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     *
-     * @throws IOException
      */
     @FXML
-    public void goToMenu() throws IOException {
-        showMainWindow();
+    public void goToMenu() {
+        try {
+            showMainWindow();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showMainWindow()!");
+        }
     }
 
     /**
      * Metóda pre spracovanie stlačenia tlačidla pre zobrazenie štatistík.
      *
      * <p> Po stlačení daného tlačidla sa zobrazí obsazovka so štatistikami.
-     *
-     * @throws IOException
      */
     @FXML
-    public void viewStatistics() throws IOException {
-        showStatisticsWindow(table, fileCount, files);
+    public void viewStatistics() {
+        try {
+            showStatisticsWindow(table, fileCount, files);
+        } catch (IOException e) {
+            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showStatisticsWindow()!");
+        }
     }
 
     /**
@@ -133,7 +141,8 @@ public class ErrorController extends Controller {
                 table.put(line[0], tableRecord);
             }
         } catch (FileNotFoundException | NumberFormatException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
+                    "Problém pri čítaní z errors.csv!");
         }
     }
 
@@ -161,7 +170,8 @@ public class ErrorController extends Controller {
                 table2.put(line[0], rows);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Chyba v ErrorController!");
+            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
+                    "Problém pri čítaní z variables.csv!");
         }
     }
 

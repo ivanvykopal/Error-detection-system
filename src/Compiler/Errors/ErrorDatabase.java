@@ -1,9 +1,13 @@
 package Compiler.Errors;
 
+import Backend.Controller.StatisticsController;
+import Backend.ProgramLogger;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca databázu chýb.
@@ -33,13 +37,6 @@ public final class ErrorDatabase implements Cloneable {
         errorTable.putIfAbsent(line, newRecord);
     }
 
-    public void getErrorMessages() {
-        for (int index: errorTable.keySet()) {
-            ErrorRecord record = errorTable.get(index);
-            System.out.println(record.toString());
-        }
-    }
-
     /**
      * Metóda pre vytvorenie kópie databázy chýb.
      *
@@ -49,8 +46,8 @@ public final class ErrorDatabase implements Cloneable {
         try {
             return (ErrorDatabase) super.clone();
         } catch (CloneNotSupportedException e) {
-            //e.printStackTrace();
-            System.out.println("Chyba pri vytváraní kópie databázy chýb!");
+            ProgramLogger.createLogger(ErrorDatabase.class.getName()).log(Level.WARNING,
+                    "Chyba pri vytváraní kópie databázy chýb!");
         }
         return null;
     }
@@ -82,9 +79,9 @@ public final class ErrorDatabase implements Cloneable {
             }
             fileWriter.close();
         } catch (IOException e) {
-            System.out.println("Chyba pri vytváraní súboru errors.csv!");
+            ProgramLogger.createLogger(ErrorDatabase.class.getName()).log(Level.WARNING,
+                    "Chyba pri vytváraní súboru errors.csv!");
         }
-
     }
 
 }

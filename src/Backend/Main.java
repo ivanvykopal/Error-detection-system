@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -15,6 +16,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        deleteLogFile();
         this.stage = stage;
         showMainWindow();
     }
@@ -32,5 +34,10 @@ public class Main extends Application {
 
         stage.setScene(new Scene(root, 500, 500));
         stage.show();
+    }
+
+    private void deleteLogFile() {
+        File fileError = new File("logs/log-file.log");
+        fileError.delete();
     }
 }

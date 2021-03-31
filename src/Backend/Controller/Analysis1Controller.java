@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca controller pre Analysis1Window.
@@ -38,12 +40,15 @@ public class Analysis1Controller extends Controller {
      * Metóda pre spracovanie stlačenia tlačidla Menu.
      *
      * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     *
-     * @throws IOException
      */
     @FXML
-    public void goToMenu() throws IOException {
-        showMainWindow();
+    public void goToMenu() {
+        try {
+            showMainWindow();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showMainWindow()!");
+        }
     }
 
     /**
@@ -62,11 +67,14 @@ public class Analysis1Controller extends Controller {
         if (selectedFile != null) {
             warning.setTextFill(Color.web("#000000"));
             warning.setText("Súbor: " + selectedFile.getAbsolutePath());
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Súbor: " +
+                    selectedFile.getAbsolutePath() + " bol vybraný.");
             absolutePath = selectedFile.getAbsolutePath();
             file = selectedFile.getName();
         } else {
             warning.setTextFill(Color.web("#FF0000"));
             warning.setText("Chybný súbor!");
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Chybný súbor!");
             absolutePath = null;
         }
     }
@@ -89,15 +97,17 @@ public class Analysis1Controller extends Controller {
             warning.setHeaderText("Nesprávny súbor!");
             warning.setTitle("Upozornenie");
             warning.show();
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
         }
         else {
-            System.out.println("Analyzujem kód!");
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Analyzujem kód.");
             try {
                 //načíta súbor do reťazca
                 String text = new String(Files.readAllBytes(Paths.get(absolutePath)));
                 IncludePreprocessor prep = new IncludePreprocessor(text);
                 if (!prep.process()) {
-                    System.out.println("Súbor " + absolutePath + " obsahuje aj študentom definované knižnice!");
+                    ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                            "Súbor " + absolutePath + " obsahuje aj študentom definované knižnice!");
                     return;
                 }
                 ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -110,10 +120,12 @@ public class Analysis1Controller extends Controller {
                     showErrorWindow(new ArrayList<>(Collections.singletonList(file)));
                 }
             } catch (IOException er) {
-                //er.printStackTrace();
-                System.out.println("Chyba v Analysis1Controller!");
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                        "Vyskytla sa chyba pri práci s I/O súbormi!");
+
             } catch (Exception e) {
-                System.out.println("Chyba v Analysis1Controller spôsobená parserom!");
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                        "Vyskytla sa chyba spôsobená parserom!");
             }
 
         }

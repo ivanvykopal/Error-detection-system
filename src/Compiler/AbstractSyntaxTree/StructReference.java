@@ -11,7 +11,7 @@ public final class StructReference extends Node {
     /** Atribút name predstavuje vrchol pre názov štruktúry.**/
     Node name;
 
-    /** Atribút type predstavuje typ prístupu (. alebo ->). **/
+    /** Atribút type predstavuje typ prístupu (. alebo {@code ->}). **/
     String type;
 
     /** Atribút field predstavuje názov premennej zo štruktúry. **/

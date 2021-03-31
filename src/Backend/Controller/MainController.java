@@ -1,7 +1,9 @@
 package Backend.Controller;
 
+import Backend.ProgramLogger;
 import javafx.fxml.FXML;
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * Trieda predstavujúca controller pre MainWindow.
@@ -18,24 +20,30 @@ public class MainController extends Controller {
      * Metóda pre spracovanie stlačenia tlačidla pre analyzovania jedného súboru.
      *
      * <p> Po stlačení daného tlačidla sa zobrazí obrazovka pre analýzu jedného súboru.
-     *
-     * @throws IOException
      */
     @FXML
-    public void analysis1() throws IOException {
-        showAnalysis1Window();
+    public void analysis1() {
+        try {
+            showAnalysis1Window();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(MainController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showAnalysis1Window()!");
+        }
     }
 
     /**
      * Metóda pre spracovanie stlačenia tlačidla pre analyzovania adresára so zdrojovými kódmi.
      *
      * <p> Po stlačení daného tlačidla sa zobrazí obrazovka pre analýzu viacerých zdrojových kódov.
-     *
-     * @throws IOException
      */
     @FXML
-    public void analysis2() throws IOException {
-        showAnalysis2Window();
+    public void analysis2() {
+        try {
+            showAnalysis2Window();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(MainController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showAnalysis2Window()!");
+        }
     }
 
 }

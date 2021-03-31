@@ -17,9 +17,6 @@ public final class Declaration extends DeclarationNode {
     /** Atribút initValues obsahuje vrhol pre inicializačnú hodnotu. **/
     Node initValues;
 
-    //TODO: odstrániť bitsize
-    Node bitsize;
-
     /**
      * Konštruktor, ktorý vytvára triedu {@code Declaration} a inicilizuje jej atribúty.
      *
@@ -33,15 +30,12 @@ public final class Declaration extends DeclarationNode {
      *
      * @param init  vrchol pre inicializačnú hodnotu
      *
-     * @param bitsize
-     *
      * @param line riadok využitia
      */
-    public Declaration(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, Node init, Node bitsize, int line) {
+    public Declaration(String name, ArrayList<String> quals, ArrayList<String> storage, Node type, Node init, int line) {
         super(name, quals, type, line);
         this.storage = storage;
         this.initValues = init;
-        this.bitsize = bitsize;
         setLine(line);
     }
 
@@ -70,7 +64,6 @@ public final class Declaration extends DeclarationNode {
         }
         if (type != null) type.traverse(indent + "    ");
         if (initValues != null) initValues.traverse(indent + "    ");
-        if (bitsize != null) bitsize.traverse(indent + "    ");
     }
 
 }

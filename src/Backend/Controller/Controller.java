@@ -22,7 +22,7 @@ public class Controller {
     /**
      *  Metóda pre spustenie obrazovky pre analyzovanie jedného súboru.
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showAnalysis1Window() throws IOException {
         Stage stage = new Stage();
@@ -41,7 +41,7 @@ public class Controller {
     /**
      * Metóda pre spustenie obrazovky pre analyzovanie adresáru so zdrojovými kódmi.
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showAnalysis2Window() throws IOException {
         Stage stage = new Stage();
@@ -62,7 +62,7 @@ public class Controller {
      *
      * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showErrorWindow(ArrayList<String> files) throws IOException {
         Stage stage = new Stage();
@@ -87,7 +87,7 @@ public class Controller {
      *
      * @param fileCount počet analyzovaných zdrojových kódov
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showErrorWindow(ArrayList<String> files, int fileCount) throws IOException {
         Stage stage = new Stage();
@@ -109,7 +109,7 @@ public class Controller {
     /**
      * Metóda pre spustenie obrazovky pre hlavné menu.
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showMainWindow() throws IOException {
         Stage stage = new Stage();
@@ -133,7 +133,7 @@ public class Controller {
      *
      * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
      *
-     * @throws IOException
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
      */
     protected void showStatisticsWindow(HashMap<String, ArrayList<TableRecord>> table, int count, ArrayList<String> files) throws IOException {
         Stage stage = new Stage();

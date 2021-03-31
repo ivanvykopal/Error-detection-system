@@ -4,7 +4,6 @@ import Compiler.Errors.ErrorRecord;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
@@ -16,11 +15,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-
+/**
+ * Trieda predstavujúca controller pre ErrorController.
+ *
+ * <p> V rámci tejto triedy sa spracovávajú stlačenia tlačitidiel pre dané okno.
+ *
+ * @see Controller
+ *
+ * @author Ivan Vykopal
+ */
 public class ErrorController extends Controller {
+    /** Atribút fileCount predstavuje počet analyzovaných zdrojových kódov. **/
     private int fileCount = 1;
+
+    /** Atribút files predstavuje zoznam súborov, v ktorých sa nachádza aspoň jedna chyba. **/
     ArrayList<String> files;
+
+    /** Atribút table predstavuje tabuľku s chybami pre jednotlivé zdrojové kódy. **/
     private HashMap<String, ArrayList<TableRecord>> table = new HashMap<>();
+
+    /** Atribút table2 predstavuje tabuľky s možnosťami zdieľania premenných v jednotlivých zdrojových kódoch. **/
     private HashMap<String, ArrayList<String>> table2 = new HashMap<>();
 
     @FXML
@@ -44,13 +58,22 @@ public class ErrorController extends Controller {
     @FXML
     TableColumn<String, String> variableColumn;
 
+    /**
+     * Konštruktor, v ktorom sa načítavajú údaje do tabuľky s chybami a možnosti zdieľania premenných v jednotlivých
+     * zdrojových kódov.
+     */
     public ErrorController() {
         readErrorFile();
         readVariableFile();
     }
 
+    /**
+     * Metóda pre spracovanie výberu zdrojového kódu rozbaľovacieho poľa.
+     *
+     * <p> Po vybraní zdrojového kódu z rozbaľovacieho poľa sa zobrazia zistené chyby pre daný zdrojový kód.
+     */
     @FXML
-    public void getSelectedItem(ActionEvent event) {
+    public void getSelectedItem() {
         variableTable.getItems().clear();
         errorTable.getItems().clear();
         if (!comboBox.getSelectionModel().getSelectedItem().equals("Vyberte súbor")) {
@@ -62,16 +85,36 @@ public class ErrorController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre spracovanie stlačenia tlačidla Menu.
+     *
+     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
+     *
+     * @throws IOException
+     */
     @FXML
-    public void goToMenu(ActionEvent event) throws IOException {
+    public void goToMenu() throws IOException {
         showMainWindow();
     }
 
+    /**
+     * Metóda pre spracovanie stlačenia tlačidla pre zobrazenie štatistík.
+     *
+     * <p> Po stlačení daného tlačidla sa zobrazí obsazovka so štatistikami.
+     *
+     * @throws IOException
+     */
     @FXML
-    public void viewStatistics(ActionEvent event) throws IOException {
+    public void viewStatistics() throws IOException {
         showStatisticsWindow(table, fileCount, files);
     }
 
+    /**
+     * Metóda pre načítanie chýb pre jednotlivé zdrojové kódy z csv súboru.
+     *
+     * <p> V tejto metóde sa napĺňa atribút table.
+     *
+     */
     private void readErrorFile() {
         try {
             File errorFile = new File("errors.csv");
@@ -94,6 +137,12 @@ public class ErrorController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre načítanie možnosti zdieľania prememných pre jednotlivé zdrojové kódy.
+     *
+     * <p> V tejto metóde sa napĺňa atribút table2.
+     *
+     */
     private void readVariableFile() {
         try {
             File variableFile = new File("variables.csv");
@@ -116,6 +165,10 @@ public class ErrorController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre naplnenie tabuľky s chybami na obrazovke na základe vybraného zdrojového kódu.
+     *
+     */
     private void setErrorTable() {
         if (!table.isEmpty()) {
             ArrayList<TableRecord> records = table.get(comboBox.getSelectionModel().getSelectedItem());
@@ -124,6 +177,10 @@ public class ErrorController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre naplnenie tabuľky s možnosťami zdieľania premenných na obrazovke pre vybraný zdrojový kód.
+     *
+     */
     private void setVariableTable() {
         if (!table2.isEmpty()) {
             ArrayList<String> records = table2.get(comboBox.getSelectionModel().getSelectedItem());
@@ -138,12 +195,22 @@ public class ErrorController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre naplnenie rozbaľovacieho poľa so súbormi, v ktorých sa nachádza aspoň jedna chyba.
+     *
+     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
+     */
     public void fillComboBox(ArrayList<String> files) {
         this.files = files;
         comboBox.setItems(FXCollections.observableArrayList(files));
         comboBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Metóda pre nastavenie počtu analyzovaných zdrojových kódov.
+     *
+     * @param count počet analyzovaných zdrojových kódov
+     */
     public void setFileCount(int count) {
         this.fileCount = count;
     }

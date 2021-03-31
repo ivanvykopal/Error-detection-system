@@ -8,20 +8,45 @@ import Compiler.Lexer.Scanner;
 import Compiler.Lexer.Token;
 import Compiler.Lexer.Tag;
 import Compiler.SymbolTable.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import Compiler.AbstractSyntaxTree.*;
 
+/**
+ * Trieda, ktorá spracováva tokeny a mení ich abstraktný syntaktický strom.
+ *
+ * <p> Trieda predstavuje syntaktickú analýzu spolu so sémantickou analýzou.
+ *
+ * @author Ivan Vykopal
+ */
 public class Parser {
+    /** Atribút position predstavuje pozíciu aktuálne spracovávaného tokenu. **/
     private int position = 0;
+
+    /** Atribút tokenStream predstavuje zoznam tokenov pre spracovanie. **/
     public ArrayList<Token> tokenStream = new ArrayList<>();
-    private Node parseTree;
+
+    /** Atribút errorDatabse predstavuje databázu chýb. **/
     private ErrorDatabase errorDatabase;
+
+    /**
+     * Atribút lastStatementLine predstavuje riadok, na ktorom sa poslednýkrát vyskytol ""statement"
+     *
+     * <p> Slúži najmä pre prídávanie riadku využitia, prípadne aj inicializácie pri for a while cykle.
+     **/
     private int lastStatementLine = -1;
 
+    /** Atribút symbolTable predstavuje zreťazený zoznam symbolických tabuliek. **/
     public SymbolTable symbolTable = new SymbolTable(null);
 
+    /**
+     * Konštruktor, ktorý zadaný súbor v textovej podobe spracuje prostredníctvom triedy {@code Scanner} a premení vstup
+     * na prúd tokenov. Tieto tokeny sú uložené v atribúte tokenStream.
+     *
+     * @param file analyzovaný súbor v textovej podobe
+     *
+     * @param errorDatabase databáza chýb
+     */
     public Parser(String file, ErrorDatabase errorDatabase) {
         this.errorDatabase = errorDatabase;
         Scanner scanner = new Scanner(file, errorDatabase);
@@ -37,11 +62,19 @@ public class Parser {
         }
     }
 
-    public void parse(String file) {
+    /**
+     * Metóda pre spustenie syntaktickej a sémantickej analýzy pre zdrojový kód.
+     *
+     * <p> Súčasťou tejto metódy je aj nájdenie globálnych premenných, dlho aktívnych premenných a aj neptimálne
+     * využívanie premenných v programe.
+     *
+     * @param fileName názov analyzovaného súboru
+     */
+    public void parse(String fileName) {
         ArrayList<Node> child = translation_unit();
+        Node parseTree;
         if (child == null) {
             System.out.println("Chyba v parse tree!");
-            parseTree = null;
         } else {
             parseTree = new AST(child);
             //parseTree.traverse("");
@@ -49,7 +82,7 @@ public class Parser {
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
                 symbolTable.findLongActiveVariable(errorDatabase);
-                new VariableUsageChecker(symbolTable, errorDatabase, file);
+                new VariableUsageChecker(symbolTable, errorDatabase, fileName);
             } else {
                 symbolTable.findGlobalVariable(errorDatabase);
                 symbolTable.findLongActiveVariable(errorDatabase);
@@ -57,36 +90,83 @@ public class Parser {
         }
     }
 
+    /**
+     * Metóda pre načítanie nasledujúceho tokenu.
+     */
     private void nextToken() {
         if (position != tokenStream.size() - 1) {
             position++;
         }
     }
 
+    /**
+     * Metóda pre zistenie riadku aktuálne spracovávaného tokenu.
+     *
+     * @return riadok aktuálne spracovávaného tokenu
+     */
     private int getTokenLine() {
         return tokenStream.get(position).line;
     }
 
+    /**
+     * Metóda pre zistenie riadku tokenu, ktorý sa nachádza na zvolenej pozícii.
+     *
+     * @param index pozícia tokenu
+     *
+     * @return riadok pre token na zvolenej pozícii
+     */
     private int getTokenLine(int index) {
         return tokenStream.get(index).line;
     }
 
+    /**
+     * Metóda pre zistenie hodnoty aktuálne spracovávaného tokenu.
+     *
+     * @return hodnota aktuálne spracovávaného tokenu
+     */
     private String getTokenValue() {
         return tokenStream.get(position).value;
     }
 
+    /**
+     * Metóda pre zistenie hodnoty tokenu, ktorý sa nachádza na zvolenej pozícii.
+     *
+     * @param index pozícia tokenu
+     *
+     * @return hodnota pre token na zvolenej pozícii
+     */
     private String getTokenValue(int index) {
         return tokenStream.get(index).value;
     }
 
+    /**
+     * Metóda pre zistenie triedy aktuálne spracovávaného tokenu.
+     *
+     * @return trieda aktuálne spracovávaného tokenu
+     */
     private byte getTokenTag() {
         return tokenStream.get(position).tag;
     }
 
+    /**
+     * Metóda pre zistenie triedy tokenu, ktorý sa nachádza na zvolenej pozícii.
+     *
+     * @param index pozícia tokenu
+     *
+     * @return trieaa pre token na zvolenej pozícii
+     */
     private byte getTokenTag(int index) {
         return tokenStream.get(index).tag;
     }
 
+    /**
+     * Metóda pre zistenie, či aktuálny token je rovnaký ako zadaná hodnota. V prípade, ak je zhoda presunie sa na
+     * nasledujúci token a zároveň vráti predchádzajúci token, inak vráti null;
+     *
+     * @param tag trieda tokenu
+     *
+     * @return porovnávaný token, inak null
+     */
     private Leaf accept(byte tag) {
         if (getTokenTag() == tag) {
             Leaf terminal = new Leaf(getTokenTag(), getTokenValue(), getTokenLine());
@@ -96,6 +176,15 @@ public class Parser {
         return null;
     }
 
+    /**
+     * Metóda pre zistenie, či aktuálny token je rovnaký ako zadaná hodnota. V prípade, ak je zhoda presunie sa na
+     * nasledujúci token a zároveň vráti predchádzajúci token. V prípade, ak nie je zhoda, zistí sa chyba a následne sa
+     * zistená chyba uloží do databázy chýb.
+     *
+     * @param tag trieda tokenu
+     *
+     * @return porovnávaný token, inak null
+     */
     private Leaf expect(byte tag) {
         Leaf terminal = accept(tag);
         if (terminal != null) {
@@ -155,8 +244,8 @@ public class Parser {
      *                      | STRING
      *                      | CHARACTER
      *                      | '(' expression ')'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node primary_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -203,6 +292,8 @@ public class Parser {
     /**
      * string ->  STRING
      *          | string STRING
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node string() {
         StringBuilder str = new StringBuilder();
@@ -226,8 +317,8 @@ public class Parser {
      * constant ->  NUMBER
      *            | REAL
      *            | ENUMERATION_CONSTANT
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node constant() {
         switch (getTokenTag()) {
@@ -286,8 +377,8 @@ public class Parser {
 
     /**
      * enumeration_constant -> IDENTIFIER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return identifikátor, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String enumeration_constant() {
         if (getTokenTag() == Tag.IDENTIFIER) {
@@ -305,8 +396,8 @@ public class Parser {
      * postfix_expression ->  primary_expression rest1
      *                      | '(' type_name ')' '{' initializer_list '}' rest1
      *                      | '(' type_name ')' '{' initializer_list ',' '}' rest1
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node postfix_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -384,8 +475,8 @@ public class Parser {
      *         | '(' ')' rest1
      *         | '(' argument_expression_list ')' rest1
      *         | epsilon
-     * @return 1 ak sa našla zhoda,
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         null, ak sa vyskytla chyba
      */
     private Node rest1(Node child) {
         Node child1, child2 = null, child3 = null;
@@ -482,9 +573,8 @@ public class Parser {
     /**
      * argument_expression_list ->  argument_expression_list ',' assignment_expression
      *                            | assignment_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         null, ak sa vyskytla chyba
      */
     private Node argument_expression_list() {
         ArrayList<Node> arr = new ArrayList<>();
@@ -521,9 +611,9 @@ public class Parser {
      *                    | SIZEOF '(' type_name ')'
      *                    | SIZEOF '(' unary_expression ')'
      *                    | SIZEOF unary_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašlarest
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node unary_expression() {
         Node child1, child2;
@@ -597,9 +687,8 @@ public class Parser {
 
     /**
      * unary_operator -> '&' | '*' | '+' | '-' | '~' | '!'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String unary_operator() {
         switch (getTokenTag()) {
@@ -619,8 +708,8 @@ public class Parser {
     /**
      * cast_expression ->  unary_expression
      *                   | '(' type_name ')' cast_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node cast_expression() {
         Node child1, child2 = null, child3 = null;
@@ -656,8 +745,9 @@ public class Parser {
      *                             | multiplicative_expression '/' cast_expression
      *                             | multiplicative_expression '%' cast_expression
      *                             | cast_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node multiplicative_expression() {
         Node child1 = cast_expression();
@@ -684,8 +774,9 @@ public class Parser {
      * additive_expression ->  additive_expression '+' multiplicative_expression
      *                       | additive_expression '-' multiplicative_expression
      *                       | multiplicative_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node additive_expression() {
         Node child1 = multiplicative_expression();
@@ -718,8 +809,9 @@ public class Parser {
      * shift_expression ->  shift_expression '<<' additive_expression
      *                    | shift_expression '>>' additive_expression
      *                    | additive_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node shift_expression() {
         Node child1 = additive_expression();
@@ -754,8 +846,9 @@ public class Parser {
      *                         | relational_expression '<=' shift_expression
      *                         | relational_expression '>=' shift_expression
      *                         | shift_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node relational_expression() {
         Node child1 = shift_expression();
@@ -788,8 +881,9 @@ public class Parser {
      * equality_expression ->  equality_expression '==' relational_expression
      *                       | equality_expression '!=' relational_expression
      *                       | relational_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node equality_expression() {
         Node child1 = relational_expression();
@@ -821,8 +915,9 @@ public class Parser {
     /**
      * and_expression ->  and_expression '&' equality_expression
      *                  | equality_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node and_expression() {
         Node child1 = equality_expression();
@@ -854,8 +949,9 @@ public class Parser {
     /**
      * exclusive_or_expression ->  exclusive_or_expression '^' and_expression
      *                           | and_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node exclusive_or_expression() {
         Node child1 = and_expression();
@@ -887,8 +983,9 @@ public class Parser {
     /**
      * inclusive_or_expression ->  inclusive_or_expression '|' exclusive_or_expression
      *                           | exclusive_or_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node inclusive_or_expression() {
         Node child1 = exclusive_or_expression();
@@ -920,8 +1017,9 @@ public class Parser {
     /**
      * logical_and_expression ->  logical_and_expression '&&' inclusive_or_expression
      *                          | inclusive_or_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node logical_and_expression() {
         Node child1 = inclusive_or_expression();
@@ -953,8 +1051,9 @@ public class Parser {
     /**
      * logical_or_expression ->  logical_or_expression '||' logical_and_expression
      *                         | logical_and_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node logical_or_expression() {
         Node child1 = logical_and_expression();
@@ -986,8 +1085,9 @@ public class Parser {
     /**
      * conditional_expression ->  logical_or_expression
      *                          | logical_or_expression '?' expression ':' conditional_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node conditional_expression() {
         Node child1 = logical_or_expression();
@@ -1022,9 +1122,9 @@ public class Parser {
     /**
      * assignment_expression ->  conditional_expression
      *                         | unary_expression assignment_operator assignment_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node assignment_expression() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -1063,8 +1163,8 @@ public class Parser {
 
     /**
      * assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<' | '>>=' | '&=' | '^=' | '|='
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String assignment_operator() {
         Node child1 = accept(Tag.ASSIGNMENT);
@@ -1077,8 +1177,9 @@ public class Parser {
     /**
      * expression ->  expression ',' assignment_expression
      *              | assignment_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node expression() {
         Node child1 = assignment_expression();
@@ -1112,8 +1213,9 @@ public class Parser {
 
     /**
      * constant_expression -> conditional_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node constant_expression() {
         Node child1 = conditional_expression();
@@ -1129,9 +1231,9 @@ public class Parser {
     /**
      * declaration ->  declaration_specifiers ';'
      *               | declaration_specifiers init_declarator_list ';'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> declaration() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -1201,9 +1303,9 @@ public class Parser {
      *                          | type_specifier
      *                          | type_qualifier declaration_specifiers
      *                          | type_qualifier
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node declaration_specifiers(TypeNode typeNode) {
         String child1 = storage_class_specifier();
@@ -1256,9 +1358,9 @@ public class Parser {
     /**
      * init_declarator_list -> init_declarator_list ',' init_declarator
      *                       | init_declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> init_declarator_list() {
         ArrayList<Node> arr = new ArrayList<>();
@@ -1289,9 +1391,9 @@ public class Parser {
     /**
      * init_declarator ->  declarator '=' initializer
      *                   | declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node init_declarator() {
         Node child1 = declarator();
@@ -1322,8 +1424,8 @@ public class Parser {
 
     /**
      * storage_class_specifier -> TYPEDEF | EXTERN | STATIC | AUTO | REGISTER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String storage_class_specifier() {
         switch (getTokenTag()) {
@@ -1344,9 +1446,9 @@ public class Parser {
      *                  | struct_or_union_specifier
      *                  | enum_specifier
      *                  | TYPEDEF_NAME
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node type_specifier() {
         ArrayList<String> arr = new ArrayList<>();
@@ -1400,9 +1502,9 @@ public class Parser {
      * struct_or_union_specifier ->  struct_or_union '{' struct_declaration_list '}'
      *                             | struct_or_union IDENTIFIER '{' struct_declaration_list '}'
      *                             | struct_or_union IDENTIFIER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node struct_or_union_specifier() {
         String child1 = struct_or_union();
@@ -1474,8 +1576,8 @@ public class Parser {
 
     /**
      * struct_or_union -> STRUCT | UNION
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String struct_or_union() {
         switch (getTokenTag()) {
@@ -1491,9 +1593,9 @@ public class Parser {
     /**
      * struct_declaration_list ->  struct_declaration_list struct_declaration
      *                           | struct_declaration
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> struct_declaration_list() {
         ArrayList<Node> child1 = struct_declaration();
@@ -1521,9 +1623,9 @@ public class Parser {
     /**
      * struct_declaration ->  specifier_qualifier_list ';'
      *                      | specifier_qualifier_list struct_declarator_list ';'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> struct_declaration() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -1581,9 +1683,9 @@ public class Parser {
      *                            | type_specifier
      *                            | type_qualifier specifier_qualifier_list
      *                            | type_qualifier
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node specifier_qualifier_list(TypeNode typeNode) {
         Node child1 = type_specifier();
@@ -1622,9 +1724,9 @@ public class Parser {
     /**
      * struct_declarator_list ->  struct_declarator_list ',' struct_declarator
      *                          | struct_declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> struct_declarator_list() {
         ArrayList<Node> arr = new ArrayList<>();
@@ -1656,9 +1758,9 @@ public class Parser {
      * struct_declarator ->  ':' constant_expression
      *                     | declarator ':' constant_expression
      *                     | declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node struct_declarator() {
         Node child1;
@@ -1697,9 +1799,9 @@ public class Parser {
 
     /**
      * enum_specifier -> ENUM left13
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node enum_specifier() {
         if (getTokenTag() == Tag.ENUM) {
@@ -1722,9 +1824,9 @@ public class Parser {
      *          | IDENTIFIER '{' enumerator_list '}'
      *          | IDENTIFIER '{' enumerator_list ',' '}'
      *          | IDENTIFIER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left13(int line) {
         Node child1, child2, child3;
@@ -1782,9 +1884,9 @@ public class Parser {
     /**
      * enumerator_list ->  enumerator_list ',' enumerator
      *                   | enumerator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node enumerator_list() {
         Node child1 = enumerator();
@@ -1816,9 +1918,9 @@ public class Parser {
     /**
      * enumerator ->  enumeration_constant '=' constant_expression
      *              | enumeration_constant
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node enumerator() {
         String child1 = enumeration_constant();
@@ -1843,8 +1945,8 @@ public class Parser {
 
     /**
      * type_qualifier -> CONST | VOLATILE
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return hodnota aktuálneho tokenu, ak sa našla zhoda,
+     *         prázdny reťazec, ak sa zhoda nenašla
      */
     private String type_qualifier() {
         switch (getTokenTag()) {
@@ -1860,9 +1962,9 @@ public class Parser {
     /**
      * declarator ->  pointer direct_declarator
      *              | direct_declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node declarator() {
         Node child1 = pointer();
@@ -1887,8 +1989,9 @@ public class Parser {
     /**
      * direct_declarator ->  IDENTIFIER rest18
      *                     | '(' declarator ')' rest18
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node direct_declarator() {
         Node child1, child2 = null, child3 = null;
@@ -1941,8 +2044,8 @@ public class Parser {
      * rest18 ->  '[' left16
      *          | '(' left17
      *          | epsilon
-     * @return 1 ak sa našla zhoda,
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         null, ak sa vyskytla chyba
      */
     private Node rest18(Node declarator) {
         Node child1;
@@ -1978,9 +2081,9 @@ public class Parser {
      *          | type_qualifier_list left19
      *          | assignment_expression ']' rest18
      *          | ']' rest18
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left16(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -2080,9 +2183,9 @@ public class Parser {
      * left17 ->  parameter_type_list ')' rest18
      *          | ')' rest18
      *          | identifier_list rest18
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left17(Node declarator) {
         Node child1, decl, child;
@@ -2146,9 +2249,9 @@ public class Parser {
     /**
      * left18 ->  type_qualifier_list assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
       private Node left18(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
@@ -2216,9 +2319,9 @@ public class Parser {
      *          | STATIC assignment_expression ']' rest18
      *          | assignment_expression ']' rest18
      *          | ']' rest18
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left19(ArrayList<String> qualifiers, Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -2318,8 +2421,8 @@ public class Parser {
      *           | '*' type_qualifier_list
      *           | '*' pointer
      *           | '*'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node pointer() {
         if (getTokenTag() == Tag.MULT) {
@@ -2360,9 +2463,8 @@ public class Parser {
     /**
      * type_qualifier_list ->  type_qualifier_list type_qualifier
      *                       | type_qualifier
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
      */
      private ArrayList<String> type_qualifier_list() {
         String child1 = type_qualifier();
@@ -2382,9 +2484,9 @@ public class Parser {
     /**
      * parameter_type_list ->  parameter_list ',' '...'
      *                       | parameter_list
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node parameter_type_list() {
         ParameterList child1 = parameter_list();
@@ -2410,9 +2512,9 @@ public class Parser {
     /**
      * parameter_list ->  parameter_list ',' parameter_declaration
      *                  | parameter_declaration
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return ParameterList, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ParameterList parameter_list() {
         Node child1 = parameter_declaration();
@@ -2444,9 +2546,9 @@ public class Parser {
     /**
      * parameter_declaration -> declaration_specifiers left22
      *                         | left22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node parameter_declaration() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -2483,9 +2585,9 @@ public class Parser {
      * left22 ->  declarator
      *          | abstract_declarator
      *          | epsilon
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
       private Node left22(TypeNode typeNode) {
         if (typeNode.getTypes().isEmpty()) {
@@ -2549,9 +2651,9 @@ public class Parser {
     /**
      * identifier_list ->  identifier_list ',' IDENTIFIER
      *                   | IDENTIFIER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node identifier_list() {
         ArrayList<Node> arr = new ArrayList<>();
@@ -2581,9 +2683,9 @@ public class Parser {
     /**
      * type_name ->  specifier_qualifier_list abstract_declarator
      *             | specifier_qualifier_list
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node type_name() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -2612,9 +2714,9 @@ public class Parser {
      * abstract_declarator ->  pointer direct_abstract_declarator
      *                       | pointer
      *                       | direct_abstract_declarator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node abstract_declarator() {
         Node child1 = pointer();
@@ -2643,9 +2745,9 @@ public class Parser {
     /**
      * direct_abstract_declarator ->  '(' left25
      *                              | '[' left26
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node direct_abstract_declarator() {
         Node child1;
@@ -2681,9 +2783,9 @@ public class Parser {
      * left25 ->  abstract_declarator ')' rest22
      *          | ')' rest22
      *          | parameter_type_list ')' rest22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left25() {
         Node child1, decl;
@@ -2751,9 +2853,9 @@ public class Parser {
      *          | STATIC left27
      *          | type_qualifier_list left28
      *          | assignment_expression ']' rest22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left26(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -2865,9 +2967,9 @@ public class Parser {
     /**
      * left27 ->  type_qualifier_list assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left27(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
@@ -2944,9 +3046,9 @@ public class Parser {
      * left28 ->  STATIC assignment_expression ']' rest22
      *          | assignment_expression ']' rest22
      *          | ']' rest22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left28(ArrayList<String> qualifiers, Node declarator) {
         Node child1, child2 = null, child3 = null, decl, child = null;
@@ -3033,8 +3135,8 @@ public class Parser {
      * rest22 ->  '[' left26
      *          | '(' left29
      *          | epsilon
-     * @return 1 ak sa našla zhoda,
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         null, ak sa vyskytla chyba
      */
     private Node rest22(Node declarator) {
         Node child1;
@@ -3067,9 +3169,9 @@ public class Parser {
     /**
      * left29 ->  ')' rest22
      *          | parameter_type_list ')' rest22
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left29(Node declarator) {
         Node child1, decl, child;
@@ -3118,9 +3220,9 @@ public class Parser {
      *               | '{' initializer_list ',' '}'
      *               | '{' '}'
      *               | assignment_expression
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node initializer() {
         Node child1, child2;
@@ -3160,9 +3262,9 @@ public class Parser {
     /**
      * initializer_list ->  designation initializer rest23
      *                    | initializer rest23
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node initializer_list() {
         ArrayList<Node> child1 = designation();
@@ -3212,8 +3314,8 @@ public class Parser {
      * rest23 ->  ',' designation initializer rest23
      *          | ',' initializer rest23
      *          | epsilon
-     * @return 1 ak sa našla zhoda,
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         null, ak sa vyskytla chyba
      */
     private Node rest23(InitializationList init) {
         if (getTokenTag() == Tag.COMMA) {
@@ -3262,9 +3364,9 @@ public class Parser {
 
     /**
      * designation -> designator_list '='
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> designation() {
         ArrayList<Node> child1 = designator_list();
@@ -3286,9 +3388,9 @@ public class Parser {
     /**
      * designator_list ->  designator_list designator
      *                   | designator
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> designator_list() {
         Node child1 = designator();
@@ -3317,9 +3419,9 @@ public class Parser {
     /**
      * designator ->  '[' constant_expression ']'
      *              | '.' IDENTIFIER
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node designator() {
         Node child1, child2 = null;
@@ -3355,8 +3457,9 @@ public class Parser {
      *             | selection_statement
      *             | iteration_statement
      *             | jump_statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node statement(boolean createSymbolTable) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -3414,9 +3517,9 @@ public class Parser {
      * labeled_statement ->  IDENTIFIER ':' statement
      *                     | CASE constant_expression ':' statement
      *                     | DEFAULT ':' statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node labeled_statement() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -3478,9 +3581,9 @@ public class Parser {
     /**
      * compound_statement ->  '{' '}'
      *                      | '{' block_item_list '}'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node compound_statement(boolean createSymbolTable, boolean functionDefinition) {
         if (getTokenTag() == Tag.LEFT_BRACES) {
@@ -3526,9 +3629,9 @@ public class Parser {
     /**
      * block_item_list ->  block_item_list block_item
      *                   | block_item
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> block_item_list() {
         ArrayList<Node> arr = new ArrayList<>();
@@ -3557,9 +3660,9 @@ public class Parser {
     /**
      * block_item ->  declaration
      *              | statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> block_item() {
         ArrayList<Node> child1 = declaration();
@@ -3584,9 +3687,9 @@ public class Parser {
     /**
      * expression_statement ->  ';'
      *                        | expression ';'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node expression_statement() {
         if (getTokenTag() == Tag.SEMICOLON) {
@@ -3617,9 +3720,9 @@ public class Parser {
      * selection_statement ->  IF '(' expression ')' statement ELSE statement
      *                       | IF '(' expression ')' statement
      *                       | SWITCH '(' expression ')' statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node selection_statement() {
         Node child1, child2 = null, child3 = null, child4 = null, child5 = null;
@@ -3682,9 +3785,9 @@ public class Parser {
      * iteration_statement ->  WHILE '(' expression ')' statement
      *                       | DO statement WHILE '(' expression ')' ';'
      *                       | FOR '(' left33
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node iteration_statement() {
         Node child1, child2 = null, child3 = null, child4 = null;
@@ -3767,9 +3870,9 @@ public class Parser {
      *          | expression_statement expression_statement expression ')' statement
      *          | declaration expression_statement ')' statement
      *          | declaration expression_statement expression ')' statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node left33(int line) {
         //vytvorenie vnorenej tabuľky
@@ -3922,9 +4025,9 @@ public class Parser {
      *                  | BREAK ';'
      *                  | RETURN ';'
      *                  | RETURN expression ';'
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private Node jump_statement() {
         Node child1, child2;
@@ -3989,7 +4092,7 @@ public class Parser {
                         return new Return(child1, line, symbolTable, errorDatabase);
                     }
                 }
-                //TODO: odchytiť chybu??
+                //TODO: odchytiť chybu
                 return null;
         }
         return new None();
@@ -3998,9 +4101,9 @@ public class Parser {
     /**
      * translation_unit ->  translation_unit external_declaration
      *                    | external_declaration
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázdny zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> translation_unit() {
         ArrayList<Node> child1 = external_declaration();
@@ -4025,8 +4128,9 @@ public class Parser {
     /**
      * external_declaration ->  function_definition
      *                        | declaration
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázndy zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> external_declaration() {
         SymbolTable copySymbolTable = symbolTable.createCopy();
@@ -4056,8 +4160,8 @@ public class Parser {
      *                       | declaration_specifiers declarator compound_statement
      *                       | declarator declaration_list compound_statement
      *                       | declarator compound_statement
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
+     * @return Node, ak sa našla zhoda,
+     *         None, ak sa zhoda nenašla
      */
     private Node function_definition() {
         TypeNode typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -4115,9 +4219,9 @@ public class Parser {
     /**
      * declaration_list ->  declaration_list declaration
      *                    | declaration
-     * @return 1 ak sa našla zhoda,
-     *         0 ak sa zhoda nenašla
-     *         -1 ak sa vyskytla chyba
+     * @return zoznam vrcholov (Node), ak sa našla zhoda,
+     *         prázndy zoznam, ak sa zhoda nenašla
+     *         null, ak sa vyskytla chyba
      */
     private ArrayList<Node> declaration_list() {
         ArrayList<Node> child1 = declaration();
@@ -4144,32 +4248,52 @@ public class Parser {
     }
 
     /**
+     * Metóda pre vytvorenie deklarácie na základe zadaného typu.
      *
-     * @param typeNode
-     * @param declarations
-     * @return
+     * <p> Táto metóda preťažuje metódu {@code createDeclaration} s tým, že argumenty parameter a structVariable majú
+     * hodnotu false.
+     *
+     * @param typeNode vrchol pre typ deklarácie
+     *
+     * @param declarations zoznam vrcholov deklarovaných premenných
+     *
+     * @return zoznam vrcholov zadeklarovaných premenných
      */
     private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations) {
         return createDeclaration(typeNode, declarations, false, false);
     }
 
     /**
+     * Metóda pre vytvorenie deklarácie na základe zadaného typu.
      *
-     * @param typeNode
-     * @param declarations
-     * @param structVariable
-     * @return
+     * <p> Táto metóda preťažuje metódu {@code createDeclaration} s tým, že argument parameter má hodnotu false.
+     *
+     * @param typeNode vrchol pre typ deklarácie
+     *
+     * @param declarations zoznam vrcholov deklarovaných premenných
+     *
+     * @param structVariable informácia, či ide o premennú v rámci štruktúry
+     *
+     * @return zoznam vrcholov zadeklarovaných premenných
      */
     private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean structVariable) {
         return createDeclaration(typeNode, declarations, false, structVariable);
     }
 
     /**
+     * Metóda pre vytvorenie deklarácie na základe zadaného typu.
      *
-     * @param typeNode
-     * @param declarations
-     * @param parameter
-     * @return
+     * <p> TODO:
+     *
+     * @param typeNode vrchol pre typ deklarácie
+     *
+     * @param declarations zoznam vrcholov deklarovaných premenných
+     *
+     * @param parameter informácia, či ide o parameter funkcie
+     *
+     * @param structVariable informácia, či ide o premennú v rámci štruktúry
+     *
+     * @return zoznam vrcholov zadeklarovaných premenných
      */
     private ArrayList<Node> createDeclaration(TypeNode typeNode, ArrayList<Node> declarations, boolean parameter,
                                               boolean structVariable) {
@@ -4238,10 +4362,13 @@ public class Parser {
     }
 
     /**
+     * Metóda pre nastavenie názvu identifikátora pre vonkajší vrchol a zároveň nastavenie typu pre najvnútornejší vrchol.
      *
-     * @param declaration
-     * @param typename
-     * @return
+     * @param declaration vonkajší vrchol, pre ktorý sa napravuje typ
+     *
+     * @param typename zoznam typových špecifikátorov (int, long, ...)
+     *
+     * @return upravený vrchol
      */
     private Node fixTypes(Node declaration, ArrayList<Node> typename) {
         DeclarationNode decl = (DeclarationNode) declaration;
@@ -4251,10 +4378,17 @@ public class Parser {
             type = type.getType();
         }
 
+        //
+        // Z vnútorného vrcholu, kde sa nachádza názov identifikátora, sa tento názov identifikátoru vloží do
+        // vonkajšieho vrcholu (DeclarationNode).
+        //
         decl.addName(((TypeDeclaration) type).getDeclname());
         ((TypeDeclaration) type).addQualifiers(decl.getQualifiers());
 
-        //Riešenie chýb
+        //
+        // Riešenie, či v typoch sú len vrcholy IdentifierType, ak nie ide o Struct, Enum alebo Union, ktorý musí byť
+        // ako samostantý typ.
+        //
         for (Node t_name : typename) {
             if (!(t_name instanceof IdentifierType)) {
                 if (typename.size() > 1) {
@@ -4266,8 +4400,8 @@ public class Parser {
                 }
             }
         }
-
         if (typename.isEmpty()) {
+            // ak nie je žiaden typ, nastavuje sa defaultne int
             if (!(decl.getType() instanceof FunctionDeclaration)) {
                 errorDatabase.addErrorMessage(decl.getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
                 return null;
@@ -4276,6 +4410,8 @@ public class Parser {
             arr.add("int");
             type.addType(new IdentifierType(arr, decl.getLine()));
         } else {
+            // každý typový špecifikátor je v IdentifierType a je potrebné  všetky tieto typy zjednotiť a obaliť ich
+            // iba v jednom IdentifierType
             ArrayList<String> arr = new ArrayList<>();
             for (Node t_name : typename) {
                 arr.addAll(((IdentifierType) t_name).getNames());
@@ -4288,10 +4424,13 @@ public class Parser {
     }
 
     /**
+     * Metóda pre pridanie typu pre novopridávaný vrchol (obalový vrchol).
      *
-     * @param declaration
-     * @param modifier
-     * @return
+     * @param declaration existujúci vrchol
+     *
+     * @param modifier novo pridávaný vrchol
+     *
+     * @return výsledný vrchol
      */
     private Node modifyType(Node declaration, Node modifier) {
         Node tail = modifier;
@@ -4301,9 +4440,11 @@ public class Parser {
         }
 
         if (declaration instanceof TypeDeclaration) {
+            // nastavujeme typ pre modifier (obalový typ)
             tail.addType(declaration);
             return modifier;
         } else {
+            // ak declaration nie je základný typ, nájdem jeho výsledný typ a priradíme ho k vrcholu modifier
             Node declaration_tail = declaration;
 
             while (!(declaration_tail.getType() instanceof TypeDeclaration)) {
@@ -4317,6 +4458,19 @@ public class Parser {
         }
     }
 
+    /**
+     * Metóda pre vytvorenie deklarácie funkcie na základe zadaného typu.
+     *
+     * @param typeNode vrchol pre typ deklarácie
+     *
+     * @param declaration vrchol deklarovanej funkcie
+     *
+     * @param parameters zoznam parametrov funckie
+     *
+     * @param body telo funckie
+     *
+     * @return vrchol pre zadefinovanú funkciu
+     */
     private Node createFunction(TypeNode typeNode, Node declaration, ArrayList<Node> parameters, Node body) {
         ArrayList<Node> arr = new ArrayList<>();
         arr.add(new Declarator(declaration, null));
@@ -4325,6 +4479,16 @@ public class Parser {
         return new FunctionDefinition(decl, parameters, body, decl.getLine());
     }
 
+    /**
+     * Metóda pre typovú kontrolu priradenia pri deklarovaní premennej.
+     *
+     * @param declarator ľavá časť priradenia
+     *
+     * @param initializer pravá časť priradenia
+     *
+     * @return true, ak nie je typová nezhoda
+     *         false, ak je typová nezhoda
+     */
     private boolean typeChecking(Node declarator, Node initializer) {
         if (initializer == null || declarator == null) {
             return true;
@@ -4491,6 +4655,19 @@ public class Parser {
 
     }
 
+    /**
+     * Metóda pre vysporiadanie sa z chybového stavu.
+     *
+     * <p> V rámci tejto metódy sa postupuje tak, že sa prechádzajú tokeny, až kým sa nenájde záchytný bod, pri tejto
+     * metóde ide o bodkočiarku ';' a pravú kučeravú zátvorku '}'.
+     *
+     * @param checkError informácia o tom, či sa má chyba zapisovať
+     *
+     * @param tag trieda tokenu, ktorý má bť prvý nájdený
+     *
+     * @return Err, ak sa program zotavil z chyby
+     *         null, ak sa program nezotavil z chyby
+     */
     private Node errorRecoverySB(boolean checkError, byte tag) {
         while (getTokenTag() != Tag.SEMICOLON && getTokenTag() != Tag.RIGHT_BRACES) {
             nextToken();
@@ -4510,6 +4687,15 @@ public class Parser {
         }
     }
 
+    /**
+     * Metóda pre vysporiadanie sa z chybového stavu.
+     *
+     * <p> V rámci tejto metódy sa postupuje tak, že sa prechádzajú tokeny, až kým sa nenájde záchytný bod, pri tejto
+     * metóde ide o pravú kučeravú zátvorku '}'.
+     *
+     * @return Err, ak sa program zotavil z chyby
+     *         null, ak sa program nezotavil z chyby
+     */
     private Node errorRecoveryB() {
         while (getTokenTag() != Tag.RIGHT_BRACES) {
             nextToken();
@@ -4522,6 +4708,15 @@ public class Parser {
         return new Err();
     }
 
+    /**
+     * Metóda pre vysporiadanie sa z chybového stavu.
+     *
+     * <p> V rámci tejto metódy sa postupuje tak, že sa prechádzajú tokeny, až kým sa nenájde záchytný bod, pri tejto
+     * metóde ide o bodkočiarku ';'.
+     *
+     * @return Err, ak sa program zotavil z chyby
+     *         null, ak sa program nezotavil z chyby
+     */
     private Node errorRecoveryS() {
         while (getTokenTag() != Tag.SEMICOLON) {
             nextToken();

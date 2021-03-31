@@ -12,6 +12,8 @@ import java.util.HashMap;
 /**
  * Trieda, ktorá spracováva vstup a mení ho na tokeny.
  *
+ * <p> Trieda predstavuje lexikálnu analýzu.
+ *
  * @author Ivan Vykopal
  */
 public final class Scanner {

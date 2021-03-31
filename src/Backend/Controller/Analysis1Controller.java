@@ -3,7 +3,6 @@ package Backend.Controller;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -16,20 +15,44 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Trieda predstavujúca controller pre Analysis1Window.
+ *
+ * <p> V rámci tejto triedy sa spracovávajú stlačenia tlačitidiel pre dané okno.
+ *
+ * @see Controller
+ *
+ * @author Ivan Vykopal
+ */
 public class Analysis1Controller extends Controller {
+    /** Atribút absolutePath obsahuje absolútnu cestu k analyzovanému súboru. **/
     private String absolutePath;
+
+    /** Atribút file predstavuje analyzovaný súbor v textovej podobe. **/
     private String file;
 
     @FXML
     private Label warning;
 
+    /**
+     * Metóda pre spracovanie stlačenia tlačidla Menu.
+     *
+     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
+     *
+     * @throws IOException
+     */
     @FXML
-    public void goToMenu(ActionEvent event) throws IOException {
+    public void goToMenu() throws IOException {
         showMainWindow();
     }
 
+    /**
+     * Metóda pre spracovanie stlačenia výberu súboru.
+     *
+     * <p> Po stlačení daného tlačidla sa zobrazí okno pre výber súboru.
+     */
     @FXML
-    public void getFile(ActionEvent event) {
+    public void getFile() {
         FileChooser filechooser = new FileChooser();
         filechooser.setTitle("Vyberte súbor");
         filechooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("C kód", "*.c"));
@@ -48,7 +71,17 @@ public class Analysis1Controller extends Controller {
         }
     }
 
-    public void analyzeCode(ActionEvent event) {
+    /**
+     * Metóda pre spracovanie tlačidla spracovania súboru.
+     *
+     * <p> Po stlačení daného tlačidla sa spustí analýza súboru. Pri analýze sa súbor načíta, predspracuje sa a následne
+     * sa spustia kroky prekladu ako je lexikálna analýza, syntaktická analýza a sémantická analýza.
+     *
+     * <p> V rámci analyzovania súboru sa vyhodnocuje aj neoptímalne využívanie premenných na základe symbolickej tabuľky
+     * a informácií v nej uložených.
+     */
+    @FXML
+    public void analyzeCode() {
         deleteFiles();
         Alert warning = new Alert(Alert.AlertType.WARNING);
         if (absolutePath == null) {
@@ -86,6 +119,9 @@ public class Analysis1Controller extends Controller {
         }
     }
 
+    /**
+     * Metóda pre vymazanie vybraných súborov.
+     */
     private void deleteFiles() {
         File fileError = new File("errors.csv");
         fileError.delete();

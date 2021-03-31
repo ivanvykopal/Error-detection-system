@@ -8,9 +8,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class Controller {
+/**
+ * Trieda pre kontrolere pre jednotlivé okná.
+ *
+ * <p> Obsahuje zároveň aj preddefinované metódy pre spúšťanie jednotlivých okien programu.
+ *
+ * @author Ivan Vykopal
+ */
+public class Controller {
+    /** Atribút mainStage potrebný pre zobrazovanie okien programu. **/
     protected Stage mainStage;
 
+    /**
+     *  Metóda pre spustenie obrazovky pre analyzovanie jedného súboru.
+     *
+     * @throws IOException
+     */
     protected void showAnalysis1Window() throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/Analysis1Window.fxml"));
@@ -25,6 +38,11 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre analyzovanie adresáru so zdrojovými kódmi.
+     *
+     * @throws IOException
+     */
     protected void showAnalysis2Window() throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/Analysis2Window.fxml"));
@@ -39,6 +57,13 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre vypísanie chýb.
+     *
+     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
+     *
+     * @throws IOException
+     */
     protected void showErrorWindow(ArrayList<String> files) throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/ErrorWindow.fxml"));
@@ -55,6 +80,15 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre vypísanie chýb.
+     *
+     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
+     *
+     * @param fileCount počet analyzovaných zdrojových kódov
+     *
+     * @throws IOException
+     */
     protected void showErrorWindow(ArrayList<String> files, int fileCount) throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/ErrorWindow.fxml"));
@@ -72,6 +106,11 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre hlavné menu.
+     *
+     * @throws IOException
+     */
     protected void showMainWindow() throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/MainWindow.fxml"));
@@ -85,6 +124,17 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre zobrazenie štatistík.
+     *
+     * @param table tabuľka s chybami pre jednotlivé zdrojové kódy
+     *
+     * @param count počet analyzovaných zdrojových kódov
+     *
+     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
+     *
+     * @throws IOException
+     */
     protected void showStatisticsWindow(HashMap<String, ArrayList<TableRecord>> table, int count, ArrayList<String> files) throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/StatisticsWindow.fxml"));
@@ -103,6 +153,11 @@ public abstract class Controller {
         mainStage.close();
     }
 
+    /**
+     * Metóda pre nastavenie kontajnera pre okno.
+     *
+     * @param stage kontajner pre okno
+     */
     public void setMainStage(Stage stage) {
         mainStage = stage;
     }

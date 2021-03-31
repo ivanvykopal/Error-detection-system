@@ -2,7 +2,6 @@ package Backend.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -15,10 +14,25 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+/**
+ * Trieda predstavujúca controller pre StatisticsWindow.
+ *
+ * <p> V rámci tejto triedy sa spracovávajú stlačenia tlačitidiel pre dané okno.
+ *
+ * @see Controller
+ *
+ * @author Ivan Vykopal
+ */
 public class StatisticsController extends Controller {
+    /** Atribút table predstavuje tabuľky s chybami pre jednotlivé zdrojové kódy. **/
     private HashMap<String, ArrayList<TableRecord>> table;
+
+    /** Atribút allErrorCount predstavuje celkový počet zistených chýb. **/
     private int allErrorCount = 0;
+
+    /** Atribút fileCount predstavuje počet analyzovaných zdrojových kódov. **/
     private int fileCount = 0;
+
     @FXML
     ComboBox<String> comboBox;
 
@@ -52,13 +66,25 @@ public class StatisticsController extends Controller {
     @FXML
     Label meanErrorCount;
 
+    /**
+     * Metóda pre spracovanie stlačenia tlačidla Menu.
+     *
+     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
+     *
+     * @throws IOException
+     */
     @FXML
-    public void goToMenu(ActionEvent event) throws IOException {
+    public void goToMenu() throws IOException {
         showMainWindow();
     }
 
+    /**
+     * Metóda pre spracovanie výberu zdrojového kódu rozbaľovacieho poľa.
+     *
+     * <p> Po vybraní zdrojového kódu z rozbaľovacieho poľa sa zobrazia zistené chyby pre daný zdrojový kód.
+     */
     @FXML
-    public void getSelectedItem(ActionEvent event) {
+    public void getSelectedItem() {
         tableForOne.getItems().clear();
         if (!comboBox.getSelectionModel().getSelectedItem().equals("Vyberte súbor")) {
             fillTableForOne();
@@ -67,6 +93,9 @@ public class StatisticsController extends Controller {
         }
     }
 
+    /**
+     * Metóda pre naplnenie tabuľky na obrazovke so súhrnnými počtami chýb pre vybraný zdrojový kód.
+     */
     private void fillTableForOne() {
         HashMap<String, TableRecord> oneCodeTable = new HashMap<>();
         ArrayList<TableRecord> records = table.get(comboBox.getSelectionModel().getSelectedItem());
@@ -90,6 +119,11 @@ public class StatisticsController extends Controller {
         tableForOne.setItems(data);
     }
 
+    /**
+     * Metóda pre zistenie počtu súborov pre jednotlivé chyby, v ktorých sa dané chyby vyskytli.
+     *
+     * @return tabuľka s počtom súborov, pre jednotlivé chyby
+     */
     private HashMap<String, Integer> findFileErrorCount() {
         HashMap<String, Integer> fileErrorCount = new HashMap<>();
         for (String key : table.keySet()) {
@@ -112,6 +146,9 @@ public class StatisticsController extends Controller {
         return fileErrorCount;
     }
 
+    /**
+     * Metóda pre vytvorenie tabuľky so súhrnnými informáciami o chybách pre všetky zdrojové kódy.
+     */
     private void fillTableForAll() {
         HashMap<String, TableRecord> allCodesTable = new HashMap<>();
 
@@ -134,6 +171,11 @@ public class StatisticsController extends Controller {
         fillTErrorTablePercent(allCodesTable);
     }
 
+    /**
+     * Metóda pre naplnenie tabuľky na obrazovke so súhrnnými informáciami o chybách pre všetky zdrojové kódy.
+     *
+     * @param errorTable tabuľka so súhrnnými informáciami o chybách pre všetky zdrojové kódy.
+     */
     private void fillTErrorTablePercent(HashMap<String, TableRecord> errorTable) {
         HashMap<String, Integer> fileErrorCount = findFileErrorCount();
         ArrayList<SummaryTableRecord> records = new ArrayList<>();
@@ -162,24 +204,47 @@ public class StatisticsController extends Controller {
         errorTablePercent.setItems(data2);
     }
 
+    /**
+     * Metóda pre naplnenie tabuľky na obrazovke so súhrnnými informáciami o chybách pre všetky zdrojové kódy a naplnenie
+     * informácie o priemernom počte chýb pre zdrojový kód.
+     */
     public void fillTables() {
         fillTableForAll();
         fillMeanErrorCount();
     }
 
+    /**
+     * Metóda pre naplnenie rozbaľovacieho poľa so súbormi, v ktorých sa nachádza aspoň jedna chyba.
+     *
+     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
+     */
     public void fillComboBox(ArrayList<String> files) {
         comboBox.setItems(FXCollections.observableArrayList(files));
         comboBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Metóda pre naplnenie informácie o priemernom počte chýb pre zdrojový kód.
+     *
+     */
     private void fillMeanErrorCount() {
         meanErrorCount.setText(String.valueOf(allErrorCount / fileCount));
     }
 
+    /**
+     * Metóda pre nastavenie tabuľky s chybami pre jednotlivé zdrojové kódy.
+     *
+     * @param table tabuľka s chybami pre jednotlivé zdrojové kódy
+     */
     public void setTable(HashMap<String, ArrayList<TableRecord>> table) {
         this.table = table;
     }
 
+    /**
+     * Metóda pre nastavenie počtu analyzovaných zdrojových kódov.
+     *
+     * @param count počet analyzovaných zdrojových kódov
+     */
     public void setFileCount(int count) {
         this.fileCount = count;
     }

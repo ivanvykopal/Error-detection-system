@@ -62,29 +62,6 @@ public class Controller {
      *
      * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
      *
-     * @throws IOException v prípade ak fxml súbor nebol nájdený
-     */
-    protected void showErrorWindow(ArrayList<String> files) throws IOException {
-        Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/ErrorWindow.fxml"));
-        Parent root = loader.load();
-        stage.setTitle("Systém na detekciu chýb");
-        files.add(0, "Vyberte súbor");
-
-        ErrorController controller = loader.getController();
-        controller.setMainStage(stage);
-        controller.fillComboBox(files);
-
-        stage.setScene(new Scene(root, 1000, 1000));
-        stage.show();
-        mainStage.close();
-    }
-
-    /**
-     * Metóda pre spustenie obrazovky pre vypísanie chýb.
-     *
-     * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
-     *
      * @param fileCount počet analyzovaných zdrojových kódov
      *
      * @throws IOException v prípade ak fxml súbor nebol nájdený
@@ -94,7 +71,6 @@ public class Controller {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/ErrorWindow.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
-        files.add(0, "Vyberte súbor");
 
         ErrorController controller = loader.getController();
         controller.setMainStage(stage);
@@ -146,7 +122,6 @@ public class Controller {
         controller.fillComboBox(files);
         controller.setTable(table);
         controller.fillTables();
-        files.add(0, "Vyberte súbor");
 
         stage.setScene(new Scene(root, 1000, 1000));
         stage.show();

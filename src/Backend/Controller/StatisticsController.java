@@ -35,6 +35,9 @@ public class StatisticsController extends Controller {
     /** Atribút fileCount predstavuje počet analyzovaných zdrojových kódov. **/
     private int fileCount = 0;
 
+    /** Atribút files predstavuje zoznam súborov, v ktorých sa nachádza aspoň jedna chyba. **/
+    private ArrayList<String> files;
+
     @FXML
     ComboBox<String> comboBox;
 
@@ -80,6 +83,21 @@ public class StatisticsController extends Controller {
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
                     "Problém pri načítaní showMainWindow()!");
+        }
+    }
+
+    /**
+     * Metóda pre spracovanie stlačenia tlačidla Späť.
+     *
+     * <p> Po stlačení tlačidla Späť sa zobrazí obrazovka so zoznamom chýb.
+     */
+    @FXML
+    public void goBack() {
+        try {
+            showErrorWindow(files, fileCount);
+        } catch (IOException e) {
+            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+                    "Problém pri načítaní showErrorWindow()!");
         }
     }
 
@@ -196,8 +214,8 @@ public class StatisticsController extends Controller {
                         .setScale(2, RoundingMode.HALF_UP);
                 BigDecimal percentCount = new BigDecimal((double) count / fileCount * 100).setScale(2,
                         RoundingMode.HALF_UP);
-                records.add(new SummaryTableRecord(record.getNumber() + " (" + percent + ")",
-                        record.getMessage(), record.getCode(), count + " (" + percentCount + ")" ));
+                records.add(new SummaryTableRecord(record.getNumber() + " (" + percent + " %)",
+                        record.getMessage(), record.getCode(), count + " (" + percentCount + " %)" ));
                 fileWriter.write(record.getCode() + ", " + record.getNumber() + ", " + percent +  ", " + count
                         + ", " + percentCount + "\n");
             }
@@ -225,6 +243,8 @@ public class StatisticsController extends Controller {
      * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
      */
     public void fillComboBox(ArrayList<String> files) {
+        this.files = new ArrayList<>(files);
+        files.add(0, "Vyberte súbor");
         comboBox.setItems(FXCollections.observableArrayList(files));
         comboBox.getSelectionModel().selectFirst();
     }
@@ -254,4 +274,5 @@ public class StatisticsController extends Controller {
     public void setFileCount(int count) {
         this.fileCount = count;
     }
+
 }

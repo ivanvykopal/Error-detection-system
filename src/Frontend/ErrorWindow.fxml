@@ -18,12 +18,12 @@
    <children>
       <HBox alignment="CENTER_RIGHT" spacing="50.0">
          <children>
-            <Button alignment="BASELINE_LEFT" contentDisplay="TOP" mnemonicParsing="false" onAction="#viewStatistics" text="Zobraziť štatistiky">
+            <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#viewStatistics" text="Zobraziť štatistiky">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button alignment="BASELINE_LEFT" contentDisplay="TOP" mnemonicParsing="false" onAction="#goToMenu" text="Menu">
+            <Button alignment="CENTER" contentDisplay="TOP" minWidth="75.0" mnemonicParsing="false" onAction="#goToMenu" text="Menu">
                <font>
                   <Font size="15.0" />
                </font>
@@ -35,6 +35,9 @@
          <padding>
             <Insets bottom="10.0" right="50.0" top="10.0" />
          </padding>
+         <VBox.margin>
+            <Insets right="50.0" />
+         </VBox.margin>
       </HBox>
       <VBox alignment="CENTER" prefHeight="72.0" prefWidth="800.0">
          <children>
@@ -75,17 +78,17 @@
                <children>
                   <TableView fx:id="errorTable" prefHeight="250.0" prefWidth="600.0">
                     <columns>
-                      <TableColumn fx:id="codeColumn" maxWidth="84.0000274181366" minWidth="-Infinity" prefWidth="84.0000274181366" resizable="true" text="Kód chyby">
+                      <TableColumn fx:id="codeColumn" maxWidth="84.0000274181366" minWidth="-Infinity" resizable="true" text="Kód chyby">
                           <cellValueFactory>
                               <PropertyValueFactory property="code" />
                           </cellValueFactory>
                       </TableColumn>
-                      <TableColumn fx:id="messageColumn" minWidth="-Infinity" prefWidth="419.19998174905777" resizable="true" text="Chybová hláška">
+                      <TableColumn fx:id="messageColumn" minWidth="-Infinity" prefWidth="450.0" resizable="true" text="Chybová hláška">
                           <cellValueFactory>
                               <PropertyValueFactory property="message" />
                           </cellValueFactory>
                       </TableColumn>
-                        <TableColumn fx:id="lineColumn" minWidth="-Infinity" prefWidth="95.99993896484375" resizable="true" text="Číslo riadku">
+                        <TableColumn fx:id="lineColumn" minWidth="-1.0" prefWidth="164.0" resizable="true" text="Číslo riadku">
                             <cellValueFactory>
                                 <PropertyValueFactory property="number" />
                             </cellValueFactory>
@@ -118,7 +121,7 @@
                <children>
                   <TableView fx:id="variableTable" prefHeight="250.0" prefWidth="599.0">
                      <columns>
-                        <TableColumn fx:id="variableColumn" minWidth="-Infinity" prefWidth="598.4000091671944" resizable="true" text="Možné zdielané premenné" />
+                        <TableColumn fx:id="variableColumn" minWidth="-1.0" prefWidth="694.0" resizable="true" text="Možné zdielané premenné" />
                      </columns>
                   </TableView>
                </children>

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="820.0" maxWidth="800.0" prefHeight="1000.0" prefWidth="800.0" spacing="25.0" xmlns="http://javafx.com/javafx/8.0.241" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.Controller.ErrorController">
+<VBox alignment="CENTER" maxHeight="820.0" maxWidth="800.0" prefHeight="1000.0" prefWidth="800.0" spacing="25.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.Controller.ErrorController">
    <children>
       <HBox alignment="CENTER_RIGHT" spacing="50.0">
          <children>
@@ -35,6 +35,9 @@
          <padding>
             <Insets bottom="10.0" right="50.0" top="10.0" />
          </padding>
+         <VBox.margin>
+            <Insets right="50.0" />
+         </VBox.margin>
       </HBox>
       <VBox alignment="CENTER" prefHeight="72.0" prefWidth="800.0">
          <children>
@@ -75,17 +78,17 @@
                <children>
                   <TableView fx:id="errorTable" prefHeight="250.0" prefWidth="600.0">
                     <columns>
-                      <TableColumn fx:id="codeColumn" maxWidth="84.0000274181366" minWidth="-Infinity" prefWidth="84.0000274181366" resizable="true" text="Kód chyby">
+                      <TableColumn fx:id="codeColumn" maxWidth="84.0000274181366" minWidth="-Infinity" resizable="true" text="Kód chyby">
                           <cellValueFactory>
                               <PropertyValueFactory property="code" />
                           </cellValueFactory>
                       </TableColumn>
-                      <TableColumn fx:id="messageColumn" minWidth="-Infinity" prefWidth="419.19998174905777" resizable="true" text="Chybová hláška">
+                      <TableColumn fx:id="messageColumn" minWidth="-Infinity" prefWidth="450.0" resizable="true" text="Chybová hláška">
                           <cellValueFactory>
                               <PropertyValueFactory property="message" />
                           </cellValueFactory>
                       </TableColumn>
-                        <TableColumn fx:id="lineColumn" minWidth="-Infinity" prefWidth="95.99993896484375" resizable="true" text="Číslo riadku">
+                        <TableColumn fx:id="lineColumn" minWidth="-1.0" prefWidth="164.0" resizable="true" text="Číslo riadku">
                             <cellValueFactory>
                                 <PropertyValueFactory property="number" />
                             </cellValueFactory>
@@ -118,7 +121,7 @@
                <children>
                   <TableView fx:id="variableTable" prefHeight="250.0" prefWidth="599.0">
                      <columns>
-                        <TableColumn fx:id="variableColumn" minWidth="-Infinity" prefWidth="598.4000091671944" resizable="true" text="Možné zdielané premenné" />
+                        <TableColumn fx:id="variableColumn" minWidth="-1.0" prefWidth="694.0" resizable="true" text="Možné zdielané premenné" />
                      </columns>
                   </TableView>
                </children>

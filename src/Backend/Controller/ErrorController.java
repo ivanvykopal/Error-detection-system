@@ -211,7 +211,8 @@ public class ErrorController extends Controller {
      * @param files zoznam súborov, v ktorých sa nachádza aspoň jedna chyba
      */
     public void fillComboBox(ArrayList<String> files) {
-        this.files = files;
+        this.files = new ArrayList<>(files);
+        files.add(0, "Vyberte súbor");
         comboBox.setItems(FXCollections.observableArrayList(files));
         comboBox.getSelectionModel().selectFirst();
     }

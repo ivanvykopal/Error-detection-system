@@ -115,9 +115,9 @@ public class Analysis1Controller extends Controller {
                 parser.parse(file);
                 errorDatabase.createFile(file);
                 if (errorDatabase.isEmpty()) {
-                    showErrorWindow(new ArrayList<>());
+                    showErrorWindow(new ArrayList<>(), 1);
                 } else {
-                    showErrorWindow(new ArrayList<>(Collections.singletonList(file)));
+                    showErrorWindow(new ArrayList<>(Collections.singletonList(file)), 1);
                 }
             } catch (IOException er) {
                 ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,

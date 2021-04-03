@@ -132,20 +132,7 @@ public final class BinaryOperator extends Node {
         if (var1 >= Type.UNION && var2 >= Type.UNION) {
             return -1;
         }
-        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
-            return -1;
-        }
 
-        /*
-        if (var1 < 50 && var2 < 50 && var1 >= Type.UNION && var2 >= Type.UNION) {
-            return -1;
-        }
-        if (var1 < 50 && var2 < 50 && var1 < Type.UNION && var2 < Type.UNION) {
-            return (short) Math.max(var1, var2);
-        }
-        if (var1 > 50 && var2 > 50 && (var1 % 50) >= Type.UNION && (var2 % 50) >= Type.UNION) {
-            return -1;
-        }*/
         return (short) Math.max(var1, var2);
     }
 

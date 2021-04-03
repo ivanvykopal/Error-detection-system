@@ -4,6 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,5 +137,17 @@ public class Controller {
      */
     public void setMainStage(Stage stage) {
         mainStage = stage;
+    }
+
+    /**
+     * Metóda pre vymazanie vybraných súborov.
+     */
+    protected void deleteFiles() {
+        File fileError = new File("errors.csv");
+        fileError.delete();
+        File fileVariables = new File("variables.csv");
+        fileVariables.delete();
+        File fileErrorTotal = new File("error-total.csv");
+        fileErrorTotal.delete();
     }
 }

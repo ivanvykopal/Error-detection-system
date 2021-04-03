@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.Controller.StatisticsController">
+<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.241" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.Controller.StatisticsController">
    <children>
       <VBox alignment="CENTER" maxHeight="998.0" maxWidth="800.0" prefHeight="998.0" prefWidth="800.0" spacing="15.0">
          <children>

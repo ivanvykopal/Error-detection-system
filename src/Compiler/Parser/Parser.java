@@ -56,7 +56,7 @@ public class Parser {
             if (tok.tag == Tag.EOF) {
                 break;
             } else {
-                //System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
+                System.out.println(tok.line + ": " + tok.value + ", " + tok.tag);
                 tokenStream.add(tok);
             }
         }
@@ -77,8 +77,8 @@ public class Parser {
             System.out.println("Chyba v parse tree!");
         } else {
             parseTree = new AST(child);
-            //parseTree.traverse("");
-            //symbolTable.printSymbolTable(0);
+            parseTree.traverse("");
+            symbolTable.printSymbolTable(0);
             if (errorDatabase.isEmpty()) {
                 symbolTable.findGlobalVariable(errorDatabase);
                 symbolTable.findLongActiveVariable(errorDatabase);
@@ -4573,6 +4573,10 @@ public class Parser {
             return true;
         }
 
+        if (initializer instanceof InitializationList) {
+            return true;
+        }
+
         if (declarator instanceof TypeDeclaration) {
             Node tail = declarator.getType();
             String type = "";
@@ -4623,9 +4627,6 @@ public class Parser {
             }
 
             if (type1 >= Type.UNION && type2 >= Type.UNION) {
-                return false;
-            }
-            if (type1 >= Type.UNION && type2 < Type.UNION || type2 >= Type.UNION && type1 < Type.UNION) {
                 return false;
             }
 
@@ -4724,9 +4725,6 @@ public class Parser {
                 return true;
             }
 
-            if (type1 >= Type.UNION || type2 > Type.UNION) {
-                return false;
-            }
             return true;
         } else {
             return true;

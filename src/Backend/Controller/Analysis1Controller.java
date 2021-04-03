@@ -131,16 +131,4 @@ public class Analysis1Controller extends Controller {
         }
     }
 
-    /**
-     * Metóda pre vymazanie vybraných súborov.
-     */
-    private void deleteFiles() {
-        File fileError = new File("errors.csv");
-        fileError.delete();
-        File fileVariables = new File("variables.csv");
-        fileVariables.delete();
-        File fileErrorTotal = new File("error-total.csv");
-        fileErrorTotal.delete();
-    }
-
 }

@@ -140,6 +140,7 @@ public class ErrorController extends Controller {
                 tableRecord.add(new TableRecord(Integer.parseInt(line[3].trim()), line[2].trim(), line[1].trim()));
                 table.put(line[0], tableRecord);
             }
+            reader.close();
         } catch (FileNotFoundException | NumberFormatException e) {
             ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
                     "Problém pri čítaní z errors.csv!");
@@ -169,6 +170,7 @@ public class ErrorController extends Controller {
                 rows.add(line[1].trim());
                 table2.put(line[0], rows);
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
                     "Problém pri čítaní z variables.csv!");

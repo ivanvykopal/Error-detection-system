@@ -100,7 +100,7 @@ public final class TypeChecker {
                 String name = String.join(" ", ((IdentifierType) id).getNames());
                 Record record = symbolTable.lookup(name);
                 if (record != null && record.getKind() == Kind.TYPEDEF_NAME) {
-                    return record.getType();
+                    return (short) (record.getType() + 50);
                 } else {
                     return Type.TYPEDEF_TYPE;
                 }

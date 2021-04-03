@@ -138,10 +138,6 @@ public final class TernaryOperator extends Node {
             typeCategory = -1;
             return false;
         }
-        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
-            typeCategory = -1;
-            return false;
-        }
 
         typeCategory = (byte) Math.max(var1, var2);
         return true;

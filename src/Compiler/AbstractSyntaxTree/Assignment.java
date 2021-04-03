@@ -123,9 +123,6 @@ public final class Assignment extends Node {
         if (var1 >= Type.UNION && var2 >= Type.UNION) {
             return false;
         }
-        if (var1 >= Type.UNION && var2 < Type.UNION || var2 >= Type.UNION && var1 < Type.UNION) {
-            return false;
-        }
 
         return true;
     }

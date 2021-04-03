@@ -2,23 +2,23 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-03-31T21:51:19</date>
-  <millis>1617220279096</millis>
+  <date>2021-04-01T15:28:11</date>
+  <millis>1617283691530</millis>
   <sequence>0</sequence>
   <logger>Backend.Controller.Analysis1Controller</logger>
   <level>INFO</level>
   <class>Backend.ProgramLogger</class>
   <method>log</method>
   <thread>15</thread>
-  <message>Súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW01\student1_1.c bol vybraný.</message>
+  <message>Súbor: C:\Users\Acer\Desktop\test.c bol vybraný.</message>
 </record>
 </log>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-03-31T21:51:19</date>
-  <millis>1617220279535</millis>
+  <date>2021-04-01T15:28:12</date>
+  <millis>1617283692319</millis>
   <sequence>1</sequence>
   <logger>Backend.Controller.Analysis1Controller</logger>
   <level>INFO</level>
@@ -26,5 +26,110 @@
   <method>log</method>
   <thread>15</thread>
   <message>Analyzujem kód.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:28:12</date>
+  <millis>1617283692442</millis>
+  <sequence>2</sequence>
+  <logger>Backend.Controller.ErrorController</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Problém pri čítaní z variables.csv!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:28:50</date>
+  <millis>1617283730345</millis>
+  <sequence>3</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Súbor: C:\Users\Acer\Desktop\test.c bol vybraný.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:28:51</date>
+  <millis>1617283731010</millis>
+  <sequence>4</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Analyzujem kód.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:28:51</date>
+  <millis>1617283731058</millis>
+  <sequence>5</sequence>
+  <logger>Backend.Controller.ErrorController</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Problém pri čítaní z variables.csv!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:29:10</date>
+  <millis>1617283750274</millis>
+  <sequence>6</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Súbor: C:\Users\Acer\Desktop\test.c bol vybraný.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:29:10</date>
+  <millis>1617283750969</millis>
+  <sequence>7</sequence>
+  <logger>Backend.Controller.Analysis1Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Analyzujem kód.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-01T15:29:11</date>
+  <millis>1617283751002</millis>
+  <sequence>8</sequence>
+  <logger>Backend.Controller.ErrorController</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>15</thread>
+  <message>Problém pri čítaní z variables.csv!</message>
 </record>
 </log>

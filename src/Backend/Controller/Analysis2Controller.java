@@ -160,17 +160,17 @@ public class Analysis2Controller extends Controller {
                                     ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
                                             "Analyzujem súbor: " +  file.getAbsolutePath() + "!");
                                     fileCount++;
-                                    ErrorDatabase errorDatabase = new ErrorDatabase();
-                                    Parser parser = new Parser(text, errorDatabase);
                                     try {
+                                        ErrorDatabase errorDatabase = new ErrorDatabase();
+                                        Parser parser = new Parser(text, errorDatabase);
                                         parser.parse(file.getName());
+                                        errorDatabase.createFile(file.getName());
+                                        if (!errorDatabase.isEmpty()) {
+                                            fileNames.add(file.getName());
+                                        }
                                     } catch (Exception e) {
                                         ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
                                                 "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
-                                    }
-                                    errorDatabase.createFile(file.getName());
-                                    if (!errorDatabase.isEmpty()) {
-                                        fileNames.add(file.getName());
                                     }
                                 }
                             }
@@ -195,18 +195,6 @@ public class Analysis2Controller extends Controller {
             };
             service.start();
         }
-    }
-
-    /**
-     * Metóda pre vymazanie vybraných súborov.
-     */
-    private void deleteFiles() {
-        File fileError = new File("errors.csv");
-        fileError.delete();
-        File fileVariables = new File("variables.csv");
-        fileVariables.delete();
-        File fileErrorTotal = new File("error-total.csv");
-        fileErrorTotal.delete();
     }
 
 }

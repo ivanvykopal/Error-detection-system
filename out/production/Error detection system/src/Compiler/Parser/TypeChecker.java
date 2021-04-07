@@ -224,7 +224,7 @@ public final class TypeChecker {
         } else if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+                return -2;                           //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
@@ -239,7 +239,7 @@ public final class TypeChecker {
 
             Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+                return -2;                           //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }

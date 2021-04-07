@@ -22,7 +22,7 @@ import java.util.logging.Level;
 public final class SymbolTableFiller {
 
     /**
-     * Privátny konštruktor.
+     * Privátny konštruktor pre triedu {@code SymbolTableFiller}.
      */
     private SymbolTableFiller() {
     }
@@ -677,12 +677,10 @@ public final class SymbolTableFiller {
         try {
             File file = new File("config/libraryVariables.config");
             scanner = new java.util.Scanner(file);
-            System.out.println("súbor libraryVariables.config");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             InputStream is = SymbolTableFiller.class.getResourceAsStream("/config/libraryVariables.config");
             scanner = new java.util.Scanner(is);
-            System.out.println("default libraryVariables.config");
         }
         try {
             while (scanner.hasNextLine()) {

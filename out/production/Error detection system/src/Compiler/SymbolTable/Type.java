@@ -8,7 +8,7 @@ package Compiler.SymbolTable;
 public class Type {
 
     /**
-     * Privátny konštruktor.
+     * Privátny konštruktor pre triedu {@code Type}.
      */
     private Type() {}
 

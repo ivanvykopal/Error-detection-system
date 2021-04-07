@@ -3,9 +3,7 @@ package Compiler.Lexer;
 import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.GraphColoring.VariableUsageChecker;
 import Compiler.Preprocessing.Preprocessor;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.logging.Level;

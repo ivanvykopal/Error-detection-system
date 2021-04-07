@@ -5,6 +5,7 @@ import java.util.ArrayList;
 /**
  * Trieda predstavujúca počiatočný vrchol abstraktného syntaktického stromu (Abstract syntax tree).
  * Predstavuje začiatok pre zdrojový kód v jazyku C.
+ *
  * @author Ivan Vykopal
  *
  * @see Node

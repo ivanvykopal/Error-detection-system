@@ -8,22 +8,50 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
+/**
+ * Hlavná trieda pre spustenie programu.
+ *
+ * @author Ivan Vykopal
+ */
 public class Main extends Application {
 
+    /** Atribút stage je potrebný pre zobrazovanie okien programu. **/
     static Stage stage;
 
+    /**
+     * Metóda pre sputenie grafického rozhrania.
+     *
+     * @param stage kontajner pre okno
+     */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         deleteLogFile();
         this.stage = stage;
-        showMainWindow();
+        try {
+            showMainWindow();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(Main.class.getName()).log(Level.WARNING,
+                    "Vyskytla sa chyba pri práci s I/O súbormi!");
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Hlavná metóda pre spustenie programu.
+     *
+     * @param args argumenty programu
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Metóda pre spustenie obrazovky pre hlavné menu.
+     *
+     * @throws IOException v prípade ak fxml súbor nebol nájdený
+     */
     private void showMainWindow() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/MainWindow.fxml"));
         Parent root = loader.load();
@@ -35,6 +63,9 @@ public class Main extends Application {
         stage.show();
     }
 
+    /**
+     * Metóda pre vymazanie súboru s logmi.
+     */
     private void deleteLogFile() {
         File fileError = new File("logs/log-file.log");
         fileError.delete();

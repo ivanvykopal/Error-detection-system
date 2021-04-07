@@ -119,7 +119,7 @@ public final class UnaryOperator extends Node {
             return false;
         }
         if (type == -2) {
-            typeCategory = -2;                                                              //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+            typeCategory = -2;                       //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             return true;
         }
         typeCategory = type;

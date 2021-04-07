@@ -3,12 +3,8 @@ package Compiler.Lexer;
 import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.GraphColoring.VariableUsageChecker;
 import Compiler.Preprocessing.Preprocessor;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -585,21 +581,30 @@ public final class Scanner {
         }
         java.util.Scanner scanner;
         try {
-            scanner = new java.util.Scanner(new FileInputStream("types.config"));
+            File file = new File("config/types.config");
+            scanner = new java.util.Scanner(file);
+            System.out.println("súbor types.config");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            InputStream is = getClass().getResourceAsStream("/config/types.config");
+            scanner = new java.util.Scanner(is);
+            System.out.println("default types.config");
+        }
+        try {
             while (scanner.hasNextLine()) {
                 String configLine = scanner.nextLine();
                 if (configLine.contains(identifier+",")) {
-                    String[] words = configLine.split(", ");
-                    if (!words[0].equals(identifier)) {
+                    String[] words = configLine.split("=");
+                    if (!words[0].trim().equals(identifier)) {
                         continue;
                     }
                     if (words.length == 2) {
-                        return new Token(Tag.INT, words[1], line);
+                        return new Token(Tag.INT, words[1].trim(), line);
                     }
                 }
             }
             return new Token(Tag.IDENTIFIER, identifier, line);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             ProgramLogger.createLogger(Scanner.class.getName()).log(Level.WARNING,
                     "Nebol nájdený konfiguračný súbor types.config!");
         }

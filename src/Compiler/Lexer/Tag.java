@@ -7,6 +7,9 @@ package Compiler.Lexer;
  */
 public final class Tag {
 
+    /**
+     * Privátny konštruktor pre triedu {@code Tag}.
+     */
     private Tag() {}
 
     //keywords

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Error detection system:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Error_detection_system_jar</output-path>
+    <root id="archive" name="Error detection system.jar">
+      <element id="module-output" name="Error detection system" />
+    </root>
+  </artifact>
+</component>

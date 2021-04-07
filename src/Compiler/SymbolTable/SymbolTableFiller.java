@@ -6,8 +6,11 @@ import Compiler.AbstractSyntaxTree.Enum;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -19,7 +22,7 @@ import java.util.logging.Level;
 public final class SymbolTableFiller {
 
     /**
-     * Privátny konštruktor.
+     * Privátny konštruktor pre triedu {@code SymbolTableFiller}.
      */
     private SymbolTableFiller() {
     }
@@ -166,6 +169,7 @@ public final class SymbolTableFiller {
             if (declarator1.getDeclarator() instanceof PointerDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 int line = 0;
+                int pointer = 1;
                 String name = "";
                 String type = "";
                 String struct_name = "";
@@ -175,13 +179,13 @@ public final class SymbolTableFiller {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
-                            type = "enum * ";
+                            type = "enum ";
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
-                            type = "struct * ";
+                            type = "struct ";
                         } else {
                             struct_name = ((Union) decl_tail).getName();
-                            type = "union * ";
+                            type = "union ";
                         }
                         break;
                     }
@@ -189,13 +193,18 @@ public final class SymbolTableFiller {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
                         line = decl_tail.getLine();
                     }
+                    if (decl_tail instanceof PointerDeclaration) {
+                        pointer++;
+                    }
                     decl_tail = decl_tail.getType();
                 }
 
                 if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     if (struct_name != null) {
                         type = type.replaceFirst(" ", " " + struct_name + " ");
@@ -215,6 +224,7 @@ public final class SymbolTableFiller {
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
                 int line = declarator1.getDeclarator().getLine();
                 String type = "";
+                int pointer = 0;
                 short typeCategory;
                 String struct_name = "";
 
@@ -232,13 +242,18 @@ public final class SymbolTableFiller {
                         }
                         break;
                     }
+                    if (decl_tail instanceof PointerDeclaration) {
+                        pointer++;
+                    }
                     decl_tail = decl_tail.getType();
                 }
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     if (struct_name != null) {
                         type = type.replaceFirst(" ", " " + struct_name + " ");
@@ -257,6 +272,7 @@ public final class SymbolTableFiller {
             if (declarator1.getDeclarator() instanceof PointerDeclaration) {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 int line = 0;
+                int pointer = 1;
                 String name = "";
                 String type = "";
                 String struct_name = "";
@@ -266,13 +282,13 @@ public final class SymbolTableFiller {
                     if (decl_tail.isEnumStructUnion()) {
                         if (decl_tail instanceof Enum) {
                             struct_name = ((Enum) decl_tail).getName();
-                            type = "enum * ";
+                            type = "enum ";
                         } else if (decl_tail instanceof Struct) {
                             struct_name = ((Struct) decl_tail).getName();
-                            type = "struct * ";
+                            type = "struct ";
                         } else {
                             struct_name = ((Union) decl_tail).getName();
-                            type = "union * ";
+                            type = "union ";
                         }
                         break;
                     }
@@ -280,14 +296,19 @@ public final class SymbolTableFiller {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
                         line = decl_tail.getLine();
                     }
+                    if (decl_tail instanceof PointerDeclaration) {
+                        pointer++;
+                    }
                     decl_tail = decl_tail.getType();
                 }
 
                 if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
+                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
                     line = decl_tail.getLine();
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     if (struct_name != null) {
                         type = type.replaceFirst(" ", " " + struct_name + " ");
@@ -320,6 +341,7 @@ public final class SymbolTableFiller {
                 Node decl_tail = declarator1.getDeclarator().getType();
                 String name = ((TypeDeclaration) declarator1.getDeclarator()).getDeclname();
                 int line = declarator1.getDeclarator().getLine();
+                int pointer = 0;
                 String type = "";
                 String struct_name = "";
                 short typeCategory;
@@ -338,13 +360,18 @@ public final class SymbolTableFiller {
                         }
                         break;
                     }
+                    if (decl_tail instanceof PointerDeclaration) {
+                        pointer++;
+                    }
                     decl_tail = decl_tail.getType();
                 }
 
                 if (type.equals("")) {
                     type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
+                    type = TypeChecker.addPointers(pointer, type);
                     typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                     if (struct_name != null) {
                         type = type.replaceFirst(" ", " " + struct_name + " ");
@@ -379,7 +406,7 @@ public final class SymbolTableFiller {
                 int line = 0;
                 Node constant = ((ArrayDeclaration) declarator1.getDeclarator()).getDimension();
                 String type = "";
-                boolean pointer = false;
+                int pointer = 0;
                 int size = -1;
                 String struct_name = "";
                 short typeCategory;
@@ -394,7 +421,7 @@ public final class SymbolTableFiller {
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail instanceof PointerDeclaration) {
-                        pointer = true;
+                        pointer++;
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
@@ -416,26 +443,15 @@ public final class SymbolTableFiller {
                     decl_tail = decl_tail.getType();
                 }
 
-                if (pointer) {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    } else {
-                        type += "* ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        if (struct_name != null) {
-                            type = type.replaceFirst(" ", " " + struct_name + " ");
-                        }
-                    }
+                if (type.equals("")) {
+                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    } else {
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        if (struct_name != null) {
-                            type = type.replaceFirst(" ", " " + struct_name + " ");
-                        }
+                    type = TypeChecker.addPointers(pointer, type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }
 
@@ -484,14 +500,14 @@ public final class SymbolTableFiller {
                 String name = "";
                 int line = 0;
                 ParameterList parameters = (ParameterList) ((FunctionDeclaration) declarator1.getDeclarator()).getArguments();
-                boolean pointer = false;
+                int pointer = 0;
                 String type = "";
                 String struct_name = "";
                 short typeCategory;
 
                 while (!(decl_tail instanceof IdentifierType)) {
                     if (decl_tail instanceof PointerDeclaration) {
-                        pointer = true;
+                        pointer++;
                     }
                     if (decl_tail instanceof TypeDeclaration) {
                         name = ((TypeDeclaration) decl_tail).getDeclname();
@@ -513,26 +529,15 @@ public final class SymbolTableFiller {
                     decl_tail = decl_tail.getType();
                 }
 
-                if (pointer) {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " * ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    } else {
-                        type += "* ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        if (struct_name != null) {
-                            type = type.replaceFirst(" ", " " + struct_name + " ");
-                        }
-                    }
+                if (type.equals("")) {
+                    type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
+                    type = TypeChecker.addPointers(pointer, type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
                 } else {
-                    if (type.equals("")) {
-                        type = String.join(" ", ((IdentifierType) decl_tail).getNames()) + " ";
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                    } else {
-                        typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
-                        if (struct_name != null) {
-                            type = type.replaceFirst(" ", " " + struct_name + " ");
-                        }
+                    type = TypeChecker.addPointers(pointer, type);
+                    typeCategory = TypeChecker.findType(type, decl_tail, symbolTable);
+                    if (struct_name != null) {
+                        type = type.replaceFirst(" ", " " + struct_name + " ");
                     }
                 }
 
@@ -670,7 +675,14 @@ public final class SymbolTableFiller {
     private static boolean isFromLibrary(String identifier) {
         Scanner scanner;
         try {
-            scanner = new Scanner(new FileInputStream("libraryVariables.config"));
+            File file = new File("config/libraryVariables.config");
+            scanner = new java.util.Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            InputStream is = SymbolTableFiller.class.getResourceAsStream("/config/libraryVariables.config");
+            scanner = new java.util.Scanner(is);
+        }
+        try {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if (line.contains(identifier)) {
@@ -678,7 +690,7 @@ public final class SymbolTableFiller {
                 }
             }
             return false;
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             ProgramLogger.createLogger(SymbolTableFiller.class.getName()).log(Level.WARNING,
                     "Nebol nájdený konfiguračný súbor libraryVariables.config!");
         }

@@ -100,7 +100,7 @@ public final class TypeChecker {
                 String name = String.join(" ", ((IdentifierType) id).getNames());
                 Record record = symbolTable.lookup(name);
                 if (record != null && record.getKind() == Kind.TYPEDEF_NAME) {
-                    return (short) (record.getType() + 50);
+                    return (short) (record.getType() + pointer);
                 } else {
                     return Type.TYPEDEF_TYPE;
                 }
@@ -128,7 +128,7 @@ public final class TypeChecker {
         } else if (initializer instanceof Cast) {
             Node tail = initializer.getType();
             String type = "";
-            boolean pointer = false;
+            int pointer = 0;
 
             while (!(tail instanceof IdentifierType)) {
                 if (tail.isEnumStructUnion()) {
@@ -142,23 +142,15 @@ public final class TypeChecker {
                     break;
                 }
                 if (tail instanceof PointerDeclaration) {
-                    pointer = true;
+                    pointer++;
                 }
                 tail = tail.getType();
             }
 
-            if (pointer) {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
-                } else {
-                    type += "* ";
-                }
-            } else {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
-                }
+            if (type.equals("")) {
+                type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
-
+            type = addPointers(pointer, type);
             //spojí všetky typy do stringu a konvertuje ich na byte
             return findType(type, tail, symbolTable);
         } else if (initializer instanceof UnaryOperator) {
@@ -232,7 +224,7 @@ public final class TypeChecker {
         } else if (node instanceof Identifier) {
             Record record = table.lookup(((Identifier) node).getName());
             if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+                return -2;                           //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
@@ -247,7 +239,7 @@ public final class TypeChecker {
 
             Record record = table.lookup(((Identifier) id).getName());
             if (record == null) {
-                return -2;                                                      //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
+                return -2;                           //vracia -2 ako informáciu, že nenašiel záznam v symbolicek tabuľke
             } else {
                 return record.getType();
             }
@@ -282,7 +274,7 @@ public final class TypeChecker {
         } else if (node instanceof Cast) {
             Node tail = node.getType();
             String type = "";
-            boolean pointer = false;
+            int pointer = 0;
 
             while (!(tail instanceof IdentifierType)) {
                 if (tail.isEnumStructUnion()) {
@@ -296,23 +288,15 @@ public final class TypeChecker {
                     break;
                 }
                 if (tail instanceof PointerDeclaration) {
-                    pointer = true;
+                    pointer++;
                 }
                 tail = tail.getType();
             }
 
-            if (pointer) {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " * ";
-                } else {
-                    type += "* ";
-                }
-            } else {
-                if (type.equals("")) {
-                    type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
-                }
+            if (type.equals("")) {
+                type = String.join(" ", ((IdentifierType) tail).getNames()) + " ";
             }
-
+            type = addPointers(pointer, type);
             return TypeChecker.findType(type, tail, table);
         } else if (node instanceof TernaryOperator) {
             return ((TernaryOperator) node).getTypeCategory();
@@ -321,5 +305,22 @@ public final class TypeChecker {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Metóda pre pridanie * do typu na základe počtu zistených *.
+     *
+     * @param count počet *
+     *
+     * @param type type, na úpravu
+     *
+     * @return výsledný typ
+     */
+    public static String addPointers(int count, String type) {
+        StringBuilder typeBuilder = new StringBuilder(type);
+        for (int i = 0; i < count; i++) {
+            typeBuilder.append("* ");
+        }
+        return typeBuilder.toString();
     }
 }

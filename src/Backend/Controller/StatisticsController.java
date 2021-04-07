@@ -39,37 +39,16 @@ public class StatisticsController extends Controller {
     private ArrayList<String> files;
 
     @FXML
-    ComboBox<String> comboBox;
+    private ComboBox<String> comboBox;
 
     @FXML
-    TableView<TableRecord> tableForOne;
+    private TableView<TableRecord> tableForOne;
 
     @FXML
-    TableColumn<TableRecord, String> codeColumnOne;
+    private TableView<SummaryTableRecord> errorTablePercent;
 
     @FXML
-    TableColumn<TableRecord, String> messageColumnOne;
-
-    @FXML
-    TableColumn<TableRecord, String> countOne;
-
-    @FXML
-    TableView<SummaryTableRecord> errorTablePercent;
-
-    @FXML
-    TableColumn<SummaryTableRecord, String> codeColumnPercent;
-
-    @FXML
-    TableColumn<SummaryTableRecord, String> messageColumnPercent;
-
-    @FXML
-    TableColumn<SummaryTableRecord, String> percentColumn;
-
-    @FXML
-    TableColumn<SummaryTableRecord, String> countColumn;
-
-    @FXML
-    Label meanErrorCount;
+    private Label meanErrorCount;
 
     /**
      * Metóda pre spracovanie stlačenia tlačidla Menu.
@@ -203,7 +182,7 @@ public class StatisticsController extends Controller {
         HashMap<String, Integer> fileErrorCount = findFileErrorCount();
         ArrayList<SummaryTableRecord> records = new ArrayList<>();
         try {
-            File fileVariables = new File("error-total.csv");
+            File fileVariables = new File("statistics.csv");
             fileVariables.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileVariables, true);
@@ -222,7 +201,7 @@ public class StatisticsController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní z error-total.csv!");
+                    "Problém pri zápise do statisticscsv!");
         }
         ObservableList<SummaryTableRecord> data2 = FXCollections.observableArrayList(records);
         errorTablePercent.setItems(data2);

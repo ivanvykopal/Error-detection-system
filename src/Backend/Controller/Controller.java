@@ -28,7 +28,7 @@ public class Controller {
      */
     protected void showAnalysis1Window() throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/Analysis1Window.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/Analysis1Window.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
 
@@ -47,7 +47,7 @@ public class Controller {
      */
     protected void showAnalysis2Window() throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/Analysis2Window.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/Analysis2Window.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
 
@@ -70,7 +70,7 @@ public class Controller {
      */
     protected void showErrorWindow(ArrayList<String> files, int fileCount) throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/ErrorWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/ErrorWindow.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
 
@@ -91,7 +91,7 @@ public class Controller {
      */
     protected void showMainWindow() throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/MainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/MainWindow.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
         MainController controller = loader.getController();
@@ -115,7 +115,7 @@ public class Controller {
      */
     protected void showStatisticsWindow(HashMap<String, ArrayList<TableRecord>> table, int count, ArrayList<String> files) throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../Frontend/StatisticsWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Frontend/StatisticsWindow.fxml"));
         Parent root = loader.load();
         stage.setTitle("Systém na detekciu chýb");
         StatisticsController controller = loader.getController();
@@ -147,7 +147,7 @@ public class Controller {
         fileError.delete();
         File fileVariables = new File("variables.csv");
         fileVariables.delete();
-        File fileErrorTotal = new File("error-total.csv");
+        File fileErrorTotal = new File("statistics.csv");
         fileErrorTotal.delete();
     }
 }

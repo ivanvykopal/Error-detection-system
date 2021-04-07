@@ -8,6 +8,9 @@ package Compiler.SymbolTable;
  */
 public final class Kind {
 
+    /**
+     * Privátny konštruktor pre triedu {@code Kind}.
+     */
     private Kind() {}
 
     public static byte VARIABLE = 0;

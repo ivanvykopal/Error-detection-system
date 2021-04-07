@@ -62,8 +62,4 @@ public class Declarator extends Node {
         if (initializer != null) initializer.traverse(indent + "    ");
     }
 
-    public Node getBitsize() {
-        return null;
-    }
-
 }

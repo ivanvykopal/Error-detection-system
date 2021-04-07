@@ -25,14 +25,4 @@ public final class StructDeclarator extends Declarator {
         this.bitsize = bitsize;
     }
 
-    /**
-     * Metóda na zistenie vrcholu pre počet bitov.
-     *
-     * @return vrchol pre počet bitov.
-     */
-    @Override
-    public Node getBitsize() {
-        return bitsize;
-    }
-
 }

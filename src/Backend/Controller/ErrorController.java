@@ -40,25 +40,16 @@ public class ErrorController extends Controller {
     private HashMap<String, ArrayList<String>> table2 = new HashMap<>();
 
     @FXML
-    ComboBox<String> comboBox;
+    private ComboBox<String> comboBox;
 
     @FXML
-    TableView<TableRecord> errorTable;
+    private TableView<TableRecord> errorTable;
 
     @FXML
-    TableView<String> variableTable;
+    private TableView<String> variableTable;
 
     @FXML
-    TableColumn<ErrorRecord, String> codeColumn;
-
-    @FXML
-    TableColumn<ErrorRecord, String> messageColumn;
-
-    @FXML
-    TableColumn<ErrorRecord, String> lineColumn;
-
-    @FXML
-    TableColumn<String, String> variableColumn;
+    private TableColumn<String, String> variableColumn;
 
     /**
      * Konštruktor, v ktorom sa načítavajú údaje do tabuľky s chybami a možnosti zdieľania premenných v jednotlivých

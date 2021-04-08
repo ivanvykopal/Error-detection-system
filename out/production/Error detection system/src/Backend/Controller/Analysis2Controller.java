@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -123,77 +124,92 @@ public class Analysis2Controller extends Controller {
             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Analyzujem kódy.");
             File[] files = folder.listFiles();
 
-            Service<Void> service = new Service<Void>() {
-                @Override
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            int fileCount = 0;
-                            for (File file : files != null ? files : new File[0]) {
-                                if (file.isFile()) {
-                                    String name = file.toString();
-                                    if (!name.contains(".")) {
+            try {
+                Service<Void> service = new Service<Void>() {
+                    @Override
+                    protected Task<Void> createTask() {
+                        return new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                File fileAnalyzing = new File("unanalyzed_files.txt");
+                                fileAnalyzing.createNewFile();
+                                FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
+
+                                int fileCount = 0;
+                                for (File file : files != null ? files : new File[0]) {
+                                    if (file.isFile()) {
+                                        String name = file.toString();
+                                        if (!name.contains(".")) {
+                                            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                    "Súbor " + name + " nie je korektný.");
+                                            fileWriter.write("Súbor " + name + " nie je korektný.\n");
+                                            continue;
+                                        }
+                                        if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
+                                            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                    "Súbor " + name + " nemá príponu .c!");
+                                            fileWriter.write("Súbor " + name + " nemá príponu .c!");
+                                            continue;
+                                        }
+                                        String text = null;
+                                        try {
+                                            text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+                                        } catch (IOException e) {
+                                            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                                                    "Chyba pri načítaní zdrojového kódu!");
+                                            continue;
+                                        }
+
+                                        IncludePreprocessor prep = new IncludePreprocessor(text);
+                                        String lib = prep.process();
+                                        if (!lib.equals("")) {
+                                            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                                                    "Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                                            fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                                            continue;
+                                        }
                                         ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
-                                                "Súbor " + name + " nie je korektný.");
-                                        continue;
+                                                "Analyzujem súbor: " + file.getAbsolutePath() + "!");
+                                        fileCount++;
+                                        try {
+                                            ErrorDatabase errorDatabase = new ErrorDatabase();
+                                            Parser parser = new Parser(text, errorDatabase);
+                                            parser.parse(file.getName());
+                                            errorDatabase.createFile(file.getName());
+                                            if (!errorDatabase.isEmpty()) {
+                                                fileNames.add(file.getName());
+                                            }
+                                        } catch (Exception e) {
+                                            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                                                    "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
+                                        }
                                     }
-                                    if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
-                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
-                                                "Súbor " + name + " nemá príponu .c!");
-                                        continue;
-                                    }
-                                    String text = null;
+                                }
+
+                                final CountDownLatch latch = new CountDownLatch(1);
+                                int finalFileCount = fileCount;
+                                Platform.runLater(() -> {
                                     try {
-                                        text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+                                        showErrorWindow(fileNames, finalFileCount);
                                     } catch (IOException e) {
                                         ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
-                                                "Chyba pri načítaní zdrojového kódu!");
+                                                "Problém pri načítaní showErrorWindow()!");
+                                    } finally {
+                                        latch.countDown();
                                     }
-
-                                    IncludePreprocessor prep = new IncludePreprocessor(text);
-                                    if (!prep.process()) {
-                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
-                                                "Súbor " + file.getAbsolutePath() + " obsahuje aj študentom definované knižnice!");
-                                        continue;
-                                    }
-                                    ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
-                                            "Analyzujem súbor: " +  file.getAbsolutePath() + "!");
-                                    fileCount++;
-                                    try {
-                                        ErrorDatabase errorDatabase = new ErrorDatabase();
-                                        Parser parser = new Parser(text, errorDatabase);
-                                        parser.parse(file.getName());
-                                        errorDatabase.createFile(file.getName());
-                                        if (!errorDatabase.isEmpty()) {
-                                            fileNames.add(file.getName());
-                                        }
-                                    } catch (Exception e) {
-                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
-                                                "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
-                                    }
-                                }
+                                });
+                                latch.await();
+                                fileWriter.close();
+                                return null;
                             }
-
-                            final CountDownLatch latch = new CountDownLatch(1);
-                            int finalFileCount = fileCount;
-                            Platform.runLater(() -> {
-                                try {
-                                    showErrorWindow(fileNames, finalFileCount);
-                                } catch (IOException e) {
-                                    ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
-                                            "Problém pri načítaní showErrorWindow()!");
-                                } finally {
-                                    latch.countDown();
-                                }
-                            });
-                            latch.await();
-                            return null;
-                        }
-                    };
-                }
-            };
-            service.start();
+                        };
+                    }
+                };
+                service.start();
+            } catch (Exception e) {
+                ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                        "Problém pri analyzovaní zdrojových kódov!");
+            }
         }
     }
 

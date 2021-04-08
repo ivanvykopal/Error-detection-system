@@ -1,7 +1,6 @@
 package Backend.Controller;
 
 import Backend.ProgramLogger;
-import Compiler.Errors.ErrorRecord;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

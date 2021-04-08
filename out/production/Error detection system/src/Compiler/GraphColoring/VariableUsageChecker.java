@@ -267,7 +267,7 @@ public class VariableUsageChecker {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(VariableUsageChecker.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní variables.csv!");
+                    "Problém pri zápise variables.csv!");
         }
     }
 

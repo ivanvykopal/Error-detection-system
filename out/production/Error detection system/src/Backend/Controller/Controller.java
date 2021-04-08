@@ -142,12 +142,14 @@ public class Controller {
     /**
      * Metóda pre vymazanie vybraných súborov.
      */
-    protected void deleteFiles() {
+    protected static void deleteFiles() {
         File fileError = new File("errors.csv");
         fileError.delete();
         File fileVariables = new File("variables.csv");
         fileVariables.delete();
         File fileErrorTotal = new File("statistics.csv");
         fileErrorTotal.delete();
+        File fileAnalyzing = new File("unanalyzed_files.txt");
+        fileAnalyzing.delete();
     }
 }

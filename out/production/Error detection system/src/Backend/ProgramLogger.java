@@ -3,6 +3,7 @@ package Backend;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,6 +39,7 @@ public class ProgramLogger {
         }
 
         logger = Logger.getLogger(className);
+        logger.setUseParentHandlers(false);
         if (handler != null) {
             logger.addHandler(handler);
         }

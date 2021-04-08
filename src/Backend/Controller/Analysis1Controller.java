@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -90,46 +91,55 @@ public class Analysis1Controller extends Controller {
      */
     @FXML
     public void analyzeCode() {
-        deleteFiles();
-        Alert warning = new Alert(Alert.AlertType.WARNING);
-        if (absolutePath == null) {
-            warning.setContentText("Nie je vybraný súbor alebo vybraný súbor je chybný!");
-            warning.setHeaderText("Nesprávny súbor!");
-            warning.setTitle("Upozornenie");
-            warning.show();
-            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
-        }
-        else {
-            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Analyzujem kód.");
-            try {
-                //načíta súbor do reťazca
-                String text = new String(Files.readAllBytes(Paths.get(absolutePath)));
-                IncludePreprocessor prep = new IncludePreprocessor(text);
-                if (!prep.process()) {
-                    ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                            "Súbor " + absolutePath + " obsahuje aj študentom definované knižnice!");
-                    return;
-                }
-                ErrorDatabase errorDatabase = new ErrorDatabase();
-                Parser parser = new Parser(text, errorDatabase);
-                parser.parse(file);
-                errorDatabase.createFile(file);
-                if (errorDatabase.isEmpty()) {
-                    showErrorWindow(new ArrayList<>(), 1);
-                } else {
-                    showErrorWindow(new ArrayList<>(Collections.singletonList(file)), 1);
-                }
-            } catch (IOException er) {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                        "Vyskytla sa chyba pri práci s I/O súbormi!");
-                er.printStackTrace();
+        try {
+            File fileAnalyzing = new File("unanalyzed_files.txt");
+            deleteFiles();
+            fileAnalyzing.createNewFile();
+            FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
 
-            } catch (Exception e) {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                        "Vyskytla sa chyba spôsobená parserom!");
-                e.printStackTrace();
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            if (absolutePath == null) {
+                warning.setContentText("Nie je vybraný súbor alebo vybraný súbor je chybný!");
+                warning.setHeaderText("Nesprávny súbor!");
+                warning.setTitle("Upozornenie");
+                warning.show();
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
             }
+            else {
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Analyzujem kód.");
+                try {
+                    //načíta súbor do reťazca
+                    String text = new String(Files.readAllBytes(Paths.get(absolutePath)));
+                    IncludePreprocessor prep = new IncludePreprocessor(text);
+                    String lib = prep.process();
+                    if (!lib.equals("")) {
+                        ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                                "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                        fileWriter.write("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
+                        return;
+                    }
+                    ErrorDatabase errorDatabase = new ErrorDatabase();
+                    Parser parser = new Parser(text, errorDatabase);
+                    parser.parse(file);
+                    errorDatabase.createFile(file);
+                    if (errorDatabase.isEmpty()) {
+                        showErrorWindow(new ArrayList<>(), 1);
+                    } else {
+                        showErrorWindow(new ArrayList<>(Collections.singletonList(file)), 1);
+                    }
+                } catch (IOException er) {
+                    ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                            "Vyskytla sa chyba pri práci s I/O súbormi!");
 
+                } catch (Exception e) {
+                    ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                            "Vyskytla sa chyba spôsobená parserom!");
+                }
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                    "Problém pri čítaní unanalyzed_files.txt");
         }
     }
 

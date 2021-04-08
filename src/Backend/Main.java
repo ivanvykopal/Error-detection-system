@@ -1,5 +1,6 @@
 package Backend;
 
+import Backend.Controller.ConsoleController;
 import Backend.Controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -44,7 +45,26 @@ public class Main extends Application {
      * @param args argumenty programu
      */
     public static void main(String[] args) {
-        launch(args);
+        if (args.length < 1) {
+            launch(args);
+        } else {
+            if (args.length == 1) {
+                switch (args[0]) {
+                    case "console" :
+                        ConsoleController.runConsole();
+                        break;
+                    case "gui" :
+                        launch(args);
+                        break;
+                    default:
+                        System.out.println("Nesprávny argument programu!");
+                        break;
+                }
+            } else {
+                System.out.println("Program požaduje len jeden argument!");
+            }
+        }
+
     }
 
     /**

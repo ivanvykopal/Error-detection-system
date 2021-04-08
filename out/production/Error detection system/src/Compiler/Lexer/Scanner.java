@@ -583,17 +583,15 @@ public final class Scanner {
         try {
             File file = new File("config/types.config");
             scanner = new java.util.Scanner(file);
-            System.out.println("súbor types.config");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             InputStream is = getClass().getResourceAsStream("/config/types.config");
             scanner = new java.util.Scanner(is);
-            System.out.println("default types.config");
         }
         try {
             while (scanner.hasNextLine()) {
                 String configLine = scanner.nextLine();
-                if (configLine.contains(identifier+",")) {
+                if (configLine.contains(identifier+"=")) {
                     String[] words = configLine.split("=");
                     if (!words[0].trim().equals(identifier)) {
                         continue;

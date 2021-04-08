@@ -21,20 +21,21 @@ public class IncludePreprocessor {
     /**
      * Metóda na zistenie, či súbor obsahuje aj inú knižnicu ako sú štandardné knižnice.
      *
-     * @return true, ak obsahuje len štandardné knižnice
-     *         false, ak obsahuje aj študentom vytvorené knižnice.
+     * @return prázdny reťazec, ak obsahuje len štandardné knižnice
+     *         názov nepodporovanej knižnice, ak obsahuje aj študentom vytvorené knižnice.
      */
-    public boolean process() {
+    public String process() {
         String[] lines = file.split("\n");
 
         for (String line : lines) {
             if (!line.trim().equals("") && line.trim().charAt(0) == '#' && line.contains("include")) {
-                if (!preprocessInclude(line)) {
-                    return false;
+                String lib = preprocessInclude(line);
+                if (!lib.equals("")) {
+                    return lib;
                 }
             }
         }
-        return true;
+        return "";
     }
 
     /**
@@ -42,9 +43,9 @@ public class IncludePreprocessor {
      *
      * @param line riadok s #include a s knižnicou
      *
-     * @return true, ak ide o štandardnú knižnicu, inak false
+     * @return názov nepodporovanej knižnice, ak taká je, inak prázdny reťazec
      */
-    private boolean preprocessInclude(String line) {
+    private String preprocessInclude(String line) {
         //zmaže medzery
         String temp = line.replaceAll(" ", "");
 
@@ -52,6 +53,8 @@ public class IncludePreprocessor {
         for (int i = 9; i <temp.length(); i++) {
             if (Character.isLetterOrDigit(temp.charAt(i)) || temp.charAt(i) == '_' || temp.charAt(i) == '.') {
                 word.append(temp.charAt(i));
+            } else {
+                break;
             }
         }
 
@@ -86,10 +89,9 @@ public class IncludePreprocessor {
             case "wchar.h":
             case "wctype.h":
             case "malloc.h":
-            case "regex.h":
-                return true;
+                return "";
             default:
-                return false;
+                return word.toString();
         }
     }
 }

@@ -4,15 +4,15 @@ import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -33,9 +33,10 @@ public final class ConsoleController extends Controller {
     private ConsoleController() {}
 
     /**
-     * Metóda pre
+     * Metóda pre spustenie pprogramu v konzolovej verzii.
      */
     public static void runConsole() {
+        deleteLogFile();
         while (true) {
             System.out.println("------------------------------------------------------------------------------------------------------------------");
             System.out.println("                                            Systém na detekciu chýb");
@@ -63,6 +64,11 @@ public final class ConsoleController extends Controller {
                     System.out.println("Nesprávna možnosť!\n");
                     break;
             }
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -88,13 +94,18 @@ public final class ConsoleController extends Controller {
             fileAnalyzing.createNewFile();
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
             try {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Analyzujem kód.");
                 File file = new File(input);
+                if (!file.exists()) {
+                    System.out.println("Zadaný súbor neexistuje! Nie je podporovaná diakritika!");
+                    ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný súbor neexistuje!");
+                    return;
+                }
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, "Analyzujem kód.");
                 String text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                 IncludePreprocessor prep = new IncludePreprocessor(text);
                 String lib = prep.process();
                 if (!lib.equals("")) {
-                    ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                    ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                             "Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                     fileWriter.write("Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
                     return;
@@ -112,10 +123,10 @@ public final class ConsoleController extends Controller {
                     System.out.println("Pri ďalšej analýze sú tieto výsledky premazané!\n");
                 }
             } catch (IOException er) {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                         "Vyskytla sa chyba pri práci s I/O súbormi!");
             } catch (Exception e) {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                         "Vyskytla sa chyba spôsobená parserom!");
             }
         } catch (IOException e) {
@@ -139,15 +150,21 @@ public final class ConsoleController extends Controller {
         System.out.print("Zadajte úplnú cestu k adresáru so zdrojovými kódmi: ");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().trim();
+
         try {
             File fileAnalyzing = new File("unanalyzed_files.txt");
             deleteFiles();
             fileAnalyzing.createNewFile();
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
 
-            System.out.println("Prebieha analyzovanie zdrojových kódov. Po ukončení analýzy sa zobrazí správa.");
-            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Analyzujem kódy.");
             File folder = new File(input);
+            if (!folder.exists()) {
+                System.out.println("Zadaný adresár neexistuje! Nie je podporovaná diakritika!");
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný adresár neexistuje!");
+                return;
+            }
+            System.out.println("Prebieha analyzovanie zdrojových kódov. Po ukončení analýzy sa zobrazí správa.");
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, "Analyzujem kódy.");
             File[] files = folder.listFiles();
             int fileCount = 0;
 
@@ -155,13 +172,13 @@ public final class ConsoleController extends Controller {
                 if (file.isFile()) {
                     String name = file.toString();
                     if (!name.contains(".")) {
-                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                        ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                                 "Súbor " + name + " nie je korektný.");
                         fileWriter.write("Súbor " + name + " nie je korektný.\n");
                         continue;
                     }
                     if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
-                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                        ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                                 "Súbor " + name + " nemá príponu .c!");
                         fileWriter.write("Súbor " + name + " nemá príponu .c!");
                         continue;
@@ -170,7 +187,7 @@ public final class ConsoleController extends Controller {
                     try {
                         text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                     } catch (IOException e) {
-                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                        ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                                 "Chyba pri načítaní zdrojového kódu!");
                         continue;
                     }
@@ -178,12 +195,12 @@ public final class ConsoleController extends Controller {
                     IncludePreprocessor prep = new IncludePreprocessor(text);
                     String lib = prep.process();
                     if (!lib.equals("")) {
-                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                        ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                                 "Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                         fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                         continue;
                     }
-                    ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
+                    ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                             "Analyzujem súbor: " + file.getAbsolutePath() + "!");
                     fileCount++;
                     try {
@@ -192,7 +209,7 @@ public final class ConsoleController extends Controller {
                         parser.parse(file.getName());
                         errorDatabase.createFile(file.getName());
                     } catch (Exception e) {
-                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
+                        ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                                 "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
                     }
                 }
@@ -264,7 +281,7 @@ public final class ConsoleController extends Controller {
             }
             fileWriter.close();
         } catch (IOException e) {
-            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                     "Problém pri zápise do statisticscsv!");
         }
     }
@@ -321,8 +338,16 @@ public final class ConsoleController extends Controller {
             }
             reader.close();
         } catch (FileNotFoundException | NumberFormatException e) {
-            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                     "Problém pri čítaní z errors.csv!");
         }
+    }
+
+    /**
+     * Metóda pre vymazanie súboru s logmi.
+     */
+    private static void deleteLogFile() {
+        File fileError = new File("logs/log-file.log");
+        fileError.delete();
     }
 }

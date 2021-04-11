@@ -255,7 +255,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.IDENTIFIER:
                 Record record = symbolTable.lookup(getTokenValue());
-                if (record == null || (record.getKind() != Kind.ENUMERATION_CONSTANT /*&& record.getKind() != Kind.TYPEDEF_NAME*/)) {
+                if (record == null || (record.getKind() != Kind.ENUMERATION_CONSTANT && record.getKind() != Kind.TYPEDEF_NAME)) {
                     nextToken();
                     return new Identifier(getTokenValue(position - 1), getTokenLine(position - 1));
                 }

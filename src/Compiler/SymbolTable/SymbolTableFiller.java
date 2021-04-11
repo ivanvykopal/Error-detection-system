@@ -676,7 +676,6 @@ public final class SymbolTableFiller {
             File file = new File("config/libraryVariables.config");
             scanner = new java.util.Scanner(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
             InputStream is = SymbolTableFiller.class.getResourceAsStream("/config/libraryVariables.config");
             scanner = new java.util.Scanner(is);
         }

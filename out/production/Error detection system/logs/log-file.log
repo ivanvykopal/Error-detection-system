@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:28</date>
+  <millis>1618131628462</millis>
+  <sequence>0</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem kódy.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:28</date>
+  <millis>1618131628561</millis>
+  <sequence>1</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:30</date>
+  <millis>1618131630971</millis>
+  <sequence>2</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main1.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:31</date>
+  <millis>1618131631761</millis>
+  <sequence>3</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main10.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:32</date>
+  <millis>1618131632325</millis>
+  <sequence>4</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main11.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:33</date>
+  <millis>1618131633080</millis>
+  <sequence>5</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main12.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:33</date>
+  <millis>1618131633812</millis>
+  <sequence>6</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main13.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:34</date>
+  <millis>1618131634788</millis>
+  <sequence>7</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main14.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:36</date>
+  <millis>1618131636324</millis>
+  <sequence>8</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main15.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:37</date>
+  <millis>1618131637001</millis>
+  <sequence>9</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main16.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:39</date>
+  <millis>1618131639088</millis>
+  <sequence>10</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main17.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:40</date>
+  <millis>1618131640302</millis>
+  <sequence>11</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main18.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:42</date>
+  <millis>1618131642184</millis>
+  <sequence>12</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main19.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:45</date>
+  <millis>1618131645071</millis>
+  <sequence>13</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main2.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:45</date>
+  <millis>1618131645986</millis>
+  <sequence>14</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main20.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:48</date>
+  <millis>1618131648140</millis>
+  <sequence>15</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main21.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:49</date>
+  <millis>1618131649238</millis>
+  <sequence>16</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main22.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:50</date>
+  <millis>1618131650621</millis>
+  <sequence>17</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main23.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:51</date>
+  <millis>1618131651616</millis>
+  <sequence>18</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main24.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:53</date>
+  <millis>1618131653634</millis>
+  <sequence>19</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main25.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:54</date>
+  <millis>1618131654904</millis>
+  <sequence>20</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main26.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:55</date>
+  <millis>1618131655610</millis>
+  <sequence>21</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main27.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:56</date>
+  <millis>1618131656681</millis>
+  <sequence>22</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main28.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:57</date>
+  <millis>1618131657248</millis>
+  <sequence>23</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main29.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:00:58</date>
+  <millis>1618131658779</millis>
+  <sequence>24</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main3.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:01</date>
+  <millis>1618131661960</millis>
+  <sequence>25</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main30.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:02</date>
+  <millis>1618131662735</millis>
+  <sequence>26</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main31.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:03</date>
+  <millis>1618131663508</millis>
+  <sequence>27</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main32.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:05</date>
+  <millis>1618131665829</millis>
+  <sequence>28</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main33.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:07</date>
+  <millis>1618131667432</millis>
+  <sequence>29</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main34.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:08</date>
+  <millis>1618131668973</millis>
+  <sequence>30</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main35.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:09</date>
+  <millis>1618131669649</millis>
+  <sequence>31</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main36.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:11</date>
+  <millis>1618131671546</millis>
+  <sequence>32</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main37.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:12</date>
+  <millis>1618131672107</millis>
+  <sequence>33</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main38.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:13</date>
+  <millis>1618131673257</millis>
+  <sequence>34</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main39.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:14</date>
+  <millis>1618131674177</millis>
+  <sequence>35</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main4.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:14</date>
+  <millis>1618131674852</millis>
+  <sequence>36</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main40.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:16</date>
+  <millis>1618131676072</millis>
+  <sequence>37</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main41.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:18</date>
+  <millis>1618131678195</millis>
+  <sequence>38</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main42.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:18</date>
+  <millis>1618131678909</millis>
+  <sequence>39</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main43.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:20</date>
+  <millis>1618131680624</millis>
+  <sequence>40</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main44.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:21</date>
+  <millis>1618131681279</millis>
+  <sequence>41</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main45.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:22</date>
+  <millis>1618131682534</millis>
+  <sequence>42</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main46.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:23</date>
+  <millis>1618131683701</millis>
+  <sequence>43</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main47.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:27</date>
+  <millis>1618131687698</millis>
+  <sequence>44</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main48.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:29</date>
+  <millis>1618131689592</millis>
+  <sequence>45</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main49.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:30</date>
+  <millis>1618131690172</millis>
+  <sequence>46</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main5.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:30</date>
+  <millis>1618131690419</millis>
+  <sequence>47</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main50.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:31</date>
+  <millis>1618131691085</millis>
+  <sequence>48</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main51.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:31</date>
+  <millis>1618131691914</millis>
+  <sequence>49</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main52.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:32</date>
+  <millis>1618131692600</millis>
+  <sequence>50</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main6.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:33</date>
+  <millis>1618131693206</millis>
+  <sequence>51</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main7.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:33</date>
+  <millis>1618131693370</millis>
+  <sequence>52</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main8.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-04-11T11:01:34</date>
+  <millis>1618131694673</millis>
+  <sequence>53</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojové kódy\HW06\main9.c!</message>
+</record>
+</log>

@@ -28,13 +28,11 @@ public class ProgramLogger {
         try {
             handler = new FileHandler("logs/log-file.log", true);
         } catch (IOException e) {
-            e.printStackTrace();
             File file = new File("logs/log-file.log");
             try {
                 file.createNewFile();
                 handler = new FileHandler("logs/log-file.log", true);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
 

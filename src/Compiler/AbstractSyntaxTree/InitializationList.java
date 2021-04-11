@@ -39,7 +39,7 @@ public final class InitializationList extends Node {
     }
 
     /**
-     * Metóda pre pridanie yužitia premenných v rámci {@code Assignment}, pre zadaný riadok.
+     * Metóda pre pridanie yužitia premenných v rámci {@code InitializationList}, pre zadaný riadok.
      *
      * @param table symbolická tabuľka
      *

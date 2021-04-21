@@ -53,7 +53,6 @@ public class Index {
         access.add(index);
     }
 
-    //TODO: premyslieť názov
     /**
      * Metóda na nastavenie informácií o uložení premennej v zreťazenom zozname symbolických tabuliek.
      *

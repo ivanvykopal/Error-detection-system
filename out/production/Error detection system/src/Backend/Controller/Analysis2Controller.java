@@ -70,7 +70,7 @@ public class Analysis2Controller extends Controller {
     @FXML
     public void getFolder() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Vyberte priečinok");
+        directoryChooser.setTitle("Vyberte Adresár");
 
         File selectedDirectory = directoryChooser.showDialog(null);
 
@@ -106,10 +106,10 @@ public class Analysis2Controller extends Controller {
         Alert warning = new Alert(Alert.AlertType.WARNING);
         if (folder == null) {
             warning.setContentText("Nie je vybraný priečinok alebo vybraný priečinok je chybný!");
-            warning.setHeaderText("Nesprávny priečinok!");
+            warning.setHeaderText("Nesprávny adresár!");
             warning.setTitle("Upozornenie");
             warning.show();
-            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
+            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Problém s adresárom!");
         }
         else {
             btnAnalyse.setOnAction(null);
@@ -148,7 +148,7 @@ public class Analysis2Controller extends Controller {
                                         if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
                                             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
                                                     "Súbor " + name + " nemá príponu .c!");
-                                            fileWriter.write("Súbor " + name + " nemá príponu .c!");
+                                            fileWriter.write("Súbor " + name + " nemá príponu .c!\n");
                                             continue;
                                         }
                                         String text = null;
@@ -165,7 +165,7 @@ public class Analysis2Controller extends Controller {
                                         if (!lib.equals("")) {
                                             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
                                                     "Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                                            fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                                            fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
                                             continue;
                                         }
                                         ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
@@ -182,6 +182,7 @@ public class Analysis2Controller extends Controller {
                                         } catch (Exception e) {
                                             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
                                                     "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
+                                            fileWriter.write("Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!\n");
                                         }
                                     }
                                 }

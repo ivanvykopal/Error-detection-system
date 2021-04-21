@@ -584,7 +584,6 @@ public final class Scanner {
             File file = new File("config/types.config");
             scanner = new java.util.Scanner(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
             InputStream is = getClass().getResourceAsStream("/config/types.config");
             scanner = new java.util.Scanner(is);
         }

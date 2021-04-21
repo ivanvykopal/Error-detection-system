@@ -56,7 +56,7 @@ public final class UnaryOperator extends Node {
                 SymbolTableFiller.resolveInitialization(expression, table, errorDatabase);
             }
             if (operator.equals("*") || operator.equals("sizeof")) {
-                SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, false);
+                SymbolTableFiller.resolveUsage(expression, table, errorDatabase, false, false);
             } else {
                 SymbolTableFiller.resolveUsage(expression, table, errorDatabase, true, true);
             }

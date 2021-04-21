@@ -72,11 +72,10 @@ public class Parser {
      */
     public void parse(String fileName) {
         ArrayList<Node> child = translation_unit();
-        Node parseTree;
         if (child == null) {
             System.out.println("Chyba v parse tree!");
         } else {
-            parseTree = new AST(child);
+            Node parseTree = new AST(child);
             //parseTree.traverse("");
             //symbolTable.printSymbolTable(0);
             if (errorDatabase.isEmpty()) {
@@ -2061,7 +2060,7 @@ public class Parser {
                 errorDatabase = copyErrorDatabase;
                 return new None();
         }
-        //TODO: nie som si istý
+
         if (getTokenTag() < 32) {
             errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
             return null;
@@ -2681,7 +2680,7 @@ public class Parser {
                 return decl;
             }
         }
-        //TODO: zistiť prečo
+
         if (typeNode.getTypes().size() == 0) {
             typeNode.addType(new IdentifierType(new ArrayList<>(Collections.singletonList("int")), child1.getLine()));
         }
@@ -4172,7 +4171,6 @@ public class Parser {
                         return new Return(child1, line, symbolTable, errorDatabase);
                     }
                 }
-                //TODO: odchytiť chybu
                 return null;
         }
         return new None();
@@ -4363,7 +4361,9 @@ public class Parser {
     /**
      * Metóda pre vytvorenie deklarácie na základe zadaného typu.
      *
-     * <p> TODO:
+     * <p> Táto metóda vytvára deklaráciu premenných. umožňuje vytvárať aj také deklarácie, ktoré sa nachádzajú na
+     * jednom riadku. Počas deklarácie sa jednotlivé premenné pridaávajú aj do symbolickej tabuľky. V tejto metóda
+     * prebieha aj kontrola typov v prípade, ak deklarovanú hodnotu inicializujeme.
      *
      * @param typeNode vrchol pre typ deklarácie
      *

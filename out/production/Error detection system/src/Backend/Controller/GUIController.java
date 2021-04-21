@@ -56,7 +56,6 @@ public class GUIController extends Application {
         } catch (IOException e) {
             ProgramLogger.createLogger(Main.class.getName()).log(Level.WARNING,
                     "Vyskytla sa chyba pri práci s I/O súbormi!");
-            e.printStackTrace();
         }
     }
 

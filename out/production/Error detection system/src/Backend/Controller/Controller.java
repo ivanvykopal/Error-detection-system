@@ -147,9 +147,11 @@ public class Controller {
         fileError.delete();
         File fileVariables = new File("variables.csv");
         fileVariables.delete();
-        File fileErrorTotal = new File("statistics.csv");
+        File fileErrorTotal = new File("total_statistics.csv");
         fileErrorTotal.delete();
         File fileAnalyzing = new File("unanalyzed_files.txt");
         fileAnalyzing.delete();
+        File fileStatistics = new File("program_statistics.csv");
+        fileStatistics.delete();
     }
 }

@@ -44,7 +44,8 @@ public class VariableUsageChecker {
         }
 
         for (SymbolTable tab : symbolTable.getChilds()) {
-            ArrayList<Index> indexes = findGlobal(symbolTable);
+            /*ArrayList<Index> indexes = findGlobal(symbolTable);*/
+            ArrayList<Index> indexes = new ArrayList<>();
             ArrayList<Integer> list = new ArrayList<>();
             createIndexes(tab, list, indexes);
             byte[][] matrix = MatrixBuilder.createMatrix(tab, indexes);
@@ -209,7 +210,7 @@ public class VariableUsageChecker {
             variables[i] = new ArrayList<>();
         }
 
-        int maxColor = 0;
+        int maxColor = -1;
         for (int i = 0; i < rows; i++) {
             if ((colors[i] - 1) > maxColor) {
                 maxColor = colors[i] - 1;
@@ -217,7 +218,7 @@ public class VariableUsageChecker {
             variables[colors[i] - 1].add(i);
         }
 
-        if (maxColor != rows - 1 && maxColor != 0) {
+        if (maxColor != rows - 1 && maxColor != -1) {
             findErrorType(maxColor, variables, indexes, errorDatabase, table);
         }
 
@@ -235,7 +236,7 @@ public class VariableUsageChecker {
      */
     private void createVariables(int size, ArrayList<Integer>[] variables, ArrayList<Index> indexes) {
         try {
-            if (size == 0) {
+            if (size == -1) {
                 return;
             }
             File fileVariables = new File("variables.csv");

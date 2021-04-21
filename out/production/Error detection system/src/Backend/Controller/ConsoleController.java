@@ -4,11 +4,9 @@ import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -26,6 +24,9 @@ public final class ConsoleController extends Controller {
 
     /** Atribút table predstavuje tabuľku s chybami pre jednotlivé zdrojové kódy. **/
     private static HashMap<String, ArrayList<TableRecord>> table;
+
+    /** **/
+    private static int allErrorCount = 0;
 
     /**
      * Privátny konštruktor pre triedu {@code ConsoleController}
@@ -66,8 +67,7 @@ public final class ConsoleController extends Controller {
             }
             try {
                 TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
     }
@@ -95,7 +95,7 @@ public final class ConsoleController extends Controller {
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
             try {
                 File file = new File(input);
-                if (!file.exists()) {
+                if (!file.exists() || !file.isFile()) {
                     System.out.println("Zadaný súbor neexistuje! Nie je podporovaná diakritika!");
                     ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný súbor neexistuje!");
                     return;
@@ -119,6 +119,7 @@ public final class ConsoleController extends Controller {
                 } else {
                     readErrorFile();
                     fillTableForAll(1);
+                    createStatisticsForOne();
                     System.out.println("\nVýsledky analýzy boli uložené v adresári " + new File("").getAbsolutePath() + "!");
                     System.out.println("Pri ďalšej analýze sú tieto výsledky premazané!\n");
                 }
@@ -128,9 +129,13 @@ public final class ConsoleController extends Controller {
             } catch (Exception e) {
                 ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                         "Vyskytla sa chyba spôsobená parserom!");
+                fileWriter.write("Chyba pri analyzovaní súboru " + input + "!\n");
+            } finally {
+                fileWriter.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
+                    "Vyskytla sa chyba pri vytváraní unanalyzed_files.txt!");
         }
     }
 
@@ -146,6 +151,7 @@ public final class ConsoleController extends Controller {
      */
     private static void analyzeCodes() {
         table = new HashMap<>();
+        allErrorCount = 0;
         System.out.print("\n");
         System.out.print("Zadajte úplnú cestu k adresáru so zdrojovými kódmi: ");
         Scanner scanner = new Scanner(System.in);
@@ -158,7 +164,7 @@ public final class ConsoleController extends Controller {
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
 
             File folder = new File(input);
-            if (!folder.exists()) {
+            if (!folder.exists() || !folder.isDirectory()) {
                 System.out.println("Zadaný adresár neexistuje! Nie je podporovaná diakritika!");
                 ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný adresár neexistuje!");
                 return;
@@ -180,7 +186,7 @@ public final class ConsoleController extends Controller {
                     if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                                 "Súbor " + name + " nemá príponu .c!");
-                        fileWriter.write("Súbor " + name + " nemá príponu .c!");
+                        fileWriter.write("Súbor " + name + " nemá príponu .c!\n");
                         continue;
                     }
                     String text = null;
@@ -197,7 +203,7 @@ public final class ConsoleController extends Controller {
                     if (!lib.equals("")) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
                                 "Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                        fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                        fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
                         continue;
                     }
                     ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
@@ -211,17 +217,21 @@ public final class ConsoleController extends Controller {
                     } catch (Exception e) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                                 "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
+                        fileWriter.write("Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!\n");
                     }
                 }
             }
             readErrorFile();
             fillTableForAll(fileCount);
+            createStatisticsForOne();
+            System.out.println("\nPriemerný počet chýb pre zdrojový kód: " + allErrorCount / fileCount);
             System.out.println("\nVýsledky analýzy boli uložené v adresári " + new File("").getAbsolutePath() + "!");
             System.out.println("Pri ďalšej analýze sú tieto výsledky premazané!\n");
 
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
+                    "Vyskytla sa chyba pri vytváraní unanalyzed_files.txt!");
         }
     }
 
@@ -232,7 +242,6 @@ public final class ConsoleController extends Controller {
      */
     private static void fillTableForAll(int fileCount) {
         HashMap<String, TableRecord> allCodesTable = new HashMap<>();
-        int allErrorCount = 0;
 
         for (String key : table.keySet()) {
             ArrayList<TableRecord> records = table.get(key);
@@ -265,7 +274,7 @@ public final class ConsoleController extends Controller {
     private static void createStatistics(HashMap<String, TableRecord> errorTable, int allErrorCount, int fileCount) {
         HashMap<String, Integer> fileErrorCount = findFileErrorCount();
         try {
-            File fileVariables = new File("statistics.csv");
+            File fileVariables = new File("total_statistics.csv");
             fileVariables.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileVariables, true);
@@ -282,7 +291,7 @@ public final class ConsoleController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do statisticscsv!");
+                    "Problém pri zápise do total_statistics.csv!");
         }
     }
 
@@ -349,5 +358,46 @@ public final class ConsoleController extends Controller {
     private static void deleteLogFile() {
         File fileError = new File("logs/log-file.log");
         fileError.delete();
+    }
+
+    /**
+     * Metóda pre vytvorenie súboru so štatistikami pre jednotlivé zdojové kódy.
+     */
+    public static void createStatisticsForOne() {
+        HashMap<String, TableRecord> oneCodeTable;
+
+        File fileStatistics = new File("program_statistics.csv");
+        try {
+            fileStatistics.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(fileStatistics, true);
+            ArrayList<String> keys = new ArrayList<>(table.keySet());
+            Collections.sort(keys);
+
+            for (String key : table.keySet()) {
+                oneCodeTable = new HashMap<>();
+                ArrayList<TableRecord> records = table.get(key);
+
+                for (TableRecord tbRecord: records) {
+                    TableRecord oneCodeRecord = oneCodeTable.get(tbRecord.getCode());
+                    if (oneCodeRecord == null) {
+                        oneCodeTable.put(tbRecord.getCode(), new TableRecord(1, tbRecord.getMessage(), tbRecord.getCode()));
+                    } else {
+                        oneCodeRecord.setNumber(oneCodeRecord.getNumber() + 1);
+                        oneCodeTable.put(tbRecord.getCode(), oneCodeRecord);
+                    }
+                }
+
+                for (String keyValue : oneCodeTable.keySet()) {
+                    TableRecord record = oneCodeTable.get(keyValue);
+                    fileWriter.write(key + ", " + keyValue + ", " + record.getMessage() + ", " + record.getNumber() +"\n");
+                }
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+                    "Problém pri zápise do program_statistics.csv!");
+        }
+
     }
 }

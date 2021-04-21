@@ -134,6 +134,7 @@ public class Analysis1Controller extends Controller {
                 } catch (Exception e) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                             "Vyskytla sa chyba spôsobená parserom!");
+                    fileWriter.write("Chyba pri analyzovaní súboru " + absolutePath + "!\n");
                 }
             }
             fileWriter.close();

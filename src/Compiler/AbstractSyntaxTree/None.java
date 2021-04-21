@@ -1,5 +1,5 @@
 package Compiler.AbstractSyntaxTree;
-//TODO: vymyslieť lepší popis
+
 /**
  * Trieda predstavujúca vrchol, ktorý naznačuje, že nebol nájdený iný vrchol.
  *

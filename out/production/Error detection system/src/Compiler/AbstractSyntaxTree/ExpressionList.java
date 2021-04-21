@@ -3,7 +3,6 @@ package Compiler.AbstractSyntaxTree;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.SymbolTable;
 import Compiler.SymbolTable.SymbolTableFiller;
-
 import java.util.ArrayList;
 
 /**
@@ -35,7 +34,7 @@ public final class ExpressionList extends Node {
         setLine(line);
 
         for (Node node : expressions) {
-            SymbolTableFiller.resolveUsage(node, table, errorDatabase, true, true);
+            SymbolTableFiller.resolveUsage(node, table, errorDatabase, false, true);
         }
     }
 

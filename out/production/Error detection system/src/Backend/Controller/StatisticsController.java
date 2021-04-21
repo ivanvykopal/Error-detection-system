@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import java.io.File;
 import java.io.FileWriter;
@@ -182,10 +181,10 @@ public class StatisticsController extends Controller {
         HashMap<String, Integer> fileErrorCount = findFileErrorCount();
         ArrayList<SummaryTableRecord> records = new ArrayList<>();
         try {
-            File fileVariables = new File("statistics.csv");
-            fileVariables.createNewFile();
+            File fileStatistics = new File("total_statistics.csv");
+            fileStatistics.createNewFile();
 
-            FileWriter fileWriter = new FileWriter(fileVariables, true);
+            FileWriter fileWriter = new FileWriter(fileStatistics, true);
             for (String key: errorTable.keySet()) {
                 TableRecord record = errorTable.get(key);
                 int count = fileErrorCount.get(key);
@@ -201,7 +200,7 @@ public class StatisticsController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do statisticscsv!");
+                    "Problém pri zápise do total_statistics.csv!");
         }
         ObservableList<SummaryTableRecord> data2 = FXCollections.observableArrayList(records);
         errorTablePercent.setItems(data2);
@@ -214,6 +213,7 @@ public class StatisticsController extends Controller {
     public void fillTables() {
         fillTableForAll();
         fillMeanErrorCount();
+        createStatisticsForOne();
     }
 
     /**
@@ -252,6 +252,46 @@ public class StatisticsController extends Controller {
      */
     public void setFileCount(int count) {
         this.fileCount = count;
+    }
+
+    /**
+     * Metóda pre vytvorenie súboru so štatistikami pre jednotlivé zdojové kódy.
+     */
+    public void createStatisticsForOne() {
+        HashMap<String, TableRecord> oneCodeTable;
+
+        File fileStatistics = new File("program_statistics.csv");
+        try {
+            fileStatistics.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(fileStatistics, true);
+            ArrayList<String> keys = new ArrayList<>(table.keySet());
+            Collections.sort(keys);
+
+            for (String key : keys) {
+                oneCodeTable = new HashMap<>();
+                ArrayList<TableRecord> records = table.get(key);
+
+                for (TableRecord tbRecord: records) {
+                    TableRecord oneCodeRecord = oneCodeTable.get(tbRecord.getCode());
+                    if (oneCodeRecord == null) {
+                        oneCodeTable.put(tbRecord.getCode(), new TableRecord(1, tbRecord.getMessage(), tbRecord.getCode()));
+                    } else {
+                        oneCodeRecord.setNumber(oneCodeRecord.getNumber() + 1);
+                        oneCodeTable.put(tbRecord.getCode(), oneCodeRecord);
+                    }
+                }
+
+                for (String keyValue : oneCodeTable.keySet()) {
+                    TableRecord record = oneCodeTable.get(keyValue);
+                    fileWriter.write(key + ", " + keyValue + ", " + record.getMessage() + ", " + record.getNumber() + "\n");
+                }
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
+                    "Problém pri zápise do program_statistics.csv!");
+        }
     }
 
 }

@@ -22,17 +22,17 @@
    <children>
       <VBox alignment="CENTER" spacing="50.0" GridPane.columnSpan="2" GridPane.rowSpan="4">
          <children>
-            <Label text="Vyberte priečinok z počítača" textAlignment="CENTER">
+            <Label text="Vyberte adresár z počítača" textAlignment="CENTER">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label fx:id="warning" text="Nebol načítaný žiaden priečinok!" textFill="RED">
+            <Label fx:id="warning" text="Nebol načítaný žiaden adresár!" textFill="RED">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Button fx:id="btnChooseFolder" mnemonicParsing="false" onAction="#getFolder" prefHeight="31.0" prefWidth="300.0" text="Načítať priečinok">
+            <Button fx:id="btnChooseFolder" mnemonicParsing="false" onAction="#getFolder" prefHeight="31.0" prefWidth="300.0" text="Načítať adresár">
                <font>
                   <Font size="15.0" />
                </font>

@@ -1,0 +1,2 @@
+Súbor D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW05\student9_5.c obsahuje nepodporovanú knižnicu: valgrind!
+Súbor D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW05\student9_6.c obsahuje nepodporovanú knižnicu: valgrind!

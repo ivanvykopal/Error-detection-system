@@ -374,7 +374,7 @@ public final class ConsoleController extends Controller {
             ArrayList<String> keys = new ArrayList<>(table.keySet());
             Collections.sort(keys);
 
-            for (String key : table.keySet()) {
+            for (String key : keys) {
                 oneCodeTable = new HashMap<>();
                 ArrayList<TableRecord> records = table.get(key);
 

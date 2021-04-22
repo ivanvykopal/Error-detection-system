@@ -8,6 +8,7 @@ import Compiler.Lexer.Scanner;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -326,16 +327,41 @@ public class SymbolTable implements Serializable {
      * @param errorDatabase databáza chýb
      */
     public void findLongActiveVariable(ErrorDatabase errorDatabase) {
+        Properties prop = new Properties();
+        InputStream is;
+        try {
+            is = new FileInputStream("config/lines.config");
+        } catch (FileNotFoundException e) {
+            is = getClass().getResourceAsStream("/config/lines.config");
+        }
+        try {
+            prop.load(is);
+        } catch (IOException e) {
+            ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
+                    "Nebol nájdený konfiguračný súbor lines.config!");
+        }
+
+        int initLine, usageLine;
+        try {
+            initLine = Integer.parseInt(prop.getProperty("initialization"));
+            usageLine = Integer.parseInt(prop.getProperty("usage"));
+        } catch (NumberFormatException e) {
+            ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
+                    "Problém pri získavaní údajov z lines.config!");
+            initLine = 3;
+            usageLine = 10;
+        }
+
         for (String key : table.keySet()) {
             Record record = table.get(key);
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
                 if (record.getInitializationLines().size() > 0) {
-                    if (record.getInitializationLines().get(0) - record.getDeclarationLine() > 3) {
+                    if (record.getInitializationLines().get(0) - record.getDeclarationLine() > initLine) {
                         errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
                     }
                 }
                 if (record.getInitializationLines().size() > 0 && record.getUsageLines().size() > 0) {
-                    if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > 10) {
+                    if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > usageLine) {
                         errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
                     }
                 }

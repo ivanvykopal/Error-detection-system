@@ -1,0 +1,179 @@
+Názov súboru, Kód chyby, Chybová správa, Počet výskytov
+student10_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student10_2.c, E-RP-05, dlho aktívna premenná, 1
+student10_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student10_3.c, E-RP-05, dlho aktívna premenná, 1
+student10_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student11_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student11_1.c, E-RP-05, dlho aktívna premenná, 2
+student11_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student11_2.c, E-RP-05, dlho aktívna premenná, 2
+student12_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student13_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student13_1.c, E-RP-05, dlho aktívna premenná, 1
+student14_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student14_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student14_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student14_4.c, E-SxA-07, nesprávna syntax, 1
+student14_4.c, L-SxA-09, využitie kľúčového slova ako premennej, 1
+student14_5.c, E-RP-07, neoptimálne využívanie premenných, 1
+student14_6.c, E-RP-07, neoptimálne využívanie premenných, 1
+student15_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student15_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student15_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student15_4.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student16_1.c, E-RP-05, dlho aktívna premenná, 2
+student16_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student16_2.c, E-RP-05, dlho aktívna premenná, 2
+student16_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student16_3.c, E-RP-05, dlho aktívna premenná, 2
+student16_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student16_4.c, E-RP-05, dlho aktívna premenná, 2
+student16_4.c, E-RP-07, neoptimálne využívanie premenných, 1
+student16_5.c, E-RP-05, dlho aktívna premenná, 2
+student16_5.c, E-RP-07, neoptimálne využívanie premenných, 1
+student16_6.c, E-RP-05, dlho aktívna premenná, 2
+student16_6.c, E-RP-07, neoptimálne využívanie premenných, 1
+student17_1.c, E-RP-05, dlho aktívna premenná, 1
+student17_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student18_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student19_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student19_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student19_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student1_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student1_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student1_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student20_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student20_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student20_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student20_4.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student20_5.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student21_1.c, E-RP-05, dlho aktívna premenná, 7
+student21_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student21_2.c, E-RP-05, dlho aktívna premenná, 7
+student21_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student23_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student23_1.c, W-01, využívanie globálnej premennej, 1
+student24_1.c, E-RP-05, dlho aktívna premenná, 1
+student24_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student24_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student24_2.c, E-RP-05, dlho aktívna premenná, 1
+student24_3.c, E-RP-05, dlho aktívna premenná, 1
+student24_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student24_4.c, E-RP-05, dlho aktívna premenná, 1
+student24_4.c, E-RP-07, neoptimálne využívanie premenných, 1
+student25_1.c, E-RP-05, dlho aktívna premenná, 1
+student25_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student25_2.c, E-RP-05, dlho aktívna premenná, 1
+student25_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student26_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student27_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student29_1.c, E-RP-05, dlho aktívna premenná, 3
+student29_2.c, E-RP-05, dlho aktívna premenná, 3
+student2_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student2_1.c, E-RP-05, dlho aktívna premenná, 1
+student2_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student2_2.c, E-RP-05, dlho aktívna premenná, 1
+student30_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student30_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student30_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student30_4.c, E-RP-07, neoptimálne využívanie premenných, 1
+student31_1.c, E-RP-05, dlho aktívna premenná, 7
+student31_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student31_2.c, E-RP-05, dlho aktívna premenná, 1
+student31_3.c, E-RP-05, dlho aktívna premenná, 1
+student31_4.c, E-RP-05, dlho aktívna premenná, 1
+student32_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student32_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_1.c, E-RP-05, dlho aktívna premenná, 1
+student34_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_2.c, E-RP-05, dlho aktívna premenná, 1
+student34_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_3.c, E-RP-05, dlho aktívna premenná, 1
+student34_4.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_4.c, E-RP-05, dlho aktívna premenná, 1
+student34_5.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_5.c, E-RP-05, dlho aktívna premenná, 1
+student34_6.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student34_6.c, E-RP-05, dlho aktívna premenná, 1
+student36_1.c, E-RP-05, dlho aktívna premenná, 3
+student36_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student36_2.c, E-RP-05, dlho aktívna premenná, 3
+student36_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student36_3.c, E-RP-05, dlho aktívna premenná, 3
+student36_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student37_1.c, E-RP-05, dlho aktívna premenná, 1
+student37_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student38_1.c, E-RP-05, dlho aktívna premenná, 1
+student38_2.c, E-RP-05, dlho aktívna premenná, 1
+student38_3.c, E-RP-05, dlho aktívna premenná, 1
+student39_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student3_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student3_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student40_1.c, E-RP-05, dlho aktívna premenná, 3
+student40_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student40_2.c, E-RP-05, dlho aktívna premenná, 3
+student40_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student41_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student41_1.c, E-RP-05, dlho aktívna premenná, 3
+student41_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student41_2.c, E-RP-05, dlho aktívna premenná, 2
+student42_1.c, E-RP-05, dlho aktívna premenná, 2
+student42_2.c, E-RP-05, dlho aktívna premenná, 2
+student44_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student45_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student48_1.c, E-RP-05, dlho aktívna premenná, 1
+student48_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student49_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student49_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student49_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student50_1.c, E-RP-05, dlho aktívna premenná, 2
+student50_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student50_2.c, E-RP-05, dlho aktívna premenná, 2
+student50_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student50_3.c, E-RP-05, dlho aktívna premenná, 2
+student50_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student50_4.c, E-RP-05, dlho aktívna premenná, 2
+student50_4.c, E-RP-07, neoptimálne využívanie premenných, 1
+student50_5.c, E-RP-05, dlho aktívna premenná, 2
+student50_5.c, E-RP-07, neoptimálne využívanie premenných, 1
+student51_1.c, E-RP-05, dlho aktívna premenná, 2
+student51_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student51_2.c, E-ST-01, neinicializovaná premenná, 6
+student51_2.c, E-RP-05, dlho aktívna premenná, 1
+student51_3.c, E-RP-05, dlho aktívna premenná, 1
+student51_3.c, E-RP-07, neoptimálne využívanie premenných, 1
+student51_4.c, E-RP-05, dlho aktívna premenná, 1
+student51_4.c, E-RP-07, neoptimálne využívanie premenných, 1
+student52_1.c, E-RP-05, dlho aktívna premenná, 3
+student52_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student52_2.c, E-RP-05, dlho aktívna premenná, 3
+student52_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student53_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student54_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student54_1.c, E-RP-05, dlho aktívna premenná, 1
+student55_1.c, E-RP-05, dlho aktívna premenná, 2
+student55_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student55_2.c, E-RP-05, dlho aktívna premenná, 2
+student55_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student56_1.c, E-RP-05, dlho aktívna premenná, 1
+student56_2.c, E-RP-05, dlho aktívna premenná, 1
+student56_3.c, E-RP-05, dlho aktívna premenná, 1
+student56_4.c, E-RP-05, dlho aktívna premenná, 1
+student56_5.c, E-RP-05, dlho aktívna premenná, 1
+student56_6.c, E-RP-05, dlho aktívna premenná, 1
+student56_7.c, E-RP-05, dlho aktívna premenná, 1
+student57_1.c, E-ST-03, nedeklarovaná premenná, 1
+student58_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student59_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student5_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student6_1.c, E-RP-05, dlho aktívna premenná, 3
+student6_1.c, E-RP-07, neoptimálne využívanie premenných, 1
+student6_2.c, E-RP-05, dlho aktívna premenná, 4
+student6_2.c, E-RP-07, neoptimálne využívanie premenných, 1
+student7_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student8_1.c, W-01, využívanie globálnej premennej, 3
+student9_1.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student9_2.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1
+student9_3.c, E-RP-09, neoptimálne využívanie argumentov mainu, 1

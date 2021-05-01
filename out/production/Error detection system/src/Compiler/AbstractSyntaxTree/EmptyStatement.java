@@ -21,6 +21,7 @@ public final class EmptyStatement extends Node {
 
     /**
      * Metóda pre zistenie, či ide o triedu EmptyStatement.
+     *
      * @return true, ak ide o triedu {@code EmptyStatement}
      *         false, ak nejde o triedu {@code EmptyStatement}
      */

@@ -3,14 +3,12 @@ package Compiler.GraphColoring;
 import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.SymbolTable.Kind;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
@@ -44,7 +42,6 @@ public class VariableUsageChecker {
         }
 
         for (SymbolTable tab : symbolTable.getChilds()) {
-            /*ArrayList<Index> indexes = findGlobal(symbolTable);*/
             ArrayList<Index> indexes = new ArrayList<>();
             ArrayList<Integer> list = new ArrayList<>();
             createIndexes(tab, list, indexes);
@@ -52,28 +49,6 @@ public class VariableUsageChecker {
 
             checkVariableUsage(indexes.size(), matrix, indexes, errorDatabase, tab);
         }
-    }
-
-    /**
-     * Metóda na vyhľadanie globálnych premenných v programe.
-     *
-     * @param symbolTable symbolická tabuľka
-     *
-     * @return zoznam globálnych premenných
-     */
-    private ArrayList<Index> findGlobal(SymbolTable symbolTable) {
-        ArrayList<Index> indexes = new ArrayList<>();
-        HashMap<String, Record> table = symbolTable.getTable();
-        for (String key: table.keySet()) {
-            Record record = table.get(key);
-            if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                Index index = new Index(key, record.getDeclarationLine(), record.getTypeString());
-                index.setAccess(new ArrayList<>());
-                index.setGlobal(true);
-                indexes.add(index);
-            }
-        }
-        return indexes;
     }
 
     /**

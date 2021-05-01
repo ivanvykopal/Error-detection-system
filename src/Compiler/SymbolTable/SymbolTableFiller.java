@@ -682,7 +682,7 @@ public final class SymbolTableFiller {
         try {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (line.contains(identifier)) {
+                if (line.trim().equals(identifier.trim())) {
                     return true;
                 }
             }

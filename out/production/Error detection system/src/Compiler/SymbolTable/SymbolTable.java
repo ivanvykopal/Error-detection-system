@@ -3,8 +3,6 @@ package Compiler.SymbolTable;
 import Backend.ProgramLogger;
 import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
-import Compiler.Lexer.Scanner;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +16,13 @@ import java.util.logging.Level;
  */
 public class SymbolTable implements Serializable {
     /** Atribút parent obsahuje referenciu na rodičovskú symbolickú tabuľku **/
-    SymbolTable parent = null;
+    private SymbolTable parent = null;
 
     /** Atribút table obsahuje zoznam premenných, funkcií,... **/
-    HashMap<String, Record> table;
+    private HashMap<String, Record> table;
 
     /** Atribút childs predstavuje zoznam potomkov (symbolických tabuliek). **/
-    ArrayList<SymbolTable> childs = new ArrayList<>();
+    private ArrayList<SymbolTable> childs = new ArrayList<>();
 
     /**
      * Konštruktor, v ktorom nastavujeme predchádzajúcu tabuľku.
@@ -330,15 +328,15 @@ public class SymbolTable implements Serializable {
         Properties prop = new Properties();
         InputStream is;
         try {
-            is = new FileInputStream("config/lines.config");
+            is = new FileInputStream("config/longActiveVariable.config");
         } catch (FileNotFoundException e) {
-            is = getClass().getResourceAsStream("/config/lines.config");
+            is = getClass().getResourceAsStream("/config/longActiveVariable.config");
         }
         try {
             prop.load(is);
         } catch (IOException e) {
             ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
-                    "Nebol nájdený konfiguračný súbor lines.config!");
+                    "Nebol nájdený konfiguračný súbor longActiveVariable.config!");
         }
 
         int initLine, usageLine;
@@ -347,7 +345,7 @@ public class SymbolTable implements Serializable {
             usageLine = Integer.parseInt(prop.getProperty("usage"));
         } catch (NumberFormatException e) {
             ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
-                    "Problém pri získavaní údajov z lines.config!");
+                    "Problém pri získavaní údajov z longActiveVariable.config!");
             initLine = 3;
             usageLine = 10;
         }

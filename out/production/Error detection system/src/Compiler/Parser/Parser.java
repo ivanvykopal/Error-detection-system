@@ -1822,7 +1822,7 @@ public class Parser {
     }
 
     /**
-     * enum_specifier: ENUM left13
+     * enum_specifier: ENUM left1
      *
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
@@ -1831,7 +1831,7 @@ public class Parser {
     private Node enum_specifier() {
         if (getTokenTag() == Tag.ENUM) {
             nextToken();
-            Node child1 = left13(getTokenLine(position - 1));
+            Node child1 = left1(getTokenLine(position - 1));
             if (child1 != null && !child1.isNone()) {
                 return child1;
             }
@@ -1844,7 +1844,7 @@ public class Parser {
     }
 
     /**
-     * left13:    '{' enumerator_list '}'
+     * left1:     '{' enumerator_list '}'
      *          | '{' enumerator_list ',' '}'
      *          | IDENTIFIER '{' enumerator_list '}'
      *          | IDENTIFIER '{' enumerator_list ',' '}'
@@ -1856,7 +1856,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left13(int line) {
+    private Node left1(int line) {
         Node child1, child2, child3;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACES:
@@ -2015,8 +2015,8 @@ public class Parser {
     }
 
     /**
-     * direct_declarator:    IDENTIFIER rest18
-     *                     | '(' declarator ')' rest18
+     * direct_declarator:    IDENTIFIER rest2
+     *                     | '(' declarator ')' rest2
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2031,7 +2031,7 @@ public class Parser {
                 String terminal = getTokenValue();
                 nextToken();
                 Node declarator = new TypeDeclaration(terminal, null, null, getTokenLine(position - 1));
-                child1 = rest18(declarator);
+                child1 = rest2(declarator);
                 if (child1 == null) {
                     return null;
                 }
@@ -2047,7 +2047,7 @@ public class Parser {
                     child2 = accept(Tag.RIGHT_PARENTHESES);
                 }
                 if (child2 != null) {
-                    child3 = rest18(child1);
+                    child3 = rest2(child1);
                 }
                 if (child3 != null && !child3.isEmpty()) {
                     return child3;
@@ -2069,8 +2069,8 @@ public class Parser {
     }
 
     /**
-     * rest18:    '[' left16
-     *          | '(' left17
+     * rest2:    '[' left2
+     *          | '(' left3
      *          | epsilon
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
@@ -2078,12 +2078,12 @@ public class Parser {
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
-    private Node rest18(Node declarator) {
+    private Node rest2(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
                 nextToken();
-                child1 = left16(declarator);
+                child1 = left2(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2093,7 +2093,7 @@ public class Parser {
                 return null;
             case Tag.LEFT_PARENTHESES:
                 nextToken();
-                child1 = left17(declarator);
+                child1 = left3(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2107,11 +2107,11 @@ public class Parser {
     }
 
     /**
-     * left16:    '*' ']' rest18
-     *          | STATIC left18
-     *          | type_qualifier_list left19
-     *          | assignment_expression ']' rest18
-     *          | ']' rest18
+     * left2:    '*' ']' rest2
+     *          | STATIC left4
+     *          | type_qualifier_list left5
+     *          | assignment_expression ']' rest2
+     *          | ']' rest2
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -2119,7 +2119,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left16(Node declarator) {
+    private Node left2(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
@@ -2133,7 +2133,7 @@ public class Parser {
                     decl = new ArrayDeclaration(null, new Identifier("*", getTokenLine(position - 1)),
                             new ArrayList<>(), getTokenLine(position - 1));
                     Node child = modifyType(declarator, decl);
-                    child2 = rest18(child);
+                    child2 = rest2(child);
                     if (child2 == null) {
                         return null;
                     }
@@ -2150,7 +2150,7 @@ public class Parser {
                 }
             case Tag.STATIC:
                 nextToken();
-                child1 = left18(declarator);
+                child1 = left4(declarator);
                 if (child1 == null) {
                     return null;
                 }
@@ -2164,7 +2164,7 @@ public class Parser {
                 nextToken();
                 decl = new ArrayDeclaration(null, null, new ArrayList<>(), getTokenLine(position - 1));
                 Node child = modifyType(declarator, decl);
-                child1 = rest18(child);
+                child1 = rest2(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -2186,7 +2186,7 @@ public class Parser {
             } else {
                 decl = new ArrayDeclaration(null, child1, new ArrayList<>(), getTokenLine(position - 1));
                 Node child = modifyType(declarator, decl);
-                child3 = rest18(child);
+                child3 = rest2(child);
                 if (child3 == null ) {
                     return null;
                 }
@@ -2199,7 +2199,7 @@ public class Parser {
         }
         ArrayList<String> child4 = type_qualifier_list();
         if (!child4.isEmpty()) {
-            child2 = left19(child4, declarator);
+            child2 = left5(child4, declarator);
             if (child2 == null) {
                 return null;
             }
@@ -2214,9 +2214,9 @@ public class Parser {
     }
 
     /**
-     * left17:    parameter_type_list ')' rest18
-     *          | ')' rest18
-     *          | identifier_list rest18
+     * left3:    parameter_type_list ')' rest2
+     *          | ')' rest2
+     *          | identifier_list rest2
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -2224,13 +2224,13 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left17(Node declarator) {
+    private Node left3(Node declarator) {
         Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null, getTokenLine(position - 1));
             child = modifyType(declarator, decl);
-            child1 = rest18(child);
+            child1 = rest2(child);
             if (child1 == null) {
                 return null;
             }
@@ -2252,7 +2252,7 @@ public class Parser {
             } else {
                 decl = new FunctionDeclaration(child1, null, getTokenLine(position - 1));
                 child = modifyType(declarator, decl);
-                child3 = rest18(child);
+                child3 = rest2(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -2270,7 +2270,7 @@ public class Parser {
         if (!child1.isNone()) {
             decl = new FunctionDeclaration(child1, null, child1.getLine());
             child = modifyType(declarator, decl);
-            child2 = rest18(child);
+            child2 = rest2(child);
             if (child2 == null) {
                 return null;
             }
@@ -2284,8 +2284,8 @@ public class Parser {
     }
 
     /**
-     * left18:    type_qualifier_list assignment_expression ']' rest18
-     *          | assignment_expression ']' rest18
+     * left4:    type_qualifier_list assignment_expression ']' rest2
+     *          | assignment_expression ']' rest2
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -2293,7 +2293,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-      private Node left18(Node declarator) {
+      private Node left4(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
         Node decl, child2, child3, child4;
         if (!child1.isEmpty()) {
@@ -2314,7 +2314,7 @@ public class Parser {
 
                     decl = new ArrayDeclaration(null, child2, child1, getTokenLine(position - 1));
                     Node child = modifyType(declarator, decl);
-                    child4 = rest18(child);
+                    child4 = rest2(child);
                     if (child4 == null) {
                         return null;
                     }
@@ -2340,7 +2340,7 @@ public class Parser {
 
                 decl = new ArrayDeclaration(null, child2, child1, getTokenLine(position - 1));
                 Node child = modifyType(declarator, decl);
-                child4 = rest18(child);
+                child4 = rest2(child);
                 if (child4 == null) {
                     return null;
                 }
@@ -2355,10 +2355,10 @@ public class Parser {
     }
 
     /**
-     * left19:    '*' ']' rest18
-     *          | STATIC assignment_expression ']' rest18
-     *          | assignment_expression ']' rest18
-     *          | ']' rest18
+     * left5:    '*' ']' rest2
+     *          | STATIC assignment_expression ']' rest2
+     *          | assignment_expression ']' rest2
+     *          | ']' rest2
      *
      * @param qualifiers zoznam kvalifikátorov (static,...)
      *
@@ -2368,7 +2368,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left19(ArrayList<String> qualifiers, Node declarator) {
+    private Node left5(ArrayList<String> qualifiers, Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
@@ -2382,7 +2382,7 @@ public class Parser {
                     decl = new ArrayDeclaration(null, new Identifier("*", getTokenLine(position - 1)),
                             qualifiers, getTokenLine(position - 1));
                     child = modifyType(declarator, decl);
-                    child2 = rest18(child);
+                    child2 = rest2(child);
                     if (child2 == null) {
                         return null;
                     }
@@ -2412,7 +2412,7 @@ public class Parser {
 
                     decl = new ArrayDeclaration(null, child1, qualifiers, getTokenLine(position - 1));
                     child = modifyType(declarator, decl);
-                    child3 = rest18(child);
+                    child3 = rest2(child);
                 }
                 if (child3 == null) {
                     return null;
@@ -2426,7 +2426,7 @@ public class Parser {
                 nextToken();
                 decl = new ArrayDeclaration(null, null, qualifiers, getTokenLine(position - 1));
                 child = modifyType(declarator, decl);
-                child1 = rest18(child);
+                child1 = rest2(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -2447,7 +2447,7 @@ public class Parser {
             } else {
                 decl = new ArrayDeclaration(null, child1, qualifiers, getTokenLine(position - 1));
                 child = modifyType(declarator, decl);
-                child3 = rest18(child);
+                child3 = rest2(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -2589,8 +2589,8 @@ public class Parser {
     }
 
     /**
-     * parameter_declaration:   declaration_specifiers left22
-     *                         | left22
+     * parameter_declaration:   declaration_specifiers left6
+     *                         | left6
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2604,7 +2604,7 @@ public class Parser {
         }
         if (!child1.isNone()) {
             typeNode = (TypeNode) child1;
-            child2 = left22(typeNode);
+            child2 = left6(typeNode);
             if (child2 == null) {
                 return null;
             }
@@ -2616,7 +2616,7 @@ public class Parser {
             }
         }
         typeNode = new TypeNode(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        child1 = left22(typeNode);
+        child1 = left6(typeNode);
         if (child1 == null) {
             return null;
         }
@@ -2627,7 +2627,7 @@ public class Parser {
     }
 
     /**
-     * left22:    declarator
+     * left6:    declarator
      *          | abstract_declarator
      *          | epsilon
      *
@@ -2637,7 +2637,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-      private Node left22(TypeNode typeNode) {
+      private Node left6(TypeNode typeNode) {
         if (typeNode.getTypes().isEmpty()) {
             ArrayList<String> arr = new ArrayList<>();
             arr.add("int");
@@ -2791,8 +2791,8 @@ public class Parser {
     }
 
     /**
-     * direct_abstract_declarator:    '(' left25
-     *                              | '[' left26
+     * direct_abstract_declarator:    '(' left7
+     *                              | '[' left8
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -2805,7 +2805,7 @@ public class Parser {
         switch (getTokenTag()) {
             case Tag.LEFT_PARENTHESES:
                 nextToken();
-                child1 = left25();
+                child1 = left7();
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2815,7 +2815,7 @@ public class Parser {
                 return new None();
             case Tag.LEFT_BRACKETS:
                 nextToken();
-                child1 = left26(null);
+                child1 = left8(null);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2828,19 +2828,19 @@ public class Parser {
     }
 
     /**
-     * left25:    abstract_declarator ')' rest22
-     *          | ')' rest22
-     *          | parameter_type_list ')' rest22
+     * left7:    abstract_declarator ')' rest3
+     *          | ')' rest3
+     *          | parameter_type_list ')' rest3
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left25() {
+    private Node left7() {
         Node child1, decl;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null, getTokenLine(position - 1));
-            child1 = rest22(decl);
+            child1 = rest3(decl);
             if (child1 == null) {
                 return null;
             }
@@ -2860,7 +2860,7 @@ public class Parser {
             if (child2 == null) {
                 return null;
             } else {
-                child3 = rest22(child1);
+                child3 = rest3(child1);
                 if (child3 == null) {
                     return null;
                 }
@@ -2881,7 +2881,7 @@ public class Parser {
                 return null;
             } else {
                 decl = new FunctionDeclaration(child1, null, getTokenLine(position - 1));
-                child3 = rest22(decl);
+                child3 = rest3(decl);
                 if (child3 == null) {
                     return null;
                 }
@@ -2896,11 +2896,11 @@ public class Parser {
     }
 
     /**
-     * left26:    ']' rest22
-     *          | '*' ']' rest22
-     *          | STATIC left27
-     *          | type_qualifier_list left28
-     *          | assignment_expression ']' rest22
+     * left8:    ']' rest3
+     *          | '*' ']' rest3
+     *          | STATIC left9
+     *          | type_qualifier_list left10
+     *          | assignment_expression ']' rest3
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -2908,7 +2908,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left26(Node declarator) {
+    private Node left8(Node declarator) {
         SymbolTable copySymbolTable = symbolTable.createCopy();
         ErrorDatabase copyErrorDatabase = errorDatabase.createCopy();
         int pos = position;
@@ -2924,7 +2924,7 @@ public class Parser {
                     child = new ArrayDeclaration(new TypeDeclaration(null, null, null), null,
                             new ArrayList<>(), getTokenLine(position - 1));
                 }
-                child1 = rest22(child);
+                child1 = rest3(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -2945,7 +2945,7 @@ public class Parser {
                         child = new ArrayDeclaration(new TypeDeclaration(null, null, null),
                                 new Identifier("*", getTokenLine(position -1 )), new ArrayList<>(), getTokenLine(position - 1));
                     }
-                    child2 = rest22(child);
+                    child2 = rest3(child);
                     if (child2 == null) {
                         return null;
                     }
@@ -2962,7 +2962,7 @@ public class Parser {
                 }
             case Tag.STATIC:
                 nextToken();
-                child1 = left27(declarator);
+                child1 = left9(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -2988,7 +2988,7 @@ public class Parser {
                     child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child1,
                             new ArrayList<>(), getTokenLine(position - 1));
                 }
-                child3 = rest22(child);
+                child3 = rest3(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -3001,7 +3001,7 @@ public class Parser {
         }
         ArrayList<String> child4 = type_qualifier_list();
         if (!child4.isEmpty()) {
-            child2 = left28(child4, declarator);
+            child2 = left10(child4, declarator);
             if (child2 == null) {
                 return null;
             }
@@ -3016,8 +3016,8 @@ public class Parser {
     }
 
     /**
-     * left27:    type_qualifier_list assignment_expression ']' rest22
-     *          | assignment_expression ']' rest22
+     * left9:    type_qualifier_list assignment_expression ']' rest3
+     *          | assignment_expression ']' rest3
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -3025,7 +3025,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left27(Node declarator) {
+    private Node left9(Node declarator) {
         ArrayList<String> child1 = type_qualifier_list();
         Node child2, child3, child4, decl, child;
         if (!child1.isEmpty()) {
@@ -3051,7 +3051,7 @@ public class Parser {
                         child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child2,
                                 child1, getTokenLine(position - 1));
                     }
-                    child4 = rest22(child);
+                    child4 = rest3(child);
                     if (child4 == null) {
                         return null;
                     }
@@ -3082,7 +3082,7 @@ public class Parser {
                     child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child2,
                             child1, getTokenLine(position - 1));
                 }
-                child4 = rest22(child);
+                child4 = rest3(child);
                 if (child4 == null) {
                     return null;
                 }
@@ -3097,9 +3097,9 @@ public class Parser {
     }
 
     /**
-     * left28:    STATIC assignment_expression ']' rest22
-     *          | assignment_expression ']' rest22
-     *          | ']' rest22
+     * left10:    STATIC assignment_expression ']' rest3
+     *          | assignment_expression ']' rest3
+     *          | ']' rest3
      *
      * @param qualifiers zoznam kvalifikátorov (static, ...)
      *
@@ -3109,7 +3109,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left28(ArrayList<String> qualifiers, Node declarator) {
+    private Node left10(ArrayList<String> qualifiers, Node declarator) {
         Node child1, child2 = null, child3 = null, decl, child = null;
         switch (getTokenTag()) {
             case Tag.STATIC:
@@ -3132,7 +3132,7 @@ public class Parser {
                         child = new ArrayDeclaration(new TypeDeclaration(null, null, null), child1,
                                 qualifiers, getTokenLine(position - 1));
                     }
-                    child3 = rest22(child);
+                    child3 = rest3(child);
                 }
                 if (child3 == null) {
                     return null;
@@ -3150,7 +3150,7 @@ public class Parser {
                 } else {
                     child = decl;
                 }
-                child1 = rest22(child);
+                child1 = rest3(child);
                 if (child1 == null) {
                     return null;
                 }
@@ -3176,7 +3176,7 @@ public class Parser {
                 } else {
                     child = decl;
                 }
-                child3 = rest22(child);
+                child3 = rest3(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -3191,8 +3191,8 @@ public class Parser {
     }
 
     /**
-     * rest22:    '[' left26
-     *          | '(' left29
+     * rest3:    '[' left28
+     *          | '(' left11
      *          | epsilon
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
@@ -3200,12 +3200,12 @@ public class Parser {
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
-    private Node rest22(Node declarator) {
+    private Node rest3(Node declarator) {
         Node child1;
         switch (getTokenTag()) {
             case Tag.LEFT_BRACKETS:
                 nextToken();
-                child1 = left26(declarator);
+                child1 = left8(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -3215,7 +3215,7 @@ public class Parser {
                 return null;
             case Tag.LEFT_PARENTHESES:
                 nextToken();
-                child1 = left29(declarator);
+                child1 = left11(declarator);
                 if (child1 != null && !child1.isNone()) {
                     return child1;
                 }
@@ -3229,8 +3229,8 @@ public class Parser {
     }
 
     /**
-     * left29:    ')' rest22
-     *          | parameter_type_list ')' rest22
+     * left11:    ')' rest3
+     *          | parameter_type_list ')' rest3
      *
      * @param declarator vrchol z metódy, z ktorej bol volaný
      *
@@ -3238,13 +3238,13 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left29(Node declarator) {
+    private Node left11(Node declarator) {
         Node child1, decl, child;
         if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
             nextToken();
             decl = new FunctionDeclaration(null, null, getTokenLine(position - 1));
             child = modifyType(declarator, decl);
-            child1 = rest22(child);
+            child1 = rest3(child);
             if (child1 == null) {
                 return null;
             }
@@ -3266,7 +3266,7 @@ public class Parser {
             } else {
                 decl = new FunctionDeclaration(child1, null, getTokenLine(position - 1));
                 child = modifyType(declarator, decl);
-                child3 = rest22(child);
+                child3 = rest3(child);
                 if (child3 == null) {
                     return null;
                 }
@@ -3349,7 +3349,7 @@ public class Parser {
                 ArrayList<Node> arr = new ArrayList<>();
                 arr.add(new NamedInitializer(child1, child2, symbolTable, errorDatabase));
                 InitializationList init = new InitializationList(arr, child2.getLine(), symbolTable, errorDatabase);
-                child3 = rest23(init);
+                child3 = rest4(init);
                 if (child3 == null) {
                     return null;
                 } else {
@@ -3365,7 +3365,7 @@ public class Parser {
             ArrayList<Node> arr = new ArrayList<>();
             arr.add(child2);
             InitializationList init = new InitializationList(arr, child2.getLine(), symbolTable, errorDatabase);
-            child3 = rest23(init);
+            child3 = rest4(init);
             if (child3 == null) {
                 return null;
             } else {
@@ -3376,8 +3376,8 @@ public class Parser {
     }
 
     /**
-     * rest23:    ',' designation initializer rest23
-     *          | ',' initializer rest23
+     * rest4:    ',' designation initializer rest4
+     *          | ',' initializer rest4
      *          | epsilon
      *
      * @param init list s inicializovanými hodnotami
@@ -3385,7 +3385,7 @@ public class Parser {
      * @return Node, ak sa našla zhoda,
      *         null, ak sa vyskytla chyba
      */
-    private Node rest23(InitializationList init) {
+    private Node rest4(InitializationList init) {
         if (getTokenTag() == Tag.COMMA) {
             nextToken();
             ArrayList<Node> child1 = designation();
@@ -3403,7 +3403,7 @@ public class Parser {
                     return null;
                 } else {
                     init.addExpression(new NamedInitializer(child1, child2, symbolTable, errorDatabase));
-                    child3 = rest23(init);
+                    child3 = rest4(init);
                     if (child3 == null) {
                         return null;
                     } else {
@@ -3417,7 +3417,7 @@ public class Parser {
             }
             if (!child2.isNone()) {
                 init.addExpression(child2);
-                child3 = rest23(init);
+                child3 = rest4(init);
                 if (child3 == null) {
                     return null;
                 } else {
@@ -3860,7 +3860,7 @@ public class Parser {
     /**
      * iteration_statement:    WHILE '(' expression ')' statement
      *                       | DO statement WHILE '(' expression ')' ';'
-     *                       | FOR '(' left33
+     *                       | FOR '(' left12
      * @return Node, ak sa našla zhoda,
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
@@ -3926,7 +3926,7 @@ public class Parser {
                 nextToken();
                 child1 = expect(Tag.LEFT_PARENTHESES);
                 if (child1 != null) {
-                    child2 = left33(line);
+                    child2 = left12(line);
                 }
                 if (child2 == null) {
                     return null;
@@ -3942,7 +3942,7 @@ public class Parser {
     }
 
     /**
-     * left33:    expression_statement expression_statement ')' statement
+     * left12:    expression_statement expression_statement ')' statement
      *          | expression_statement expression_statement expression ')' statement
      *          | declaration expression_statement ')' statement
      *          | declaration expression_statement expression ')' statement
@@ -3953,7 +3953,7 @@ public class Parser {
      *         None, ak sa zhoda nenašla
      *         null, ak sa vyskytla chyba
      */
-    private Node left33(int line) {
+    private Node left12(int line) {
         //vytvorenie vnorenej tabuľky
         symbolTable = new SymbolTable(symbolTable);
         if (symbolTable.getParent() != null) {
@@ -4417,7 +4417,7 @@ public class Parser {
                 declaration = fixTypes(declaration, typeNode.getTypes());
             }
 
-            if (!typeChecking(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
+            if (!typeCheck(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
                 errorDatabase.addErrorMessage(declarator1.getInitializer().getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
             } else if (((Declarator) decl).getDeclarator() instanceof Identifier) {
                 Declarator declarator2 = (Declarator) decl;
@@ -4569,7 +4569,7 @@ public class Parser {
      * @return true, ak nie je typová nezhoda
      *         false, ak je typová nezhoda
      */
-    private boolean typeChecking(Node declarator, Node initializer) {
+    private boolean typeCheck(Node declarator, Node initializer) {
         if (initializer == null || declarator == null) {
             return true;
         }

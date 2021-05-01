@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-05-01T15:28:22</date>
+  <millis>1619875702636</millis>
+  <sequence>0</sequence>
+  <logger>Backend.Controller.ConsoleController</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>1</thread>
+  <message>Analyzujem kód.</message>
+</record>
+</log>

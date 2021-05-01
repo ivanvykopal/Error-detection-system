@@ -278,6 +278,7 @@ public final class ConsoleController extends Controller {
             fileVariables.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileVariables, true);
+            fileWriter.write("Kód chyby, Počet chýb, Percentuálny podiel, Počet súborov, Percentuálny podiel\n");
             for (String key: errorTable.keySet()) {
                 TableRecord record = errorTable.get(key);
                 int count = fileErrorCount.get(key);
@@ -371,6 +372,7 @@ public final class ConsoleController extends Controller {
             fileStatistics.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileStatistics, true);
+            fileWriter.write("Názov súboru, Kód chyby, Chybová správa, Počet výskytov\n");
             ArrayList<String> keys = new ArrayList<>(table.keySet());
             Collections.sort(keys);
 

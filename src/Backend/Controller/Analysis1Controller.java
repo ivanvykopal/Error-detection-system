@@ -116,6 +116,10 @@ public class Analysis1Controller extends Controller {
                         ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                                 "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                         fileWriter.write("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
+                        warning.setContentText("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                        warning.setHeaderText("Chyba pri analyzovaní súboru!");
+                        warning.setTitle("Upozornenie");
+                        warning.show();
                         return;
                     }
                     ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -130,11 +134,18 @@ public class Analysis1Controller extends Controller {
                 } catch (IOException er) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                             "Vyskytla sa chyba pri práci s I/O súbormi!");
-
+                    warning.setContentText("Chyba pri analyzovaní súboru!");
+                    warning.setHeaderText("Chyba pri analyzovaní súboru!");
+                    warning.setTitle("Upozornenie");
+                    warning.show();
                 } catch (Exception e) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                             "Vyskytla sa chyba spôsobená parserom!");
                     fileWriter.write("Chyba pri analyzovaní súboru " + absolutePath + "!\n");
+                    warning.setContentText("Chyba pri analyzovaní súboru!");
+                    warning.setHeaderText("Chyba pri analyzovaní súboru!");
+                    warning.setTitle("Upozornenie");
+                    warning.show();
                 }
             }
             fileWriter.close();

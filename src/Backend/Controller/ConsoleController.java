@@ -108,6 +108,7 @@ public final class ConsoleController extends Controller {
                     ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
                             "Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                     fileWriter.write("Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
+                    System.out.println("Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                     return;
                 }
                 ErrorDatabase errorDatabase = new ErrorDatabase();

@@ -2,44 +2,29 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-05-05T14:40:07</date>
-  <millis>1620218407721</millis>
+  <date>2021-07-05T19:59:08</date>
+  <millis>1625507948956</millis>
   <sequence>0</sequence>
   <logger>Backend.Controller.Analysis1Controller</logger>
   <level>INFO</level>
   <class>Backend.ProgramLogger</class>
   <method>log</method>
   <thread>16</thread>
-  <message>Súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW05\student9_5.c bol vybraný.</message>
+  <message>Chybný súbor!</message>
 </record>
 </log>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-05-05T14:40:08</date>
-  <millis>1620218408331</millis>
+  <date>2021-07-05T19:59:11</date>
+  <millis>1625507951761</millis>
   <sequence>1</sequence>
   <logger>Backend.Controller.Analysis1Controller</logger>
   <level>INFO</level>
   <class>Backend.ProgramLogger</class>
   <method>log</method>
   <thread>16</thread>
-  <message>Analyzujem kód.</message>
-</record>
-</log>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE log SYSTEM "logger.dtd">
-<log>
-<record>
-  <date>2021-05-05T14:40:08</date>
-  <millis>1620218408377</millis>
-  <sequence>2</sequence>
-  <logger>Backend.Controller.Analysis1Controller</logger>
-  <level>WARNING</level>
-  <class>Backend.ProgramLogger</class>
-  <method>log</method>
-  <thread>16</thread>
-  <message>Súbor D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW05\student9_5.c obsahuje nepodporovanú knižnicu: valgrind!</message>
+  <message>Chybný súbor!</message>
 </record>
 </log>

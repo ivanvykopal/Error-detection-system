@@ -21,10 +21,7 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 1) {
             try {
-                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-                SwingUtilities.invokeLater(() -> {
-                    new MainWindow();
-                });
+                GUIController.runGUI();
             } catch (Exception e) {
                 System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
                         "podporujúcou JavaFX (Java do verzie 10 vrátane)!");
@@ -37,10 +34,7 @@ public class Main {
                         break;
                     case "gui" :
                         try {
-                            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-                            SwingUtilities.invokeLater(() -> {
-                                new MainWindow();
-                            });
+                            GUIController.runGUI();
                         } catch (Exception e) {
                             System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
                                     "podporujúcou JavaFX (Java do verzie 10 vrátane)!");

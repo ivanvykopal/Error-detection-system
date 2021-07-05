@@ -2,21 +2,23 @@ package Frontend;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class MainWindow extends JWindow {
+public class MainWindow extends JFrame {
     private JPanel panel1;
-    private JButton analysis1;
-    private JButton analysis2;
+    private JButton analysis1Btn;
+    private JButton analysis2Btn;
     private JLabel close;
-    private JLabel minimalize;
     private JLabel hide;
 
     public MainWindow() {
         add(this.panel1);
         this.setSize(800,600);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
         setVisible(true);
 
         addMouseMotionListener(new MouseMotionListener() {
@@ -38,30 +40,37 @@ public class MainWindow extends JWindow {
                 MainWindow.this.setLocation(p);
             }
         });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                toFront();
+            }
+        });
     }
 
-    public void analysis1AddListener(MouseListener listener) {
-        analysis1.addMouseListener(listener);
+    public void analysis1BtnAddListener(MouseListener listener) {
+        analysis1Btn.addMouseListener(listener);
     }
 
-    public void analysis2AddListener(MouseListener listener) {
-        analysis2.addMouseListener(listener);
+    public void analysis2BtnAddListener(MouseListener listener) {
+        analysis2Btn.addMouseListener(listener);
     }
 
     public void closeAddListener(MouseListener listener) {
         close.addMouseListener(listener);
     }
 
-    public void minimalizeAddListener(MouseListener listener) {
-        minimalize.addMouseListener(listener);
+    public JLabel getClose() {
+        return close;
     }
 
     public void hideAddListener(MouseListener listener) {
         hide.addMouseListener(listener);
     }
 
-    public void mainWindowAddListener(MouseListener listener) {
-        this.addMouseListener(listener);
+    public JLabel getHide() {
+        return hide;
     }
 
 }

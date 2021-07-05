@@ -4,6 +4,8 @@ import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
+import Frontend.Analysis2Window;
+import Frontend.MainWindow;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -11,14 +13,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
@@ -32,57 +38,112 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public class Analysis2Controller extends Controller {
+
+    private final Analysis2Window window;
+
     /** Atribút folder predstavuje adresár s analyzovanými súbormi. **/
     private File folder;
 
-    @FXML
-    private Label warning;
 
-    @FXML
-    private Button btnChooseFolder;
-
-    @FXML
-    private Button btnAnalyse;
-
-    @FXML
-    private Button btnMenu;
-
-    /**
-     * Metóda pre spracovanie stlačenia tlačidla Menu.
-     *
-     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     */
-    @FXML
-    public void goToMenu() {
-        try {
-            showMainWindow();
-        } catch (IOException e) {
-            ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
-                    "Problém pri načítaní showMainWindow()!");
-        }
+    private Analysis2Controller(Analysis2Window window) {
+        this.window = window;
+        initController();
     }
 
-    /**
+    public static void createController(Analysis2Window window) {
+        new Analysis2Controller(window);
+    }
+
+    private void initController() {
+        this.window.analyzeBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+            }
+        });
+
+        this.window.closeAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close.png"))));
+            }
+        });
+
+        this.window.hideAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                window.setVisible(!window.isVisible());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus.png"))));
+            }
+        });
+
+        this.window.menuBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                MainController.createController(new MainWindow());
+                window.setVisible(false);
+            }
+        });
+
+        this.window.analyzeBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                analyzeCodes();
+            }
+        });
+
+        this.window.loadFolderBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                getFolder();
+            }
+        });
+    }
+
+        /**
      * Metóda pre spracovanie stlačenia výberu adresása so zdrojovými kódmi.
      *
      * <p> Po stlačení daného tlačidla sa zobrazí okno pre výber adresáru.
      */
-    @FXML
     public void getFolder() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Vyberte Adresár");
+        JFileChooser directoryChooser = new JFileChooser();
+        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        directoryChooser.setDialogTitle("Vyberte Adresár");
 
-        File selectedDirectory = directoryChooser.showDialog(null);
+        File selectedDirectory = null;
+        int returnVal = directoryChooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            selectedDirectory = directoryChooser.getSelectedFile();
+        }
 
         if (selectedDirectory != null) {
-            warning.setTextFill(Color.web("#000000"));
-            warning.setText("Adresár: " + selectedDirectory.getAbsolutePath());
+            window.getWarning().setForeground(Color.BLACK);
+            window.getWarning().setText("Adresár: " + selectedDirectory.getAbsolutePath());
             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
                     "Adresár: " + selectedDirectory.getAbsolutePath() + " bol vybraný.");
             folder = selectedDirectory;
         } else {
-            warning.setTextFill(Color.web("#FF0000"));
-            warning.setText("Chybný adresár!");
+            window.getWarning().setForeground(Color.RED);
+            window.getWarning().setText("Chybný adresár!");
             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO,
                     "Chybný adresár!");
             folder = null;
@@ -99,7 +160,6 @@ public class Analysis2Controller extends Controller {
      * <p> V rámci analyzovania zdrojových kódov sa vyhodnocuje aj neoptímalne využívanie premenných na základe symbolickej
      * tabuľky a informácií v nej uložených.
      */
-    @FXML
     public void analyzeCodes() {
         ArrayList<String> fileNames = new ArrayList<>();
         deleteFiles();
@@ -112,9 +172,9 @@ public class Analysis2Controller extends Controller {
             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Problém s adresárom!");
         }
         else {
-            btnAnalyse.setOnAction(null);
-            btnChooseFolder.setOnAction(null);
-            btnMenu.setOnAction(null);
+            window.getLoadFolderBtn().setAction(null);
+            window.getAnalyzeBtn().setAction(null);
+            window.getMenuBtn().setAction(null);
             Alert info = new Alert(Alert.AlertType.INFORMATION);
             info.setTitle("Informácia");
             info.setHeaderText("Analyzovanie programov");

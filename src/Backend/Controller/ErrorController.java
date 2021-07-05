@@ -82,7 +82,7 @@ public class ErrorController extends Controller {
      *
      * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
      */
-    @FXML
+    /*@FXML
     public void goToMenu() {
         try {
             showMainWindow();
@@ -90,7 +90,7 @@ public class ErrorController extends Controller {
             ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
                     "Problém pri načítaní showMainWindow()!");
         }
-    }
+    }*/
 
     /**
      * Metóda pre spracovanie stlačenia tlačidla pre zobrazenie štatistík.

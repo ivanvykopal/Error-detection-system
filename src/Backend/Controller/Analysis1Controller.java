@@ -4,11 +4,14 @@ import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
-import javafx.fxml.FXML;
+import Frontend.Analysis1Window;
+import Frontend.MainWindow;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -28,56 +32,111 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public class Analysis1Controller extends Controller {
+
+    private final Analysis1Window window;
+
     /** Atribút absolutePath obsahuje absolútnu cestu k analyzovanému súboru. **/
     private String absolutePath;
 
     /** Atribút file predstavuje analyzovaný súbor v textovej podobe. **/
     private String file;
 
-    @FXML
-    private Label warning;
+    private Analysis1Controller(Analysis1Window window) {
+        this.window = window;
 
-    /**
-     * Metóda pre spracovanie stlačenia tlačidla Menu.
-     *
-     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     */
-    @FXML
-    public void goToMenu() {
-        try {
-            showMainWindow();
-        } catch (IOException e) {
-            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                    "Problém pri načítaní showMainWindow()!");
-        }
+        this.window.closeAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close.png"))));
+            }
+        });
+
+        this.window.hideAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                window.setVisible(!window.isVisible());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus.png"))));
+            }
+        });
+
+        this.window.loadFileBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                getFile();
+            }
+        });
+
+        this.window.analyzeBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                analyzeCode();
+            }
+        });
+
+        this.window.menuBtnAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                MainController.createController(new MainWindow());
+                window.setVisible(false);
+            }
+        });
     }
+
+    public static void createController(Analysis1Window window) {
+        new Analysis1Controller(window);
+    }
+
 
     /**
      * Metóda pre spracovanie stlačenia výberu súboru.
      *
      * <p> Po stlačení daného tlačidla sa zobrazí okno pre výber súboru.
      */
-    @FXML
     public void getFile() {
-        FileChooser filechooser = new FileChooser();
-        filechooser.setTitle("Vyberte súbor");
-        filechooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("C kód", "*.c"));
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Vyberte súbor");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("C kód", "c"));
 
-        File selectedFile = filechooser.showOpenDialog(null);
+        File selectedFile = null;
+        int returnValue = fileChooser.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            selectedFile = fileChooser.getSelectedFile();
+        }
 
         if (selectedFile != null) {
-            warning.setTextFill(Color.web("#000000"));
-            warning.setText("Súbor: " + selectedFile.getAbsolutePath());
+            window.getWarning().setForeground(Color.BLACK);
+            window.getWarning().setText("Súbor: " + selectedFile.getAbsolutePath());
             ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Súbor: " +
                     selectedFile.getAbsolutePath() + " bol vybraný.");
             absolutePath = selectedFile.getAbsolutePath();
             file = selectedFile.getName();
         } else {
-            warning.setTextFill(Color.web("#FF0000"));
-            warning.setText("Chybný súbor!");
+            window.getWarning().setForeground(Color.RED);
+            window.getWarning().setText("Chybný súbor!");
             ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Chybný súbor!");
             absolutePath = null;
         }
+
     }
 
     /**
@@ -89,7 +148,6 @@ public class Analysis1Controller extends Controller {
      * <p> V rámci analyzovania súboru sa vyhodnocuje aj neoptímalne využívanie premenných na základe symbolickej tabuľky
      * a informácií v nej uložených.
      */
-    @FXML
     public void analyzeCode() {
         try {
             File fileAnalyzing = new File("unanalyzed_files.txt");

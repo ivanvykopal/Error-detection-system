@@ -2,21 +2,25 @@ package Frontend;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class Analysis2Window extends JWindow {
-    private JButton analysis1;
-    private JButton analysis2;
+public class Analysis2Window extends JFrame {
+    private JButton loadFolderBtn;
+    private JButton analyzeBtn;
     private JLabel close;
-    private JLabel minimalize;
     private JLabel hide;
     private JPanel panel;
+    private JButton menuBtn;
+    private JLabel warning;
 
     public Analysis2Window() {
         add(this.panel);
         this.setSize(800, 600);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
         setVisible(true);
 
         addMouseMotionListener(new MouseMotionListener() {
@@ -38,29 +42,51 @@ public class Analysis2Window extends JWindow {
                 Analysis2Window.this.setLocation(p);
             }
         });
+
     }
 
-    public void analysis1AddListener(MouseListener listener) {
-        analysis1.addMouseListener(listener);
+    public void loadFolderBtnAddListener(MouseListener listener) {
+        loadFolderBtn.addMouseListener(listener);
     }
 
-    public void analysis2AddListener(MouseListener listener) {
-        analysis2.addMouseListener(listener);
+    public JButton getLoadFolderBtn() {
+        return loadFolderBtn;
+    }
+
+    public void analyzeBtnAddListener(MouseListener listener) {
+        analyzeBtn.addMouseListener(listener);
+    }
+
+    public JButton getAnalyzeBtn() {
+        return analyzeBtn;
+    }
+
+    public void menuBtnAddListener(MouseListener listener) {
+        menuBtn.addMouseListener(listener);
+    }
+
+    public JButton getMenuBtn() {
+        return menuBtn;
     }
 
     public void closeAddListener(MouseListener listener) {
         close.addMouseListener(listener);
     }
 
-    public void minimalizeAddListener(MouseListener listener) {
-        minimalize.addMouseListener(listener);
+    public JLabel getClose() {
+        return close;
     }
 
     public void hideAddListener(MouseListener listener) {
         hide.addMouseListener(listener);
     }
 
-    public void mainWindowAddListener(MouseListener listener) {
-        this.addMouseListener(listener);
+    public JLabel getHide() {
+        return hide;
     }
+
+    public JLabel getWarning() {
+        return warning;
+    }
+
 }

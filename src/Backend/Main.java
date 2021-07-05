@@ -2,6 +2,9 @@ package Backend;
 
 import Backend.Controller.ConsoleController;
 import Backend.Controller.GUIController;
+import Frontend.MainWindow;
+
+import javax.swing.*;
 
 /**
  * Hlavná trieda pre spustenie programu.
@@ -18,7 +21,10 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 1) {
             try {
-                GUIController.runGUI(args);
+                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                SwingUtilities.invokeLater(() -> {
+                    new MainWindow();
+                });
             } catch (Exception e) {
                 System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
                         "podporujúcou JavaFX (Java do verzie 10 vrátane)!");
@@ -31,7 +37,10 @@ public class Main {
                         break;
                     case "gui" :
                         try {
-                            GUIController.runGUI(args);
+                            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                            SwingUtilities.invokeLater(() -> {
+                                new MainWindow();
+                            });
                         } catch (Exception e) {
                             System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
                                     "podporujúcou JavaFX (Java do verzie 10 vrátane)!");

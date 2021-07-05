@@ -6,17 +6,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class MainWindow extends JWindow {
-    private JPanel panel1;
+public class Analysis2Window extends JWindow {
     private JButton analysis1;
     private JButton analysis2;
     private JLabel close;
     private JLabel minimalize;
     private JLabel hide;
+    private JPanel panel;
 
-    public MainWindow() {
-        add(this.panel1);
-        this.setSize(800,600);
+    public Analysis2Window() {
+        add(this.panel);
+        this.setSize(800, 600);
         setVisible(true);
 
         addMouseMotionListener(new MouseMotionListener() {
@@ -30,12 +30,12 @@ public class MainWindow extends JWindow {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                Point p = MainWindow.this.getLocation();
+                Point p = Analysis2Window.this.getLocation();
                 p.x += e.getXOnScreen() - mx;
                 p.y += e.getYOnScreen() - my;
                 mx = e.getXOnScreen();
                 my = e.getYOnScreen();
-                MainWindow.this.setLocation(p);
+                Analysis2Window.this.setLocation(p);
             }
         });
     }
@@ -63,5 +63,4 @@ public class MainWindow extends JWindow {
     public void mainWindowAddListener(MouseListener listener) {
         this.addMouseListener(listener);
     }
-
 }

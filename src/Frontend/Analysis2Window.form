@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Frontend.MainWindow">
-  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Frontend.Analysis2Window">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="910" height="819"/>
+      <xy x="20" y="20" width="664" height="513"/>
     </constraints>
     <properties>
       <background color="-1"/>
-      <enabled value="true"/>
+      <foreground color="-1"/>
       <preferredSize width="800" height="600"/>
-      <requestFocusEnabled value="false"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="e5be4" layout-manager="GridLayoutManager" row-count="13" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="9c8a9" layout-manager="GridLayoutManager" row-count="17" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -23,91 +22,86 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="a9799" class="javax.swing.JLabel">
+          <component id="5aba8" class="javax.swing.JLabel">
             <constraints>
               <grid row="3" column="1" row-span="2" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font name="Segoe UI" size="18"/>
               <foreground color="-16777216"/>
-              <text value="Výber analýzy"/>
+              <text value="Vyberte adresár z počítača"/>
             </properties>
           </component>
-          <component id="7a561" class="javax.swing.JButton" binding="analysis1">
-            <constraints>
-              <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Segoe UI" size="14"/>
-              <text value="Jeden zdrojový súbor"/>
-            </properties>
-          </component>
-          <component id="8f664" class="javax.swing.JButton" binding="analysis2">
+          <component id="8f856" class="javax.swing.JButton" binding="analysis1">
             <constraints>
               <grid row="8" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font name="Segoe UI" size="14"/>
-              <hideActionText value="true"/>
-              <text value="Viac zdrojových súborov"/>
+              <text value="Načítať adresár"/>
             </properties>
           </component>
-          <hspacer id="77d79">
+          <component id="318a6" class="javax.swing.JButton" binding="analysis2">
+            <constraints>
+              <grid row="10" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Segoe UI" size="14"/>
+              <hideActionText value="true"/>
+              <text value="Analyzovať zdrojové kódy"/>
+            </properties>
+          </component>
+          <hspacer id="9367e">
             <constraints>
               <grid row="3" column="0" row-span="2" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="ebd2c">
+          <hspacer id="68791">
             <constraints>
-              <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="c76b2">
+          <hspacer id="7bb99">
             <constraints>
-              <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="5905c">
+          <hspacer id="afa4c">
             <constraints>
-              <grid row="12" column="0" row-span="1" col-span="5" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="16" column="0" row-span="1" col-span="5" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <vspacer id="66aad">
+          <vspacer id="89de2">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="330c8">
-            <constraints>
-              <grid row="5" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <vspacer id="ebbd">
-            <constraints>
-              <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <vspacer id="7e712">
+          <vspacer id="dd30c">
             <constraints>
               <grid row="7" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="43142">
+          <vspacer id="3a19c">
+            <constraints>
+              <grid row="13" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="c4f52">
+            <constraints>
+              <grid row="9" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="8658b">
+            <constraints>
+              <grid row="15" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="1de70">
             <constraints>
               <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="db20a">
-            <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <vspacer id="7da0d">
-            <constraints>
-              <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <grid id="c2d39" layout-manager="GridLayoutManager" row-count="1" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="e50c2" layout-manager="GridLayoutManager" row-count="1" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -117,7 +111,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="9c5f0" class="javax.swing.JLabel" binding="close">
+              <component id="eecfd" class="javax.swing.JLabel" binding="close">
                 <constraints>
                   <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -126,7 +120,7 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="d478a" class="javax.swing.JLabel" binding="minimalize">
+              <component id="28aa8" class="javax.swing.JLabel" binding="minimalize">
                 <constraints>
                   <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -135,7 +129,7 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="73566" class="javax.swing.JLabel" binding="hide">
+              <component id="a6bf9" class="javax.swing.JLabel" binding="hide">
                 <constraints>
                   <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -144,61 +138,91 @@
                   <text value=""/>
                 </properties>
               </component>
-              <hspacer id="c4a24">
+              <hspacer id="fe6b0">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="5c488">
+              <hspacer id="5be7e">
                 <constraints>
                   <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="515e4">
+              <hspacer id="98d64">
                 <constraints>
                   <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="f0b30">
+              <hspacer id="7f6df">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="b0e2e">
+              <hspacer id="d117b">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="f598c">
+              <hspacer id="5c881">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="cd3b4">
+              <hspacer id="f8c80">
                 <constraints>
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <hspacer id="86b2d">
+              <hspacer id="cf267">
                 <constraints>
                   <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
             </children>
           </grid>
-          <hspacer id="8ff0">
+          <hspacer id="b97ed">
             <constraints>
               <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <vspacer id="23d47">
+          <vspacer id="b44">
             <constraints>
               <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
+          <component id="c011a" class="javax.swing.JButton">
+            <constraints>
+              <grid row="12" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Segoe UI" size="14"/>
+              <hideActionText value="true"/>
+              <text value="Menu"/>
+            </properties>
+          </component>
+          <vspacer id="8a70d">
+            <constraints>
+              <grid row="14" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <component id="db41b" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Segoe UI Light" size="14"/>
+              <foreground color="-4509175"/>
+              <text value="Nebol načítaný žiaden adresár!"/>
+            </properties>
+          </component>
+          <vspacer id="e2b62">
+            <constraints>
+              <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
         </children>
       </grid>
-      <grid id="55a89" layout-manager="GridLayoutManager" row-count="8" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="78fc9" layout-manager="GridLayoutManager" row-count="8" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -209,7 +233,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="1fe93" class="javax.swing.JLabel">
+          <component id="5f7e7" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -218,54 +242,54 @@
               <foreground color="-16777216"/>
               <horizontalAlignment value="0"/>
               <iconTextGap value="3"/>
-              <text value="Systém na detekciu chýb"/>
+              <text value="Analýza programov"/>
             </properties>
           </component>
-          <vspacer id="cd6d0">
+          <vspacer id="9e74c">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="8d88e">
+          <vspacer id="aad55">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <component id="911ca" class="javax.swing.JLabel">
+          <vspacer id="2e827">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="37e63">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="6b26e">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <component id="ef3f0" class="javax.swing.JLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font name="Segoe UI Light" size="16"/>
               <foreground color="-16777216"/>
-              <text value="Systém určený na identifikáciu chýb"/>
+              <text value="Analýza určená pre viacero"/>
             </properties>
           </component>
-          <component id="b1784" class="javax.swing.JLabel">
+          <component id="7afeb" class="javax.swing.JLabel">
             <constraints>
               <grid row="5" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font name="Segoe UI Light" size="16"/>
               <foreground color="-16777216"/>
-              <text value=" v zdrojových súboroch jazyka C."/>
+              <text value="zdrojových súborov."/>
             </properties>
           </component>
-          <vspacer id="eb832">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <vspacer id="a7bfd">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <vspacer id="f48fe">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
         </children>
       </grid>
     </children>

@@ -2,7 +2,6 @@ package Frontend;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -13,8 +12,8 @@ public class Analysis2Window extends JFrame {
     private JLabel close;
     private JLabel hide;
     private JPanel panel;
-    private JButton menuBtn;
     private JLabel warning;
+    private JLabel home;
 
     public Analysis2Window() {
         add(this.panel);
@@ -61,12 +60,12 @@ public class Analysis2Window extends JFrame {
         return analyzeBtn;
     }
 
-    public void menuBtnAddListener(MouseListener listener) {
-        menuBtn.addMouseListener(listener);
+    public void homeAddListener(MouseListener listener) {
+        home.addMouseListener(listener);
     }
 
-    public JButton getMenuBtn() {
-        return menuBtn;
+    public JLabel getHome() {
+        return home;
     }
 
     public void closeAddListener(MouseListener listener) {

@@ -16,8 +16,8 @@ public class ErrorWindow extends JFrame {
     private JTable table2;
     private JScrollPane sp1;
     private JScrollPane sp2;
-    private JButton menuBtn;
-    private JButton statisticsBtn;
+    private JLabel home;
+    private JLabel statistics;
 
     public ErrorWindow() {
         add(this.panel);
@@ -68,12 +68,20 @@ public class ErrorWindow extends JFrame {
 
     }
 
-    public void menuBtnAddListener(MouseListener listener) {
-        menuBtn.addMouseListener(listener);
+    public void homeAddListener(MouseListener listener) {
+        home.addMouseListener(listener);
     }
 
-    public void statisticsBtnAddListener(MouseListener listener) {
-        statisticsBtn.addMouseListener(listener);
+    public JLabel getHome() {
+        return home;
+    }
+
+    public void statisticsAddListener(MouseListener listener) {
+        statistics.addMouseListener(listener);
+    }
+
+    public JLabel getStatistics() {
+        return statistics;
     }
 
     public void closeAddListener(MouseListener listener) {

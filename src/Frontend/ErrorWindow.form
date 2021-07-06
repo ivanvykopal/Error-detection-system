@@ -193,11 +193,6 @@
               <grid row="2" column="25" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="97a9d">
-            <constraints>
-              <grid row="2" column="24" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
           <hspacer id="51917">
             <constraints>
               <grid row="2" column="19" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -238,22 +233,22 @@
               <grid row="2" column="21" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="8b6fd" class="javax.swing.JButton" binding="statisticsBtn">
+          <component id="42a0f" class="javax.swing.JLabel" binding="home">
             <constraints>
-              <grid row="2" column="15" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="24" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font name="Segoe UI" size="14"/>
-              <text value="Štatistiky"/>
+              <icon value="Images/home.png"/>
+              <text value=""/>
             </properties>
           </component>
-          <component id="fc233" class="javax.swing.JButton" binding="menuBtn">
+          <component id="d1f76" class="javax.swing.JLabel" binding="statistics">
             <constraints>
-              <grid row="2" column="18" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="22" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font name="Segoe UI" size="14"/>
-              <text value="Menu"/>
+              <icon value="Images/statistics.png"/>
+              <text value=""/>
             </properties>
           </component>
         </children>

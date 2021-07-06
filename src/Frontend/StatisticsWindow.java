@@ -15,9 +15,9 @@ public class StatisticsWindow extends JFrame {
     private JTable table2;
     private JLabel hide;
     private JLabel close;
-    private JButton backBtn;
-    private JButton menuBtn;
     private JPanel panel;
+    private JLabel back;
+    private JLabel home;
 
     public StatisticsWindow() {
         add(this.panel);
@@ -72,12 +72,20 @@ public class StatisticsWindow extends JFrame {
 
     }
 
-    public void menuBtnAddListener(MouseListener listener) {
-        menuBtn.addMouseListener(listener);
+    public void homeAddListener(MouseListener listener) {
+        home.addMouseListener(listener);
     }
 
-    public void backBtnAddListener(MouseListener listener) {
-        backBtn.addMouseListener(listener);
+    public JLabel getHome() {
+        return home;
+    }
+
+    public void backAddListener(MouseListener listener) {
+        back.addMouseListener(listener);
+    }
+
+    public JLabel getBack() {
+        return back;
     }
 
     public void closeAddListener(MouseListener listener) {
@@ -96,20 +104,4 @@ public class StatisticsWindow extends JFrame {
         return hide;
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-        SwingUtilities.invokeLater(() -> {
-            new StatisticsWindow();
-        });
-    }
 }

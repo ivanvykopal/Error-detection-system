@@ -49,6 +49,7 @@ public class MainController extends Controller {
             }
         });
 
+        this.window.getClose().setToolTipText("Ukončenie systému");
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

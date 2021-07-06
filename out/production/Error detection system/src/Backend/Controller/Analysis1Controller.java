@@ -44,6 +44,16 @@ public class Analysis1Controller extends Controller {
     private Analysis1Controller(Analysis1Window window) {
         this.window = window;
 
+        initController();
+    }
+
+    public static void createController(Analysis1Window window) {
+        new Analysis1Controller(window);
+    }
+
+    private void initController() {
+
+        this.window.getClose().setToolTipText("Ukončenie systému");
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -75,6 +85,7 @@ public class Analysis1Controller extends Controller {
             }
         });
 
+        this.window.getHome().setToolTipText("Návrat do menu");
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -93,11 +104,6 @@ public class Analysis1Controller extends Controller {
             }
         });
     }
-
-    public static void createController(Analysis1Window window) {
-        new Analysis1Controller(window);
-    }
-
 
     /**
      * Metóda pre spracovanie stlačenia výberu súboru.
@@ -118,7 +124,14 @@ public class Analysis1Controller extends Controller {
 
         if (selectedFile != null) {
             window.getWarning().setForeground(Color.BLACK);
-            window.getWarning().setText("Súbor: " + selectedFile.getAbsolutePath());
+            String name = selectedFile.getAbsolutePath();
+            if(name.length() > 30) {
+                int index = name.substring(name.length() - 30).indexOf('\\') + name.length() - 30;
+                window.getWarning().setText("Súbor: ..." + name.substring(index));
+            } else {
+                window.getWarning().setText("Súbor: " + name);
+            }
+            window.getWarning().setToolTipText(name);
             ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Súbor: " +
                     selectedFile.getAbsolutePath() + " bol vybraný.");
             absolutePath = selectedFile.getAbsolutePath();

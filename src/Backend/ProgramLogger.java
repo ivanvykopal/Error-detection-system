@@ -32,7 +32,15 @@ public class ProgramLogger {
             try {
                 file.createNewFile();
                 handler = new FileHandler("logs/log-file.log", true);
-            } catch (IOException ignored) {
+            } catch (IOException e1) {
+                File directory = new File("logs");
+                if (! directory.exists()){
+                    directory.mkdir();
+                }
+                try {
+                    handler = new FileHandler("logs/log-file.log", true);
+                } catch (IOException ignored) {
+                }
             }
         }
 

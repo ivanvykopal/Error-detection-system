@@ -63,6 +63,7 @@ public class ErrorController extends Controller {
     }
 
     private void initController() {
+        this.window.getClose().setToolTipText("Ukončenie systému");
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -80,6 +81,7 @@ public class ErrorController extends Controller {
             }
         });
 
+        this.window.getHome().setToolTipText("Návrat do menu");
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -98,6 +100,7 @@ public class ErrorController extends Controller {
             }
         });
 
+        this.window.getStatistics().setToolTipText("Zobrazenie štatistík");
         this.window.statisticsAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -215,7 +218,7 @@ public class ErrorController extends Controller {
                 Object[] row = new Object[3];
                 row[0] = record.getCode();
                 row[1] = record.getMessage();
-                row[2] = record.getCode();
+                row[2] = record.getNumber();
                 model.addRow(row);
             }
         }
@@ -230,8 +233,10 @@ public class ErrorController extends Controller {
             ArrayList<String> records = table2.get((String) window.getComboBox1().getSelectedItem());
             DefaultTableModel model = (DefaultTableModel) window.getVariableTable().getModel();
 
-            for(String item : records) {
-                model.addRow(new String[]{item});
+            if (records != null) {
+                for (String item : records) {
+                    model.addRow(new String[]{item});
+                }
             }
         }
     }

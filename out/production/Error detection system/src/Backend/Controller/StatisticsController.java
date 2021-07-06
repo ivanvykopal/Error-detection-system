@@ -61,6 +61,7 @@ public class StatisticsController extends Controller {
     }
 
     private void initController() {
+        this.window.getClose().setToolTipText("Ukončenie systému");
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -78,6 +79,7 @@ public class StatisticsController extends Controller {
             }
         });
 
+        this.window.getHome().setToolTipText("Návrat do menu");
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -96,6 +98,7 @@ public class StatisticsController extends Controller {
             }
         });
 
+        this.window.getBack().setToolTipText("Návrat na zobrazenie chýb");
         this.window.backAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -105,12 +108,12 @@ public class StatisticsController extends Controller {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                window.getBack().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/back-1.png"))));
+                window.getBack().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/back-arrow-1.png"))));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                window.getBack().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/back.png"))));
+                window.getBack().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/back-arrow.png"))));
             }
         });
 

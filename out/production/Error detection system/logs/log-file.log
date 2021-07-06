@@ -2,29 +2,4124 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-07-05T19:59:08</date>
-  <millis>1625507948956</millis>
+  <date>2021-07-06T20:17:23</date>
+  <millis>1625595443499</millis>
   <sequence>0</sequence>
-  <logger>Backend.Controller.Analysis1Controller</logger>
+  <logger>Backend.Controller.Analysis2Controller</logger>
   <level>INFO</level>
   <class>Backend.ProgramLogger</class>
   <method>log</method>
   <thread>16</thread>
-  <message>Chybný súbor!</message>
+  <message>Adresár: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03 bol vybraný.</message>
 </record>
 </log>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2021-07-05T19:59:11</date>
-  <millis>1625507951761</millis>
+  <date>2021-07-06T20:17:25</date>
+  <millis>1625595445412</millis>
   <sequence>1</sequence>
-  <logger>Backend.Controller.Analysis1Controller</logger>
+  <logger>Backend.Controller.Analysis2Controller</logger>
   <level>INFO</level>
   <class>Backend.ProgramLogger</class>
   <method>log</method>
   <thread>16</thread>
-  <message>Chybný súbor!</message>
+  <message>Analyzujem kódy.</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:25</date>
+  <millis>1625595445412</millis>
+  <sequence>2</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student10_1.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:25</date>
+  <millis>1625595445834</millis>
+  <sequence>3</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student10_2.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446099</millis>
+  <sequence>4</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student10_3.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446318</millis>
+  <sequence>5</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student11_1.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446428</millis>
+  <sequence>6</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student11_2.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446537</millis>
+  <sequence>7</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student11_3.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446615</millis>
+  <sequence>8</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student11_4.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446709</millis>
+  <sequence>9</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student11_5.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446787</millis>
+  <sequence>10</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student12_1.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:26</date>
+  <millis>1625595446912</millis>
+  <sequence>11</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>INFO</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Analyzujem súbor: D:\Users\Ivan\FIIT\6.semester\BP\Zdrojove kody\HW03\student12_2.c!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>12</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>13</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>14</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>15</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>16</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>17</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>18</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>19</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>20</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447084</millis>
+  <sequence>21</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>22</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>23</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>24</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>25</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>26</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>27</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>28</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>29</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>30</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>31</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>32</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>33</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>34</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>35</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447099</millis>
+  <sequence>36</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>37</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>38</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>39</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>40</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>41</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>42</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>43</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>44</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>45</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>46</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>47</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>48</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>49</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>50</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>51</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>52</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>53</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>54</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>55</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>56</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>57</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>58</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447115</millis>
+  <sequence>59</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>60</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>61</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>62</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>63</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>64</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>65</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>66</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>67</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>68</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>69</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>70</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>71</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>72</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>73</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>74</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>75</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>76</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>77</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>78</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>79</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>80</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>81</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>82</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>83</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447131</millis>
+  <sequence>84</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>85</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>86</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>87</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>88</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>89</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>90</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>91</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>92</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>93</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>94</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>95</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>96</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>97</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>98</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>99</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>100</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>101</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>102</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>103</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>104</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>105</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>106</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>107</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>108</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447146</millis>
+  <sequence>109</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>110</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>111</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>112</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>113</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>114</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>115</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>116</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>117</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>118</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>119</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>120</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>121</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>122</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>123</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>124</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>125</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>126</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>127</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>128</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>129</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>130</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>131</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>132</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447162</millis>
+  <sequence>133</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>134</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>135</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>136</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>137</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>138</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>139</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>140</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>141</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>142</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>143</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>144</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>145</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>146</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>147</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>148</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>149</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>150</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>151</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>152</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>153</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>154</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>155</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>156</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>157</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>158</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>159</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>160</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447178</millis>
+  <sequence>161</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>162</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>163</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>164</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>165</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>166</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>167</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>168</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>169</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>170</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>171</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>172</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>173</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>174</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>175</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>176</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>177</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>178</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>179</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>180</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>181</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>182</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>183</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>184</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>185</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>186</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>187</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>188</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447193</millis>
+  <sequence>189</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>190</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>191</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>192</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>193</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>194</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>195</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>196</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>197</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>198</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>199</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>200</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>201</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>202</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>203</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>204</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>205</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>206</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>207</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>208</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>209</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>210</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>211</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>212</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>213</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447209</millis>
+  <sequence>214</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447224</millis>
+  <sequence>215</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>216</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>217</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>218</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>219</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>220</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>221</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>222</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>223</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>224</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>225</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>226</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>227</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>228</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>229</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>230</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>231</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>232</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447225</millis>
+  <sequence>233</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>234</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>235</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>236</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>237</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>238</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>239</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>240</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>241</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>242</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>243</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>244</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>245</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>246</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>247</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>248</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>249</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>250</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>251</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>252</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>253</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>254</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447235</millis>
+  <sequence>255</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>256</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>257</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>258</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>259</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>260</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>261</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>262</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>263</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>264</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>265</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>266</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>267</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>268</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>269</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>270</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>271</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>272</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>273</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-07-06T20:17:27</date>
+  <millis>1625595447251</millis>
+  <sequence>274</sequence>
+  <logger>Backend.Controller.Analysis2Controller</logger>
+  <level>WARNING</level>
+  <class>Backend.ProgramLogger</class>
+  <method>log</method>
+  <thread>34</thread>
+  <message>Chyba pri načítaní zdrojového kódu!</message>
 </record>
 </log>

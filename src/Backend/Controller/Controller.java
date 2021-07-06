@@ -1,6 +1,5 @@
 package Backend.Controller;
 
-import javafx.stage.Stage;
 import java.io.File;
 
 /**

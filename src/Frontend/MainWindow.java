@@ -12,7 +12,6 @@ public class MainWindow extends JFrame {
     private JButton analysis1Btn;
     private JButton analysis2Btn;
     private JLabel close;
-    private JLabel hide;
 
     public MainWindow() {
         add(this.panel1);
@@ -63,14 +62,6 @@ public class MainWindow extends JFrame {
 
     public JLabel getClose() {
         return close;
-    }
-
-    public void hideAddListener(MouseListener listener) {
-        hide.addMouseListener(listener);
-    }
-
-    public JLabel getHide() {
-        return hide;
     }
 
 }

@@ -96,7 +96,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="5450" class="javax.swing.JTable" binding="table1" default-binding="true">
+              <component id="5450" class="javax.swing.JTable" binding="errorTable">
                 <constraints/>
                 <properties/>
               </component>
@@ -109,7 +109,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="852c3" class="javax.swing.JTable" binding="table2" default-binding="true">
+              <component id="852c3" class="javax.swing.JTable" binding="variableTable">
                 <constraints/>
                 <properties/>
               </component>
@@ -165,15 +165,6 @@
               <grid row="2" column="1" row-span="1" col-span="12" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="5f288" class="javax.swing.JLabel" binding="hide">
-            <constraints>
-              <grid row="2" column="26" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <icon value="Images/minus.png"/>
-              <text value=""/>
-            </properties>
-          </component>
           <component id="208b3" class="javax.swing.JLabel" binding="close">
             <constraints>
               <grid row="2" column="28" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -186,11 +177,6 @@
           <hspacer id="8cd7a">
             <constraints>
               <grid row="2" column="27" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
-          <hspacer id="2c3a4">
-            <constraints>
-              <grid row="2" column="25" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <hspacer id="51917">
@@ -223,11 +209,6 @@
               <grid row="7" column="5" row-span="1" col-span="9" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="a93d">
-            <constraints>
-              <grid row="2" column="23" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
           <hspacer id="d481c">
             <constraints>
               <grid row="2" column="21" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -235,16 +216,21 @@
           </hspacer>
           <component id="42a0f" class="javax.swing.JLabel" binding="home">
             <constraints>
-              <grid row="2" column="24" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="26" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <icon value="Images/home.png"/>
               <text value=""/>
             </properties>
           </component>
+          <hspacer id="a93d">
+            <constraints>
+              <grid row="2" column="25" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
           <component id="d1f76" class="javax.swing.JLabel" binding="statistics">
             <constraints>
-              <grid row="2" column="22" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="24" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <icon value="Images/statistics.png"/>

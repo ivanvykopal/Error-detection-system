@@ -5,15 +5,12 @@ import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
 import Frontend.Analysis2Window;
+import Frontend.ErrorWindow;
 import Frontend.MainWindow;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.stage.DirectoryChooser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -43,7 +40,6 @@ public class Analysis2Controller extends Controller {
 
     /** Atribút folder predstavuje adresár s analyzovanými súbormi. **/
     private File folder;
-
 
     private Analysis2Controller(Analysis2Window window) {
         this.window = window;
@@ -79,28 +75,21 @@ public class Analysis2Controller extends Controller {
             }
         });
 
-        this.window.hideAddListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                window.setVisible(!window.isVisible());
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus-1.png"))));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus.png"))));
-            }
-        });
-
-        this.window.menuBtnAddListener(new MouseAdapter() {
+        this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 MainController.createController(new MainWindow());
                 window.setVisible(false);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home.png"))));
             }
         });
 
@@ -163,18 +152,16 @@ public class Analysis2Controller extends Controller {
     public void analyzeCodes() {
         ArrayList<String> fileNames = new ArrayList<>();
         deleteFiles();
-        Alert warning = new Alert(Alert.AlertType.WARNING);
+
         if (folder == null) {
-            warning.setContentText("Nie je vybraný priečinok alebo vybraný priečinok je chybný!");
-            warning.setHeaderText("Nesprávny adresár!");
-            warning.setTitle("Upozornenie");
-            warning.show();
+            JOptionPane.showMessageDialog(null, "Nie je vybraný priečinok alebo vybraný priečinok je chybný!",
+                    "Nesprávny adresár!", JOptionPane.WARNING_MESSAGE);
+
             ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.INFO, "Problém s adresárom!");
         }
         else {
             window.getLoadFolderBtn().setAction(null);
             window.getAnalyzeBtn().setAction(null);
-            window.getMenuBtn().setAction(null);
             Alert info = new Alert(Alert.AlertType.INFORMATION);
             info.setTitle("Informácia");
             info.setHeaderText("Analyzovanie programov");
@@ -251,10 +238,8 @@ public class Analysis2Controller extends Controller {
                                 int finalFileCount = fileCount;
                                 Platform.runLater(() -> {
                                     try {
-                                        showErrorWindow(fileNames, finalFileCount);
-                                    } catch (IOException e) {
-                                        ProgramLogger.createLogger(Analysis2Controller.class.getName()).log(Level.WARNING,
-                                                "Problém pri načítaní showErrorWindow()!");
+                                        ErrorController.createController(new ErrorWindow(), fileNames, finalFileCount);
+                                        window.setVisible(false);
                                     } finally {
                                         latch.countDown();
                                     }

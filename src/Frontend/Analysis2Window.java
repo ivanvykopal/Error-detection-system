@@ -10,7 +10,6 @@ public class Analysis2Window extends JFrame {
     private JButton loadFolderBtn;
     private JButton analyzeBtn;
     private JLabel close;
-    private JLabel hide;
     private JPanel panel;
     private JLabel warning;
     private JLabel home;
@@ -74,14 +73,6 @@ public class Analysis2Window extends JFrame {
 
     public JLabel getClose() {
         return close;
-    }
-
-    public void hideAddListener(MouseListener listener) {
-        hide.addMouseListener(listener);
-    }
-
-    public JLabel getHide() {
-        return hide;
     }
 
     public JLabel getWarning() {

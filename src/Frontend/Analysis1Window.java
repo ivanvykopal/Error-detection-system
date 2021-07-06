@@ -11,7 +11,6 @@ public class Analysis1Window extends JFrame {
     private JPanel panel;
     private JButton loadFileBtn;
     private JLabel close;
-    private JLabel hide;
     private JButton analyzeBtn;
     private JLabel warning;
     private JLabel home;
@@ -67,14 +66,6 @@ public class Analysis1Window extends JFrame {
 
     public JLabel getClose() {
         return close;
-    }
-
-    public void hideAddListener(MouseListener listener) {
-        hide.addMouseListener(listener);
-    }
-
-    public JLabel getHide() {
-        return hide;
     }
 
     public JLabel getWarning() {

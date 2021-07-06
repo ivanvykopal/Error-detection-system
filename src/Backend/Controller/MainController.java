@@ -66,23 +66,6 @@ public class MainController extends Controller {
             }
         });
 
-        this.window.hideAddListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                window.setVisible(!window.isVisible());
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus-1.png"))));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus.png"))));
-            }
-        });
-
     }
 
 }

@@ -10,14 +10,14 @@ import java.awt.event.MouseMotionListener;
 public class StatisticsWindow extends JFrame {
     private JComboBox comboBox1;
     private JScrollPane sp1;
-    private JTable table1;
+    private JTable tableForOne;
     private JScrollPane sp2;
-    private JTable table2;
-    private JLabel hide;
+    private JTable errorTablePercent;
     private JLabel close;
-    private JButton menuBtn;
     private JPanel panel;
     private JLabel back;
+    private JLabel home;
+    private JLabel meanErrorCount;
 
     public StatisticsWindow() {
         add(this.panel);
@@ -31,23 +31,23 @@ public class StatisticsWindow extends JFrame {
         sp2.setMaximumSize(new Dimension(300,250));
         sp2.setPreferredSize(new Dimension(300,250));
 
-        String[] column_names = {"Kód chyby", "Chybová správa", "Číslo riadku"};
+        String[] column_names = {"Kód chyby", "Chybová správa", "Počet výskytov"};
         DefaultTableModel table_model1 = new DefaultTableModel(column_names,0);
-        table1.setModel(table_model1);
-        table1.getColumnModel().getColumn(0).setMaxWidth(150);
-        table1.getColumnModel().getColumn(0).setMaxWidth(150);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(100);
-        table1.getColumnModel().getColumn(2).setMaxWidth(100);
+        tableForOne.setModel(table_model1);
+        tableForOne.getColumnModel().getColumn(0).setMaxWidth(150);
+        tableForOne.getColumnModel().getColumn(0).setMaxWidth(150);
+        tableForOne.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tableForOne.getColumnModel().getColumn(2).setMaxWidth(100);
 
         column_names = new String[]{"Kód chyby", "Chybová správa", "Početnosť chýb", "Početnosť súborov"};
         DefaultTableModel table_model2 = new DefaultTableModel(column_names,0);
-        table2.setModel(table_model2);
-        table2.getColumnModel().getColumn(0).setMaxWidth(150);
-        table2.getColumnModel().getColumn(0).setMaxWidth(150);
-        table2.getColumnModel().getColumn(2).setPreferredWidth(125);
-        table2.getColumnModel().getColumn(2).setMaxWidth(125);
-        table2.getColumnModel().getColumn(3).setPreferredWidth(125);
-        table2.getColumnModel().getColumn(3).setMaxWidth(125);
+        errorTablePercent.setModel(table_model2);
+        errorTablePercent.getColumnModel().getColumn(0).setMaxWidth(150);
+        errorTablePercent.getColumnModel().getColumn(0).setMaxWidth(150);
+        errorTablePercent.getColumnModel().getColumn(2).setPreferredWidth(125);
+        errorTablePercent.getColumnModel().getColumn(2).setMaxWidth(125);
+        errorTablePercent.getColumnModel().getColumn(3).setPreferredWidth(125);
+        errorTablePercent.getColumnModel().getColumn(3).setMaxWidth(125);
         setVisible(true);
 
         addMouseMotionListener(new MouseMotionListener() {
@@ -72,8 +72,12 @@ public class StatisticsWindow extends JFrame {
 
     }
 
-    public void menuBtnAddListener(MouseListener listener) {
-        menuBtn.addMouseListener(listener);
+    public void homeAddListener(MouseListener listener) {
+        home.addMouseListener(listener);
+    }
+
+    public JLabel getHome() {
+        return home;
     }
 
     public void backAddListener(MouseListener listener) {
@@ -92,12 +96,19 @@ public class StatisticsWindow extends JFrame {
         return close;
     }
 
-    public void hideAddListener(MouseListener listener) {
-        hide.addMouseListener(listener);
+    public JComboBox getComboBox1() {
+        return comboBox1;
     }
 
-    public JLabel getHide() {
-        return hide;
+    public JTable getErrorTablePercent() {
+        return errorTablePercent;
     }
 
+    public JTable getTableForOne() {
+        return tableForOne;
+    }
+
+    public void setText(String text) {
+        meanErrorCount.setText("Priemerný počet chýb pre zdrojový kód: " + text);
+    }
 }

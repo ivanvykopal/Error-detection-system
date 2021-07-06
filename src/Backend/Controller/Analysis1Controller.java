@@ -5,8 +5,8 @@ import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
 import Compiler.Preprocessing.IncludePreprocessor;
 import Frontend.Analysis1Window;
+import Frontend.ErrorWindow;
 import Frontend.MainWindow;
-import javafx.scene.control.Alert;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -61,23 +61,6 @@ public class Analysis1Controller extends Controller {
             }
         });
 
-        this.window.hideAddListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                window.setVisible(!window.isVisible());
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus-1.png"))));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                window.getHide().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/minus.png"))));
-            }
-        });
-
         this.window.loadFileBtnAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -92,11 +75,21 @@ public class Analysis1Controller extends Controller {
             }
         });
 
-        this.window.menuBtnAddListener(new MouseAdapter() {
+        this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 MainController.createController(new MainWindow());
                 window.setVisible(false);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home.png"))));
             }
         });
     }
@@ -155,12 +148,9 @@ public class Analysis1Controller extends Controller {
             fileAnalyzing.createNewFile();
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
 
-            Alert warning = new Alert(Alert.AlertType.WARNING);
             if (absolutePath == null) {
-                warning.setContentText("Nie je vybraný súbor alebo vybraný súbor je chybný!");
-                warning.setHeaderText("Nesprávny súbor!");
-                warning.setTitle("Upozornenie");
-                warning.show();
+                JOptionPane.showMessageDialog(null, "Nie je vybraný súbor alebo vybraný súbor je chybný!",
+                        "Nesprávny súbor!", JOptionPane.WARNING_MESSAGE);
                 ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
             }
             else {
@@ -174,10 +164,8 @@ public class Analysis1Controller extends Controller {
                         ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                                 "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
                         fileWriter.write("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
-                        warning.setContentText("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                        warning.setHeaderText("Chyba pri analyzovaní súboru!");
-                        warning.setTitle("Upozornenie");
-                        warning.show();
+                        JOptionPane.showMessageDialog(null, "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!",
+                                "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                     ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -185,25 +173,25 @@ public class Analysis1Controller extends Controller {
                     parser.parse(file);
                     errorDatabase.createFile(file);
                     if (errorDatabase.isEmpty()) {
-                        showErrorWindow(new ArrayList<>(), 1);
+                        ErrorController.createController(new ErrorWindow(), new ArrayList<>(), 1);
                     } else {
-                        showErrorWindow(new ArrayList<>(Collections.singletonList(file)), 1);
+                        ErrorController.createController(new ErrorWindow(), new ArrayList<>(Collections.singletonList(file)),
+                                1);
                     }
+                    window.setVisible(false);
                 } catch (IOException er) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                             "Vyskytla sa chyba pri práci s I/O súbormi!");
-                    warning.setContentText("Chyba pri analyzovaní súboru!");
-                    warning.setHeaderText("Chyba pri analyzovaní súboru!");
-                    warning.setTitle("Upozornenie");
-                    warning.show();
+                    JOptionPane.showMessageDialog(null, "Chyba pri analyzovaní súboru!",
+                            "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
+
                 } catch (Exception e) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
                             "Vyskytla sa chyba spôsobená parserom!");
                     fileWriter.write("Chyba pri analyzovaní súboru " + absolutePath + "!\n");
-                    warning.setContentText("Chyba pri analyzovaní súboru!");
-                    warning.setHeaderText("Chyba pri analyzovaní súboru!");
-                    warning.setTitle("Upozornenie");
-                    warning.show();
+                    JOptionPane.showMessageDialog(null, "Chyba pri analyzovaní súboru!",
+                            "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
+
                 }
             }
             fileWriter.close();

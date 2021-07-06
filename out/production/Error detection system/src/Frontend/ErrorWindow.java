@@ -9,15 +9,14 @@ import java.awt.event.MouseMotionListener;
 
 public class ErrorWindow extends JFrame {
     private JLabel close;
-    private JLabel hide;
     private JPanel panel;
     private JComboBox comboBox1;
-    private JTable table1;
-    private JTable table2;
+    private JTable errorTable;
+    private JTable variableTable;
     private JScrollPane sp1;
     private JScrollPane sp2;
-    private JButton menuBtn;
-    private JButton statisticsBtn;
+    private JLabel home;
+    private JLabel statistics;
 
     public ErrorWindow() {
         add(this.panel);
@@ -35,15 +34,15 @@ public class ErrorWindow extends JFrame {
 
         String[] column_names = {"Kód chyby","Chybová správa","Číslo riadku"};
         DefaultTableModel table_model1 = new DefaultTableModel(column_names,0);
-        table1.setModel(table_model1);
-        table1.getColumnModel().getColumn(0).setMaxWidth(150);
-        table1.getColumnModel().getColumn(0).setMaxWidth(150);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(100);
-        table1.getColumnModel().getColumn(2).setMaxWidth(100);
+        errorTable.setModel(table_model1);
+        errorTable.getColumnModel().getColumn(0).setMaxWidth(150);
+        errorTable.getColumnModel().getColumn(0).setMaxWidth(150);
+        errorTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        errorTable.getColumnModel().getColumn(2).setMaxWidth(100);
 
         column_names = new String[]{"Možné zdielané premenné"};
         DefaultTableModel table_model2 = new DefaultTableModel(column_names,0);
-        table2.setModel(table_model2);
+        variableTable.setModel(table_model2);
         setVisible(true);
 
         addMouseMotionListener(new MouseMotionListener() {
@@ -68,12 +67,20 @@ public class ErrorWindow extends JFrame {
 
     }
 
-    public void menuBtnAddListener(MouseListener listener) {
-        menuBtn.addMouseListener(listener);
+    public void homeAddListener(MouseListener listener) {
+        home.addMouseListener(listener);
     }
 
-    public void statisticsBtnAddListener(MouseListener listener) {
-        statisticsBtn.addMouseListener(listener);
+    public JLabel getHome() {
+        return home;
+    }
+
+    public void statisticsAddListener(MouseListener listener) {
+        statistics.addMouseListener(listener);
+    }
+
+    public JLabel getStatistics() {
+        return statistics;
     }
 
     public void closeAddListener(MouseListener listener) {
@@ -84,11 +91,15 @@ public class ErrorWindow extends JFrame {
         return close;
     }
 
-    public void hideAddListener(MouseListener listener) {
-        hide.addMouseListener(listener);
+    public JComboBox getComboBox1() {
+        return comboBox1;
     }
 
-    public JLabel getHide() {
-        return hide;
+    public JTable getErrorTable() {
+        return errorTable;
+    }
+
+    public JTable getVariableTable() {
+        return variableTable;
     }
 }

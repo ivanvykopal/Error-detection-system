@@ -1,18 +1,20 @@
 package Backend.Controller;
 
 import Backend.ProgramLogger;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import Frontend.ErrorWindow;
+import Frontend.MainWindow;
+import Frontend.StatisticsWindow;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -26,6 +28,9 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public class ErrorController extends Controller {
+
+    private final ErrorWindow window;
+
     /** Atribút fileCount predstavuje počet analyzovaných zdrojových kódov. **/
     private int fileCount = 1;
 
@@ -38,25 +43,84 @@ public class ErrorController extends Controller {
     /** Atribút table2 predstavuje tabuľky s možnosťami zdieľania premenných v jednotlivých zdrojových kódoch. **/
     private HashMap<String, ArrayList<String>> table2 = new HashMap<>();
 
-    @FXML
-    private ComboBox<String> comboBox;
-
-    @FXML
-    private TableView<TableRecord> errorTable;
-
-    @FXML
-    private TableView<String> variableTable;
-
-    @FXML
-    private TableColumn<String, String> variableColumn;
-
     /**
      * Konštruktor, v ktorom sa načítavajú údaje do tabuľky s chybami a možnosti zdieľania premenných v jednotlivých
      * zdrojových kódov.
      */
-    public ErrorController() {
+    private ErrorController(ErrorWindow window, ArrayList<String> files, int fileCount) {
+        this.window = window;
+        this.fileCount = fileCount;
+
+        fillComboBox(files);
+        initController();
+
         readErrorFile();
         readVariableFile();
+    }
+
+    public static void createController(ErrorWindow window, ArrayList<String> files, int fileCount) {
+        new ErrorController(window, files, fileCount);
+    }
+
+    private void initController() {
+        this.window.closeAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getClose().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/close.png"))));
+            }
+        });
+
+        this.window.homeAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                MainController.createController(new MainWindow());
+                window.setVisible(false);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getHome().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/home.png"))));
+            }
+        });
+
+        this.window.statisticsAddListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                StatisticsController.createController(new StatisticsWindow(), table, fileCount, files);
+                window.setVisible(false);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                window.getStatistics().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/statistics-1.png"))));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                window.getStatistics().setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Images/statistics.png"))));
+            }
+        });
+
+        this.window.getComboBox1().addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                getSelectedItem();
+            }
+        });
     }
 
     /**
@@ -64,46 +128,18 @@ public class ErrorController extends Controller {
      *
      * <p> Po vybraní zdrojového kódu z rozbaľovacieho poľa sa zobrazia zistené chyby pre daný zdrojový kód.
      */
-    @FXML
     public void getSelectedItem() {
-        variableTable.getItems().clear();
-        errorTable.getItems().clear();
-        if (!comboBox.getSelectionModel().getSelectedItem().equals("Vyberte súbor")) {
+        DefaultTableModel variableModel = (DefaultTableModel) window.getVariableTable().getModel();
+        DefaultTableModel errorModel = (DefaultTableModel) window.getErrorTable().getModel();
+        variableModel.setRowCount(0);
+        errorModel.setRowCount(0);
+        String selected = (String) window.getComboBox1().getSelectedItem();
+        if (selected != null && !selected.equals("Vyberte súbor")) {
             setErrorTable();
             setVariableTable();
         } else {
-            variableTable.getItems().clear();
-            errorTable.getItems().clear();
-        }
-    }
-
-    /**
-     * Metóda pre spracovanie stlačenia tlačidla Menu.
-     *
-     * <p> Po stlačení tlačidla Menu sa zobrazí hlavné okno.
-     */
-    /*@FXML
-    public void goToMenu() {
-        try {
-            showMainWindow();
-        } catch (IOException e) {
-            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
-                    "Problém pri načítaní showMainWindow()!");
-        }
-    }*/
-
-    /**
-     * Metóda pre spracovanie stlačenia tlačidla pre zobrazenie štatistík.
-     *
-     * <p> Po stlačení daného tlačidla sa zobrazí obsazovka so štatistikami.
-     */
-    @FXML
-    public void viewStatistics() {
-        try {
-            showStatisticsWindow(table, fileCount, files);
-        } catch (IOException e) {
-            ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
-                    "Problém pri načítaní showStatisticsWindow()!");
+            variableModel.setRowCount(0);
+            errorModel.setRowCount(0);
         }
     }
 
@@ -173,9 +209,15 @@ public class ErrorController extends Controller {
      */
     private void setErrorTable() {
         if (!table.isEmpty()) {
-            ArrayList<TableRecord> records = table.get(comboBox.getSelectionModel().getSelectedItem());
-            ObservableList<TableRecord> data = FXCollections.observableArrayList(records);
-            errorTable.setItems(data);
+            ArrayList<TableRecord> records = table.get((String) window.getComboBox1().getSelectedItem());
+            DefaultTableModel model = (DefaultTableModel) window.getErrorTable().getModel();
+            for (TableRecord record : records) {
+                Object[] row = new Object[3];
+                row[0] = record.getCode();
+                row[1] = record.getMessage();
+                row[2] = record.getCode();
+                model.addRow(row);
+            }
         }
     }
 
@@ -185,15 +227,12 @@ public class ErrorController extends Controller {
      */
     private void setVariableTable() {
         if (!table2.isEmpty()) {
-            ArrayList<String> records = table2.get(comboBox.getSelectionModel().getSelectedItem());
-            ObservableList<String> data;
-            if (records == null) {
-                data = FXCollections.observableArrayList(new ArrayList<>());
-            } else {
-                data = FXCollections.observableArrayList(records);
+            ArrayList<String> records = table2.get((String) window.getComboBox1().getSelectedItem());
+            DefaultTableModel model = (DefaultTableModel) window.getVariableTable().getModel();
+
+            for(String item : records) {
+                model.addRow(new String[]{item});
             }
-            variableColumn.setCellValueFactory(e -> new SimpleStringProperty((e.getValue())));
-            variableTable.setItems(data);
         }
     }
 
@@ -205,16 +244,8 @@ public class ErrorController extends Controller {
     public void fillComboBox(ArrayList<String> files) {
         this.files = new ArrayList<>(files);
         files.add(0, "Vyberte súbor");
-        comboBox.setItems(FXCollections.observableArrayList(files));
-        comboBox.getSelectionModel().selectFirst();
+        window.getComboBox1().setModel(new DefaultComboBoxModel(files.toArray()));
+        window.getComboBox1().setSelectedIndex(0);
     }
 
-    /**
-     * Metóda pre nastavenie počtu analyzovaných zdrojových kódov.
-     *
-     * @param count počet analyzovaných zdrojových kódov
-     */
-    public void setFileCount(int count) {
-        this.fileCount = count;
-    }
 }

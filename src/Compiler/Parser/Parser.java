@@ -1,7 +1,7 @@
 package Compiler.Parser;
 
+import Backend.InternationalizationClass;
 import Compiler.AbstractSyntaxTree.Enum;
-import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.GraphColoring.VariableUsageChecker;
 import Compiler.Lexer.Scanner;
@@ -196,23 +196,23 @@ public class Parser {
             case Tag.RIGHT_PARENTHESES:
             case Tag.LEFT_BRACES:
             case Tag.RIGHT_BRACES:
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-01"), "E-SxA-01");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-01"), "E-SxA-01");
                 break;
             case Tag.SEMICOLON:
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-03"), "E-SxA-03");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-03"), "E-SxA-03");
                 break;
             case Tag.PLUS:
             case Tag.MINUS:
             case Tag.MULT:
             case Tag.DIV:
             case Tag.MOD:
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-05"), "E-SxA-05");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-05"), "E-SxA-05");
                 break;
             case Tag.IDENTIFIER:
                 if (getTokenTag() < 32) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("L-SxA-09"), "L-SxA-09");
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-06"), "E-SxA-06");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-06"), "E-SxA-06");
                 }
                 break;
             default:
@@ -223,13 +223,13 @@ public class Parser {
                     case Tag.RIGHT_BRACES:
                     case Tag.LEFT_PARENTHESES:
                     case Tag.RIGHT_PARENTHESES:
-                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-02"), "E-SxA-02");
+                        errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-02"), "E-SxA-02");
                         break;
                     default:
                         if (tag < 32 && getTokenTag() == Tag.IDENTIFIER) {
-                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-04"), "E-SxA-04");
+                            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-04"), "E-SxA-04");
                         } else {
-                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                         }
                 }
                 break;
@@ -342,7 +342,7 @@ public class Parser {
                     }
                 }
                 if (u > 1 || l > 2) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SmA-01"), "E-SmA-01");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
                 }
                 StringBuilder type = new StringBuilder();
                 if (u > 0) {
@@ -503,7 +503,7 @@ public class Parser {
                     return ref;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DOT:
@@ -565,7 +565,7 @@ public class Parser {
                     return ref;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -594,14 +594,14 @@ public class Parser {
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
             return new ExpressionList(arr, line, symbolTable, errorDatabase);
         }
         if (child1 != null && child1.isNone()) {
-            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
         }
         return null;
     }
@@ -631,7 +631,7 @@ public class Parser {
                     return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.SIZEOF:
@@ -655,7 +655,7 @@ public class Parser {
                         return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                     }
                     if (child1 != null && child1.isNone()) {
-                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     }
                     return null;
                 } else {
@@ -666,7 +666,7 @@ public class Parser {
                     if (!child1.isNone()) {
                         return new UnaryOperator(child1, terminal, child1.getLine(), symbolTable, errorDatabase);
                     } else {
-                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                         return null;
                     }
                 }
@@ -675,7 +675,7 @@ public class Parser {
         if (!operator.equals("")) {
             child1 = cast_expression();
             if (child1.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return new UnaryOperator(child1, operator, child1.getLine(), symbolTable, errorDatabase);
@@ -766,7 +766,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -801,7 +801,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -838,7 +838,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -877,7 +877,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -912,7 +912,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -949,7 +949,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -983,7 +983,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1017,7 +1017,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1054,7 +1054,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1088,7 +1088,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     child1 = new BinaryOperator(binOperator, terminal, child1, binOperator.getLine(), symbolTable, errorDatabase);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1124,7 +1124,7 @@ public class Parser {
                     return new TernaryOperator(child1, child2, child4, child1.getLine(), symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -1157,7 +1157,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return new Assignment(child1, operator, child2, child1.getLine(), symbolTable, errorDatabase);
@@ -1220,7 +1220,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1400,7 +1400,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1429,12 +1429,12 @@ public class Parser {
                     return new InitDeclarator(child1, child2);
                 }
                 if (child2 != null && child2.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
                 if (getTokenValue().equals("==")) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 return new InitDeclarator(child1, null);
@@ -1588,7 +1588,7 @@ public class Parser {
                     }
             }
             if (getTokenTag() < 32) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("L-SxA-09"), "L-SxA-09");
                 return null;
             }
         }
@@ -1769,7 +1769,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     arr.add(child1);
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -1795,7 +1795,7 @@ public class Parser {
                 return new StructDeclarator(new TypeDeclaration(null, null, null), child1);
             }
             if (child1 != null && child1.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
             }
             return null;
         }
@@ -1811,7 +1811,7 @@ public class Parser {
                     return new StructDeclarator(child1, child2);
                 }
                 if (child2 != null && child2.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -1836,7 +1836,7 @@ public class Parser {
                 return child1;
             }
             if (child1 != null && child1.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
             }
             return null;
         }
@@ -1903,7 +1903,7 @@ public class Parser {
                 }
         }
         if (getTokenTag() < 32) {
-            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -1961,7 +1961,7 @@ public class Parser {
                     return new Enumerator(child1, child2, line);
                 }
                 if (child2 != null && child2.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             } else {
@@ -2062,7 +2062,7 @@ public class Parser {
         }
 
         if (getTokenTag() < 32) {
-            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -2088,7 +2088,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.LEFT_PARENTHESES:
@@ -2098,7 +2098,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -2157,7 +2157,7 @@ public class Parser {
                 if (!child1.isNone()) {
                     return child1;
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             case Tag.RIGHT_BRACKETS:
@@ -2204,7 +2204,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -2302,7 +2302,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_BRACKETS);
@@ -2401,7 +2401,7 @@ public class Parser {
                 nextToken();
                 child1 = assignment_expression();
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
@@ -2609,7 +2609,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -2715,14 +2715,14 @@ public class Parser {
                     arr.add(new Identifier(getTokenValue(), getTokenLine()));
                     nextToken();
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
             return new ParameterList(arr, line, symbolTable, errorDatabase);
         }
         if (getTokenTag() < 32) {
-            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("L-SxA-09"), "L-SxA-09");
+            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("L-SxA-09"), "L-SxA-09");
             return null;
         }
         return new None();
@@ -2820,7 +2820,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -2967,7 +2967,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3006,7 +3006,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 return child2;
@@ -3034,7 +3034,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 child3 = expect(Tag.RIGHT_BRACKETS);
@@ -3116,7 +3116,7 @@ public class Parser {
                 nextToken();
                 child1 = assignment_expression();
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
                 if (child1 != null && !child1.isNone()) {
@@ -3210,7 +3210,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.LEFT_PARENTHESES:
@@ -3220,7 +3220,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             default:
@@ -3343,7 +3343,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 ArrayList<Node> arr = new ArrayList<>();
@@ -3399,7 +3399,7 @@ public class Parser {
                     return null;
                 }
                 if (child2.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 } else {
                     init.addExpression(new NamedInitializer(child1, child2, symbolTable, errorDatabase));
@@ -3424,7 +3424,7 @@ public class Parser {
                     return new EmptyStatement();
                 }
             }
-            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
             return null;
         }
         return new EmptyStatement();
@@ -3446,7 +3446,7 @@ public class Parser {
                 nextToken();
                 return child1;
             } else {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             }
         }
@@ -3504,7 +3504,7 @@ public class Parser {
                     return child1;
                 }
                 if (child1 != null && child1.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DOT:
@@ -3625,7 +3625,7 @@ public class Parser {
                     return new Default(child2, line);
                 }
                 if (child2 != null && child2.isNone()) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.CASE:
@@ -3642,7 +3642,7 @@ public class Parser {
                     return new Case(child1, child3, line, symbolTable, errorDatabase);
                 }
                 if ((child1 != null && child1.isNone()) || (child3 != null && child3.isNone())) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3830,7 +3830,7 @@ public class Parser {
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())
                         || (child5 != null && child5.isNone())) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.SWITCH:
@@ -3850,7 +3850,7 @@ public class Parser {
                     return new Switch(child2, child4, line, symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3888,7 +3888,7 @@ public class Parser {
                     return new While(child2, child4, line, symbolTable, errorDatabase);
                 }
                 if ((child2 != null && child2.isNone()) || (child4 != null && child4.isNone())) {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
             case Tag.DO:
@@ -3934,7 +3934,7 @@ public class Parser {
                 if (!child2.isNone()) {
                     return child2;
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 }
                 return null;
         }
@@ -3971,7 +3971,7 @@ public class Parser {
                 return null;
             }
              if (child2.isNone()) {
-                 errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                 errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                  if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
@@ -3990,7 +3990,7 @@ public class Parser {
                          return new For(child1, child2, null, child3, line, symbolTable, errorDatabase);
                      }
                      if (child3 != null && child3.isNone()) {
-                         errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                         errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                      }
                      return null;
                  }
@@ -4010,7 +4010,7 @@ public class Parser {
                              return null;
                          }
                          if (child5.isNone()) {
-                             errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                             errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                              return null;
                          } else {
                              if (child1.isEmpty()) {
@@ -4026,7 +4026,7 @@ public class Parser {
                          }
                      }
                  } else {
-                     errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                     errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                      return null;
                  }
             }
@@ -4041,7 +4041,7 @@ public class Parser {
                 return null;
             }
             if (child2.isNone()) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                 return null;
             } else {
                 if (getTokenTag() == Tag.RIGHT_PARENTHESES) {
@@ -4057,7 +4057,7 @@ public class Parser {
                         return new For(new DeclarationList(child, line), child2, null, child3, line, symbolTable, errorDatabase);
                     }
                     if (child3 != null && child3.isNone()) {
-                        errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                        errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     }
                     return null;
                 }
@@ -4077,7 +4077,7 @@ public class Parser {
                             return null;
                         }
                         if (child5.isNone()) {
-                            errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                            errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                             return null;
                         } else {
                             if (child2.isEmpty()) {
@@ -4090,7 +4090,7 @@ public class Parser {
                         }
                     }
                 } else {
-                    errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                    errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
                     return null;
                 }
             }
@@ -4418,14 +4418,14 @@ public class Parser {
             }
 
             if (!typeCheck(((Declarator) decl).getDeclarator(),((Declarator) decl).getInitializer())) {
-                errorDatabase.addErrorMessage(declarator1.getInitializer().getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
+                errorDatabase.addErrorMessage(declarator1.getInitializer().getLine(), InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
             } else if (((Declarator) decl).getDeclarator() instanceof Identifier) {
                 Declarator declarator2 = (Declarator) decl;
                 Record record = symbolTable.lookup(((Identifier) declarator2.getDeclarator()).getName());
                 if (record != null && (record.getKind() == Kind.ARRAY || record.getKind() == Kind.ARRAY_PARAMETER ||
                         record.getKind() == Kind.STRUCT_ARRAY_PARAMETER) &&
                         TypeChecker.findTypeCategory(declarator2.getInitializer(), symbolTable) > 50) {
-                    errorDatabase.addErrorMessage(declarator2.getLine(), Error.getError("E-RP-08"), "E-RP-08");
+                    errorDatabase.addErrorMessage(declarator2.getLine(), InternationalizationClass.getErrors().getString("E-RP-08"), "E-RP-08");
                 }
             }
 
@@ -4472,7 +4472,7 @@ public class Parser {
         for (Node t_name : typename) {
             if (!(t_name instanceof IdentifierType)) {
                 if (typename.size() > 1) {
-                    errorDatabase.addErrorMessage(decl.getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
+                    errorDatabase.addErrorMessage(decl.getLine(), InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
                     return null;
                 } else {
                     type.addType(t_name);
@@ -4483,7 +4483,7 @@ public class Parser {
         if (typename.isEmpty()) {
             // ak nie je žiaden typ, nastavuje sa defaultne int
             if (!(decl.getType() instanceof FunctionDeclaration)) {
-                errorDatabase.addErrorMessage(decl.getLine(), Error.getError("E-SmA-01"), "E-SmA-01");
+                errorDatabase.addErrorMessage(decl.getLine(), InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
                 return null;
             }
             ArrayList<String> arr = new ArrayList<>();
@@ -4768,7 +4768,7 @@ public class Parser {
             return new Err();
         } else {
             if (checkError) {
-                errorDatabase.addErrorMessage(getTokenLine(), Error.getError("E-SxA-07"), "E-SxA-07");
+                errorDatabase.addErrorMessage(getTokenLine(), InternationalizationClass.getErrors().getString("E-SxA-07"), "E-SxA-07");
             }
             return null;
         }

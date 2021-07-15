@@ -1,7 +1,7 @@
 package Compiler.GraphColoring;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
-import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.SymbolTable.Record;
 import Compiler.SymbolTable.SymbolTable;
@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -19,8 +20,12 @@ import java.util.logging.Level;
 public class VariableUsageChecker {
     /** Atribút file predstavuje názov analyzovaného súboru. **/
     private String file;
+
     /** Atribút parameters predstavuje zoznam parametrov funkcie. **/
     private ArrayList<String> mainParameters = new ArrayList<>();
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     /**
      * Konštruktor, pre nastavenie názvu súboru.
@@ -243,7 +248,7 @@ public class VariableUsageChecker {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(VariableUsageChecker.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise variables.csv!");
+                    bundle.getString("variablesErr2"));
         }
     }
 
@@ -272,7 +277,7 @@ public class VariableUsageChecker {
             }
         }
         if (!isMain) {
-            errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
+            errorDatabase.addErrorMessage(0, InternationalizationClass.getErrors().getString("E-RP-07"), "E-RP-07");
             return;
         }
         if (size == 0) {
@@ -294,9 +299,9 @@ public class VariableUsageChecker {
             }
         }
         if (mainArgumentProblem) {
-            errorDatabase.addErrorMessage(0, Error.getError("E-RP-09"), "E-RP-09");
+            errorDatabase.addErrorMessage(0, InternationalizationClass.getErrors().getString("E-RP-09"), "E-RP-09");
         } else {
-            errorDatabase.addErrorMessage(0, Error.getError("E-RP-07"), "E-RP-07");
+            errorDatabase.addErrorMessage(0, InternationalizationClass.getErrors().getString("E-RP-07"), "E-RP-07");
         }
     }
 }

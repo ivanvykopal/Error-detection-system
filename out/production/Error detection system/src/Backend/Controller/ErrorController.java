@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Frontend.ErrorWindow;
 import Frontend.MainWindow;
@@ -12,10 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -43,6 +41,9 @@ public class ErrorController extends Controller {
     /** Atribút table2 predstavuje tabuľky s možnosťami zdieľania premenných v jednotlivých zdrojových kódoch. **/
     private HashMap<String, ArrayList<String>> table2 = new HashMap<>();
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     /**
      * Konštruktor, v ktorom sa načítavajú údaje do tabuľky s chybami a možnosti zdieľania premenných v jednotlivých
      * zdrojových kódov.
@@ -63,7 +64,7 @@ public class ErrorController extends Controller {
     }
 
     private void initController() {
-        this.window.getClose().setToolTipText("Ukončenie systému");
+        this.window.getClose().setToolTipText(bundle.getString("close"));
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -81,7 +82,7 @@ public class ErrorController extends Controller {
             }
         });
 
-        this.window.getHome().setToolTipText("Návrat do menu");
+        this.window.getHome().setToolTipText(bundle.getString("home"));
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -100,7 +101,7 @@ public class ErrorController extends Controller {
             }
         });
 
-        this.window.getStatistics().setToolTipText("Zobrazenie štatistík");
+        this.window.getStatistics().setToolTipText(bundle.getString("statistics"));
         this.window.statisticsAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -137,7 +138,7 @@ public class ErrorController extends Controller {
         variableModel.setRowCount(0);
         errorModel.setRowCount(0);
         String selected = (String) window.getComboBox1().getSelectedItem();
-        if (selected != null && !selected.equals("Vyberte súbor")) {
+        if (selected != null && !selected.equals(bundle.getString("chooseFile"))) {
             setErrorTable();
             setVariableTable();
         } else {
@@ -172,7 +173,7 @@ public class ErrorController extends Controller {
             reader.close();
         } catch (FileNotFoundException | NumberFormatException e) {
             ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní z errors.csv!");
+                    bundle.getString("errorsErr"));
         }
     }
 
@@ -202,7 +203,7 @@ public class ErrorController extends Controller {
             reader.close();
         } catch (FileNotFoundException e) {
             ProgramLogger.createLogger(ErrorController.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní z variables.csv!");
+                    bundle.getString("variablesErr"));
         }
     }
 
@@ -248,7 +249,7 @@ public class ErrorController extends Controller {
      */
     public void fillComboBox(ArrayList<String> files) {
         this.files = new ArrayList<>(files);
-        files.add(0, "Vyberte súbor");
+        files.add(0, bundle.getString("chooseFile"));
         window.getComboBox1().setModel(new DefaultComboBoxModel(files.toArray()));
         window.getComboBox1().setSelectedIndex(0);
     }

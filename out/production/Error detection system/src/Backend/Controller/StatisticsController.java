@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Frontend.ErrorWindow;
 import Frontend.MainWindow;
@@ -42,6 +43,9 @@ public class StatisticsController extends Controller {
     /** Atribút files predstavuje zoznam súborov, v ktorých sa nachádza aspoň jedna chyba. **/
     private ArrayList<String> files;
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     /**
      * Konštruktor, v ktorom sa načítavajú údaje do tabuľky s chybami a možnosti zdieľania premenných v jednotlivých
      * zdrojových kódov.
@@ -61,7 +65,7 @@ public class StatisticsController extends Controller {
     }
 
     private void initController() {
-        this.window.getClose().setToolTipText("Ukončenie systému");
+        this.window.getClose().setToolTipText(bundle.getString("close"));
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -79,7 +83,7 @@ public class StatisticsController extends Controller {
             }
         });
 
-        this.window.getHome().setToolTipText("Návrat do menu");
+        this.window.getHome().setToolTipText(bundle.getString("home"));
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -98,7 +102,7 @@ public class StatisticsController extends Controller {
             }
         });
 
-        this.window.getBack().setToolTipText("Návrat na zobrazenie chýb");
+        this.window.getBack().setToolTipText(bundle.getString("back"));
         this.window.backAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -133,7 +137,7 @@ public class StatisticsController extends Controller {
         DefaultTableModel model = (DefaultTableModel) window.getTableForOne().getModel();
         model.setRowCount(0);
         String selected = (String) window.getComboBox1().getSelectedItem();
-        if (selected != null && !selected.equals("Vyberte súbor")) {
+        if (selected != null && !selected.equals(bundle.getString("chooseFile"))) {
             fillTableForOne();
         } else {
             model.setRowCount(0);
@@ -233,7 +237,7 @@ public class StatisticsController extends Controller {
             fileStatistics.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileStatistics, true);
-            fileWriter.write("Kód chyby, Počet chýb, Percentuálny podiel, Počet súborov, Percentuálny podiel\n");
+            fileWriter.write(bundle.getString("totalHeader") + "\n");
             for (String key: errorTable.keySet()) {
                 TableRecord record = errorTable.get(key);
                 int count = fileErrorCount.get(key);
@@ -249,7 +253,7 @@ public class StatisticsController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do total_statistics.csv!");
+                    bundle.getString("totalErr"));
         }
 
         DefaultTableModel model = (DefaultTableModel) window.getErrorTablePercent().getModel();
@@ -280,7 +284,7 @@ public class StatisticsController extends Controller {
      */
     public void fillComboBox(ArrayList<String> files) {
         this.files = new ArrayList<>(files);
-        files.add(0, "Vyberte súbor");
+        files.add(0, bundle.getString("chooseFile"));
 
         window.getComboBox1().setModel(new DefaultComboBoxModel(files.toArray()));
         window.getComboBox1().setSelectedIndex(0);
@@ -305,7 +309,7 @@ public class StatisticsController extends Controller {
             fileStatistics.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileStatistics, true);
-            fileWriter.write("Názov súboru, Kód chyby, Chybová správa, Počet výskytov\n");
+            fileWriter.write(bundle.getString("programHeader") + "\n");
             ArrayList<String> keys = new ArrayList<>(table.keySet());
             Collections.sort(keys);
 
@@ -331,7 +335,7 @@ public class StatisticsController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do program_statistics.csv!");
+                    bundle.getString("programErr"));
         }
     }
 

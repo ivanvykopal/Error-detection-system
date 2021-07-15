@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
@@ -20,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -41,6 +43,9 @@ public class Analysis1Controller extends Controller {
     /** Atribút file predstavuje analyzovaný súbor v textovej podobe. **/
     private String file;
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     private Analysis1Controller(Analysis1Window window) {
         this.window = window;
 
@@ -53,7 +58,7 @@ public class Analysis1Controller extends Controller {
 
     private void initController() {
 
-        this.window.getClose().setToolTipText("Ukončenie systému");
+        this.window.getClose().setToolTipText(bundle.getString("close"));
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -85,7 +90,7 @@ public class Analysis1Controller extends Controller {
             }
         });
 
-        this.window.getHome().setToolTipText("Návrat do menu");
+        this.window.getHome().setToolTipText(bundle.getString("home"));
         this.window.homeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -112,9 +117,9 @@ public class Analysis1Controller extends Controller {
      */
     public void getFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Vyberte súbor");
+        fileChooser.setDialogTitle(bundle.getString("chooseFile"));
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("C kód", "c"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(bundle.getString("cCode"), "c"));
 
         File selectedFile = null;
         int returnValue = fileChooser.showOpenDialog(null);
@@ -127,19 +132,19 @@ public class Analysis1Controller extends Controller {
             String name = selectedFile.getAbsolutePath();
             if(name.length() > 30) {
                 int index = name.substring(name.length() - 30).indexOf('\\') + name.length() - 30;
-                window.getWarning().setText("Súbor: ..." + name.substring(index));
+                window.getWarning().setText(bundle.getString("file") + ": ..." + name.substring(index));
             } else {
-                window.getWarning().setText("Súbor: " + name);
+                window.getWarning().setText(bundle.getString("file") + ": " + name);
             }
             window.getWarning().setToolTipText(name);
-            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Súbor: " +
-                    selectedFile.getAbsolutePath() + " bol vybraný.");
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, bundle.getString("file") + ": " +
+                    selectedFile.getAbsolutePath() + bundle.getString("choosed"));
             absolutePath = selectedFile.getAbsolutePath();
             file = selectedFile.getName();
         } else {
             window.getWarning().setForeground(Color.RED);
-            window.getWarning().setText("Chybný súbor!");
-            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Chybný súbor!");
+            window.getWarning().setText(bundle.getString("fileErr"));
+            ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, bundle.getString("fileErr"));
             absolutePath = null;
         }
 
@@ -162,12 +167,12 @@ public class Analysis1Controller extends Controller {
             FileWriter fileWriter = new FileWriter(fileAnalyzing, true);
 
             if (absolutePath == null) {
-                JOptionPane.showMessageDialog(null, "Nie je vybraný súbor alebo vybraný súbor je chybný!",
-                        "Nesprávny súbor!", JOptionPane.WARNING_MESSAGE);
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Problém so súborom!");
+                JOptionPane.showMessageDialog(null, bundle.getString("fileErr1"),
+                        bundle.getString("fileErr2"), JOptionPane.WARNING_MESSAGE);
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, bundle.getString("fileErr3"));
             }
             else {
-                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, "Analyzujem kód.");
+                ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.INFO, bundle.getString("analyzing"));
                 try {
                     //načíta súbor do reťazca
                     String text = new String(Files.readAllBytes(Paths.get(absolutePath)));
@@ -175,10 +180,10 @@ public class Analysis1Controller extends Controller {
                     String lib = prep.process();
                     if (!lib.equals("")) {
                         ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                                "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                        fileWriter.write("Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
-                        JOptionPane.showMessageDialog(null, "Súbor " + absolutePath + " obsahuje nepodporovanú knižnicu: " + lib + "!",
-                                "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
+                                bundle.getString("file") + " " + absolutePath + bundle.getString("libraryErr") + lib + "!");
+                        fileWriter.write(bundle.getString("file") + " " + absolutePath + bundle.getString("libraryErr") + lib + "!\n");
+                        JOptionPane.showMessageDialog(null, bundle.getString("file") + " " + absolutePath + bundle.getString("libraryErr") + lib + "!",
+                                bundle.getString("analyzingErr") + "!", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                     ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -194,23 +199,23 @@ public class Analysis1Controller extends Controller {
                     window.setVisible(false);
                 } catch (IOException er) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                            "Vyskytla sa chyba pri práci s I/O súbormi!");
-                    JOptionPane.showMessageDialog(null, "Chyba pri analyzovaní súboru!",
-                            "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
+                            bundle.getString("IOErr"));
+                    JOptionPane.showMessageDialog(null, bundle.getString("analyzingErr") + "!",
+                            bundle.getString("analyzingErr") + "!", JOptionPane.WARNING_MESSAGE);
 
                 } catch (Exception e) {
                     ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                            "Vyskytla sa chyba spôsobená parserom!");
-                    fileWriter.write("Chyba pri analyzovaní súboru " + absolutePath + "!\n");
-                    JOptionPane.showMessageDialog(null, "Chyba pri analyzovaní súboru!",
-                            "Chyba pri analyzovaní súboru!", JOptionPane.WARNING_MESSAGE);
+                            bundle.getString("parseErr"));
+                    fileWriter.write(bundle.getString("analyzingErr") + " " + absolutePath + "!\n");
+                    JOptionPane.showMessageDialog(null, bundle.getString("analyzingErr") + "!",
+                            bundle.getString("analyzingErr") + "!", JOptionPane.WARNING_MESSAGE);
 
                 }
             }
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(Analysis1Controller.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní unanalyzed_files.txt");
+                    bundle.getString("unanalyzedErr"));
         }
     }
 

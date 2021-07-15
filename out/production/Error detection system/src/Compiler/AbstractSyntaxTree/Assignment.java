@@ -1,6 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
-import Compiler.Errors.Error;
+import Backend.InternationalizationClass;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.*;
@@ -58,15 +58,15 @@ public final class Assignment extends Node {
 
         if (!typeCheck(table)) {
             if (right instanceof FunctionCall) {
-                errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("L-SmA-03"), "L-SmA-03");
             } else {
-                errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
             }
         } else if (left instanceof Identifier) {
             Record record = table.lookup(((Identifier) left).getName());
             if (record != null && (record.getKind() == Kind.ARRAY || record.getKind() == Kind.ARRAY_PARAMETER ||
                     record.getKind() == Kind.STRUCT_ARRAY_PARAMETER) && TypeChecker.findTypeCategory(right, table) > 50) {
-                errorDatabase.addErrorMessage(line, Error.getError("E-RP-08"), "E-RP-08");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-RP-08"), "E-RP-08");
             }
         }
     }

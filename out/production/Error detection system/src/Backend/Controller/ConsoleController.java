@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.Parser;
@@ -12,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
 /**
  * Trieda predstavujúca controller pre konzolovú verziu programu.
  *
@@ -28,6 +28,9 @@ public final class ConsoleController extends Controller {
     /** **/
     private static int allErrorCount = 0;
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     /**
      * Privátny konštruktor pre triedu {@code ConsoleController}
      */
@@ -40,15 +43,15 @@ public final class ConsoleController extends Controller {
         deleteLogFile();
         while (true) {
             System.out.println("------------------------------------------------------------------------------------------------------------------");
-            System.out.println("                                            Systém na detekciu chýb");
+            System.out.println("                                            " + bundle.getString("systemName") );
             System.out.println("------------------------------------------------------------------------------------------------------------------");
-            System.out.println("Možnosti pre analyzovanie zdrojových kódov:");
-            System.out.println("Pre analyzovanie jedného programu zadajte číslo 1");
-            System.out.println("Pre analyzovanie viacerých programov zadajte číslo 2");
-            System.out.println("Pre ukončenie programu zadajte číslo 3");
+            System.out.println(bundle.getString("options"));
+            System.out.println(bundle.getString("option1"));
+            System.out.println(bundle.getString("option2"));
+            System.out.println(bundle.getString("option3"));
             System.out.print("\n");
             Scanner scanner = new Scanner(System.in);
-            System.out.print("Vaša možnosť: ");
+            System.out.print(bundle.getString("option4") + " ");
             String input = scanner.nextLine().trim();
 
             switch(input) {
@@ -62,7 +65,7 @@ public final class ConsoleController extends Controller {
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Nesprávna možnosť!\n");
+                    System.out.println(bundle.getString("optionErr") + "\n");
                     break;
             }
             try {
@@ -84,7 +87,7 @@ public final class ConsoleController extends Controller {
     private static void analyzeCode() {
         table = new HashMap<>();
         System.out.print("\n");
-        System.out.print("Zadajte úplnú cestu k zdrojovému kódu: ");
+        System.out.print(bundle.getString("path") + " ");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().trim();
 
@@ -96,19 +99,19 @@ public final class ConsoleController extends Controller {
             try {
                 File file = new File(input);
                 if (!file.exists() || !file.isFile()) {
-                    System.out.println("Zadaný súbor neexistuje! Nie je podporovaná diakritika!");
-                    ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný súbor neexistuje!");
+                    System.out.println(bundle.getString("pathErr"));
+                    ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, bundle.getString("fileErr4"));
                     return;
                 }
-                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, "Analyzujem kód.");
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, bundle.getString("analyzing"));
                 String text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                 IncludePreprocessor prep = new IncludePreprocessor(text);
                 String lib = prep.process();
                 if (!lib.equals("")) {
                     ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                            "Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                    fileWriter.write("Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
-                    System.out.println("Súbor " + input + " obsahuje nepodporovanú knižnicu: " + lib + "!");
+                            bundle.getString("file") + " " + input + bundle.getString("libraryErr") + " " + lib + "!");
+                    fileWriter.write(bundle.getString("file") + " " + input + bundle.getString("libraryErr") + " " + lib + "!\n");
+                    System.out.println(bundle.getString("file") + " " + input + bundle.getString("libraryErr") + " " + lib + "!");
                     return;
                 }
                 ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -116,27 +119,27 @@ public final class ConsoleController extends Controller {
                 parser.parse(file.getName());
                 errorDatabase.createFile(file.getName());
                 if (errorDatabase.isEmpty()) {
-                    System.out.println("\nProgram " + file.getName() + " neobsahoval žiadnu chybu!\n");
+                    System.out.println("\n" + bundle.getString("program") + " " + file.getName() + " " + bundle.getString("noErr") + "\n");
                 } else {
                     readErrorFile();
                     fillTableForAll(1);
                     createStatisticsForOne();
-                    System.out.println("\nVýsledky analýzy boli uložené v adresári " + new File("").getAbsolutePath() + "!");
-                    System.out.println("Pri ďalšej analýze sú tieto výsledky premazané!\n");
+                    System.out.println("\n" + bundle.getString("results") + " " + new File("").getAbsolutePath() + "!");
+                    System.out.println(bundle.getString("results1") + "\n");
                 }
             } catch (IOException er) {
                 ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                        "Vyskytla sa chyba pri práci s I/O súbormi!");
+                        bundle.getString("IOErr"));
             } catch (Exception e) {
                 ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                        "Vyskytla sa chyba spôsobená parserom!");
-                fileWriter.write("Chyba pri analyzovaní súboru " + input + "!\n");
+                        bundle.getString("parseErr"));
+                fileWriter.write(bundle.getString("analyzingErr") + " " + input + "!\n");
             } finally {
                 fileWriter.close();
             }
         } catch (IOException e) {
             ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                    "Vyskytla sa chyba pri vytváraní unanalyzed_files.txt!");
+                    bundle.getString("unanalyzedErr1"));
         }
     }
 
@@ -154,7 +157,7 @@ public final class ConsoleController extends Controller {
         table = new HashMap<>();
         allErrorCount = 0;
         System.out.print("\n");
-        System.out.print("Zadajte úplnú cestu k adresáru so zdrojovými kódmi: ");
+        System.out.print(bundle.getString("path1") + " ");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().trim();
 
@@ -166,12 +169,12 @@ public final class ConsoleController extends Controller {
 
             File folder = new File(input);
             if (!folder.exists() || !folder.isDirectory()) {
-                System.out.println("Zadaný adresár neexistuje! Nie je podporovaná diakritika!");
-                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, "Zadaný adresár neexistuje!");
+                System.out.println(bundle.getString("pathErr1"));
+                ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING, bundle.getString("directoryErr5"));
                 return;
             }
-            System.out.println("Prebieha analyzovanie zdrojových kódov. Po ukončení analýzy sa zobrazí správa.");
-            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, "Analyzujem kódy.");
+            System.out.println(bundle.getString("analyzeInfo2"));
+            ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO, bundle.getString("analyzing4"));
             File[] files = folder.listFiles();
             int fileCount = 0;
 
@@ -180,14 +183,14 @@ public final class ConsoleController extends Controller {
                     String name = file.toString();
                     if (!name.contains(".")) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
-                                "Súbor " + name + " nie je korektný.");
-                        fileWriter.write("Súbor " + name + " nie je korektný.\n");
+                                bundle.getString("file") + " " + name + " " + bundle.getString("incorrect"));
+                        fileWriter.write(bundle.getString("file") + " " + name + " " + name + " " + bundle.getString("incorrect") + "\n");
                         continue;
                     }
                     if (!name.substring(name.lastIndexOf('.') + 1).equals("c")) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
-                                "Súbor " + name + " nemá príponu .c!");
-                        fileWriter.write("Súbor " + name + " nemá príponu .c!\n");
+                                bundle.getString("file") + " " + name + " " + bundle.getString("extensionErr") + " .c!");
+                        fileWriter.write(bundle.getString("file") + " " + name + " " + bundle.getString("extensionErr") + " .c!\n");
                         continue;
                     }
                     String text = null;
@@ -195,7 +198,7 @@ public final class ConsoleController extends Controller {
                         text = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                     } catch (IOException e) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                                "Chyba pri načítaní zdrojového kódu!");
+                                bundle.getString("readErr"));
                         continue;
                     }
 
@@ -203,12 +206,12 @@ public final class ConsoleController extends Controller {
                     String lib = prep.process();
                     if (!lib.equals("")) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
-                                "Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!");
-                        fileWriter.write("Súbor " + file.getAbsolutePath() + " obsahuje nepodporovanú knižnicu: " + lib + "!\n");
+                                bundle.getString("file") + " " + file.getAbsolutePath() + " " + bundle.getString("libraryErr") + " " + lib + "!");
+                        fileWriter.write(bundle.getString("file") + " " + file.getAbsolutePath() + " " + bundle.getString("libraryErr") + " " + lib + "!\n");
                         continue;
                     }
                     ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.INFO,
-                            "Analyzujem súbor: " + file.getAbsolutePath() + "!");
+                            bundle.getString("analyzing2") + ": " + file.getAbsolutePath() + "!");
                     fileCount++;
                     try {
                         ErrorDatabase errorDatabase = new ErrorDatabase();
@@ -217,22 +220,22 @@ public final class ConsoleController extends Controller {
                         errorDatabase.createFile(file.getName());
                     } catch (Exception e) {
                         ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                                "Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!");
-                        fileWriter.write("Chyba pri analyzovaní súboru " + file.getAbsolutePath() + "!\n");
+                                bundle.getString("analyzingErr") + " " + file.getAbsolutePath() + "!");
+                        fileWriter.write(bundle.getString("analyzingErr") + " " + file.getAbsolutePath() + "!\n");
                     }
                 }
             }
             readErrorFile();
             fillTableForAll(fileCount);
             createStatisticsForOne();
-            System.out.println("\nPriemerný počet chýb pre zdrojový kód: " + allErrorCount / fileCount);
-            System.out.println("\nVýsledky analýzy boli uložené v adresári " + new File("").getAbsolutePath() + "!");
-            System.out.println("Pri ďalšej analýze sú tieto výsledky premazané!\n");
+            System.out.println("\n" + bundle.getString("text20") + ": " + allErrorCount / fileCount);
+            System.out.println("\n" + bundle.getString("results") + " " + new File("").getAbsolutePath() + "!");
+            System.out.println(bundle.getString("results1") + "\n");
 
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                    "Vyskytla sa chyba pri vytváraní unanalyzed_files.txt!");
+                    bundle.getString("unanalyzedErr1"));
         }
     }
 
@@ -279,7 +282,7 @@ public final class ConsoleController extends Controller {
             fileVariables.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileVariables, true);
-            fileWriter.write("Kód chyby, Počet chýb, Percentuálny podiel, Počet súborov, Percentuálny podiel\n");
+            fileWriter.write(bundle.getString("totalHeader") + "\n");
             for (String key: errorTable.keySet()) {
                 TableRecord record = errorTable.get(key);
                 int count = fileErrorCount.get(key);
@@ -293,7 +296,7 @@ public final class ConsoleController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do total_statistics.csv!");
+                    bundle.getString("totalErr"));
         }
     }
 
@@ -350,7 +353,7 @@ public final class ConsoleController extends Controller {
             reader.close();
         } catch (FileNotFoundException | NumberFormatException e) {
             ProgramLogger.createLogger(ConsoleController.class.getName()).log(Level.WARNING,
-                    "Problém pri čítaní z errors.csv!");
+                    bundle.getString("errorsErr"));
         }
     }
 
@@ -373,7 +376,7 @@ public final class ConsoleController extends Controller {
             fileStatistics.createNewFile();
 
             FileWriter fileWriter = new FileWriter(fileStatistics, true);
-            fileWriter.write("Názov súboru, Kód chyby, Chybová správa, Počet výskytov\n");
+            fileWriter.write(bundle.getString("programHeader") + "\n");
             ArrayList<String> keys = new ArrayList<>(table.keySet());
             Collections.sort(keys);
 
@@ -399,7 +402,7 @@ public final class ConsoleController extends Controller {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(StatisticsController.class.getName()).log(Level.WARNING,
-                    "Problém pri zápise do program_statistics.csv!");
+                    bundle.getString("programErr"));
         }
 
     }

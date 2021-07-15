@@ -1,12 +1,12 @@
 package Compiler.Errors;
 
-import Backend.Controller.StatisticsController;
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -16,6 +16,9 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public final class ErrorDatabase implements Cloneable {
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     /**
      * Atribút errorTable predstavuje hash tabuľku chýb, kde kľúč predstavuje riadok chyby a hodnota predstavuje
@@ -47,7 +50,7 @@ public final class ErrorDatabase implements Cloneable {
             return (ErrorDatabase) super.clone();
         } catch (CloneNotSupportedException e) {
             ProgramLogger.createLogger(ErrorDatabase.class.getName()).log(Level.WARNING,
-                    "Chyba pri vytváraní kópie databázy chýb!");
+                    bundle.getString("copyErr"));
         }
         return null;
     }
@@ -80,7 +83,7 @@ public final class ErrorDatabase implements Cloneable {
             fileWriter.close();
         } catch (IOException e) {
             ProgramLogger.createLogger(ErrorDatabase.class.getName()).log(Level.WARNING,
-                    "Chyba pri vytváraní súboru errors.csv!");
+                    bundle.getString("errorsErr2"));
         }
     }
 

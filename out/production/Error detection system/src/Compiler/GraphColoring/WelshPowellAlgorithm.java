@@ -89,5 +89,4 @@ public final class WelshPowellAlgorithm {
         return colors;
     }
 
-
 }

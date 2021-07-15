@@ -1,14 +1,15 @@
 package Compiler.SymbolTable;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Compiler.AbstractSyntaxTree.*;
 import Compiler.AbstractSyntaxTree.Enum;
-import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -18,6 +19,9 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public final class SymbolTableFiller {
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     /**
      * Privátny konštruktor pre triedu {@code SymbolTableFiller}.
@@ -47,14 +51,14 @@ public final class SymbolTableFiller {
                     if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
                             (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
                             (record.getType() % 50) != Type.ENUM && !table.isGlobal(((Identifier) node).getName())) {
-                        errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                        errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-01"), "E-ST-01");
                     }
                 }
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) node).getName(), record);
             } else {
                 if (checkDeclaration && !isFromLibrary(((Identifier) node).getName())) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                    errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
                 }
             }
         } else if (node instanceof StructReference) {
@@ -70,13 +74,13 @@ public final class SymbolTableFiller {
                     if (record.getType() != Type.UNION && record.getType() != Type.STRUCT && record.getType() != Type.ENUM &&
                             (record.getType() % 50) != Type.UNION && (record.getType() % 50) != Type.STRUCT &&
                             (record.getType() % 50) != Type.ENUM) {
-                        errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-01"), "E-ST-01");
+                        errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-01"), "E-ST-01");
                     }
                 }
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
             } else {
-                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
             }
         } else if (node instanceof ArrayReference) {
             Node id = node.getNameNode();
@@ -90,7 +94,7 @@ public final class SymbolTableFiller {
                 record.addUsageLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
             } else {
-                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
             }
         }
     }
@@ -413,7 +417,7 @@ public final class SymbolTableFiller {
                     try {
                         size = Integer.parseInt(((Constant) constant).getValue());
                     } catch (NumberFormatException e) {
-                        System.out.println("Chyba veľkosti poľa!");
+                        System.out.println(bundle.getString("sizeErr"));
                     }
                 }
 
@@ -583,7 +587,7 @@ public final class SymbolTableFiller {
                 table.setValue(((Identifier) node).getName(), record);
             } else {
                 if (!isFromLibrary(((Identifier) node).getName())) {
-                    errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                    errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
                 }
             }
         } else if (node instanceof StructReference) {
@@ -599,7 +603,7 @@ public final class SymbolTableFiller {
                 record.addInitializationLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
             } else {
-                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
             }
         } else if (node instanceof ArrayReference) {
             Node id = node.getNameNode();
@@ -613,7 +617,7 @@ public final class SymbolTableFiller {
                 record.addInitializationLine(node.getLine());
                 table.setValue(((Identifier) id).getName(), record);
             } else {
-                errorDatabase.addErrorMessage(node.getLine(), Error.getError("E-ST-03"), "E-ST-03");
+                errorDatabase.addErrorMessage(node.getLine(), InternationalizationClass.getErrors().getString("E-ST-03"), "E-ST-03");
             }
         }
     }
@@ -689,7 +693,7 @@ public final class SymbolTableFiller {
             return false;
         } catch (Exception e) {
             ProgramLogger.createLogger(SymbolTableFiller.class.getName()).log(Level.WARNING,
-                    "Nebol nájdený konfiguračný súbor libraryVariables.config!");
+                    bundle.getString("configErr3"));
         }
         return false;
     }

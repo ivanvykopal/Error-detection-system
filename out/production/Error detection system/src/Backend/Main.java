@@ -2,9 +2,8 @@ package Backend;
 
 import Backend.Controller.ConsoleController;
 import Backend.Controller.GUIController;
-import Frontend.MainWindow;
 
-import javax.swing.*;
+import java.util.ResourceBundle;
 
 /**
  * Hlavná trieda pre spustenie programu.
@@ -13,6 +12,9 @@ import javax.swing.*;
  */
 public class Main {
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     /**
      * Hlavná metóda pre spustenie programu.
      *
@@ -20,12 +22,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length < 1) {
-            try {
-                GUIController.runGUI();
-            } catch (Exception e) {
-                System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
-                        "podporujúcou JavaFX (Java do verzie 10 vrátane)!");
-            }
+            GUIController.runGUI();
         } else {
             if (args.length == 1) {
                 switch (args[0]) {
@@ -33,19 +30,14 @@ public class Main {
                         ConsoleController.runConsole();
                         break;
                     case "gui" :
-                        try {
                             GUIController.runGUI();
-                        } catch (Exception e) {
-                            System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
-                                    "podporujúcou JavaFX (Java do verzie 10 vrátane)!");
-                        }
                         break;
                     default:
-                        System.out.println("Nesprávny argument programu!");
+                        System.out.println(bundle.getString("argumentErr1"));
                         break;
                 }
             } else {
-                System.out.println("Program požaduje len jeden argument!");
+                System.out.println(bundle.getString("argumentErr2"));
             }
         }
     }

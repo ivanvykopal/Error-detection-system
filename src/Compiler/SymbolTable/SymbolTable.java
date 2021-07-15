@@ -1,7 +1,7 @@
 package Compiler.SymbolTable;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
-import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import java.io.*;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class SymbolTable implements Serializable {
         if (!isInSymbolTable) {
             table.put(key, value);
         } else {
-            database.addErrorMessage(line, Error.getError("E-SmA-02"), "E-SmA-02");
+            database.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-SmA-02"), "E-SmA-02");
         }
     }
 
@@ -280,8 +280,9 @@ public class SymbolTable implements Serializable {
             ObjectInputStream in = new ObjectInputStream(bis);
             return (SymbolTable) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
-                    "Chyba pri vytváraní kópie!");
+                    InternationalizationClass.getBundle().getString("copyErr"));
             return null;
         }
     }
@@ -313,7 +314,7 @@ public class SymbolTable implements Serializable {
             for (String key: table.keySet()) {
                 Record record = table.get(key);
                 if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
-                    errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("W-01"), "W-01");
+                    errorDatabase.addErrorMessage(record.getDeclarationLine(), InternationalizationClass.getErrors().getString("W-01"), "W-01");
                 }
             }
         }
@@ -336,7 +337,7 @@ public class SymbolTable implements Serializable {
             prop.load(is);
         } catch (IOException e) {
             ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
-                    "Nebol nájdený konfiguračný súbor longActiveVariable.config!");
+                    InternationalizationClass.getBundle().getString("configErr2"));
         }
 
         int initLine, usageLine;
@@ -345,7 +346,7 @@ public class SymbolTable implements Serializable {
             usageLine = Integer.parseInt(prop.getProperty("usage"));
         } catch (NumberFormatException e) {
             ProgramLogger.createLogger(SymbolTable.class.getName()).log(Level.WARNING,
-                    "Problém pri získavaní údajov z longActiveVariable.config!");
+                    InternationalizationClass.getBundle().getString("readErr2"));
             initLine = 3;
             usageLine = 10;
         }
@@ -355,12 +356,12 @@ public class SymbolTable implements Serializable {
             if (record.getKind() == Kind.VARIABLE || record.getKind() == Kind.ARRAY) {
                 if (record.getInitializationLines().size() > 0) {
                     if (record.getInitializationLines().get(0) - record.getDeclarationLine() > initLine) {
-                        errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                        errorDatabase.addErrorMessage(record.getDeclarationLine(), InternationalizationClass.getErrors().getString("E-RP-05"), "E-RP-05");
                     }
                 }
                 if (record.getInitializationLines().size() > 0 && record.getUsageLines().size() > 0) {
                     if (record.getUsageLines().get(0) - record.getInitializationLines().get(0) > usageLine) {
-                        errorDatabase.addErrorMessage(record.getDeclarationLine(), Error.getError("E-RP-05"), "E-RP-05");
+                        errorDatabase.addErrorMessage(record.getDeclarationLine(), InternationalizationClass.getErrors().getString("E-RP-05"), "E-RP-05");
                     }
                 }
             }

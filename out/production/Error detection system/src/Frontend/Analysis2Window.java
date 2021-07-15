@@ -1,10 +1,13 @@
 package Frontend;
 
+import Backend.InternationalizationClass;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ResourceBundle;
 
 public class Analysis2Window extends JFrame {
     private JButton loadFolderBtn;
@@ -13,6 +16,13 @@ public class Analysis2Window extends JFrame {
     private JPanel panel;
     private JLabel warning;
     private JLabel home;
+    private JLabel label1;
+    private JLabel label2;
+    private JLabel label3;
+    private JLabel label4;
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     public Analysis2Window() {
         add(this.panel);
@@ -20,6 +30,16 @@ public class Analysis2Window extends JFrame {
         setLocationRelativeTo(null);
         setUndecorated(true);
         setVisible(true);
+
+        label1.setText(bundle.getString("title1"));
+        label2.setText(bundle.getString("text4"));
+        label3.setText(bundle.getString("text5"));
+        label4.setText(bundle.getString("text6"));
+        warning.setForeground(Color.RED);
+        warning.setText(bundle.getString("warning2"));
+
+        loadFolderBtn.setText(bundle.getString("loadFolderBtn"));
+        analyzeBtn.setText(bundle.getString("analyzeBtn1"));
 
         addMouseMotionListener(new MouseMotionListener() {
             private int mx, my;

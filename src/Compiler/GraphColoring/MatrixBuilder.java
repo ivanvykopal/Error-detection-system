@@ -65,11 +65,6 @@ public final class MatrixBuilder {
      * @return nová matica susednosti
      */
     private static byte[][] findEdge(byte[][] matrix, int i, int j, ArrayList<Index> indexes, SymbolTable symbolTable) {
-        //ak je jedna z premenných global
-        /*if (indexes.get(i).getGlobal() || indexes.get(j).getGlobal()) {
-            matrix[i][j] = matrix[j][i] = 1;
-            return matrix;
-        }*/
         int length = Math.min(indexes.get(i).getAccess().size(), indexes.get(j).getAccess().size());
         for (int k = 0; k < length; k++) {
             if (!indexes.get(i).getAccess().get(k).equals(indexes.get(j).getAccess().get(k))) {

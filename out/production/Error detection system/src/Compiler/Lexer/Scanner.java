@@ -1,11 +1,12 @@
 package Compiler.Lexer;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
-import Compiler.Errors.Error;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Preprocessing.Preprocessor;
 import java.io.*;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -37,6 +38,9 @@ public final class Scanner {
     /** Atribút line predstavuje aktuálny riadok v súbore. **/
     public static int line = 1;
 
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     /**
      * Konštruktor, ktorý načíta vstupný súbor a zároveň naplní HashMap kľúčovými slovami,
      * pre ľahšiu kontrolu.
@@ -66,7 +70,7 @@ public final class Scanner {
             // ignorovanie prázdnych znakov a komentárov
             ignoreWhiteSpaces();
             if (ignoreComments()) {
-                errorDatabase.addErrorMessage(line, Error.getError("E-LA-03"), "E-LA-03");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-03"), "E-LA-03");
                 return new Token((byte) -1, "", line);
             }
             if (peek == '\n') {
@@ -244,7 +248,7 @@ public final class Scanner {
                     if (peek == '.') {
                         return new Token(Tag.ELLIPSIS, "...", line);
                     } else {
-                        errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
+                        errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-01"), "E-LA-01");
                         return new Token((byte) -1, "", line);
                     }
                 } else {
@@ -276,7 +280,7 @@ public final class Scanner {
             }
             if (flag) {
                 if (word.toString().length() > 31) {
-                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
+                    errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-02"), "E-LA-02");
                     return new Token((byte) -1, "", line);
                 } else {
                     return resolveIdentifier(word.toString());
@@ -290,7 +294,7 @@ public final class Scanner {
                 } else {
                     //identifier
                     if (word.toString().length() > 31) {
-                        errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
+                        errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-02"), "E-LA-02");
                         return new Token((byte) -1, "", line);
                     } else {
                         return resolveIdentifier(word.toString());
@@ -312,7 +316,7 @@ public final class Scanner {
                 break;
             }
             if (word.toString().length() > 31) {
-                errorDatabase.addErrorMessage(line, Error.getError("E-LA-02"), "E-LA-02");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-02"), "E-LA-02");
                 return new Token((byte) -1, "", line);
             } else {
                 return resolveIdentifier(word.toString());
@@ -332,7 +336,7 @@ public final class Scanner {
                     word.append(peek);
                     break;
                 } else if (peek == '\n'){
-                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-04"), "E-LA-04");
+                    errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-04"), "E-LA-04");
                     return new Token((byte) -1, "", line);
                 } else {
                     word.append(peek);
@@ -424,7 +428,7 @@ public final class Scanner {
                     while (peek != ' ') {
                         readNextCharacter();
                     }
-                    errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
+                    errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-01"), "E-LA-01");
                     return new Token((byte) -1, "", line);
                 }
                 flag = false;
@@ -473,7 +477,7 @@ public final class Scanner {
         if (peek == '§') {
             return new Token(Tag.EOF,"", line);
         }
-        errorDatabase.addErrorMessage(line, Error.getError("E-LA-01"), "E-LA-01");
+        errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-LA-01"), "E-LA-01");
         return new Token((byte) -1, "", line);
     }
 
@@ -603,7 +607,7 @@ public final class Scanner {
             return new Token(Tag.IDENTIFIER, identifier, line);
         } catch (Exception e) {
             ProgramLogger.createLogger(Scanner.class.getName()).log(Level.WARNING,
-                    "Nebol nájdený konfiguračný súbor types.config!");
+                    bundle.getString("configErr1"));
         }
         return new Token(Tag.IDENTIFIER, identifier, line);
     }

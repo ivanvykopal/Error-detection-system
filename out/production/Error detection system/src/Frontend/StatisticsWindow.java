@@ -1,11 +1,13 @@
 package Frontend;
 
+import Backend.InternationalizationClass;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ResourceBundle;
 
 public class StatisticsWindow extends JFrame {
     private JComboBox comboBox1;
@@ -18,6 +20,19 @@ public class StatisticsWindow extends JFrame {
     private JLabel back;
     private JLabel home;
     private JLabel meanErrorCount;
+    private JLabel label1;
+    private JLabel label2;
+    private JLabel label3;
+    private JLabel label4;
+    private JLabel label5;
+    private JLabel label6;
+    private JLabel label7;
+    private JLabel label8;
+    private JLabel label9;
+    private JLabel label10;
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     public StatisticsWindow() {
         add(this.panel);
@@ -25,13 +40,15 @@ public class StatisticsWindow extends JFrame {
         setLocationRelativeTo(null);
         setUndecorated(true);
 
+        initializeLabels();
+
         sp1.setMaximumSize(new Dimension(300,250));
         sp1.setPreferredSize(new Dimension(300,250));
 
         sp2.setMaximumSize(new Dimension(300,250));
         sp2.setPreferredSize(new Dimension(300,250));
 
-        String[] column_names = {"Kód chyby", "Chybová správa", "Počet výskytov"};
+        String[] column_names = {bundle.getString("code"), bundle.getString("message"), bundle.getString("occurrences")};
         DefaultTableModel table_model1 = new DefaultTableModel(column_names,0);
         tableForOne.setModel(table_model1);
         tableForOne.getColumnModel().getColumn(0).setMaxWidth(150);
@@ -39,7 +56,8 @@ public class StatisticsWindow extends JFrame {
         tableForOne.getColumnModel().getColumn(2).setPreferredWidth(100);
         tableForOne.getColumnModel().getColumn(2).setMaxWidth(100);
 
-        column_names = new String[]{"Kód chyby", "Chybová správa", "Početnosť chýb", "Početnosť súborov"};
+        column_names = new String[]{bundle.getString("code"), bundle.getString("message"), bundle.getString("errorCount"),
+                bundle.getString("fileCount")};
         DefaultTableModel table_model2 = new DefaultTableModel(column_names,0);
         errorTablePercent.setModel(table_model2);
         errorTablePercent.getColumnModel().getColumn(0).setMaxWidth(150);
@@ -109,6 +127,20 @@ public class StatisticsWindow extends JFrame {
     }
 
     public void setText(String text) {
-        meanErrorCount.setText("Priemerný počet chýb pre zdrojový kód: " + text);
+        meanErrorCount.setText(bundle.getString("text20") + " " + text);
+    }
+
+    private void initializeLabels() {
+        label1.setText(bundle.getString("title3"));
+        label2.setText(bundle.getString("text15"));
+        label3.setText(bundle.getString("text16"));
+        label4.setText(bundle.getString("text17"));
+        label5.setText(bundle.getString("text18"));
+        label6.setText(bundle.getString("text19"));
+        label7.setText(bundle.getString("subtitle4"));
+        label8.setText(bundle.getString("text12"));
+        label9.setText(bundle.getString("subtitle5"));
+        label10.setText(bundle.getString("subtitle6"));
+        meanErrorCount.setText(bundle.getString("text20"));
     }
 }

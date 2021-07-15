@@ -1,6 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
-import Compiler.Errors.Error;
+import Backend.InternationalizationClass;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.SymbolTable;
@@ -61,9 +61,9 @@ public final class TernaryOperator extends Node {
 
         if (!typeCheck(table)) {
             if (truePart instanceof FunctionCall || falsePart instanceof FunctionCall) {
-                errorDatabase.addErrorMessage(line, Error.getError("L-SmA-03"), "L-SmA-03");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("L-SmA-03"), "L-SmA-03");
             } else {
-                errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+                errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
             }
         }
     }

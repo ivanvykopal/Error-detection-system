@@ -1,18 +1,11 @@
 package Backend.Controller;
 
-import Backend.Main;
-import Backend.ProgramLogger;
+import Backend.InternationalizationClass;
+import Frontend.LanguageWindow;
 import Frontend.MainWindow;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.ResourceBundle;
 
 /**
  * Trieda predstavujúca controller pre verziu programu s grafickým rozhraním.
@@ -21,7 +14,10 @@ import java.util.logging.Level;
  *
  * @author Ivan Vykopal
  */
-public class GUIController{
+public class GUIController {
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
 
     /**
      * Privátny konštruktor pre triedu {@code GUIController}.
@@ -34,14 +30,13 @@ public class GUIController{
     public static void runGUI() {
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            SwingUtilities.invokeLater(() -> {
-                deleteLogFile();
-                MainController.createController(new MainWindow());
-            });
-        } catch (Exception e) {
-            System.out.println("Pre spustenie grafického rozhranie je potrebné spúšťať program s verziou Javy " +
-                    "podporujúcou JavaFX (Java do verzie 10 vrátane)!");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
         }
+        SwingUtilities.invokeLater(() -> {
+                deleteLogFile();
+                LanguageController.createController(new LanguageWindow());
+            });
+
     }
 
     /**

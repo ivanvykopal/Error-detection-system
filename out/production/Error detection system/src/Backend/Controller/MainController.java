@@ -1,5 +1,6 @@
 package Backend.Controller;
 
+import Backend.InternationalizationClass;
 import Backend.ProgramLogger;
 import Frontend.Analysis1Window;
 import Frontend.Analysis2Window;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -20,6 +22,10 @@ import java.util.logging.Level;
  * @author Ivan Vykopal
  */
 public class MainController extends Controller {
+
+    /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
+    private final ResourceBundle bundle = InternationalizationClass.getBundle();
+
     private final MainWindow window;
 
     private MainController(MainWindow window) {
@@ -49,7 +55,7 @@ public class MainController extends Controller {
             }
         });
 
-        this.window.getClose().setToolTipText("Ukončenie systému");
+        this.window.getClose().setToolTipText(bundle.getString("close"));
         this.window.closeAddListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

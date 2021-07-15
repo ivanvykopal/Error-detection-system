@@ -1,6 +1,6 @@
 package Compiler.AbstractSyntaxTree;
 
-import Compiler.Errors.Error;
+import Backend.InternationalizationClass;
 import Compiler.Errors.ErrorDatabase;
 import Compiler.Parser.TypeChecker;
 import Compiler.SymbolTable.Record;
@@ -47,7 +47,7 @@ public final class ArrayReference extends Node {
         setLine(line);
 
         if (!typeCheck(table)) {
-            errorDatabase.addErrorMessage(line, Error.getError("E-SmA-01"), "E-SmA-01");
+            errorDatabase.addErrorMessage(line, InternationalizationClass.getErrors().getString("E-SmA-01"), "E-SmA-01");
         } else {
             findAccessError(name, index, table, errorDatabase);
         }
@@ -89,7 +89,7 @@ public final class ArrayReference extends Node {
         Record record = table.lookup(((Identifier) id).getName());
         if (record != null) {
             if (record.getSize() != 0 && arrayIndex >= record.getSize()) {
-                errorDatabase.addErrorMessage(nodeName.getLine(), Error.getError("E-RP-06"), "E-RP-06");
+                errorDatabase.addErrorMessage(nodeName.getLine(), InternationalizationClass.getErrors().getString("E-RP-06"), "E-RP-06");
             }
         }
     }

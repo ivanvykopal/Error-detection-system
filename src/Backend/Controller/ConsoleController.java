@@ -29,7 +29,7 @@ public final class ConsoleController extends Controller {
     private static int allErrorCount = 0;
 
     /** Atribút bundle predstavuje súbor s aktuálnou jazykovou verziou. **/
-    private static final ResourceBundle bundle = InternationalizationClass.getBundle();
+    private static ResourceBundle bundle;
 
     /**
      * Privátny konštruktor pre triedu {@code ConsoleController}
@@ -40,6 +40,8 @@ public final class ConsoleController extends Controller {
      * Metóda pre spustenie pprogramu v konzolovej verzii.
      */
     public static void runConsole() {
+        selectLanguage();
+        bundle = InternationalizationClass.getBundle();
         deleteLogFile();
         while (true) {
             System.out.println("------------------------------------------------------------------------------------------------------------------");
@@ -71,6 +73,41 @@ public final class ConsoleController extends Controller {
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException ignored) {
+            }
+        }
+    }
+
+    private static void selectLanguage() {
+        boolean flag = false;
+        while(!flag) {
+            System.out.println("------------------------------------------------------------------------------------------------------------------");
+            System.out.println("                                            Error detection system");
+            System.out.println("------------------------------------------------------------------------------------------------------------------");
+            System.out.println("Select from the following languages:");
+            System.out.println("For Slovak enter sk or SK");
+            System.out.println("For English enter en or EN\n");
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Your option: ");
+            String input = scanner.nextLine().trim();
+
+            switch (input) {
+                case "sk":
+                case "SK":
+                    InternationalizationClass.setBundle("lang/bundle_sk", "lang/errors_sk", "sk", "SK");
+                    flag = true;
+                    break;
+                case "en":
+                case "EN":
+                    InternationalizationClass.setBundle("lang/bundle_en", "lang/errors_en", "en", "US");
+                    flag = true;
+                    break;
+                default:
+                    System.out.println("Wrong option!\n");
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException ignored) {
+                    }
+                    break;
             }
         }
     }
@@ -228,7 +265,7 @@ public final class ConsoleController extends Controller {
             readErrorFile();
             fillTableForAll(fileCount);
             createStatisticsForOne();
-            System.out.println("\n" + bundle.getString("text20") + ": " + allErrorCount / fileCount);
+            System.out.println("\n" + bundle.getString("text20") + " " + allErrorCount / fileCount);
             System.out.println("\n" + bundle.getString("results") + " " + new File("").getAbsolutePath() + "!");
             System.out.println(bundle.getString("results1") + "\n");
 

@@ -2,7 +2,7 @@
 
 ## Basic information about the system
 
-<p align="justify">This system is part of a Bachelor's thesis titled **Graph coloring in program analysis**.</p>
+This system is part of a Bachelor's thesis titled **Graph coloring in program analysis**.
 
 <p align="justify">This system aims to alert the user to the shortcomings in the use of variables, which is mainly related to optimizing the number of variables used in the C programming language.</p>
 
@@ -10,7 +10,7 @@
 
 ## Installation
 
-<p align="justify">The latest version of the system is in **the latest release**. To use the system, you need to download the Error_detection_system.zip file from the latest release and extract the contents of this zip file.</p>
+The latest version of the system is in **the latest release**. To use the system, you need to download the Error_detection_system.zip file from the latest release and extract the contents of this zip file.
 
 <p align="justify">After unzipping the zip file, you will see 2 folders in the working directory and a JAR file that is used to run the system.</p>
 
